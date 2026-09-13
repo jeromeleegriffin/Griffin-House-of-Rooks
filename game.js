@@ -7,7 +7,7 @@
 // It's exchanged during the join handshake so a stale host or joiner (e.g.
 // one still running old cached JS) gets caught and auto-updated instead of
 // silently failing or behaving unpredictably against a mismatched peer.
-const APP_VERSION = '349';
+const APP_VERSION = '351';
 
 function horThisIndex() {
   try {
@@ -4968,16 +4968,8 @@ function updateWaitingUI() {
 
 
 function setLobbyPortraitOrientation() {
-  // The lobby/waiting room should always use its portrait presentation.
-  // Screen Orientation locking is best-effort because some browsers only
-  // allow it in installed/fullscreen contexts; CSS still keeps the lobby
-  // visible and portrait-styled when locking is unavailable.
-  try {
-    if (screen.orientation && typeof screen.orientation.lock === 'function') {
-      const p = screen.orientation.lock('portrait');
-      if (p && typeof p.catch === 'function') p.catch(() => {});
-    }
-  } catch (e) {}
+  // Do not lock orientation on the lobby — Android lock/unlock resizes
+  // the viewport and makes the lobby photo stretch then snap back.
 }
 
 function releaseGameOrientationLock() {
@@ -5122,6 +5114,11 @@ function hostStartGame() {
   if (tourCardOpen()) {
     afterTourCard(() => hostStartGame());
     return;
+  }
+  if (seatedCount() !== 4) {
+    if (isSoloPractice || roomCode === 'OFFLINE') {
+      while (seatedCount() < 4) addBot();
+    }
   }
   if (seatedCount() !== 4) {
     const need = 4 - seatedCount();
@@ -9961,29 +9958,41 @@ function isRookCard(card) {
   return !!(card && (card.color === 'rook' || card.id === 'rook'));
 }
 
-/** Color bucket for display. Rook is its own group on the far left when it is high. */
+/** Color bucket for display. Permanent trumps are handled separately. */
 function displayColorGroup(card) {
   if (!card) return 99;
-  if (isRookCard(card)) return (typeof rookLowest !== 'undefined' && rookLowest) ? 50 : -1;
   const i = COLORS.indexOf(card.color);
   return i >= 0 ? i : 5;
 }
 
 /**
+ * Hand order for the high-trump cluster (left side of the hand):
+ *   Rook, then the red bird (Red 2), then special Red 1, then called trump high→low.
+ */
+function displayHighTrumpScore(card) {
+  if (!card) return -1;
+  const rookLow = (typeof rookLowest !== 'undefined' && rookLowest);
+  if (isRookCard(card)) return rookLow ? -1 : 400;
+  if (typeof isRed2 === 'function' ? isRed2(card) : card.id === 'red-2') return 300;
+  if (typeof isRed1 === 'function' && isRed1(card)) return 200;
+  const trump = (game && game.trump) || null;
+  if (trump && card.color === trump) return effectiveRank(card);
+  return -1;
+}
+
+/**
  * One comparator for every visible pile (hand, nest merge, discard rows, kitty flash).
- * Rook (when high) is always leftmost. Default otherwise: by color, high → low.
+ * Rook then red bird on the left. Other cards by color, high → low.
  */
 function compareCardsDisplay(a, b) {
-  const rookHigh = !(typeof rookLowest !== 'undefined' && rookLowest);
-  if (rookHigh) {
-    const aR = isRookCard(a);
-    const bR = isRookCard(b);
-    if (aR !== bR) return aR ? -1 : 1;
-  }
+  const sa = displayHighTrumpScore(a);
+  const sb = displayHighTrumpScore(b);
+  const aHigh = sa >= 0;
+  const bHigh = sb >= 0;
+  if (aHigh !== bHigh) return aHigh ? -1 : 1;
+  if (aHigh && bHigh && sa !== sb) return sb - sa;
 
   const mode = normalizeHandSortMode(handSortMode);
-  const trump = (game && game.trump) || null;
-
   if (mode === 'rank') {
     const d = effectiveRank(b) - effectiveRank(a);
     if (d) return d;
@@ -9992,15 +10001,6 @@ function compareCardsDisplay(a, b) {
   if (mode === 'counters') {
     const d = cardPoints(b) - cardPoints(a);
     if (d) return d;
-  }
-
-  if (trump) {
-    const aT = isTrumpCard(a, trump);
-    const bT = isTrumpCard(b, trump);
-    if (aT !== bT) return aT ? -1 : 1;
-    if (aT && bT) {
-      return trumpDefendStrength(b, trump) - trumpDefendStrength(a, trump);
-    }
   }
 
   const ca = displayColorGroup(a);
@@ -11132,9 +11132,16 @@ function startSoloPractice() {
     showGame();
     updatePracticeBadge();
 
-    playTableToast(() => {
-      try { hostStartGame(); } catch (e) { console.error(e); }
-    });
+    // Seat bots on 1/2/3 explicitly so the deal cannot abort.
+    try {
+      [1, 2, 3].forEach((s) => {
+        if (!playerAtSeat(s)) addBot(s);
+      });
+    } catch (e) {}
+
+    try { hostStartGame(); } catch (e) { console.error(e); }
+    try { lobby && lobby.classList.add('hidden'); } catch (e) {}
+    try { showGame(); } catch (e) {}
 
     const note = $('messageArea');
     if (note) note.textContent = 'Offline practice — you vs 3 bots. Bots only use public info.';
