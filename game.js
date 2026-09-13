@@ -7,7 +7,7 @@
 // It's exchanged during the join handshake so a stale host or joiner (e.g.
 // one still running old cached JS) gets caught and auto-updated instead of
 // silently failing or behaving unpredictably against a mismatched peer.
-const APP_VERSION = '336';
+const APP_VERSION = '337';
 
 function horThisIndex() {
   try {
@@ -6691,6 +6691,11 @@ function hostProcessTrump(data) {
   if (horRememberAction(data)) return;
   game.trump = data.color;
   game.phase = 'play';
+  try { hideActionPanel(); } catch (e) {}
+  try {
+    const bar = $('ltTrumpBar');
+    if (bar) bar.classList.add('hidden');
+  } catch (e) {}
   // Who leads the first trick, relative to the bid winner (house rule option).
   if (leadOrder === 'bidder') {
     game.currentPlayer = game.bidder;
@@ -7611,6 +7616,12 @@ function hostPromptPlay() {
   if (!game || game.phase !== 'play') return;
   if (game.resolvingTrick || game.claimAnimating) return;
   if (game.paused) return;
+  try {
+    const panel = $('actionPanel');
+    if (panel && (panel.classList.contains('trump-showdown') || /stamp the trump|choose trump/i.test(panel.textContent || ''))) {
+      hideActionPanel();
+    }
+  } catch (e) {}
 
   const claimInfo = getRestClaimInfo();
   game.trumpClaimPlayer = claimInfo ? claimInfo.seat : null;

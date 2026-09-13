@@ -1540,7 +1540,10 @@
     html += '</div><p class="option-hint">' + (includeRook ? (rookLowest ? 'The Bird stays lowest trump.' : 'The Bird stays highest trump.') : '') + '</p>';
     panel.innerHTML = html;
     panel.querySelectorAll('[data-trump]').forEach((btn) => {
-      btn.onclick = () => submitTrump(btn.getAttribute('data-trump'));
+      btn.onclick = () => {
+        try { hideActionPanel(); } catch (e) {}
+        submitTrump(btn.getAttribute('data-trump'));
+      };
     });
   };
 
