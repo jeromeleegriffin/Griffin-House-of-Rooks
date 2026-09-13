@@ -7383,8 +7383,12 @@ body.cardback-aftermath {
 }
 #scoreModal.showing-remaining #scoreModalNext,
 #scoreModal.showing-remaining #scoreModalRevealHands,
+#scoreModal.showing-remaining #scoreModalLast3,
 #scoreModal.showing-remaining .score-modal-actions {
   display: flex !important;
+}
+#scoreModal.showing-remaining #scoreModalLast3 {
+  display: inline-flex !important;
 }
 #scoreModal.showing-remaining #scoreModalNext,
 #scoreModal.showing-remaining #scoreModalRevealHands {
@@ -10016,8 +10020,8 @@ body.trick-resolving.gfx-playFly .lt-play.latest .card-face {
   position:fixed;
   left:0; right:0;
   top:0;
-  bottom:var(--portrait-hand-clearance,140px);
-  z-index:160000;
+  bottom:0;
+  z-index:400000;
   background:rgba(6,10,8,.96) !important;
   opacity:1 !important;
   box-sizing:border-box;

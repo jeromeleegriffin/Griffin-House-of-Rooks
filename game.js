@@ -7,7 +7,7 @@
 // It's exchanged during the join handshake so a stale host or joiner (e.g.
 // one still running old cached JS) gets caught and auto-updated instead of
 // silently failing or behaving unpredictably against a mismatched peer.
-const APP_VERSION = '335';
+const APP_VERSION = '336';
 
 function horThisIndex() {
   try {
@@ -7428,6 +7428,7 @@ function hostProcessAllTrumpsClaim(data) {
     player: i,
     name: (players[i] && players[i].name) || `Player ${i + 1}`,
     team: players[i] ? players[i].team : (i % 2),
+    laidDown: i === holder,
     cards: (hand || []).map(c => ({ ...c })),
   }));
   // Snapshot holder's cards for the lay-down animation (only their hand)
@@ -7451,6 +7452,16 @@ function hostProcessAllTrumpsClaim(data) {
   game.resolvingTrick = true;
   game.claimAnimating = true;
   game.trumpClaimPlayer = holder;
+  game.laidDownBy = holder;
+  game.laidDownName = (players[holder] && players[holder].name) || ('Player ' + (holder + 1));
+  game.claimLastTricks = (typeof recentTricks !== 'undefined' && recentTricks)
+    ? recentTricks.slice(0, 3).map(tr => ({
+        winner: tr.winner,
+        plays: (tr.plays || []).map(t => ({ player: t.player, card: t.card ? { ...t.card } : t.card })),
+        trump: tr.trump,
+        ledColor: tr.ledColor,
+      }))
+    : [];
   game.claimAnimation = {
     player: holder,
     cards: holderCards,
@@ -8101,14 +8112,20 @@ function hostEndHand() {
       player: h.player, name: h.name, team: h.team,
       cards: (h.cards || []).map(c => ({ ...c }))
     })) : null,
-    claimer: (typeof game.trumpClaimPlayer === 'number') ? game.trumpClaimPlayer : null,
+    claimer: (typeof game.laidDownBy === 'number')
+      ? game.laidDownBy
+      : ((typeof game.trumpClaimPlayer === 'number') ? game.trumpClaimPlayer : null),
+    claimerName: game.laidDownName || null,
     claimReason: (game.claimAnimation && game.claimAnimation.reason) || null,
-    lastTricks: (typeof recentTricks !== 'undefined' && recentTricks)
-      ? recentTricks.slice(0, 3).map(tr => ({
-          winner: tr.winner,
-          plays: (tr.plays || []).map(t => ({ player: t.player, card: t.card ? { ...t.card } : t.card }))
-        }))
-      : [],
+    lastTricks: (Array.isArray(game.claimLastTricks) && game.claimLastTricks.length
+      ? game.claimLastTricks
+      : ((typeof recentTricks !== 'undefined' && recentTricks) ? recentTricks : [])
+    ).slice(0, 3).map(tr => ({
+      winner: tr.winner,
+      plays: (tr.plays || []).map(t => ({ player: t.player, card: t.card ? { ...t.card } : t.card })),
+      trump: tr.trump,
+      ledColor: tr.ledColor,
+    })),
   };
   handHistory.push(summary);
   matchStats.hands = (matchStats.hands || 0) + 1;
@@ -8143,8 +8160,9 @@ function hostEndHand() {
 }
 
 function isLaidDownWinnerSeat(h, summary) {
-  if (!h || !summary) return false;
-  if (typeof summary.claimer === 'number') return h.player === summary.claimer;
+  if (!h) return false;
+  if (h.laidDown) return true;
+  if (summary && typeof summary.claimer === 'number') return Number(h.player) === Number(summary.claimer);
   return false;
 }
 function remainingHandCardHTML(card) {
@@ -8185,16 +8203,20 @@ function showClaimRemainingHands(summary) {
       + escapeHtmlSafe(h.name) + '</b>' + tag + '<span>' + teamName + '</span></div>'
       + '<div class="claim-remaining-cards">' + cards + '</div></div>';
   }).join('');
-  const claimerHand = hands.find(h => typeof summary.claimer === 'number' && h.player === summary.claimer);
-  const claimerName = (claimerHand && claimerHand.name)
+  const claimerHand = hands.find(h => h.laidDown)
+    || hands.find(h => typeof summary.claimer === 'number' && Number(h.player) === Number(summary.claimer));
+  const claimerName = summary.claimerName
+    || (claimerHand && claimerHand.name)
     || (players[summary.claimer] && players[summary.claimer].name)
-    || 'A player';
+    || (typeof summary.claimer === 'number' ? ('Player ' + (summary.claimer + 1)) : '');
   const trumpName = (typeof COLOR_NAMES !== 'undefined' && COLOR_NAMES[summary.trump])
     ? COLOR_NAMES[summary.trump]
     : (summary.trump || '—');
+  const whoLine = claimerName
+    ? ('<b>' + escapeHtmlSafe(claimerName) + '</b> laid down · Trump <b>' + escapeHtmlSafe(String(trumpName)) + '</b>')
+    : ('Trump <b>' + escapeHtmlSafe(String(trumpName)) + '</b>');
   section.innerHTML = '<div class="claim-remaining-title">Cards left when the winning cards were laid down</div>'
-    + '<div class="claim-remaining-meta"><b>' + escapeHtmlSafe(claimerName)
-    + '</b> laid down · Trump <b>' + escapeHtmlSafe(String(trumpName)) + '</b></div>'
+    + '<div class="claim-remaining-meta">' + whoLine + '</div>'
     + '<div class="claim-remaining-grid">' + cardsHtml + '</div>';
   body.innerHTML = '';
   body.appendChild(section);
@@ -8260,10 +8282,12 @@ function wireScoreModalActions(summary) {
   if (last3Btn) {
     const showing = modal.classList.contains('showing-remaining');
     const hasTricks = Array.isArray(summary.lastTricks) && summary.lastTricks.length;
-    last3Btn.classList.toggle('hidden', !(showing && hasTricks));
-    last3Btn.onclick = () => {
-      if (hasTricks) window._scoreLastTricks = summary.lastTricks;
-      try { openPortraitLast3(); } catch (e) {}
+    last3Btn.classList.toggle('hidden', !showing);
+    last3Btn.onclick = (e) => {
+      e.preventDefault();
+      e.stopPropagation();
+      window._scoreLastTricks = Array.isArray(summary.lastTricks) ? summary.lastTricks : [];
+      try { openPortraitLast3(); } catch (err) { console.error(err); }
     };
   }
 
@@ -11581,8 +11605,8 @@ function updateLandscapeTheater() {
           <div class="lt-endgame-banner lt-remaining-banner">
             <div class="lt-endgame-title">Remaining Cards</div>
             <div class="lt-remaining-meta">${(() => {
-              const ch = revealHands.find(h => typeof endSummary.claimer === 'number' && h.player === endSummary.claimer);
-              const nm = (ch && ch.name) || (players[endSummary.claimer] && players[endSummary.claimer].name) || 'A player';
+              const ch = revealHands.find(h => typeof endSummary.claimer === 'number' && Number(h.player) === Number(endSummary.claimer));
+              const nm = endSummary.claimerName || (ch && ch.name) || (players[endSummary.claimer] && players[endSummary.claimer].name) || (typeof endSummary.claimer === 'number' ? ('Player ' + (endSummary.claimer + 1)) : '');
               const tp = (typeof COLOR_NAMES !== 'undefined' && COLOR_NAMES[endSummary.trump]) ? COLOR_NAMES[endSummary.trump] : (endSummary.trump || '—');
               return `<b>${escapeHtmlSafe(nm)}</b> laid down · Trump <b>${escapeHtmlSafe(String(tp))}</b>`;
             })()}</div>
@@ -12072,6 +12096,8 @@ function renderPortraitLast3() {
 function openPortraitLast3() {
   const ov = $('portraitLast3Overlay');
   if (!ov) return;
+  try { if (ov.parentElement !== document.body) document.body.appendChild(ov); } catch (e) {}
+  ov.style.zIndex = '400000';
   const hand = document.querySelector('.hand-area');
   const ltHand = document.querySelector('.landscape-theater .lt-hand-wrap');
   let clearance = 110;
