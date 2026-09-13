@@ -826,12 +826,7 @@
     const ones = includeOnes ? '1s are high in color (15 pts)' : 'no 1s';
     const nest = nestGoesTo === 'bidder' ? 'nest counters go to the makers' : 'nest counters go to last trick';
     const score = bidOnlyScoring ? 'makers score the bid only' : (sandbagging ? 'sandbagging penalty is on' : 'makers score counters taken');
-    intro.innerHTML =
-      '<p><b>This table:</b> Griffin House' +
-      ' · nest ' + nestSizeDefault + ' · min bid ' + minBid + ' · play to ' + targetScore + '.</p>' +
-      '<p>' + bird + '. ' + r2 + '. ' + ones + '.</p>' +
-      '<p>Follow color if you can. ' + nest + '. ' + score + '.</p>' +
-      '<p>Gold cards are legal on your turn. Long-press a dim card to see why.</p>';
+    intro.innerHTML = '';
   }
 
   const PLAY_TIPS = {

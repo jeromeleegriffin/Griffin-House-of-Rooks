@@ -1243,10 +1243,33 @@ body.reduce-motion .card-face.playable {
   position: relative;
   z-index: 20001;
 }
+#rulesModal.modal {
+  align-items: center;
+  justify-content: center;
+  padding: 2vh 4vw;
+}
+#rulesModal .modal-content {
+  width: min(96vw, 560px);
+  max-width: 96vw;
+  max-height: 96dvh;
+  overflow: hidden;
+  padding: 1.05rem 1.25rem 0.95rem;
+  display: flex;
+  flex-direction: column;
+  box-sizing: border-box;
+}
 #rulesModal .modal-content,
 #rulesModal .rules-text {
   background: linear-gradient(180deg, #1a2744 0%, #0c1222 55%, #070b16 100%);
   opacity: 1;
+}
+#rulesModal .rules-text {
+  border: none !important;
+  background: transparent !important;
+  padding: 0 !important;
+  margin: 0 !important;
+  overflow: hidden;
+  box-shadow: none !important;
 }
 #rulesModal .rules-text p,
 #rulesModal .rules-text {
@@ -1257,11 +1280,23 @@ body.reduce-motion .card-face.playable {
   margin-bottom: 1rem;
 }
 
+#rulesModal .modal-content h2 {
+  margin: 0 0 0.45rem;
+  font-size: 1.2rem;
+}
+
 .rules-text p {
   margin-bottom: 0.75rem;
   font-size: 0.9rem;
   line-height: 1.4;
 }
+#rulesModal .rules-text p {
+  margin: 0 0 0.5rem;
+  font-size: clamp(0.82rem, 2.8vw, 0.95rem);
+  line-height: 1.38;
+}
+#rulesModal .rules-bots { opacity: 0.8; }
+#rulesModal #closeRules { margin-top: 0.35rem; align-self: flex-start; }
 
 .rules-link {
   text-align: center;
@@ -11333,11 +11368,17 @@ body.no-avatar-motion .wait-seat-av {
 }
 #cardBackModal .modal-content,
 #newPlayersModal .modal-content,
-#rulesModal .modal-content,
-#rulesModal .rules-text {
+#rulesModal .modal-content {
   background: linear-gradient(180deg, #1a2744 0%, #0c1222 55%, #070b16 100%);
   border: 1px solid rgba(212, 175, 55, 0.55);
   color: #f0e6d0;
+}
+#rulesModal .rules-text,
+#rulesModal #variantRulesBox,
+#rulesModal #liveRulesIntro {
+  border: 0 !important;
+  background: transparent !important;
+  box-shadow: none !important;
 }
 #rulesModal .rules-text p,
 #rulesModal .rules-text {

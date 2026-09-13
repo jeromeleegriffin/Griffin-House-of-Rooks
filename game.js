@@ -7,7 +7,7 @@
 // It's exchanged during the join handshake so a stale host or joiner (e.g.
 // one still running old cached JS) gets caught and auto-updated instead of
 // silently failing or behaving unpredictably against a mismatched peer.
-const APP_VERSION = '337';
+const APP_VERSION = '339';
 
 function horThisIndex() {
   try {
@@ -2368,6 +2368,7 @@ function showWelcomeScreen(code) {
   try {
     document.body.classList.remove('in-game');
     document.body.classList.add('at-table', 'at-welcome');
+    setTimeout(syncLandscapeFullscreen, 50);
   } catch (e) {}
   const c = String(code || roomCode || '').trim().toUpperCase();
   const codeEl = $('welcomeCode');
@@ -3989,6 +3990,7 @@ function showWaiting() {
   waiting.classList.remove('hidden');
   gameScreen.classList.add('hidden');
   try { document.body.classList.remove('in-game'); document.body.classList.add('at-table'); } catch (e) {}
+  setTimeout(syncLandscapeFullscreen, 50);
   const codeEl = $('displayCode');
   if (codeEl) codeEl.textContent = roomCode;
   try { applyWaitingShareMode(); } catch (e) {}
@@ -4987,6 +4989,7 @@ function showGame() {
   }
   gameScreen.classList.remove('hidden');
   try { document.body.classList.add('in-game'); document.body.classList.remove('at-table'); } catch (e) {}
+  setTimeout(syncLandscapeFullscreen, 80);
   try { syncPortraitLast3Button(); } catch (e) {}
   try { requestAnimationFrame(() => { try { positionPortraitLast3Btn(); } catch (e) {} }); } catch (e) {}
   try { setTimeout(() => { try { positionPortraitLast3Btn(); } catch (e) {} }, 250); } catch (e) {}
@@ -5014,18 +5017,16 @@ function showVariantRules() {
   if (!body) return;
   const total = typeof totalCountersInDeck === 'function' ? totalCountersInDeck() : '—';
   const sheet = `
-    <h3 style="margin-top:0;color:#c9a227">Griffin House Rules</h3>
-    <p>Base house rules with optional variations. Default: all four 1s (15 pts) + Rook + Red 2 (20 pts). Nest 6, min bid 100, game to 500. Rook highest, then Red 2.</p>
-    <p><b>Counters this hand:</b> ${total}</p>
-    <p><b>Hand size:</b> ${handSize} · <b>Nest:</b> ${nestSizeDefault} · <b>Min bid:</b> ${minBid} · <b>Play to:</b> ${targetScore}</p>
-    <p><b>Rook:</b> ${includeRook ? (rookLowest ? 'lowest trump' : 'highest trump') : 'off'} ·
-       <b>1s:</b> ${includeOnes ? (onesHigh ? 'high in suit (15 pts)' : '15 pts') : 'off'} ·
-       <b>Red 2:</b> ${includeRed2 ? (red2Points + ' pts') : 'off'} ·
-       <b>Special Red 1:</b> ${includeRed1 ? 'yes (highest trump, 30 pts)' : 'no'}</p>
-    <p><b>Scoring:</b> ${bidOnlyScoring ? 'Bid-only when made' : (sandbagging ? 'Sandbagging penalty enabled' : 'Full counters when made')} ·
-       <b>Nest goes to:</b> ${nestGoesTo === 'bidder' ? 'bidding team' : 'last-trick winner'}</p>
-    ${sandbagging ? '<p><b>Sandbagging:</b> Every 10 points a team scores over its bid creates 10 overpoints. When a team accumulates 100 overpoints, 100 points are deducted from its total score. Remaining overpoints carry forward to later hands.</p>' : ''}
-    <p style="opacity:0.8">🤖 Bots only use public information — they never see private hands.</p>
+    <p><b>Hand</b> ${handSize} · <b>Nest</b> ${nestSizeDefault} · <b>Min bid</b> ${minBid} · <b>Play to</b> ${targetScore} · <b>Counters</b> ${total}</p>
+    <p><b>Rook</b> ${includeRook ? (rookLowest ? 'lowest trump' : 'highest trump') : 'off'} ·
+       <b>1s</b> ${includeOnes ? (onesHigh ? 'high in color (15 pts)' : '15 pts') : 'off'} ·
+       <b>Red 2</b> ${includeRed2 ? (red2Points + ' pts') : 'off'} ·
+       <b>Special Red 1</b> ${includeRed1 ? 'yes (highest, 30 pts)' : 'no'}</p>
+    <p><b>Scoring</b> ${bidOnlyScoring ? 'bid only when made' : (sandbagging ? 'sandbagging on' : 'full counters when made')} ·
+       <b>Nest</b> ${nestGoesTo === 'bidder' ? 'to bidding team' : 'to last-trick winner'}</p>
+    ${sandbagging ? '<p>Every 10 over the bid is 10 overpoints. At 100 overpoints, deduct 100.</p>' : ''}
+    <p>Four seats, partners opposite. Follow color if you can. Gold cards are legal on your turn — long-press a dim card to see why.</p>
+    <p class="rules-bots">Bots only use public information — they never see private hands.</p>
   `;
   let box = $('variantRulesBox');
   if (!box && body.classList && body.classList.contains('rules-text')) {
@@ -10109,6 +10110,12 @@ function onViewportChange() {
 }
 window.addEventListener('resize', onViewportChange);
 window.addEventListener('orientationchange', onViewportChange);
+window.addEventListener('orientationchange', () => { setTimeout(syncLandscapeFullscreen, 120); });
+window.addEventListener('resize', () => { setTimeout(syncLandscapeFullscreen, 120); });
+document.addEventListener('pointerdown', () => {
+  if (wantLandscapeFullscreen()) enterLandscapeFullscreen();
+}, { passive: true });
+document.addEventListener('fullscreenchange', syncBrowserFitBtn);
 
 
 function hideActionPanel() {
@@ -10687,6 +10694,52 @@ function shareRoom() {
 
 function fullscreenElement() {
   return document.fullscreenElement || document.webkitFullscreenElement || document.msFullscreenElement || null;
+}
+
+function wantLandscapeFullscreen() {
+  try {
+    if (!document.body || !document.body.classList.contains('in-game')) return false;
+    if (window.matchMedia && window.matchMedia('(orientation: landscape)').matches) return true;
+  } catch (e) {}
+  return false;
+}
+
+function enterLandscapeFullscreen() {
+  if (!wantLandscapeFullscreen()) return;
+  try {
+    if (!fullscreenElement()) {
+      const el = document.documentElement;
+      const req = el.requestFullscreen || el.webkitRequestFullscreen || el.webkitRequestFullScreen || el.msRequestFullscreen;
+      if (req) {
+        const p = req.call(el);
+        if (p && typeof p.catch === 'function') p.catch(() => {});
+      }
+    }
+  } catch (e) {}
+  try {
+    if (screen.orientation && typeof screen.orientation.lock === 'function') {
+      const p = screen.orientation.lock('landscape');
+      if (p && typeof p.catch === 'function') p.catch(() => {});
+    }
+  } catch (e) {}
+}
+
+function exitLandscapeFullscreen() {
+  if (wantLandscapeFullscreen()) return;
+  try {
+    if (fullscreenElement()) {
+      const ex = document.exitFullscreen || document.webkitExitFullscreen || document.msExitFullscreen;
+      if (ex) {
+        const p = ex.call(document);
+        if (p && typeof p.catch === 'function') p.catch(() => {});
+      }
+    }
+  } catch (e) {}
+}
+
+function syncLandscapeFullscreen() {
+  if (wantLandscapeFullscreen()) enterLandscapeFullscreen();
+  else exitLandscapeFullscreen();
 }
 
 function syncBrowserFitBtn() {
