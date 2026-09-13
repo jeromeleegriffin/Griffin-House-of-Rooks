@@ -5,7 +5,7 @@
 :root {
   --green: #00c853;
   --red: #ff1744;
-  --yellow: #ffd600;
+  --yellow: #d4a017;
   --black: #111111;
   --bg: #1a120b;
   --card-bg: #2a1f14;
@@ -857,14 +857,14 @@ input:focus {
   background: linear-gradient(90deg, #d50000, #ff5252, #ff1744, #d50000);
 }
 .card-face.yellow {
-  border-color: #ffd600;
-  color: #e6b800;
+  border-color: #c9a227;
+  color: #b8860b;
 }
 .card-face.yellow .c-num,
 .card-face.yellow .c-color,
-.card-face.yellow .c-center { color: #e6b800; }
+.card-face.yellow .c-center { color: #b8860b; }
 .card-face.yellow .c-bar {
-  background: linear-gradient(90deg, #ffab00, #ffff00, #ffd600, #ffab00);
+  background: linear-gradient(90deg, #8a6d0f, #e0bc3a, #c9a227, #8a6d0f);
 }
 .card-face.black {
   border-color: #111;
