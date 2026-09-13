@@ -7941,7 +7941,7 @@ body.remaining-open #ltEndGame {
     width: 100%;
     height: 100%;
     object-fit: cover;
-    object-position: center 28%;
+    object-position: center center;
   }
   #lobby.screen:not(.hidden) .lobby-hero { order: -1; flex: 0 0 auto; height: 28vh; min-height: 120px; max-height: 200px; }
 }
