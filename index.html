@@ -13,7 +13,7 @@
   <title>House of Rooks</title>
   <script>
     (function () {
-      var BUILD = '351';
+      var BUILD = '352';
       try {
         var params = new URLSearchParams(location.search);
         var seen = localStorage.getItem('horBuild') || '';
@@ -36,7 +36,7 @@
   <link rel="manifest" href="manifest.json">
   <link rel="icon" href="icon-192.png">
   <link rel="apple-touch-icon" href="apple-touch-icon.png">
-  <link rel="stylesheet" href="style.css?v=351">
+  <link rel="stylesheet" href="style.css?v=352">
   <script src="vendor/peerjs.min.js"></script>
   <style>
     /* Emergency layout if style.css fails to load — joiners still see a usable page */
@@ -165,33 +165,17 @@
           <button id="installAppBtn" class="btn lobby-main" type="button">Install on this phone<span class="lobby-btn-sub">Home screen app — no browser bar</span></button>
         </div>
         <div class="lobby-hero" aria-hidden="true">
-          <img id="lobbyHeroImg" alt="" width="900" height="1338">
+          <img id="lobbyHeroImg" alt="Red raven and black raven over the griffin table" width="1176" height="784" src="lobby-hero-wide.jpg">
         </div>
         <script>
           (function () {
-            var arts = [
-              'lobby-hero.jpg',
-              'lobby-hero-3.jpg',
-              'lobby-hero-4.jpg',
-              'lobby-hero-5.jpg',
-              'lobby-hero-6.jpg',
-              'lobby-hero-7.jpg',
-              'lobby-hero-8.jpg',
-              'lobby-hero-9.jpg',
-              'lobby-hero-10.jpg',
-              'lobby-hero-11.jpg'
-            ];
+            var pick = 'lobby-hero-wide.jpg';
             var img = document.getElementById('lobbyHeroImg');
             if (!img) return;
-            var pick = '';
-            try { pick = localStorage.getItem('horLobbyHero') || sessionStorage.getItem('horLobbyHero') || ''; } catch (e) {}
-            if (arts.indexOf(pick) === -1) {
-              pick = arts[0];
-              try { localStorage.setItem('horLobbyHero', pick); } catch (e) {}
-            }
             img.src = pick;
             var wrap = img.parentNode;
             if (wrap) wrap.style.backgroundImage = 'url("' + pick + '")';
+            try { localStorage.setItem('horLobbyHero', pick); } catch (e) {}
           })();
         </script>
         <div id="friendsPanel" class="friends-panel hidden">
@@ -1122,10 +1106,10 @@
       paintInstall();
     })();
   </script>
-  <script src="rules.js?v=351"></script>
-  <script src="bots.js?v=351"></script>
-  <script src="game.js?v=351"></script>
-  <script src="polish.js?v=351"></script>
+  <script src="rules.js?v=352"></script>
+  <script src="bots.js?v=352"></script>
+  <script src="game.js?v=352"></script>
+  <script src="polish.js?v=352"></script>
   <div id="horBootError"></div>
   <script>
     window.addEventListener('error', function (ev) {
@@ -1139,7 +1123,7 @@
   </script>
   <script>
     if ('serviceWorker' in navigator) {
-      navigator.serviceWorker.register('sw.js?v=351', { updateViaCache: 'none' })
+      navigator.serviceWorker.register('sw.js?v=352', { updateViaCache: 'none' })
         .then(function (reg) { try { reg.update(); } catch (e) {} })
         .catch(() => {});
       let horSwAutoReloaded = false;
