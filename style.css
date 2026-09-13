@@ -18,10 +18,10 @@
   --wood: #5c3a1e;
   --wood-light: #8b5a2b;
   --cream: #f7f1e3;
-  --room-felt: #0d5c2e;
-  --room-felt-hi: #128a42;
-  --room-rail: #c9a227;
-  --room-bg-top: #2a1c10;
+  --room-felt: #16325f;
+  --room-felt-hi: #2a4a86;
+  --room-rail: #d7e3f0;
+  --room-bg-top: #1a2744;
 }
 
 /* Pre-bidding intro tip */
@@ -7871,11 +7871,9 @@ body.remaining-open #ltEndGame {
   color: rgba(240,224,168,.72);
 }
 #lobby .lobby-card .lobby-main.btn:not(.primary) {
-  background: linear-gradient(180deg,
-    color-mix(in srgb, var(--room-felt-hi, #1a2744) 28%, #1c1824) 0%,
-    #10141e 100%);
+  background: linear-gradient(180deg, #1c2844 0%, #10182c 100%);
   color: #f0e0a8;
-  border: 1px solid color-mix(in srgb, var(--room-rail, #d4af37) 70%, #c9a227);
+  border: 1px solid rgba(212,175,55,.7);
   box-shadow: 0 1px 0 rgba(255,255,255,.08) inset;
 }
 #lobby .lobby-card .lobby-main.btn:not(.primary) .lobby-btn-sub {
@@ -7905,11 +7903,8 @@ body.remaining-open #ltEndGame {
   text-align: center;
   white-space: normal;
   border-radius: 14px;
-  border: 1px solid color-mix(in srgb, var(--room-rail) 70%, #fff 10%);
-  background:
-    linear-gradient(180deg,
-      color-mix(in srgb, var(--room-felt-hi) 35%, #2a1c10) 0%,
-      color-mix(in srgb, var(--room-felt) 55%, #0c0906) 100%);
+  border: 1px solid rgba(212,175,55,.7);
+  background: linear-gradient(180deg, #1c2844 0%, #10182c 100%);
   color: #f6edd6;
   box-shadow: inset 0 1px 0 rgba(255,255,255,.12);
 }
@@ -8513,6 +8508,27 @@ body.room-theme-midnight .waiting-felt {
 }
 body.room-theme-midnight { --room-felt:#16325f; --room-felt-hi:#2a4a86; --room-rail:#d7e3f0; --room-bg-top:#1a2744; }
 body.room-theme-house { --room-felt:#0d5c2e; --room-felt-hi:#128a42; --room-rail:#c9a227; --room-bg-top:#1a2a14; }
+
+/* Lobby chrome stays midnight navy even if the table theme is House green. */
+#lobby,
+#lobby .header,
+#lobby .lobby-card {
+  --room-felt: #16325f;
+  --room-felt-hi: #2a4a86;
+  --room-rail: #d7e3f0;
+  --room-bg-top: #1a2744;
+}
+#lobby.screen {
+  background:
+    radial-gradient(120% 80% at 50% 0%, #1a2744 0%, #0b1020 55%, #07090f 100%) !important;
+}
+#lobby .lobby-card .lobby-main.btn,
+#lobby .rules-link .btn,
+#lobby .join-form .btn {
+  background: linear-gradient(180deg, #1c2844 0%, #10182c 100%) !important;
+  color: #f0e0a8 !important;
+  border: 1px solid rgba(212,175,55,.7) !important;
+}
 body.room-theme-riverboat { --room-felt:#8b1e1e; --room-felt-hi:#c0392b; --room-rail:#e6c35c; --room-bg-top:#5a1d24; }
 body.room-theme-cabin { --room-felt:#2f4a24; --room-felt-hi:#4f7a3a; --room-rail:#c4a574; --room-bg-top:#3d4a28; }
 body.room-theme-speakeasy { --room-felt:#141414; --room-felt-hi:#2a2a2a; --room-rail:#e0b85a; --room-bg-top:#5a3a14; }

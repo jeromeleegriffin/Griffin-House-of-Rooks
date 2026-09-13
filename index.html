@@ -13,7 +13,7 @@
   <title>House of Rooks</title>
   <script>
     (function () {
-      var BUILD = '346';
+      var BUILD = '348';
       try {
         var params = new URLSearchParams(location.search);
         var seen = localStorage.getItem('horBuild') || '';
@@ -36,7 +36,7 @@
   <link rel="manifest" href="manifest.json">
   <link rel="icon" href="icon-192.png">
   <link rel="apple-touch-icon" href="apple-touch-icon.png">
-  <link rel="stylesheet" href="style.css?v=346">
+  <link rel="stylesheet" href="style.css?v=348">
   <script src="vendor/peerjs.min.js"></script>
   <style>
     /* Emergency layout if style.css fails to load — joiners still see a usable page */
@@ -48,7 +48,16 @@
   </style>
 </head>
 
-<body class="theme-classic cardback-griffin">
+<body class="theme-classic cardback-griffin room-theme-midnight">
+  <script>
+    (function () {
+      try {
+        var p = JSON.parse(localStorage.getItem('horPrefs') || '{}') || {};
+        var theme = p.roomTheme || 'midnight';
+        document.body.className = 'theme-classic cardback-griffin room-theme-' + theme;
+      } catch (e) {}
+    })();
+  </script>
   <div id="horSplash" class="hor-splash hidden" aria-hidden="true">
     <button type="button" id="horSplashBtn" class="hor-splash-card" aria-label="Continue to the table">
       <img src="splash-battle.png" alt="Griffin's House of Rooks — The Battle Begins">
@@ -174,16 +183,12 @@
             ];
             var img = document.getElementById('lobbyHeroImg');
             if (!img) return;
-            var last = '';
-            try { last = sessionStorage.getItem('horLobbyHero') || ''; } catch (e) {}
-            var pick = arts[Math.floor(Math.random() * arts.length)];
-            if (arts.length > 1) {
-              var guard = 0;
-              while (pick === last && guard++ < 8) {
-                pick = arts[Math.floor(Math.random() * arts.length)];
-              }
+            var pick = '';
+            try { pick = localStorage.getItem('horLobbyHero') || sessionStorage.getItem('horLobbyHero') || ''; } catch (e) {}
+            if (arts.indexOf(pick) === -1) {
+              pick = arts[0];
+              try { localStorage.setItem('horLobbyHero', pick); } catch (e) {}
             }
-            try { sessionStorage.setItem('horLobbyHero', pick); } catch (e) {}
             img.src = pick;
             var wrap = img.parentNode;
             if (wrap) wrap.style.backgroundImage = 'url("' + pick + '")';
@@ -1117,10 +1122,10 @@
       paintInstall();
     })();
   </script>
-  <script src="rules.js?v=346"></script>
-  <script src="bots.js?v=346"></script>
-  <script src="game.js?v=346"></script>
-  <script src="polish.js?v=346"></script>
+  <script src="rules.js?v=348"></script>
+  <script src="bots.js?v=348"></script>
+  <script src="game.js?v=348"></script>
+  <script src="polish.js?v=348"></script>
   <div id="horBootError"></div>
   <script>
     window.addEventListener('error', function (ev) {
@@ -1134,12 +1139,13 @@
   </script>
   <script>
     if ('serviceWorker' in navigator) {
-      navigator.serviceWorker.register('sw.js?v=346', { updateViaCache: 'none' })
+      navigator.serviceWorker.register('sw.js?v=348', { updateViaCache: 'none' })
         .then(function (reg) { try { reg.update(); } catch (e) {} })
         .catch(() => {});
       let horSwAutoReloaded = false;
       navigator.serviceWorker.addEventListener('controllerchange', () => {
         if (window.__horUpdating || horSwAutoReloaded) return;
+        try { if (sessionStorage.getItem('horSwReloaded')) return; sessionStorage.setItem('horSwReloaded', '1'); } catch (e) {}
         horSwAutoReloaded = true;
         window.location.reload();
       });

@@ -1925,51 +1925,6 @@
 })();
 
 (function horLobbyHero() {
-  const arts = [
-    'lobby-hero.jpg',
-    'lobby-hero-3.jpg',
-    'lobby-hero-4.jpg',
-    'lobby-hero-5.jpg',
-    'lobby-hero-6.jpg',
-    'lobby-hero-7.jpg',
-    'lobby-hero-8.jpg',
-    'lobby-hero-9.jpg',
-    'lobby-hero-10.jpg',
-    'lobby-hero-11.jpg'
-  ];
-  function pick() {
-    let last = '';
-    try { last = sessionStorage.getItem('horLobbyHero') || ''; } catch (e) {}
-    let next = arts[Math.floor(Math.random() * arts.length)];
-    let g = 0;
-    while (arts.length > 1 && next === last && g++ < 8) {
-      next = arts[Math.floor(Math.random() * arts.length)];
-    }
-    try { sessionStorage.setItem('horLobbyHero', next); } catch (e) {}
-    return next;
-  }
-  function paint() {
-    const card = document.querySelector('#lobby .lobby-card');
-    if (!card) return;
-    let wrap = card.querySelector('.lobby-hero');
-    if (!wrap) {
-      wrap = document.createElement('div');
-      wrap.className = 'lobby-hero';
-      wrap.setAttribute('aria-hidden', 'true');
-      const img = document.createElement('img');
-      img.id = 'lobbyHeroImg';
-      img.alt = '';
-      wrap.appendChild(img);
-      card.appendChild(wrap);
-    }
-    let img = wrap.querySelector('img') || document.getElementById('lobbyHeroImg');
-    const already = (img && img.getAttribute('src')) || '';
-    const file = already.split('?')[0].split('/').pop();
-    if (arts.indexOf(file) !== -1) return;
-    const src = pick();
-    wrap.style.backgroundImage = 'url("' + src + '")';
-    if (img) img.src = src;
-  }
-  if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', paint);
-  else paint();
+  /* Lobby art is set once from index.html and stored in localStorage.
+     Do not re-roll here — that made the photo flash on every script pass. */
 })();
