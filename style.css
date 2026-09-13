@@ -7175,6 +7175,55 @@ body.cardback-aftermath {
 #scoreModal.showing-remaining #scoreModalBody {
   overflow: auto;
 }
+body.remaining-open #landscapeTheater,
+body.remaining-open .lt-table,
+body.remaining-open .lt-felt,
+body.remaining-open #ltEndGame {
+  visibility: hidden !important;
+  pointer-events: none !important;
+}
+@media (orientation: landscape) {
+  #scoreModal.showing-remaining.modal,
+  #scoreModal.showing-remaining.score-modal-top {
+    background: #07080c !important;
+    z-index: 260000 !important;
+    padding: 1.2vh 1.5vw !important;
+  }
+  #scoreModal.showing-remaining .modal-content.scoreboard-modal {
+    width: min(96vw, 1100px) !important;
+    max-width: 96vw !important;
+    max-height: 96dvh !important;
+    background: #16110c !important;
+    overflow: hidden !important;
+  }
+  #scoreModal.showing-remaining #scoreModalBody {
+    overflow: hidden !important;
+    max-height: none !important;
+  }
+  #scoreModal.showing-remaining .claim-remaining-hands {
+    background: transparent;
+    padding: 4px 2px 0;
+    margin-top: 4px;
+  }
+  #scoreModal.showing-remaining .claim-remaining-grid {
+    grid-template-columns: 1fr 1fr !important;
+    gap: 8px 16px;
+  }
+  #scoreModal.showing-remaining .claim-remaining-player {
+    overflow: visible;
+  }
+  #scoreModal.showing-remaining .claim-remaining-cards {
+    flex-wrap: wrap;
+  }
+  #scoreModal.showing-remaining .claim-remaining-card {
+    width: min(46px, 7.2vw);
+    height: min(66px, 10.4vw);
+    overflow: hidden;
+  }
+  #scoreModal.showing-remaining .claim-remaining-meta {
+    margin-bottom: 6px;
+  }
+}
 .claim-remaining-card {
   overflow: hidden;
   padding: 0;

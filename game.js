@@ -7,7 +7,7 @@
 // It's exchanged during the join handshake so a stale host or joiner (e.g.
 // one still running old cached JS) gets caught and auto-updated instead of
 // silently failing or behaving unpredictably against a mismatched peer.
-const APP_VERSION = '339';
+const APP_VERSION = '340';
 
 function horThisIndex() {
   try {
@@ -8197,6 +8197,7 @@ function showClaimRemainingHands(summary) {
   const hands = Array.isArray(summary && summary.claimRevealHands) ? summary.claimRevealHands : [];
   if (!modal || !body || !hands.length) return;
   modal.classList.add('showing-remaining');
+  try { document.body.classList.add('remaining-open'); } catch (e) {}
   const section = document.createElement('section');
   section.id = 'claimRemainingHands';
   section.className = 'claim-remaining-hands';
@@ -8272,6 +8273,7 @@ function wireScoreModalActions(summary) {
       if (modal.classList.contains('showing-remaining')) {
         modal.classList.remove('showing-remaining');
         window._ltShowRemaining = false;
+        try { document.body.classList.remove('remaining-open'); } catch (e) {}
         showScoreModal(summary);
         return;
       }
@@ -8326,6 +8328,7 @@ function wireScoreModalActions(summary) {
 }
 
 function showScoreModal(summary) {
+  try { document.body.classList.remove('remaining-open'); } catch (e) {}
   landscapeLastSummary = summary ? { ...summary, scores: Array.isArray(summary.scores) ? [...summary.scores] : summary.scores } : null;
   const modal = $('scoreModal');
   const body = $('scoreModalBody');
@@ -11665,36 +11668,8 @@ function updateLandscapeTheater() {
       const hasReveal = revealHands.some(h => Array.isArray(h.cards));
       const showRemain = !!(window._ltShowRemaining && hasReveal);
       if (showRemain) {
-        endEl.innerHTML = `
-          <div class="lt-endgame-banner lt-remaining-banner">
-            <div class="lt-endgame-title">Remaining Cards</div>
-            <div class="lt-remaining-meta">${(() => {
-              const ch = revealHands.find(h => typeof endSummary.claimer === 'number' && Number(h.player) === Number(endSummary.claimer));
-              const nm = endSummary.claimerName || (ch && ch.name) || (players[endSummary.claimer] && players[endSummary.claimer].name) || (typeof endSummary.claimer === 'number' ? ('Player ' + (endSummary.claimer + 1)) : '');
-              const tp = (typeof COLOR_NAMES !== 'undefined' && COLOR_NAMES[endSummary.trump]) ? COLOR_NAMES[endSummary.trump] : (endSummary.trump || '—');
-              return `<b>${escapeHtmlSafe(nm)}</b> laid down · Trump <b>${escapeHtmlSafe(String(tp))}</b>`;
-            })()}</div>
-            <div class="lt-remaining-grid">
-              ${revealHands.map(h => {
-                const laid = isLaidDownWinnerSeat(h, endSummary);
-                const cls = 'lt-remaining-player' + (laid ? ' is-laid-winner' : '');
-                const tag = laid ? ' · laid down' : '';
-                return `<div class="${cls}">
-                  <div class="lt-remaining-name"><b>${escapeHtmlSafe(h.name)}</b>${tag} · Team ${h.team === 0 ? 'A' : 'B'}</div>
-                  <div class="lt-remaining-cards">
-                    ${(h.cards || []).length
-                      ? h.cards.map(c => remainingHandCardHTML(c)).join('')
-                      : '<span class="claim-remaining-none">No cards left</span>'}
-                  </div>
-                </div>`;
-              }).join('')}
-            </div>
-            <div class="lt-endgame-actions">
-              <button type="button" id="ltScoreBack" class="btn">Scoreboard</button>
-              <button type="button" id="ltScoreLast3" class="btn">Last 3</button>
-              ${isGameOver ? '' : `<button type="button" id="ltScoreNext" class="btn primary">Next Hand</button>`}
-            </div>
-          </div>`;
+        endEl.classList.add('hidden');
+        endEl.innerHTML = '';
       } else {
         endEl.innerHTML = `
           <div class="lt-endgame-banner ${endSummary.made ? 'made' : 'set'}">
@@ -11716,7 +11691,7 @@ function updateLandscapeTheater() {
             </div>
           </div>`;
       }
-      endEl.classList.remove('hidden');
+      if (!showRemain) endEl.classList.remove('hidden');
       const next = $('ltScoreNext');
       if (next) {
         next.onclick = () => {
