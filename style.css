@@ -7934,14 +7934,13 @@ body.remaining-open #ltEndGame {
     min-height: 100dvh;
   }
   #lobby.screen:not(.hidden) {
-    position: relative;
-    display: grid;
-    grid-template-columns: minmax(132px, 200px) minmax(0, 1fr);
-    grid-template-rows: minmax(0, 1fr) auto;
+    display: flex;
+    flex-direction: column;
+    flex-wrap: nowrap;
     align-items: stretch;
-    justify-content: stretch;
-    gap: 0.45rem 0.9rem;
-    padding: 0.4rem 0.7rem 0.35rem;
+    justify-content: flex-start;
+    gap: 0.28rem;
+    padding: 0.28rem 0.7rem 0.28rem;
     overflow: hidden;
     height: 100dvh;
     max-height: 100dvh;
@@ -7949,85 +7948,101 @@ body.remaining-open #ltEndGame {
     box-sizing: border-box;
   }
   #lobby.screen:not(.hidden) .lobby-header {
-    grid-column: 1;
-    grid-row: 1;
+    flex: 0 0 auto;
     max-width: none;
+    width: 100%;
     margin: 0;
-    flex-direction: column;
+    flex-direction: row;
     align-items: center;
-    justify-content: center;
-    text-align: center;
-    gap: 0.3rem;
+    justify-content: flex-start;
+    text-align: left;
+    gap: 0.55rem;
   }
   #lobby.screen:not(.hidden) .lobby-mark {
-    width: min(28vh, 118px);
-    height: min(28vh, 118px);
-    flex: 0 0 auto;
+    width: 36px;
+    height: 36px;
+    flex: 0 0 36px;
   }
   #lobby.screen:not(.hidden) .lobby-header h1 {
-    font-size: clamp(1.35rem, 3.4vh, 2rem);
+    font-size: 1.25rem;
     margin: 0;
   }
   #lobby.screen:not(.hidden) .subtitle {
-    font-size: 0.82rem;
-    margin: 0;
+    display: none;
   }
   #lobby.screen:not(.hidden) .lobby-card {
-    grid-column: 2;
-    grid-row: 1;
-    flex: none;
+    flex: 1 1 auto;
+    min-height: 0;
     max-width: none;
-    width: auto;
+    width: 100%;
     margin: 0;
-    padding: 0.45rem 0.65rem 0.4rem;
+    padding: 0.4rem 0.65rem 0.35rem;
     max-height: none;
     overflow: hidden;
     align-self: stretch;
+    display: flex;
+    flex-direction: column;
+  }
+  #lobby.screen:not(.hidden) .lobby-actions {
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr;
+    gap: 0.35rem;
+    margin-top: 0.2rem;
+  }
+  #lobby.screen:not(.hidden) #installAppBtn {
+    display: none;
   }
   #lobby.screen:not(.hidden) .lobby-card .lobby-main {
     width: 100%;
-    min-height: 40px;
-    margin-top: 0.32rem;
-    font-size: 0.98rem;
+    min-height: 38px;
+    margin-top: 0;
+    padding: 0.32rem 0.4rem;
+    font-size: 0.9rem;
+  }
+  #lobby.screen:not(.hidden) .lobby-btn-sub {
+    font-size: 0.62rem;
   }
   #lobby.screen:not(.hidden) .lobby-quiet {
-    margin: 0.12rem 0 0;
-    font-size: 0.72rem;
-    line-height: 1.25;
+    display: none;
   }
   #lobby.screen:not(.hidden) #hor-player-name {
-    margin-bottom: 0.45rem;
-    padding: 0.65rem 0.8rem;
+    margin-bottom: 0.25rem;
+    padding: 0.45rem 0.7rem;
   }
   #lobby.screen:not(.hidden) .join-form {
-    margin-top: 0.35rem;
+    margin-top: 0.25rem;
+  }
+  #lobby.screen:not(.hidden) .lobby-hero {
+    flex: 1 1 auto;
+    min-height: 72px;
+    height: auto;
+    max-height: none;
+    margin-top: 0.3rem;
   }
   #lobby.screen:not(.hidden) .rules-link {
-    grid-column: 1 / -1;
-    grid-row: 2;
+    flex: 0 0 auto;
     position: static;
-    display: grid;
+    display: grid !important;
     grid-template-columns: repeat(6, minmax(0, 1fr));
-    gap: 0.3rem;
+    gap: 0.28rem;
     max-width: none;
+    width: 100%;
     margin: 0;
     padding: 0;
   }
   #lobby.screen:not(.hidden) .rules-link .btn {
-    min-height: 36px;
+    min-height: 38px;
     padding: 0.28rem 0.2rem;
     font-size: 0.68rem;
   }
   #lobby.screen:not(.hidden) .rules-link .version-tag {
-    position: absolute;
-    right: 0.7rem;
-    bottom: 0.15rem;
-    grid-column: auto;
+    grid-column: 1 / -1;
+    justify-self: end;
+    position: static;
   }
   #lobby.screen:not(.hidden) .legal-footer {
     display: none;
   }
-  #lobby .lobby-hero { min-height: 100px; height: auto; max-height: none; flex: 1 1 auto; }
 }
 @media (orientation: portrait) and (max-height: 720px) {
   #lobby.screen { padding: 0.4rem 0.7rem 0.3rem; gap: 0.2rem; }
