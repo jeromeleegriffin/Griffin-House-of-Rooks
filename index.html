@@ -14,7 +14,7 @@
   <link rel="manifest" href="manifest.json">
   <link rel="icon" href="icon-192.png">
   <link rel="apple-touch-icon" href="apple-touch-icon.png">
-  <link rel="stylesheet" href="style.css?v=201">
+  <link rel="stylesheet" href="style.css?v=202">
   <script src="vendor/peerjs.min.js"></script>
   <style>
     /* Emergency layout if style.css fails to load — joiners still see a usable page */
@@ -158,6 +158,8 @@
             }
             try { sessionStorage.setItem('horLobbyHero', pick); } catch (e) {}
             img.src = pick;
+            var wrap = img.parentNode;
+            if (wrap) wrap.style.backgroundImage = 'url("' + pick + '")';
           })();
         </script>
         <div id="friendsPanel" class="friends-panel hidden">
@@ -1087,10 +1089,10 @@
       paintInstall();
     })();
   </script>
-  <script src="rules.js?v=201"></script>
-  <script src="bots.js?v=201"></script>
-  <script src="game.js?v=201"></script>
-  <script src="polish.js?v=201"></script>
+  <script src="rules.js?v=202"></script>
+  <script src="bots.js?v=202"></script>
+  <script src="game.js?v=202"></script>
+  <script src="polish.js?v=202"></script>
   <div id="horBootError"></div>
   <script>
     window.addEventListener('error', function (ev) {
@@ -1104,7 +1106,7 @@
   </script>
   <script>
     if ('serviceWorker' in navigator) {
-      navigator.serviceWorker.register('sw.js?v=201', { updateViaCache: 'none' }).catch(() => {});
+      navigator.serviceWorker.register('sw.js?v=202', { updateViaCache: 'none' }).catch(() => {});
       let horSwAutoReloaded = false;
       navigator.serviceWorker.addEventListener('controllerchange', () => {
         if (window.__horUpdating || horSwAutoReloaded) return;

@@ -7659,12 +7659,17 @@ body.cardback-midnight {
   box-shadow: 0 10px 28px rgba(0,0,0,.35);
 }
 #lobby .lobby-hero {
-  flex: 1 1 auto;
-  min-height: 160px;
+  flex: 1 1 240px;
+  min-height: 240px;
   margin-top: 0.65rem;
   border-radius: 16px;
   overflow: hidden;
   position: relative;
+  background-color: #0a0c12;
+  background-image: url('lobby-hero.jpg');
+  background-position: center 42%;
+  background-size: cover;
+  background-repeat: no-repeat;
   border: 1px solid color-mix(in srgb, var(--room-rail) 55%, transparent);
   box-shadow:
     inset 0 1px 0 rgba(255,255,255,.08),
@@ -7673,11 +7678,26 @@ body.cardback-midnight {
 #lobby .lobby-hero img {
   width: 100%;
   height: 100%;
+  min-height: 240px;
   object-fit: cover;
   object-position: center 42%;
   display: block;
 }
-#lobby.joining .lobby-hero { display: none; }
+#lobby .join-form #joinConfirmBtn {
+  background: linear-gradient(180deg, #f3d58a 0%, #c9a227 55%, #b08a1c 100%);
+  color: #1a1408;
+  border: 1px solid #e8c96a;
+  text-decoration: none;
+  box-shadow: 0 1px 0 rgba(255,236,180,.4) inset, 0 6px 14px rgba(0,0,0,.28);
+}
+#lobby .join-form #spectateBtn,
+#lobby .join-form #joinCancelBtn {
+  background: linear-gradient(180deg, #1c2844 0%, #10182c 100%);
+  color: #f0e0a8;
+  border: 1px solid rgba(212,175,55,.7);
+  text-decoration: none;
+  box-shadow: 0 1px 0 rgba(255,255,255,.08) inset;
+}
 #lobby .lobby-card .lobby-main.btn.primary {
   background: linear-gradient(180deg, #f3d58a 0%, #c9a227 55%, #b08a1c 100%);
   color: #1a1408;
@@ -7825,7 +7845,7 @@ body.cardback-midnight {
   #lobby.screen:not(.hidden) .legal-footer {
     display: none;
   }
-  #lobby .lobby-hero { display: none; }
+  #lobby .lobby-hero { min-height: 140px; flex: 1 1 140px; }
 }
 @media (orientation: portrait) and (max-height: 720px) {
   #lobby.screen { padding: 0.4rem 0.7rem 0.3rem; gap: 0.2rem; }
@@ -7836,7 +7856,7 @@ body.cardback-midnight {
   #lobby .lobby-card .lobby-main { min-height: 42px; padding: 0.4rem 0.55rem; font-size: 0.98rem; }
   #lobby .lobby-btn-sub { font-size: 0.66rem; }
   #lobby .legal-footer { display: none; }
-  #lobby .lobby-hero { display: none; }
+  #lobby .lobby-hero { min-height: 140px; flex: 1 1 140px; }
 }
 @media (orientation: landscape) and (max-height: 400px) {
   #lobby.screen:not(.hidden) {
@@ -8752,6 +8772,20 @@ body.gfx-brassUI .btn, body.gfx-brassUI .icon-btn {
   box-shadow: inset 0 1px 0 rgba(255,230,160,.35);
 }
 body.gfx-brassUI .btn.primary { background: linear-gradient(#c9a227,#7a5a14); color:#1a1408; }
+body.gfx-brassUI #lobby .lobby-card .lobby-main.btn.primary,
+body.gfx-brassUI #lobby .join-form #joinConfirmBtn {
+  background: linear-gradient(180deg, #f3d58a 0%, #c9a227 55%, #b08a1c 100%);
+  color: #1a1408;
+  border: 1px solid #e8c96a;
+}
+body.gfx-brassUI #lobby .lobby-card .lobby-main.btn:not(.primary),
+body.gfx-brassUI #lobby .join-form #spectateBtn,
+body.gfx-brassUI #lobby .join-form #joinCancelBtn {
+  background: linear-gradient(180deg, #1c2844 0%, #10182c 100%);
+  color: #f0e0a8;
+  border: 1px solid rgba(212,175,55,.7);
+  text-decoration: none;
+}
 
 /* 20 waiting props */
 .wait-props { display:none; gap:.35rem; margin-top:.25rem; font-size:1.1rem; }
