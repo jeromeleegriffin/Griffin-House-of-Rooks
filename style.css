@@ -761,18 +761,18 @@ input:focus {
 .card-face::before {
   content: '';
   position: absolute;
-  inset: 8px 7px;
-  border: 1px solid rgba(40, 28, 12, 0.34);
-  border-radius: 3px;
+  inset: 3px;
+  border: 1px solid rgba(40, 28, 12, 0.28);
+  border-radius: 4px;
   pointer-events: none;
   z-index: 0;
 }
-.trick .card-face::before,
-.trick-card-wrap .card-face::before,
-.lt-plays .card-face::before,
-.lt-play .card-face::before {
-  inset: 9px 8px;
-  border-width: 1px;
+.hand > .card-face::before,
+.card-face.small::before,
+#myHand .card-face::before,
+.lt-hand-wrap .card-face::before {
+  inset: 2px;
+  border-radius: 3px;
 }
 
 /* Color bars top/bottom — modern Rook stripe */
