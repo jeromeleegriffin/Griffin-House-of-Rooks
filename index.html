@@ -13,7 +13,7 @@
   <title>House of Rooks</title>
   <script>
     (function () {
-      var BUILD = '361';
+      var BUILD = '362';
       try {
         var params = new URLSearchParams(location.search);
         var seen = localStorage.getItem('horBuild') || '';
@@ -36,7 +36,7 @@
   <link rel="manifest" href="manifest.json">
   <link rel="icon" href="icon-192.png">
   <link rel="apple-touch-icon" href="apple-touch-icon.png">
-  <link rel="stylesheet" href="style.css?v=361">
+  <link rel="stylesheet" href="style.css?v=362">
   <script src="vendor/peerjs.min.js"></script>
   <style>
     /* Emergency layout if style.css fails to load — joiners still see a usable page */
@@ -165,12 +165,12 @@
           <button id="installAppBtn" class="btn lobby-main" type="button">Install on this phone<span class="lobby-btn-sub">Home screen app — no browser bar</span></button>
         </div>
         <div class="lobby-hero" aria-hidden="true">
-          <img id="lobbyHeroImg" class="lobby-hero-portrait" alt="Black rook and red rook in a mid-air fight" width="1400" height="920" src="lobby-hero-wide.jpg">
+          <img id="lobbyHeroImg" class="lobby-hero-portrait" alt="Black rook and red rook in a mid-air fight" width="1400" height="920" src="lobby-hero-port-362.jpg">
           <img class="lobby-hero-land" alt="Griffin House of Rooks" width="2400" height="420" src="lobby-banner-land-361.jpg">
         </div>
         <script>
           (function () {
-            var pick = 'lobby-hero-wide.jpg';
+            var pick = 'lobby-hero-port-362.jpg';
             var img = document.getElementById('lobbyHeroImg');
             if (!img) return;
             img.src = pick;
@@ -1107,10 +1107,10 @@
       paintInstall();
     })();
   </script>
-  <script src="rules.js?v=361"></script>
-  <script src="bots.js?v=361"></script>
-  <script src="game.js?v=361"></script>
-  <script src="polish.js?v=361"></script>
+  <script src="rules.js?v=362"></script>
+  <script src="bots.js?v=362"></script>
+  <script src="game.js?v=362"></script>
+  <script src="polish.js?v=362"></script>
   <div id="horBootError"></div>
   <script>
     window.addEventListener('error', function (ev) {
@@ -1124,7 +1124,7 @@
   </script>
   <script>
     if ('serviceWorker' in navigator) {
-      navigator.serviceWorker.register('sw.js?v=361', { updateViaCache: 'none' })
+      navigator.serviceWorker.register('sw.js?v=362', { updateViaCache: 'none' })
         .then(function (reg) { try { reg.update(); } catch (e) {} })
         .catch(() => {});
       let horSwAutoReloaded = false;
