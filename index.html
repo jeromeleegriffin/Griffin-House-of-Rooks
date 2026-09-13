@@ -1,0 +1,1114 @@
+<!DOCTYPE html>
+<!-- House of Rooks | Author: Jerome Griffin | Copyright (c) 2026 Jerome Griffin / Griffin House -->
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="author" content="Jerome Griffin">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+    <meta name="theme-color" content="#1a120b">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="mobile-web-app-capable" content="yes">
+  <meta http-equiv="Cache-Control" content="no-store, no-cache, must-revalidate">
+  <meta http-equiv="Pragma" content="no-cache">
+  <title>House of Rooks</title>
+  <link rel="manifest" href="manifest.json">
+  <link rel="icon" href="icon-192.png">
+  <link rel="apple-touch-icon" href="apple-touch-icon.png">
+  <link rel="stylesheet" href="style.css?v=192">
+  <script src="vendor/peerjs.min.js"></script>
+  <style>
+    /* Emergency layout if style.css fails to load — joiners still see a usable page */
+    body{margin:0;background:#1a120b;color:#f3e6c8;font-family:sans-serif}
+    .screen.hidden{display:none!important}
+    #horBootError{display:none;position:fixed;left:8px;right:8px;bottom:8px;z-index:99999;
+      background:#4a1010;color:#ffd9d9;padding:10px 12px;border-radius:8px;font-size:14px}
+    #horBootError.show{display:block}
+  </style>
+</head>
+
+<body class="theme-classic cardback-griffin">
+  <div id="horSplash" class="hor-splash hidden" aria-hidden="true">
+    <button type="button" id="horSplashBtn" class="hor-splash-card" aria-label="Continue to the table">
+      <img src="splash-battle.png" alt="Griffin's House of Rooks — The Battle Begins">
+      <span class="hor-splash-tap">Tap to sit</span>
+    </button>
+  </div>
+  <!-- Landscape: decorative view of who played what -->
+  <div id="landscapeTheater" class="landscape-theater" aria-hidden="true">
+    <div class="lt-decor lt-corner lt-tl">🐦</div>
+    <div class="lt-decor lt-corner lt-tr">🐦</div>
+    <div id="ltKittyWait" class="lt-wait-banner hidden" aria-live="polite">
+      <img id="ltWaitArtNest" class="lt-wait-art" src="wait-nest-landscape.jpg?v=1" alt="">
+      <img id="ltWaitArtTrump" class="lt-wait-art" src="wait-trump-landscape.jpg?v=1" alt="">
+      <div class="lt-wait-veil"></div>
+      <div class="lt-wait-copy">
+        <div class="lt-wait-kicker" id="ltWaitKicker">The nest is open</div>
+        <div id="ltKittyWaitTitle">Sorting the nest</div>
+        <div id="ltKittyWaitSub">Hold tight…</div>
+        <div class="lt-wait-dots" aria-hidden="true"><span></span><span></span><span></span></div>
+      </div>
+    </div>
+    <div id="ltFeltBid" class="lt-felt-bid hidden">
+      <div class="felt-bid-name" id="ltFeltBidName">You</div>
+      <div class="bid-meta" id="ltFeltBidMeta">min 70 · high —</div>
+      <div class="bid-stepper">
+        <button type="button" class="btn" id="ltFeltMinus">−5</button>
+        <span class="bid-value" id="ltFeltVal">100</span>
+        <button type="button" class="btn" id="ltFeltPlus">+5</button>
+      </div>
+      <div class="bid-buttons">
+        <button type="button" class="btn primary" id="ltFeltBidBtn">Bid</button>
+        <button type="button" class="btn danger" id="ltFeltPassBtn">Pass</button>
+      </div>
+    </div>
+    <div class="lt-inner">
+      <div class="lt-header">
+        <div class="lt-scorebar" id="ltScoreBar" aria-live="polite">
+          <span>Team A <b id="ltScoreA">0</b></span>
+          <span>Team B <b id="ltScoreB">0</b></span>
+          <span>To <b id="ltTarget">500</b></span>
+          <span id="ltSandbagScore" class="lt-sandbag-score hidden">Sandbags A <b id="ltSandA">0</b> · B <b id="ltSandB">0</b></span>
+          <button type="button" class="table-msg-btn table-msg-btn-top" data-open-table-msg="1" title="Send a table message">Message Table $100</button>
+        </div>
+        <span class="lt-sub" id="ltSub">Tap a gold card to play · or use portrait</span>
+      </div>
+      <div id="ltViewTrick" class="lt-view">
+        <div class="lt-meta" id="ltMeta"></div>
+        <div class="lt-plays" id="ltPlays"></div>
+        <div class="lt-footer" id="ltFooter"></div>
+        <div id="ltTrumpBar" class="lt-trump-bar hidden" aria-live="polite">
+          <div class="lt-trump-title">Choose Trump</div>
+          <div class="lt-trump-buttons" id="ltTrumpButtons"></div>
+        </div>
+        <div id="ltClaimBar" class="lt-claim-bar hidden" aria-live="polite">
+          <div class="lt-claim-title" id="ltClaimTitle">Lay down winning cards</div>
+          <div class="lt-claim-actions">
+            <button type="button" class="btn primary" id="ltClaimLay">Lay Down &amp; End Hand</button>
+            <button type="button" class="btn" id="ltClaimContinue">Keep playing</button>
+          </div>
+        </div>
+        <div id="ltKittyWaitSlot" class="hidden" aria-hidden="true"></div>
+      </div>
+      <div id="ltViewLast5" class="lt-view lt-view-last5 hidden">
+        <div id="ltLast5Body" class="lt-last5-body"></div>
+      </div>
+      <div id="ltEndGame" class="lt-endgame hidden" aria-live="polite"></div>
+      <div id="ltTrumpStamp" class="trump-banner hidden" aria-live="polite"></div>
+      <div class="lt-hand-controls">
+        <button type="button" id="ltTabTrick" class="lt-tab active">This trick</button>
+        <div class="lt-hand-wrap">
+          <div class="lt-hand-label" id="ltHandLabel">Your hand</div>
+          <div class="lt-hand" id="ltHand"></div>
+        </div>
+        <button type="button" id="ltTabLast5" class="lt-tab">Last 3 tricks</button>
+      </div>
+    </div>
+  </div>
+
+<div id="app">
+    <!-- Lobby Screen -->
+    <div id="lobby" class="screen">
+      <div class="header lobby-header">
+        <img class="lobby-mark" src="griffin-icon.png" alt="">
+        <div class="lobby-header-copy">
+          <h1>House of Rooks</h1>
+          <p class="subtitle">A four-player partnership table</p>
+        </div>
+      </div>
+      <div class="card lobby-card">
+        <input type="text" id="hor-player-name" placeholder="Your name" maxlength="12" autocomplete="nickname">
+        <div id="reconnectBox" class="hidden lobby-rejoin">
+          <p class="option-hint">Previous room still open</p>
+          <button id="reconnectBtn" class="btn primary" type="button">Rejoin <span id="reconnectCode"></span></button>
+        </div>
+        <div id="joinForm" class="join-form hidden">
+          <input type="text" id="hor-room-code" placeholder="Room code" maxlength="6" autocomplete="off" inputmode="text" autocapitalize="characters" style="text-transform:uppercase">
+          <button id="joinConfirmBtn" class="btn primary" type="button">Sit down</button>
+          <button id="spectateBtn" class="btn" type="button">Watch only</button>
+          <button id="joinCancelBtn" class="btn link" type="button">Back</button>
+        </div>
+        <div class="lobby-actions">
+          <button id="soloPracticeBtn" class="btn primary lobby-main" type="button">Play offline<span class="lobby-btn-sub">You vs three bots</span></button>
+          <button id="friendsToggleBtn" class="btn lobby-main" type="button">Play with friends<span class="lobby-btn-sub">Host a table · share a code</span></button>
+          <button id="joinBtn" class="btn lobby-main" type="button">Join with a code<span class="lobby-btn-sub">Sit at a friend’s table</span></button>
+          <button id="installAppBtn" class="btn lobby-main" type="button">Install on this phone<span class="lobby-btn-sub">Home screen app — no browser bar</span></button>
+        </div>
+        <div id="friendsPanel" class="friends-panel hidden">
+          <button id="createBtn" class="btn hidden" type="button" aria-hidden="true">Create table</button>
+          <button id="rejoinBtn" class="btn" type="button">Rejoin last code</button>
+          <button id="nearbyPlayBtn" class="btn nearby-btn" type="button">Nearby (same Wi‑Fi)</button>
+        </div>
+        <div id="lobbyStatus" class="status"></div>
+        <p id="localCopyWarn" class="option-hint hidden" style="margin-top:0.6rem;">
+          This copy is not on a website. Do not send the Share/QR link — the other phone cannot open it.
+          Both people open House of Rooks on their own phone, then the guest taps Join with a code and types the 4-letter code.
+        </p>
+      </div>
+      <div class="rules-link">
+        <button id="showRules" class="btn link">How to play</button>
+        <button id="replayTutorialBtn" class="btn link" type="button">House tour</button>
+        <button id="newPlayersLobbyBtn" class="btn link" type="button">New players</button>
+        <button id="btnCardBackLobby" class="btn link" type="button">Card backs</button>
+        <button id="toggleMuteLobby" class="btn link" type="button">🔊 Sound on</button>
+        <button id="btnForceRefreshLobby" class="btn link" type="button" title="Clear this app's cached files and reload the latest version">Trouble joining? Force refresh</button>
+        <span id="appVersionTag" class="version-tag"></span>
+      </div>
+      <p class="legal-footer">House of Rooks by Jerome Griffin. Independent trick-taking table. Not affiliated with Hasbro.<br>
+        Names stay on this device. <a href="privacy.html">Privacy</a><br>
+        Questions, comments, or suggestions: <a href="mailto:jeromeleegriffin@gmail.com">jeromeleegriffin@gmail.com</a><br>
+        Donations to further the game: Cash App <a class="cash-app-link" href="https://cash.app/%24heargodtalk" target="_blank" rel="noopener noreferrer">$heargodtalk</a></p>
+    </div>
+
+    <!-- Invite welcome — shared link already has a room code -->
+    <div id="welcome" class="screen hidden">
+      <div class="header waiting-header welcome-header">
+        <img class="waiting-crest" src="griffin-icon.png" alt="" width="56" height="56">
+        <div class="waiting-header-copy">
+          <h1>Welcome to table <span id="welcomeCode"></span></h1>
+          <p id="welcomeLead">A friend shared this table with you.</p>
+        </div>
+      </div>
+      <div class="welcome-card">
+        <p class="welcome-how" id="welcomeHow">Type your name, then tap a chair. You can sit in any open seat, or replace a bot — that bot moves to the chair you left (or any other open seat). You cannot take a seat that already has a person in it.</p>
+        <input type="text" id="welcome-player-name" placeholder="Your name" maxlength="12" autocomplete="nickname" enterkeyhint="done" inputmode="text">
+        <div id="welcomeStatus" class="status"></div>
+      </div>
+      <div class="waiting-table-wrap welcome-table-wrap">
+        <div class="waiting-felt" id="welcomeFelt">
+          <button type="button" class="wait-seat top" data-welcome-seat="2" id="welcomeSeat2">
+            <span class="wait-seat-name">Open</span>
+            <span class="wait-seat-tag">Empty seat</span>
+          </button>
+          <button type="button" class="wait-seat left" data-welcome-seat="1" id="welcomeSeat1">
+            <span class="wait-seat-name">Open</span>
+            <span class="wait-seat-tag">Empty seat</span>
+          </button>
+          <div class="waiting-center">
+            <div class="waiting-center-mark">House of Rooks</div>
+            <div id="welcomeFeltStatus" class="status waiting-center-status">Tap an empty seat to sit</div>
+          </div>
+          <button type="button" class="wait-seat right" data-welcome-seat="3" id="welcomeSeat3">
+            <span class="wait-seat-name">Open</span>
+            <span class="wait-seat-tag">Empty seat</span>
+          </button>
+          <button type="button" class="wait-seat bottom" data-welcome-seat="0" id="welcomeSeat0">
+            <span class="wait-seat-name">Open</span>
+            <span class="wait-seat-tag">Empty seat</span>
+          </button>
+        </div>
+      </div>
+      <div class="welcome-bottom">
+        <button id="welcomeWatchBtn" class="btn link welcome-watch-sm" type="button">Watch</button>
+        <button id="installAppBtnWelcome" class="btn link" type="button">Install on this phone</button>
+        <button id="welcomeLobbyBtn" class="btn link welcome-back" type="button">Back to lobby</button>
+      </div>
+    </div>
+
+    <!-- Waiting Room — open table -->
+    <div id="waiting" class="screen hidden">
+      <div class="header waiting-header">
+        <img class="waiting-crest" src="griffin-icon.png" alt="" width="56" height="56">
+        <div class="waiting-header-copy">
+          <h1>Table <span id="displayCode"></span></h1>
+          <p id="speakCodeLine">Share this code. Friends tap an open seat to sit.</p>
+        </div>
+      </div>
+      <div class="share-row">
+        <button id="shareBtn" class="btn primary">Share</button>
+        <button id="copyCodeBtn" class="btn hidden" type="button" aria-hidden="true" tabindex="-1">Copy code</button>
+        <button id="showQrBtn" class="btn">QR</button>
+        <button id="nearbyPlayBtnWaiting" class="btn" type="button" title="Nearby play help">📡 Nearby</button>
+      </div>
+      <p id="nearbyHintWaiting" class="option-hint waiting-nearby-hint">
+        Same site + table code. Keep this tab open.
+      </p>
+      <div id="qrBox" class="qr-box hidden">
+        <img id="qrImg" class="qr-img hidden" width="420" height="420" alt="Scan to open this table">
+        <canvas id="qrCanvas" width="420" height="420"></canvas>
+        <p class="option-hint" id="qrHint">Scan this code to join the table</p>
+        <p class="option-hint" id="joinLinkLine" style="word-break:break-all;"></p>
+        <button type="button" id="closeQrBtn" class="qr-close-btn" aria-label="Close">×</button>
+      </div>
+      <div class="waiting-table-wrap">
+        <div class="waiting-felt" id="waitingFelt">
+          <button type="button" class="wait-seat top" data-seat="2" id="waitSeat2"></button>
+          <button type="button" class="wait-seat left" data-seat="1" id="waitSeat1"></button>
+          <div class="waiting-center">
+            <div class="waiting-center-mark">House of Rooks</div>
+            <div id="waitingStatus" class="status waiting-center-status"></div>
+          </div>
+          <button type="button" class="wait-seat right" data-seat="3" id="waitSeat3"></button>
+          <button type="button" class="wait-seat bottom" data-seat="0" id="waitSeat0"></button>
+        </div>
+      </div>
+      <div class="players-list hidden" id="playersList"></div>
+      <div class="team-name-row host-only-teams">
+        <label class="option-hint">Team names
+          <input type="text" id="hor-team-a" maxlength="14" placeholder="Griffin" autocomplete="off">
+        </label>
+        <label class="option-hint">
+          <input type="text" id="hor-team-b" maxlength="14" placeholder="Raven" autocomplete="off">
+        </label>
+      </div>
+
+      <!-- Host: open options in a popup (no long scrolling menu) -->
+      <div id="hostOptions" class="host-options host-options-bar hidden">
+        <p class="option-hint fill-seats-help" id="fillSeatsHint"></p>
+        <div class="option-block bot-count-row">
+          <span class="option-hint">Bots:</span>
+          <select id="botCountSelect" class="select-input" title="How many bots to seat">
+            <option value="0">0 bots</option>
+            <option value="1">1 bot</option>
+            <option value="2">2 bots</option>
+            <option value="3">3 bots (solo)</option>
+          </select>
+          <select id="opt-bot-difficulty" class="select-input">
+            <option value="easy">Easy</option>
+            <option value="normal">Normal</option>
+            <option value="hard">Hard</option>
+            <option value="extreme" selected>Extreme</option>
+          </select>
+        </div>
+        <button type="button" id="fillSeatsBtn" class="btn fill-seats-btn">Fill empty seats with bots</button>
+        <p id="variantHint" class="option-hint variant-hint">Griffin House Rules · Nest 6 · min bid 100 · to 500</p>
+        <!-- Hidden legacy buttons kept for JS safety -->
+
+
+      </div>
+
+
+
+      <div class="waiting-actions">
+        <button type="button" id="openHostOptionsBtn" class="btn host-options-open-btn hidden">⚙️ Game options</button>
+        <button id="startBtn" class="btn primary hidden" type="button">Start Game</button>
+        <button id="leaveBtn" class="btn danger" type="button">Leave</button>
+      </div>
+      <button id="restartPracticeBtn" class="btn hidden" type="button" aria-hidden="true">🔄 New practice game</button>
+      <p class="hint">Host must keep this tab open. Partners sit opposite (auto-assigned).</p>
+    </div>
+
+    <!-- Host options popup: MUST live outside the hidden waiting screen so it can open during Offline Practice/in-game. -->
+<div id="hostOptionsModal" class="modal host-options-modal hidden" aria-hidden="true">
+        <div class="modal-content host-options-sheet" role="dialog" aria-label="Game options">
+          <div class="host-options-sheet-header">
+            <h2>Game options</h2>
+            <button type="button" id="closeHostOptionsBtn" class="btn">Done</button>
+          </div>
+          <div class="host-options-sheet-body">
+            <div class="preset-row" id="rulePresetRow">
+              <button type="button" class="preset-btn active" data-preset="griffin">Griffin House</button>
+            </div>
+            <div class="opt-tabs" role="tablist">
+              <button type="button" class="opt-tab active" data-opt-tab="rules">Rules</button>
+              <button type="button" class="opt-tab" data-opt-tab="table">Table</button>
+              <button type="button" class="opt-tab" data-opt-tab="players">Players</button>
+              <button type="button" class="opt-tab" data-opt-tab="settings">Settings</button>
+            </div>
+            <div id="optPaneRules" class="opt-pane">
+            <div class="option-block">
+              <span class="option-hint">Ruleset:</span>
+              <strong id="rulesetLabel" style="color:#c9a227;font-size:0.95rem;">Griffin House</strong>
+            </div>
+
+            <label class="option-label">
+              <input type="checkbox" id="opt-include-ones" checked>
+              Include 1s (high in suit, 15 pts)
+            </label>
+            <label class="option-label">
+              <input type="checkbox" id="opt-include-red2" checked>
+              Include Red 2 (2nd-highest trump)
+            </label>
+            <p class="option-hint">Red 2 is only added to the deck when this box is checked.</p>
+            <div id="opt-red2-points" class="red2-points-option">
+              <span class="option-hint" style="display:block; margin-bottom:0.2rem;">Red 2 points:</span>
+              <label class="option-label" style="font-size:0.9rem;">
+                <input type="radio" name="red2pts" value="20" checked> 20
+              </label>
+              <label class="option-label" style="font-size:0.9rem; margin-left:1rem;">
+                <input type="radio" name="red2pts" value="30"> 30
+              </label>
+            </div>
+            <label class="option-label">
+              <input type="checkbox" id="opt-include-red1">
+              Include special Red 1 (highest trump, 30 pts)
+            </label>
+            <label class="option-label">
+              <input type="checkbox" id="opt-include-rook" checked>
+              Include Rook bird
+            </label>
+            <label class="option-label">
+              <input type="checkbox" id="opt-rook-lowest">
+              Rook is lowest trump
+            </label>
+
+            <div class="option-block">
+              <span class="option-hint">Min bid:</span>
+              <select id="opt-min-bid" class="select-input">
+                <option value="50">50</option>
+                <option value="70">70</option>
+                <option value="80">80</option>
+                <option value="100" selected>100</option>
+                <option value="120">120</option>
+              </select>
+            </div>
+            <div class="option-block" id="targetScoreBlock">
+              <span class="option-hint">Play to:</span>
+              <select id="opt-target-score" class="select-input">
+                <option value="200">200</option>
+                <option value="300">300</option>
+                <option value="500" selected>500</option>
+                <option value="1000">1000</option>
+                <option value="custom">Custom…</option>
+              </select>
+              <div id="opt-target-score-custom-wrap" class="target-score-custom-wrap hidden">
+                <span class="option-hint">Type score (50–5000):</span>
+                <div class="target-score-custom-row">
+                  <input type="text" id="opt-target-score-custom" class="select-input target-score-custom"
+                    inputmode="numeric" pattern="[0-9]*" maxlength="4"
+                    placeholder="e.g. 750" autocomplete="off" enterkeyhint="done"
+                    aria-label="Custom play-to score">
+                  <button type="button" id="opt-target-score-custom-confirm" class="target-score-confirm" aria-label="Confirm custom play-to score">Enter</button>
+                </div>
+              </div>
+            </div>
+
+            <label class="option-label" id="opt-specials-anytime-label">
+              <input type="checkbox" id="opt-specials-anytime">
+              <span id="opt-specials-anytime-text">Rook / Red 2 anytime</span>
+            </label>
+            <p class="option-hint">If off, specials must follow suit rules like other cards.</p>
+
+            <label class="option-label">
+              <input type="checkbox" id="opt-must-trump">
+              Must trump when void
+            </label>
+            <p class="option-hint">When you can’t follow suit you must play a trump if you have one.</p>
+
+            <label class="option-label">
+              <input type="checkbox" id="opt-bid-only">
+              Bid-only scoring (CrowsNest-style)
+            </label>
+            <p class="option-hint">If made: score the bid amount only. Set still costs −bid.</p>
+
+            <label class="option-label">
+              <input type="checkbox" id="opt-sandbagging">
+              Sandbagging penalty
+            </label>
+            <p class="option-hint">Off by default. If makers take more than the bid, the overage is subtracted from their score (bid − overage). Set still costs −bid.</p>
+
+            <div class="option-block">
+              <span class="option-hint">Nest counters go to:</span>
+              <select id="opt-nest-goes-to" class="select-input">
+                <option value="lastTrick" selected>Last-trick winner</option>
+                <option value="bidder">Bidding team</option>
+              </select>
+            </div>
+
+            <div class="option-block">
+              <span class="option-hint">First lead of the hand:</span>
+              <select id="opt-lead-order" class="select-input">
+                <option value="leftOfBidder" selected>Player to the left of the bid winner</option>
+                <option value="bidder">Bid winner leads</option>
+                <option value="rightOfBidder">Player to the right of the bid winner</option>
+              </select>
+            </div>
+
+            <p class="option-hint" style="margin-top: 1rem;">Alternate rules seen at other Rook tables (all off by default):</p>
+
+            <label class="option-label">
+              <input type="checkbox" id="opt-screw-dealer">
+              Screw the dealer
+            </label>
+            <p class="option-hint">Off by default. If everyone passes, the dealer is forced to bid the minimum instead of the hand being redealt.</p>
+
+            <label class="option-label">
+              <input type="checkbox" id="opt-misdeal-no-counters">
+              Misdeal on a counter-less hand
+            </label>
+            <p class="option-hint">Off by default. If any hand has zero point cards (no 5/10/14/one/Rook/Red 1/Red 2), redeal automatically.</p>
+
+            <label class="option-label">
+              <input type="checkbox" id="opt-open-widow">
+              Open widow
+            </label>
+            <p class="option-hint">Off by default. Reveal the nest to everyone the moment the bidder picks it up, instead of only at hand's end.</p>
+
+            <label class="option-label">
+              <input type="checkbox" id="opt-shoot-moon">
+              Allow "Shoot the Moon"
+            </label>
+            <p class="option-hint">Off by default. Bidding every counter in the deck (shown as “Shoot the moon 200” when that is the max) is all-or-nothing: make it and win the game outright, miss it and go set as usual.</p>
+
+            </div>
+            <div id="optPaneTable" class="opt-pane hidden">
+            <label class="option-label">
+              <input type="checkbox" id="opt-buy-beer">
+              Buy a bot a beer ($150)
+            </label>
+            <p class="option-hint">Off by default. When on, tap the beer above a bot’s name. They play buzzed for 5 minutes. Long-press Buzzed to see time left.</p>
+            <label class="option-label">
+              <input type="checkbox" id="opt-whisper">
+              Private human message ($200)
+            </label>
+            <p class="option-hint">Off by default. When on, tap ✉ above another human’s name to send a private note for $200.</p>
+
+            <label class="option-label">
+              <input type="checkbox" id="opt-partner-never-kill" checked>
+              Partner never kills a winner
+            </label>
+            <p class="option-hint">Bots will not overruff or beat a card their partner is already winning with.</p>
+
+            <label class="option-label">
+              <input type="checkbox" id="opt-partner-feed-last" checked>
+              Partner feeds points last-to-play
+            </label>
+            <p class="option-hint">When last and partner is winning, bots dump counters onto the trick.</p>
+
+            <details class="practice-cheats hidden" id="soloHostExtras">
+              <summary class="option-hint">Practice cheats (solo only)</summary>
+              <label class="option-label" style="margin-top:0.35rem;">
+                <input type="checkbox" id="opt-experimental-hand">
+                Experimental hand (🧪 perfect test deal)
+              </label>
+              <p class="option-hint">Adds the test-deal button in-game. The Bird is always in that test hand. Red 2 is included when that option is on.</p>
+
+              <label class="option-label" style="margin-top:0.55rem;">
+                <input type="checkbox" id="opt-lucky-on">
+                Lucky specials
+              </label>
+              <p class="option-hint">Extra chance the Rook and Red 2 (only if those cards are included) land in your hand.</p>
+              <div id="opt-lucky-controls" class="hidden" style="margin-top:0.35rem;">
+                <label class="option-label">
+                  <input type="radio" name="luckySpecialsMode" id="opt-lucky-fixed" value="fixed" checked>
+                  Choose a percentage
+                </label>
+                <label class="option-label">
+                  <input type="radio" name="luckySpecialsMode" id="opt-lucky-spinner" value="spinner">
+                  Spinner before each shuffle
+                </label>
+                <div id="opt-lucky-fixed-wrap">
+                  <span class="option-hint" style="display:block;margin-top:0.3rem;">Extra chance:</span>
+                  <select id="opt-lucky-boost" class="select-input">
+                    <option value="0" selected>0%</option>
+                    <option value="10">+10%</option>
+                    <option value="20">+20%</option>
+                    <option value="30">+30%</option>
+                    <option value="40">+40%</option>
+                    <option value="50">+50%</option>
+                  </select>
+                </div>
+                <p class="option-hint">Spinner mode pops a wheel (0–50%) before every shuffle and uses whatever it lands on for that hand.</p>
+              </div>
+            </details>
+
+            <label class="option-label">
+              <input type="checkbox" id="opt-dont-steal-bid" checked>
+              Don’t steal partner’s bid
+            </label>
+            <p class="option-hint">Bots pass over partner’s high bid unless they hold a clear power hand.</p>
+
+            <label class="option-label hidden" style="display:none !important">
+              <input type="checkbox" id="opt-landscape-hints">
+              Landscape bid hints
+            </label>
+
+            <label class="option-label">
+              <input type="checkbox" id="opt-nest-anim" checked>
+              Last-trick nest animation
+            </label>
+            <p class="option-hint">Shows nest cards flying to the last-trick winner with points.</p>
+            <label class="option-label">
+              <input type="checkbox" id="opt-lay-down" checked>
+              Lay down remaining winning cards
+            </label>
+            <p class="option-hint">When a player can take all remaining tricks, they can lay their winning cards onto the felt and end the hand.</p>
+
+            <div class="option-block">
+              <span class="option-hint">Bot difficulty:</span>
+              <select id="opt-bot-difficulty-ingame" class="select-input">
+                <option value="easy">Easy</option>
+                <option value="normal">Normal</option>
+                <option value="hard">Hard</option>
+                <option value="extreme" selected>Extreme</option>
+              </select>
+            </div>
+
+            <div class="option-block">
+              <span class="option-hint">Bot speed:</span>
+              <select id="opt-bot-speed" class="select-input">
+                <option value="blitz">Blitz</option>
+                <option value="normal" selected>Normal</option>
+                <option value="slow">Slow</option>
+              </select>
+            </div>
+
+            <div class="option-block">
+              <span class="option-hint">Sort hand:</span>
+              <select id="opt-hand-sort" class="select-input">
+                <option value="suit" selected>By color</option>
+                <option value="rank">By rank</option>
+                <option value="counters">Counters first</option>
+              </select>
+            </div>
+
+            <label class="option-label">
+              <input type="checkbox" id="opt-color-blind">
+              Color-blind friendly cards
+            </label>
+
+            <div class="option-block">
+              <span class="option-hint">Room &amp; table:</span>
+              <div class="room-theme-picker" id="roomThemePicker">
+                <button type="button" class="room-theme-btn" data-theme="house" title="Griffin House">House</button>
+                <button type="button" class="room-theme-btn" data-theme="midnight" title="Midnight Club">Midnight</button>
+                <button type="button" class="room-theme-btn" data-theme="riverboat" title="Riverboat">Riverboat</button>
+                <button type="button" class="room-theme-btn" data-theme="cabin" title="Pine Cabin">Cabin</button>
+                <button type="button" class="room-theme-btn" data-theme="speakeasy" title="Speakeasy">Speakeasy</button>
+              </div>
+              <p class="option-hint" id="roomThemeHint">Griffin House — green felt, oak rail.</p>
+            </div>
+
+            <div class="option-block card-back-option">
+              <span class="option-hint">Card backs (your table):</span>
+              <div id="cardBackPickerHost" class="card-back-picker"></div>
+              <p class="option-hint">Applies on this device. Default is the Griffin Crest.</p>
+            </div>
+
+            <div class="option-block">
+              <span class="option-hint">Turn timer:</span>
+              <select id="opt-turn-time" class="select-input">
+                <option value="0" selected>Off</option>
+                <option value="15">15 sec</option>
+                <option value="30">30 sec</option>
+                <option value="45">45 sec</option>
+              </select>
+            </div>
+            <div class="option-block">
+              <span class="option-hint">When time runs out:</span>
+              <select id="opt-timeout-policy" class="select-input">
+                <option value="auto" selected>Auto-play (smart)</option>
+                <option value="lowest">Pass on bid · lowest card on play</option>
+                <option value="skipLowest">Skip · lowest legal card</option>
+                <option value="botHand">Bot plays rest of this hand</option>
+              </select>
+            </div>
+
+            <div class="option-block sound-opts">
+              <span class="option-hint">Sounds:</span>
+              <label class="option-label"><input type="checkbox" id="opt-sound-card" checked> Cards</label>
+              <label class="option-label"><input type="checkbox" id="opt-sound-turn" checked> Turn</label>
+              <label class="option-label"><input type="checkbox" id="opt-sound-rook" checked> Rook caw</label>
+              <label class="option-label"><input type="checkbox" id="opt-sound-tick" checked> Timer tick</label>
+            </div>
+
+            <div class="option-block avatar-picker-block">
+              <span class="option-hint">Choose your table avatar:</span>
+              <div id="avatarGrid" class="avatar-grid" aria-label="Choose your avatar"></div>
+            </div>
+
+            <p class="option-hint" style="opacity:0.75;">Bots only use public information — they never see your hand.</p>
+            </div>
+            <div id="optPanePlayers" class="opt-pane hidden">
+              <p class="option-hint">Names marked <b>new</b> get the play-along house tour as the first hand unfolds. Clear that mark when someone already knows the table.</p>
+              <div id="newPlayerList" class="new-player-list"></div>
+              <div class="btn-row" style="margin-top:.55rem;flex-wrap:wrap;gap:.4rem;">
+                <button type="button" id="markMeExperiencedBtn" class="btn">Mark my name experienced</button>
+                <button type="button" id="markMeNewBtn" class="btn">Mark my name new</button>
+              </div>
+            </div>
+            <div id="optPaneSettings" class="opt-pane hidden">
+              <p class="option-hint">Name plaques. Team A default is black with white letters. Team B default is white with black letters.</p>
+              <div class="option-block">
+                <span class="option-hint">Team A plaque</span>
+                <div id="plaquePickA" class="plaque-picker" data-team="0"></div>
+              </div>
+              <div class="option-block">
+                <span class="option-hint">Team B plaque</span>
+                <div id="plaquePickB" class="plaque-picker" data-team="1"></div>
+              </div>
+              <label class="option-label"><input type="checkbox" id="opt-avatar-motion" checked> Avatar idle motion</label>
+              <p class="option-hint">Turn off if the seat portraits feel busy.</p>
+              <label class="option-label"><input type="checkbox" id="opt-tv-display"> TV / spectator table</label>
+              <p class="option-hint">Huge trick pile, personal hand hidden. For a spare phone or TV.</p>
+            </div>
+          </div>
+        </div>
+      </div>
+
+    <!-- Game Screen -->
+    <div id="game" class="screen game-room hidden">
+      <!-- Ambient room decor (CSS-driven, non-interactive) -->
+      <div class="room-decor" aria-hidden="true">
+        <div class="sconce sconce-left"><span class="flame"></span></div>
+        <div class="sconce sconce-right"><span class="flame"></span></div>
+        <div class="wall-frame wall-frame-left">🐦</div>
+        <div class="wall-frame wall-frame-right">♠♥</div>
+        <div class="chandelier">✦</div>
+        <div class="corner-ornament tl">❧</div>
+        <div class="corner-ornament tr">❧</div>
+        <div class="corner-ornament bl">❧</div>
+        <div class="corner-ornament br">❧</div>
+      </div>
+
+      <div class="top-bar opts-collapsed" id="topBar">
+        <div class="top-bar-main">
+          <div class="scores" id="scoreRow">
+            <span>A: <b id="scoreA">0</b></span>
+            <span>B: <b id="scoreB">0</b></span>
+            <span class="target-label">to <b id="targetDisplay">500</b></span>
+            <span id="sandbagScore" class="sandbag-score hidden">Sandbags: A <b id="sandbagA">0</b> · B <b id="sandbagB">0</b></span>
+            <button type="button" id="btnTableMsg" class="table-msg-btn table-msg-btn-top" data-open-table-msg="1" title="Send a table message">Message Table $100</button>
+          </div>
+          <div class="phase-row" id="phaseRow">
+            <div class="phase" id="phaseLabel">Bidding</div>
+            <span id="horConnectionBadge" class="hor-connection-badge hidden">● Connected</span>
+          </div>
+          <div class="trump" id="trumpDisplay"></div>
+          <div class="bid-progress hidden" id="bidProgress" title="Bid progress this hand"></div>
+        </div>
+        <div class="toolbar" id="topToolbar">
+          <button type="button" id="btnMute" class="icon-btn" title="Mute">🔊</button>
+          <button type="button" id="btnSort" class="icon-btn" title="Sort hand">⇅</button>
+          <button type="button" id="btnStats" class="icon-btn" title="Match stats">📊</button>
+          <button type="button" id="btnTransferHost" class="icon-btn host-only hidden" title="Transfer host">👑</button>
+          <button type="button" id="btnA11y" class="icon-btn" title="High contrast">◐</button>
+          <button type="button" id="btnReduceMotion" class="icon-btn" title="Reduce motion">✨</button>
+          <button type="button" id="btnHistory" class="icon-btn" title="History">📋</button>
+          <button type="button" id="btnRulesInGame" class="icon-btn" title="Rules">?</button>
+          <button type="button" id="btnGameOptions" class="icon-btn host-only hidden" title="Game options">⚙️</button>
+          <button type="button" id="btnTheme" class="icon-btn" title="Theme">🎨</button>
+          <button type="button" id="btnCardBack" class="icon-btn" title="Card backs">🃏</button>
+          <button type="button" id="btnPause" class="icon-btn host-only hidden" title="Pause / Resume">⏸</button>
+          <button type="button" id="btnRedeal" class="icon-btn host-only hidden" title="Redeal">🔄</button>
+          <button type="button" id="btnPerfectDeal" class="icon-btn host-only hidden" title="Deal perfect test hand">🧪</button>
+          <button type="button" id="btnUndo" class="icon-btn host-only hidden" title="Undo (bots)">↩</button>
+        </div>
+      </div>
+
+
+      <div class="table-wrap">
+        <button type="button" id="portraitLast3Btn" class="table-last3-btn" title="Last 3 tricks">Last 3</button>
+        <div class="table-felt">
+          <div class="felt-inlay" aria-hidden="true"></div>
+          <div id="feltBidDock" class="felt-bid-dock hidden"></div>
+          <div class="felt-badges">
+            <div id="handWinBanner" class="hand-win-banner hidden" aria-live="polite"></div>
+            <div id="trumpBadge" class="felt-badge hidden">Trump: —</div>
+            <div id="ledBadge" class="felt-badge led hidden">Led: —</div>
+            <div id="nestGoesBadge" class="felt-badge nest-dest">Nest → last trick</div>
+            <div id="feltBidNeed" class="felt-badge bid-need hidden"></div>
+            <div id="nestDiscardBadge" class="felt-badge nest-badge hidden">Nest 0</div>
+          </div>
+          <div class="table">
+            <div class="player-slot top" id="slot-partner">
+              <span class="seat-glass" aria-hidden="true">🍺</span>
+              <div class="name"></div>
+              <div class="seat-bank" data-bank-slot="partner">$0</div>
+              <div class="cards-count"></div>
+              <div class="played-card"></div>
+            </div>
+            <div class="player-slot left" id="slot-left">
+              <span class="seat-glass" aria-hidden="true">🍺</span>
+              <div class="name"></div>
+              <div class="seat-bank" data-bank-slot="left">$0</div>
+              <div class="cards-count"></div>
+              <div class="played-card"></div>
+            </div>
+            <div class="center-area">
+              <div id="trickArea" class="trick"></div>
+              <div id="nestArea" class="nest hidden"></div>
+              <div id="botThinking" class="bot-thinking hidden">Thinking…</div>
+              <div id="ptWaitBanner" class="pt-wait-banner hidden" aria-live="polite">
+                <img id="ptWaitArtNest" class="pt-wait-art" src="wait-nest-portrait.jpg?v=1" alt="">
+                <img id="ptWaitArtTrump" class="pt-wait-art" src="wait-trump-portrait.jpg?v=1" alt="">
+                <div class="pt-wait-veil"></div>
+                <div class="pt-wait-copy">
+                  <div class="pt-wait-kicker" id="ptWaitKicker">House of Rooks</div>
+                  <div id="ptWaitTitle">Sorting the nest</div>
+                  <div id="ptWaitSub">Hold tight…</div>
+                  <div class="pt-wait-dots" aria-hidden="true"><span></span><span></span><span></span></div>
+                </div>
+              </div>
+            </div>
+            <div class="player-slot right" id="slot-right">
+              <span class="seat-glass" aria-hidden="true">🍺</span>
+              <div class="name"></div>
+              <div class="seat-bank" data-bank-slot="right">$0</div>
+              <div class="cards-count"></div>
+              <div class="played-card"></div>
+            </div>
+            <div class="bottom-seat-row">
+              <div id="trumpBanner" class="trump-banner hidden" aria-live="polite"></div>
+              <div class="player-slot bottom" id="slot-me">
+                <span class="seat-glass" aria-hidden="true">🍺</span>
+                <div class="name"></div>
+                <div class="seat-bank is-mine" data-bank-slot="me">$0</div>
+                <div class="played-card"></div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div id="turnBanner" class="turn-banner hidden" aria-live="assertive"></div>
+      <div id="messageArea" class="message message-above-hand" aria-live="polite"></div>
+
+      <div class="hand-area">
+        <div id="trickPtsBar" class="trick-pts-bar hidden" aria-live="polite"></div>
+        <div class="hand-rail"></div>
+        <div id="myHand" class="hand"></div>
+      </div>
+      <div id="portraitLast3Overlay" class="portrait-last3-overlay hidden" aria-hidden="true">
+        <div class="portrait-last3-panel">
+          <div class="portrait-last3-title">Last 3 Tricks</div>
+          <div id="portraitLast3Body" class="portrait-last3-body"></div>
+          <button type="button" id="portraitLast3Close" class="btn primary portrait-last3-close">Close</button>
+        </div>
+      </div>
+
+      <div id="pauseOverlay" class="pause-overlay hidden">
+        <div class="pause-card">
+          <div class="pause-icon">⏸</div>
+          <h2>Game Paused</h2>
+          <p id="pauseSub">Host paused the game</p>
+          <button type="button" id="btnResumePause" class="btn primary host-only hidden">Resume</button>
+        </div>
+      </div>
+      <div id="turnTimerBar" class="turn-timer-bar hidden">
+        <div class="turn-timer-label"><span id="turnTimerName">Player</span> · <span id="turnTimerSec">30</span>s</div>
+        <div class="turn-timer-track"><div id="turnTimerFill" class="turn-timer-fill"></div></div>
+      </div>
+      <div id="actionPanel" class="action-panel hidden"></div>
+      <div id="discardOverlay" class="discard-overlay hidden" aria-hidden="true"></div>
+      <div id="trumpShowdownModal" class="modal hidden">
+        <div class="modal-content trump-showdown-modal">
+          <h2>🃏 Cards Revealed</h2>
+          <p id="trumpShowdownSub">All remaining cards have been shown.</p>
+          <div id="trumpShowdownBody" class="trump-showdown-body"></div>
+          <button id="trumpShowdownClose" class="btn primary" type="button">Continue to Score</button>
+        </div>
+      </div>
+      <div class="in-game-leave">
+        <button type="button" id="btnToggleTopOpts" class="icon-btn top-opts-toggle leave-menu-btn" title="Show / hide options" aria-label="Menu">☰</button>
+        <button type="button" id="leaveReplaceBtn" class="leave-exit-btn" title="Leave table" aria-label="Leave table">←</button>
+      </div>
+    </div>
+
+    <!-- Score summary modal / scoreboard -->
+    <div id="scoreModal" class="modal hidden">
+      <div class="modal-content scoreboard-modal">
+        <h2 id="scoreModalTitle">Scoreboard</h2>
+        <div id="scoreModalBody" class="rules-text"></div>
+        <div class="score-modal-actions">
+          <button id="scoreModalRevealHands" class="btn hidden" type="button">Show remaining cards</button>
+          <button id="scoreModalHistory" class="btn" type="button">Full history</button>
+          <button id="scoreModalCopy" class="btn" type="button">Copy night’s scores</button>
+          <button id="scoreModalNext" class="btn primary" type="button">Next Hand</button>
+        </div>
+      </div>
+    </div>
+
+
+    <!-- Stats modal -->
+    <div id="statsModal" class="modal hidden">
+      <div class="modal-content">
+        <h2>Match stats</h2>
+        <div id="statsBody" class="rules-text"></div>
+        <div class="btn-row" style="margin-top:.6rem;gap:.4rem;flex-wrap:wrap;">
+          <button id="statsCopy" class="btn" type="button">Copy night’s scores</button>
+          <button id="closeStats" class="btn primary">Close</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- History modal -->
+    <div id="historyModal" class="modal hidden">
+      <div class="modal-content">
+        <h2>Hand History</h2>
+        <div id="historyBody" class="history-list"></div>
+        <div class="btn-row" style="margin-top:.6rem;gap:.4rem;flex-wrap:wrap;">
+          <button id="historyCopy" class="btn" type="button">Copy night’s scores</button>
+          <button id="closeHistory" class="btn primary">Close</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Win celebration -->
+    <div id="winOverlay" class="win-overlay hidden">
+      <div class="win-banner">
+        <div class="confetti" id="confetti"></div>
+        <h1 id="winTitle">Team A Wins!</h1>
+        <p id="winSub">Final score</p>
+        <button id="winOk" class="btn primary">See highlights</button>
+      </div>
+    </div>
+
+    <!-- Full-page match celebration: 2 biggest winning-team tricks -->
+    <div id="celePage" class="cele-page hidden" aria-hidden="true">
+      <div class="cele-bg" aria-hidden="true"></div>
+      <div class="cele-confetti" id="celeConfetti" aria-hidden="true"></div>
+      <div class="cele-inner">
+        <header class="cele-head">
+          <div class="cele-kicker">Match complete</div>
+          <h1 id="celeTitle">Team A Wins!</h1>
+          <p id="celeSub">Biggest tricks of the match</p>
+        </header>
+        <div id="celeRecap" class="cele-recap"></div>
+        <div id="celeStage" class="cele-stage"></div>
+        <div id="celeActions" class="cele-actions hidden">
+          <div class="cele-actions-left">
+            <button type="button" id="celeCopyScores" class="btn">Copy night’s scores</button>
+            <button type="button" id="celeWaiting" class="btn">Waiting Room</button>
+          </div>
+          <div class="cele-actions-right">
+            <button type="button" id="celeRematch" class="btn primary">Rematch</button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Special capture: Rook eats Red 2 / trump 1 taken -->
+    <div id="captureOverlay" class="capture-overlay hidden" aria-hidden="true">
+      <div class="capture-burst" aria-hidden="true"></div>
+      <div class="capture-card">
+        <div class="capture-emoji" id="captureEmoji">🐦</div>
+        <div class="capture-title" id="captureTitle">THE BIRD TAKES RED 2!</div>
+        <div class="capture-sub" id="captureSub">Epic capture</div>
+        <div class="capture-sparks" aria-hidden="true">
+          <span></span><span></span><span></span><span></span><span></span><span></span>
+        </div>
+      </div>
+    </div>
+
+    <!-- Nearby play how-to (global modal — lobby + waiting) -->
+    <div id="nearbySheet" class="modal nearby-modal hidden" role="dialog" aria-label="Nearby play" aria-hidden="true">
+      <div class="modal-content nearby-sheet-inner">
+        <h2>📡 Nearby play</h2>
+        <p class="option-hint" style="margin:0 0 0.5rem;">
+          Nearby play uses the 4-letter table code. The guest must open House of Rooks on their own phone — do not send a file or a phone-only link. That is what shows a broken page.
+        </p>
+        <ol class="nearby-steps">
+          <li><strong>Everyone:</strong> Same Wi‑Fi (not guest). Both phones open this same game.</li>
+          <li><strong>Host:</strong> Play with friends. Keep this tab open. Read the 4-letter code out loud.</li>
+          <li><strong>Guest:</strong> Open their own copy of House of Rooks (same website, or their own saved game). Tap Join with a code. Type the 4 letters. Tap Sit down, then a chair.</li>
+          <li><strong>Do not</strong> text a file:// link, a Files-app link, or a QR from a copy that is not on https. That page is broken on the other phone.</li>
+        </ol>
+        <p class="option-hint">Both phones still need a little internet for the first handshake. A hotspot with data turned off will not connect.</p>
+        <div class="btn-row" style="margin-top:0.75rem;flex-wrap:wrap;gap:0.4rem;">
+          <button type="button" id="nearbyCreateBtn" class="btn primary">Create room now</button>
+          <button type="button" id="nearbyCloseBtn" class="btn">Close</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Card back picker -->
+    <div id="cardBackModal" class="modal hidden" role="dialog" aria-label="Card backs">
+      <div class="modal-content card-back-modal">
+        <h2>Card backs</h2>
+        <p class="option-hint" style="margin-top:0;">Choose a back for this device. The Griffin Crest is the default.</p>
+        <div id="cardBackPickerModal" class="card-back-picker"></div>
+        <button id="closeCardBackModal" class="btn primary" type="button">Done</button>
+      </div>
+    </div>
+
+    <!-- Rules Modal -->
+    <div id="rulesModal" class="modal hidden">
+      <div class="modal-content">
+        <h2>How to Play</h2>
+        <div class="rules-text">
+          <p><b>Players:</b> Four seats, partners opposite. Watchers can sit out.</p>
+          <p id="liveRulesIntro"></p>
+        </div>
+        <button id="closeRules" class="btn primary">Got it</button>
+      </div>
+    </div>
+  </div>
+
+  <div id="tutorialOverlay" class="tutorial-overlay hidden" role="dialog" aria-label="House tour" aria-live="polite">
+    <div class="tutorial-card">
+      <div class="tutorial-kicker" id="tutorialKicker">House tour</div>
+      <h2 class="tutorial-title" id="tutorialTitle">Welcome to the table</h2>
+      <div id="tutorialText">Bid or pass. That’s the whole auction.</div>
+      <div class="tutorial-progress" id="tutorialProgress" aria-hidden="true"></div>
+      <div class="tutorial-actions">
+        <button type="button" id="tutorialBack" class="btn">Back</button>
+        <button type="button" id="tutorialSkip" class="btn">Skip tour</button>
+        <button type="button" id="tutorialNext" class="btn primary">Got it</button>
+      </div>
+    </div>
+  </div>
+  <div id="newPlayersModal" class="modal hidden" role="dialog" aria-label="New players">
+    <div class="modal-content">
+      <h2>New players</h2>
+      <p class="option-hint">Clear the new mark so that name no longer gets the play-along tour. Mark new again to walk them through a hand.</p>
+      <div id="newPlayerListLobby" class="new-player-list"></div>
+      <div class="btn-row" style="margin-top:.6rem;flex-wrap:wrap;gap:.4rem;">
+        <button type="button" id="markMeExperiencedLobbyBtn" class="btn">Mark my name experienced</button>
+        <button type="button" id="markMeNewLobbyBtn" class="btn">Mark my name new</button>
+        <button type="button" id="closeNewPlayersBtn" class="btn primary">Done</button>
+      </div>
+    </div>
+  </div>
+  <div id="botPickerModal" class="modal hidden" role="dialog" aria-label="Choose a bot">
+    <div class="modal-content bot-picker-sheet">
+      <h2>Seat a bot</h2>
+      <p class="option-hint">Each one plays a different table game.</p>
+      <div id="botPickerGrid" class="bot-picker-grid"></div>
+      <button type="button" id="botPickerClose" class="btn">Cancel</button>
+    </div>
+  </div>
+  <div id="confirmSheet" class="modal hidden" role="dialog" aria-label="Confirm">
+    <div class="modal-content">
+      <h2 id="confirmTitle">Are you sure?</h2>
+      <p id="confirmBody" class="option-hint"></p>
+      <div class="btn-row">
+        <button type="button" id="confirmOk" class="btn danger">Yes</button>
+        <button type="button" id="confirmCancel" class="btn">Cancel</button>
+      </div>
+    </div>
+  </div>
+  <div id="botStyleTip" class="bot-style-tip hidden" role="status"></div>
+  <div id="illegalWhy" class="illegal-why hidden"></div>
+  <div id="tableMsgPopup" class="table-msg-popup hidden" aria-live="assertive"></div>
+  <div id="tableMsgModal" class="modal hidden" role="dialog" aria-label="Send table message">
+    <div class="modal-content">
+      <h2>Message the table</h2>
+      <p class="option-hint" id="tableMsgCostLine">Costs $100 · Bank $0</p>
+      <input type="text" id="tableMsgInput" maxlength="80" placeholder="Type a short message" autocomplete="off">
+      <div class="btn-row" style="margin-top:.6rem;">
+        <button type="button" id="tableMsgSend" class="btn primary">Send</button>
+        <button type="button" id="tableMsgHold" class="btn">Hold</button>
+        <button type="button" id="tableMsgCancel" class="btn">Cancel</button>
+      </div>
+    </div>
+  </div>
+  <script>
+    (function () {
+      var deferredPrompt = null;
+      var installed = false;
+      function isStandalone() {
+        try {
+          if (window.matchMedia && window.matchMedia('(display-mode: standalone)').matches) return true;
+          if (window.matchMedia && window.matchMedia('(display-mode: fullscreen)').matches) return true;
+          if (navigator.standalone === true) return true;
+        } catch (e) {}
+        return false;
+      }
+      function isIos() {
+        try {
+          return /iPad|iPhone|iPod/.test(navigator.userAgent || '') ||
+            (navigator.platform === 'MacIntel' && navigator.maxTouchPoints > 1);
+        } catch (e) { return false; }
+      }
+      function paintInstall() {
+        var hide = isStandalone() || installed;
+        var ids = ['installAppBtn', 'installAppBtnWelcome'];
+        for (var i = 0; i < ids.length; i++) {
+          var el = document.getElementById(ids[i]);
+          if (!el) continue;
+          if (hide) el.classList.add('hidden');
+          else el.classList.remove('hidden');
+        }
+      }
+      window.addEventListener('beforeinstallprompt', function (e) {
+        try { e.preventDefault(); } catch (err) {}
+        deferredPrompt = e;
+        paintInstall();
+      });
+      window.addEventListener('appinstalled', function () {
+        installed = true;
+        deferredPrompt = null;
+        paintInstall();
+      });
+      function onInstall() {
+        if (isStandalone()) return;
+        if (deferredPrompt && deferredPrompt.prompt) {
+          try {
+            var p = deferredPrompt.prompt();
+            if (p && p.then) {
+              p.then(function () {
+                return deferredPrompt.userChoice;
+              }).then(function (choice) {
+                if (choice && choice.outcome === 'accepted') installed = true;
+                deferredPrompt = null;
+                paintInstall();
+              }).catch(function () {});
+            }
+          } catch (e) {}
+        }
+      }
+      window.horInstallApp = onInstall;
+      document.addEventListener('click', function (ev) {
+        var t = ev.target && ev.target.closest ? ev.target.closest('#installAppBtn, #installAppBtnWelcome') : null;
+        if (t) {
+          try { ev.preventDefault(); } catch (e) {}
+          onInstall();
+        }
+      });
+      paintInstall();
+    })();
+  </script>
+  <script src="rules.js?v=192"></script>
+  <script src="bots.js?v=192"></script>
+  <script src="game.js?v=192"></script>
+  <script src="polish.js?v=192"></script>
+  <div id="horBootError"></div>
+  <script>
+    window.addEventListener('error', function (ev) {
+      try {
+        var el = document.getElementById('horBootError');
+        if (!el) return;
+        el.textContent = 'Page error: ' + ((ev && ev.message) || 'unknown');
+        el.classList.add('show');
+      } catch (e) {}
+    });
+  </script>
+  <script>
+    if ('serviceWorker' in navigator) {
+      navigator.serviceWorker.register('sw.js?v=192', { updateViaCache: 'none' }).catch(() => {});
+      let horSwAutoReloaded = false;
+      navigator.serviceWorker.addEventListener('controllerchange', () => {
+        if (window.__horUpdating || horSwAutoReloaded) return;
+        horSwAutoReloaded = true;
+        window.location.reload();
+      });
+    }
+  </script>
+  <script>
+    // Same-host version check. After a GitHub Pages deploy, this tab
+    // picks up the new files without jumping to another site.
+    (function () {
+      function liveVersionFromHtml(html) {
+        const m = /game\.js\?v=(\d+)/.exec(html || '');
+        return m ? parseInt(m[1], 10) : null;
+      }
+      function myVersion() {
+        if (typeof APP_VERSION === 'undefined') return 0;
+        return typeof horVersionNum === 'function' ? horVersionNum(APP_VERSION) : parseInt(APP_VERSION, 10);
+      }
+      function applyLiveVersion(liveVer) {
+        if (!liveVer) return;
+        const myVer = myVersion();
+        if (!myVer || liveVer <= myVer) return;
+        const activePhases = ['dealing', 'bidding', 'discard', 'trump', 'play'];
+        const midHand = typeof game !== 'undefined' && game && activePhases.indexOf(game.phase) !== -1;
+        if (!midHand) { try { horForceUpdate(); } catch (e) {} }
+      }
+      function checkForNewerVersion() {
+        if (window.__horUpdating) return;
+        if (location.protocol === 'file:') return;
+        fetch('index.html?checkver=' + Date.now(), { cache: 'no-store' })
+          .then((r) => (r && r.ok ? r.text() : null))
+          .then((html) => applyLiveVersion(liveVersionFromHtml(html)))
+          .catch(() => {});
+      }
+      setTimeout(checkForNewerVersion, 2500);
+      setInterval(checkForNewerVersion, 2 * 60 * 1000);
+      document.addEventListener('visibilitychange', () => {
+        if (document.visibilityState === 'visible') checkForNewerVersion();
+      });
+    })();
+  </script>
+</body>
+</html>
+
