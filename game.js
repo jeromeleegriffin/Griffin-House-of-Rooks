@@ -7,7 +7,7 @@
 // It's exchanged during the join handshake so a stale host or joiner (e.g.
 // one still running old cached JS) gets caught and auto-updated instead of
 // silently failing or behaving unpredictably against a mismatched peer.
-const APP_VERSION = '197';
+const APP_VERSION = '200';
 
 function horThisIndex() {
   try {
@@ -64,8 +64,8 @@ let sandbagging = false;
 /** Nest counters go to 'lastTrick' (default partnership) or 'bidder' */
 let nestGoesTo = 'lastTrick';
 /** Who leads the first trick of play, relative to the bid winner:
- * 'leftOfBidder' (default), 'bidder' (bid winner leads), or 'rightOfBidder' */
-let leadOrder = 'leftOfBidder';
+ * 'bidder' (default — bid winner leads), 'leftOfBidder', or 'rightOfBidder' */
+let leadOrder = 'bidder';
 /** Alternate rules seen in other Rook groups online — all off by default:
  * misdeal & redeal if any hand has zero counter cards */
 let misdealOnNoCounters = false;
@@ -1072,7 +1072,7 @@ function applyGriffinDefaults({ broadcastChange = false } = {}) {
   targetScore = 500;
   specialsAnytime = false;
   mustTrumpWhenVoid = false;
-  leadOrder = 'leftOfBidder';
+  leadOrder = 'bidder';
   recomputeHandAndNest();
   syncOptionsUI();
   if (broadcastChange && isHost) {
@@ -4061,7 +4061,7 @@ function showWaiting() {
     if (lo) {
       lo.value = leadOrder;
       lo.onchange = () => {
-        leadOrder = lo.value || 'leftOfBidder';
+        leadOrder = lo.value || 'bidder';
         try { broadcastPlaySettings(); } catch (e) {}
       };
     }
@@ -6695,7 +6695,7 @@ function hostProcessTrump(data) {
   } else if (leadOrder === 'rightOfBidder') {
     game.currentPlayer = (game.bidder + 3) % 4; // one seat right (counter-clockwise)
   } else {
-    game.currentPlayer = (game.bidder + 1) % 4; // left of bidder (default)
+    game.currentPlayer = (game.bidder + 1) % 4; // left of bidder
   }
   game.trick = [];
   game.ledColor = null;
@@ -10674,10 +10674,22 @@ function toggleFullscreen() {
 }
 
 function cycleTheme() {
-  document.body.classList.remove(...THEMES);
-  themeIndex = (themeIndex + 1) % THEMES.length;
-  document.body.classList.add(THEMES[themeIndex]);
-  localStorage.setItem('rookTheme', String(themeIndex));
+  const ids = (window.horRoomThemeIds && window.horRoomThemeIds.length)
+    ? window.horRoomThemeIds
+    : ['midnight', 'house', 'riverboat', 'cabin', 'speakeasy', 'slate', 'burgundy', 'ember', 'harbor', 'sandbar', 'ivy', 'frost', 'cocoa', 'plum', 'ink'];
+  let cur = 0;
+  ids.forEach((id, i) => {
+    if (document.body.classList.contains('room-theme-' + id)) cur = i;
+  });
+  const next = ids[(cur + 1) % ids.length];
+  if (typeof window.applyRoomTheme === 'function') window.applyRoomTheme(next, true);
+  else {
+    ids.forEach((id) => document.body.classList.remove('room-theme-' + id));
+    document.body.classList.add('room-theme-' + next);
+  }
+  try {
+    if (typeof horToast === 'function') horToast('Table: ' + next.replace(/^./, c => c.toUpperCase()));
+  } catch (e) {}
 }
 
 function hostDealPerfectHand() {

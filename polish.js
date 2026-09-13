@@ -571,6 +571,7 @@
     /* room theme class only */
   }
   window.applyRoomTheme = applyRoomTheme;
+  window.horRoomThemeIds = Object.keys(ROOM_THEMES);
 
   const GFX_KEEP = [
     'feltTexture','woodRail','roomBackdrop','richFaces',

@@ -14,7 +14,7 @@
   <link rel="manifest" href="manifest.json">
   <link rel="icon" href="icon-192.png">
   <link rel="apple-touch-icon" href="apple-touch-icon.png">
-  <link rel="stylesheet" href="style.css?v=197">
+  <link rel="stylesheet" href="style.css?v=200">
   <script src="vendor/peerjs.min.js"></script>
   <style>
     /* Emergency layout if style.css fails to load — joiners still see a usable page */
@@ -407,8 +407,8 @@
             <div class="option-block">
               <span class="option-hint">First lead of the hand:</span>
               <select id="opt-lead-order" class="select-input">
-                <option value="leftOfBidder" selected>Player to the left of the bid winner</option>
-                <option value="bidder">Bid winner leads</option>
+                <option value="leftOfBidder">Player to the left of the bid winner</option>
+                <option value="bidder" selected>Bid winner leads</option>
                 <option value="rightOfBidder">Player to the right of the bid winner</option>
               </select>
             </div>
@@ -688,7 +688,7 @@
           <button type="button" id="btnHistory" class="icon-btn" title="History">📋</button>
           <button type="button" id="btnRulesInGame" class="icon-btn" title="Rules">?</button>
           <button type="button" id="btnGameOptions" class="icon-btn host-only hidden" title="Game options">⚙️</button>
-          <button type="button" id="btnTheme" class="icon-btn" title="Theme">🎨</button>
+          <button type="button" id="btnTheme" class="icon-btn" title="Cycle table colors">🎨</button>
           <button type="button" id="btnCardBack" class="icon-btn" title="Card backs">🃏</button>
           <button type="button" id="btnPause" class="icon-btn host-only hidden" title="Pause / Resume">⏸</button>
           <button type="button" id="btnRedeal" class="icon-btn host-only hidden" title="Redeal">🔄</button>
@@ -1060,10 +1060,10 @@
       paintInstall();
     })();
   </script>
-  <script src="rules.js?v=197"></script>
-  <script src="bots.js?v=197"></script>
-  <script src="game.js?v=197"></script>
-  <script src="polish.js?v=197"></script>
+  <script src="rules.js?v=200"></script>
+  <script src="bots.js?v=200"></script>
+  <script src="game.js?v=200"></script>
+  <script src="polish.js?v=200"></script>
   <div id="horBootError"></div>
   <script>
     window.addEventListener('error', function (ev) {
@@ -1077,7 +1077,7 @@
   </script>
   <script>
     if ('serviceWorker' in navigator) {
-      navigator.serviceWorker.register('sw.js?v=197', { updateViaCache: 'none' }).catch(() => {});
+      navigator.serviceWorker.register('sw.js?v=200', { updateViaCache: 'none' }).catch(() => {});
       let horSwAutoReloaded = false;
       navigator.serviceWorker.addEventListener('controllerchange', () => {
         if (window.__horUpdating || horSwAutoReloaded) return;
