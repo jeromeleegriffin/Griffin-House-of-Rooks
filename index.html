@@ -13,7 +13,7 @@
   <title>House of Rooks</title>
   <script>
     (function () {
-      var BUILD = '345';
+      var BUILD = '346';
       try {
         var params = new URLSearchParams(location.search);
         var seen = localStorage.getItem('horBuild') || '';
@@ -36,7 +36,7 @@
   <link rel="manifest" href="manifest.json">
   <link rel="icon" href="icon-192.png">
   <link rel="apple-touch-icon" href="apple-touch-icon.png">
-  <link rel="stylesheet" href="style.css?v=345">
+  <link rel="stylesheet" href="style.css?v=346">
   <script src="vendor/peerjs.min.js"></script>
   <style>
     /* Emergency layout if style.css fails to load — joiners still see a usable page */
@@ -1117,10 +1117,10 @@
       paintInstall();
     })();
   </script>
-  <script src="rules.js?v=345"></script>
-  <script src="bots.js?v=345"></script>
-  <script src="game.js?v=345"></script>
-  <script src="polish.js?v=345"></script>
+  <script src="rules.js?v=346"></script>
+  <script src="bots.js?v=346"></script>
+  <script src="game.js?v=346"></script>
+  <script src="polish.js?v=346"></script>
   <div id="horBootError"></div>
   <script>
     window.addEventListener('error', function (ev) {
@@ -1134,7 +1134,7 @@
   </script>
   <script>
     if ('serviceWorker' in navigator) {
-      navigator.serviceWorker.register('sw.js?v=345', { updateViaCache: 'none' })
+      navigator.serviceWorker.register('sw.js?v=346', { updateViaCache: 'none' })
         .then(function (reg) { try { reg.update(); } catch (e) {} })
         .catch(() => {});
       let horSwAutoReloaded = false;

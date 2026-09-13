@@ -6249,11 +6249,11 @@ function showDiscardUI(showKitty) {
   const specialLabel = specialParts.length ? specialParts.join(' · ') : 'Specials';
 
   const groups = [
+    { key: 'special', label: specialLabel, color: 'rook' },
     { key: 'green', label: 'Green', color: 'green' },
     { key: 'red', label: 'Red', color: 'red' },
     { key: 'yellow', label: 'Yellow', color: 'yellow' },
     { key: 'black', label: 'Black', color: 'black' },
-    { key: 'special', label: specialLabel, color: 'rook' },
   ];
 
   const cardClass = (card) => {
@@ -9957,19 +9957,30 @@ function persistHandSortMode() {
   try { localStorage.setItem('horHandSortMode', handSortMode); } catch (e) {}
 }
 
-/** Color bucket for display: green, red, yellow, black, then Rook. */
+function isRookCard(card) {
+  return !!(card && (card.color === 'rook' || card.id === 'rook'));
+}
+
+/** Color bucket for display. Rook is its own group on the far left when it is high. */
 function displayColorGroup(card) {
   if (!card) return 99;
-  if (card.color === 'rook' || card.id === 'rook') return 4;
+  if (isRookCard(card)) return (typeof rookLowest !== 'undefined' && rookLowest) ? 50 : -1;
   const i = COLORS.indexOf(card.color);
   return i >= 0 ? i : 5;
 }
 
 /**
  * One comparator for every visible pile (hand, nest merge, discard rows, kitty flash).
- * Default color-high: group by color, highest rank on the left of that group.
+ * Rook (when high) is always leftmost. Default otherwise: by color, high → low.
  */
 function compareCardsDisplay(a, b) {
+  const rookHigh = !(typeof rookLowest !== 'undefined' && rookLowest);
+  if (rookHigh) {
+    const aR = isRookCard(a);
+    const bR = isRookCard(b);
+    if (aR !== bR) return aR ? -1 : 1;
+  }
+
   const mode = normalizeHandSortMode(handSortMode);
   const trump = (game && game.trump) || null;
 
