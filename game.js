@@ -7,7 +7,7 @@
 // It's exchanged during the join handshake so a stale host or joiner (e.g.
 // one still running old cached JS) gets caught and auto-updated instead of
 // silently failing or behaving unpredictably against a mismatched peer.
-const APP_VERSION = '342';
+const APP_VERSION = '343';
 
 function horThisIndex() {
   try {
@@ -8211,10 +8211,11 @@ function showClaimRemainingHands(summary) {
     const cards = (h.cards || []).length
       ? h.cards.map(c => remainingHandCardHTML(c)).join('')
       : '<span class="claim-remaining-none">No cards left</span>';
+    const nCards = (h.cards || []).length;
     return '<div class="' + cls + '">'
       + '<div class="claim-remaining-player-title"><span class="cr-name"><b>'
       + escapeHtmlSafe(h.name) + '</b>' + tag + '</span><span class="cr-team">' + teamName + '</span></div>'
-      + '<div class="claim-remaining-cards">' + cards + '</div></div>';
+      + '<div class="claim-remaining-cards" data-count="' + nCards + '">' + cards + '</div></div>';
   }).join('');
   const claimerHand = hands.find(h => h.laidDown)
     || hands.find(h => typeof summary.claimer === 'number' && Number(h.player) === Number(summary.claimer));
@@ -8235,6 +8236,49 @@ function showClaimRemainingHands(summary) {
   body.appendChild(section);
   try { body.scrollTop = 0; } catch (e) {}
   try { wireScoreModalActions(summary); } catch (e) {}
+  try { fitClaimRemainingCards(); } catch (e) {}
+  requestAnimationFrame(() => { try { fitClaimRemainingCards(); } catch (e) {} });
+  setTimeout(() => { try { fitClaimRemainingCards(); } catch (e) {} }, 60);
+}
+
+/** Shrink leftover cards so every hand fits inside its player panel. */
+function fitClaimRemainingCards() {
+  const boxes = document.querySelectorAll('#scoreModal.showing-remaining .claim-remaining-cards');
+  if (!boxes.length) return;
+  const ratio = 58 / 84;
+  boxes.forEach((box) => {
+    const cards = box.querySelectorAll('.claim-remaining-card');
+    const n = cards.length;
+    if (!n) return;
+    const w = box.clientWidth;
+    const h = box.clientHeight;
+    if (w < 12 || h < 12) return;
+    const gap = n >= 10 ? 2 : (n >= 7 ? 3 : 4);
+    box.style.setProperty('--remain-gap', gap + 'px');
+    let bestW = 18;
+    const maxCols = Math.min(n, 8);
+    for (let cols = 1; cols <= maxCols; cols++) {
+      const rows = Math.ceil(n / cols);
+      const cellW = (w - gap * (cols - 1)) / cols;
+      const cellH = (h - gap * (rows - 1)) / rows;
+      if (cellW <= 0 || cellH <= 0) continue;
+      const useH = Math.min(cellH, cellW / ratio);
+      const useW = useH * ratio;
+      if (useW > bestW) bestW = useW;
+    }
+    const cap = Math.min(w, 72);
+    bestW = Math.max(16, Math.min(bestW, cap));
+    const bestH = bestW / ratio;
+    box.style.setProperty('--remain-card-w', bestW.toFixed(2) + 'px');
+    box.style.setProperty('--remain-card-h', bestH.toFixed(2) + 'px');
+  });
+}
+
+if (typeof window !== 'undefined' && !window._horRemainFitBound) {
+  window._horRemainFitBound = true;
+  const rerun = () => { try { fitClaimRemainingCards(); } catch (e) {} };
+  window.addEventListener('resize', rerun);
+  window.addEventListener('orientationchange', () => setTimeout(rerun, 80));
 }
 
 function showStatsModal() {
