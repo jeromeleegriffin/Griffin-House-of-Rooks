@@ -1774,6 +1774,13 @@ body.theme-night {
   padding: 0.45rem 0.7rem !important;
   font-size: 0.85rem !important;
   margin: 0 !important;
+  background: linear-gradient(180deg, #1c2844 0%, #10182c 100%) !important;
+  color: #f0e0a8 !important;
+  border: 1px solid rgba(212,175,55,.7) !important;
+  box-shadow: 0 1px 0 rgba(255,255,255,.08) inset;
+}
+#waiting .share-row #nearbyPlayBtnWaiting {
+  background: linear-gradient(180deg, #1c2844 0%, #10182c 100%) !important;
 }
 #waiting .qr-box canvas {
   width: min(78vw, 78vh, 420px) !important;
@@ -1866,11 +1873,11 @@ body.theme-night {
   pointer-events: auto !important;
 }
 #waiting #startBtn.btn.primary {
-  background: linear-gradient(180deg, #f3d58a 0%, #c9a227 55%, #b08a1c 100%) !important;
-  color: #1a1408 !important;
+  background: linear-gradient(180deg, #1c2844 0%, #10182c 100%) !important;
+  color: #f0e0a8 !important;
   opacity: 1 !important;
-  border: 1px solid #e8c96a !important;
-  box-shadow: 0 1px 0 rgba(255,236,180,.35) inset, 0 4px 14px rgba(0,0,0,0.35);
+  border: 1px solid rgba(212,175,55,.7) !important;
+  box-shadow: 0 1px 0 rgba(255,255,255,.08) inset;
 }
 #waiting #leaveBtn {
   background: linear-gradient(180deg, #1c2844 0%, #10182c 100%) !important;
@@ -1879,13 +1886,11 @@ body.theme-night {
   box-shadow: 0 1px 0 rgba(255,255,255,.08) inset;
 }
 body.gfx-brassUI #waiting #leaveBtn,
-body.gfx-brassUI #waiting #startBtn.btn.primary {
+body.gfx-brassUI #waiting #startBtn.btn.primary,
+body.gfx-brassUI #waiting #shareBtn {
   background: linear-gradient(180deg, #1c2844 0%, #10182c 100%) !important;
   color: #f0e0a8 !important;
-}
-body.gfx-brassUI #waiting #startBtn.btn.primary {
-  background: linear-gradient(180deg, #f3d58a 0%, #c9a227 55%, #b08a1c 100%) !important;
-  color: #1a1408 !important;
+  border: 1px solid rgba(212,175,55,.7) !important;
 }
 #waiting #startBtn:disabled {
   opacity: 0.55 !important;
@@ -3456,9 +3461,10 @@ body.color-blind-cards .card-face .c-rank { letter-spacing: 0.04em; }
   padding: 0.45rem 0.7rem !important;
   font-size: 0.88rem !important;
   font-weight: 700 !important;
-  background: rgba(84, 110, 122, 0.55);
-  border: 1px solid rgba(176, 190, 197, 0.45);
-  color: #eceff1;
+  background: linear-gradient(180deg, #1c2844 0%, #10182c 100%);
+  border: 1px solid rgba(212,175,55,.7);
+  color: #f0e0a8;
+  box-shadow: 0 1px 0 rgba(255,255,255,.08) inset;
 }
 #waiting .fill-seats-btn:disabled {
   opacity: 0.45;
