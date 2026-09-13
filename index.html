@@ -13,7 +13,7 @@
   <title>House of Rooks</title>
   <script>
     (function () {
-      var BUILD = '355';
+      var BUILD = '358';
       try {
         var params = new URLSearchParams(location.search);
         var seen = localStorage.getItem('horBuild') || '';
@@ -36,7 +36,7 @@
   <link rel="manifest" href="manifest.json">
   <link rel="icon" href="icon-192.png">
   <link rel="apple-touch-icon" href="apple-touch-icon.png">
-  <link rel="stylesheet" href="style.css?v=355">
+  <link rel="stylesheet" href="style.css?v=358">
   <script src="vendor/peerjs.min.js"></script>
   <style>
     /* Emergency layout if style.css fails to load — joiners still see a usable page */
@@ -165,7 +165,8 @@
           <button id="installAppBtn" class="btn lobby-main" type="button">Install on this phone<span class="lobby-btn-sub">Home screen app — no browser bar</span></button>
         </div>
         <div class="lobby-hero" aria-hidden="true">
-          <img id="lobbyHeroImg" alt="Red raven and black raven over the griffin table" width="1176" height="784" src="lobby-hero-wide.jpg">
+          <img id="lobbyHeroImg" class="lobby-hero-portrait" alt="Red raven and black raven over the griffin table" width="1176" height="784" src="lobby-hero-wide.jpg">
+          <img class="lobby-hero-land" alt="House of Rooks" width="1920" height="620" src="lobby-hero-landscape.jpg">
         </div>
         <script>
           (function () {
@@ -1106,10 +1107,10 @@
       paintInstall();
     })();
   </script>
-  <script src="rules.js?v=355"></script>
-  <script src="bots.js?v=355"></script>
-  <script src="game.js?v=355"></script>
-  <script src="polish.js?v=355"></script>
+  <script src="rules.js?v=358"></script>
+  <script src="bots.js?v=358"></script>
+  <script src="game.js?v=358"></script>
+  <script src="polish.js?v=358"></script>
   <div id="horBootError"></div>
   <script>
     window.addEventListener('error', function (ev) {
@@ -1123,7 +1124,7 @@
   </script>
   <script>
     if ('serviceWorker' in navigator) {
-      navigator.serviceWorker.register('sw.js?v=355', { updateViaCache: 'none' })
+      navigator.serviceWorker.register('sw.js?v=358', { updateViaCache: 'none' })
         .then(function (reg) { try { reg.update(); } catch (e) {} })
         .catch(() => {});
       let horSwAutoReloaded = false;

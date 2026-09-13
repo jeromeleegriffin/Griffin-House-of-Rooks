@@ -7926,6 +7926,22 @@ body.remaining-open #ltEndGame {
   z-index: 1;
 }
 
+
+#lobby .lobby-hero-land { display: none; }
+@media (orientation: landscape) {
+  #lobby.screen:not(.hidden) .lobby-header { display: none !important; }
+  #lobby.screen:not(.hidden) .lobby-hero-portrait { display: none !important; }
+  #lobby.screen:not(.hidden) .lobby-hero-land {
+    display: block !important;
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    object-position: center 40%;
+  }
+  #lobby.screen:not(.hidden) .lobby-hero { order: -1; flex: 0 0 auto; height: 28vh; min-height: 120px; max-height: 200px; }
+}
 @media (orientation: landscape) {
   body:not(.in-game) #app {
     max-width: none;
