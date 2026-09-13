@@ -11,6 +11,28 @@
   <meta http-equiv="Cache-Control" content="no-store, no-cache, must-revalidate">
   <meta http-equiv="Pragma" content="no-cache">
   <title>House of Rooks</title>
+  <script>
+    (function () {
+      var BUILD = '320';
+      try {
+        var params = new URLSearchParams(location.search);
+        var seen = localStorage.getItem('horBuild') || '';
+        if (seen && seen !== BUILD && !params.get('fresh')) {
+          localStorage.setItem('horBuild', BUILD);
+          var go = function () {
+            location.replace(location.pathname + '?fresh=' + Date.now() + '&v=' + BUILD);
+          };
+          var jobs = [];
+          if (window.caches) jobs.push(caches.keys().then(function (ks) { return Promise.all(ks.map(function (k) { return caches.delete(k); })); }));
+          if (navigator.serviceWorker) jobs.push(navigator.serviceWorker.getRegistrations().then(function (rs) { return Promise.all(rs.map(function (r) { return r.unregister(); })); }));
+          Promise.all(jobs).catch(function () {}).then(go);
+          setTimeout(go, 900);
+          return;
+        }
+        localStorage.setItem('horBuild', BUILD);
+      } catch (e) {}
+    })();
+  </script>
   <link rel="manifest" href="manifest.json">
   <link rel="icon" href="icon-192.png">
   <link rel="apple-touch-icon" href="apple-touch-icon.png">
@@ -655,9 +677,9 @@
             <div id="optPanePlayers" class="opt-pane hidden">
               <p class="option-hint">Names marked <b>new</b> get the play-along house tour as the first hand unfolds. Clear that mark when someone already knows the table.</p>
               <div id="newPlayerList" class="new-player-list"></div>
-              <div class="btn-row" style="margin-top:.55rem;flex-wrap:wrap;gap:.4rem;">
-                <button type="button" id="markMeExperiencedBtn" class="btn">Mark my name experienced</button>
-                <button type="button" id="markMeNewBtn" class="btn">Mark my name new</button>
+              <div class="btn-row new-player-actions">
+                <button type="button" id="markMeExperiencedBtn" class="btn">I'm experienced</button>
+                <button type="button" id="markMeNewBtn" class="btn">Mark me new</button>
               </div>
             </div>
             <div id="optPaneSettings" class="opt-pane hidden">
@@ -988,9 +1010,9 @@
       <h2>New players</h2>
       <p class="option-hint">Clear the new mark so that name no longer gets the play-along tour. Mark new again to walk them through a hand.</p>
       <div id="newPlayerListLobby" class="new-player-list"></div>
-      <div class="btn-row" style="margin-top:.6rem;flex-wrap:wrap;gap:.4rem;">
-        <button type="button" id="markMeExperiencedLobbyBtn" class="btn">Mark my name experienced</button>
-        <button type="button" id="markMeNewLobbyBtn" class="btn">Mark my name new</button>
+      <div class="btn-row new-player-actions">
+        <button type="button" id="markMeExperiencedLobbyBtn" class="btn">I'm experienced</button>
+        <button type="button" id="markMeNewLobbyBtn" class="btn">Mark me new</button>
         <button type="button" id="closeNewPlayersBtn" class="btn primary">Done</button>
       </div>
     </div>
@@ -1111,7 +1133,9 @@
   </script>
   <script>
     if ('serviceWorker' in navigator) {
-      navigator.serviceWorker.register('sw.js?v=202', { updateViaCache: 'none' }).catch(() => {});
+      navigator.serviceWorker.register('sw.js?v=320', { updateViaCache: 'none' })
+        .then(function (reg) { try { reg.update(); } catch (e) {} })
+        .catch(() => {});
       let horSwAutoReloaded = false;
       navigator.serviceWorker.addEventListener('controllerchange', () => {
         if (window.__horUpdating || horSwAutoReloaded) return;

@@ -1869,8 +1869,23 @@ body.theme-night {
   background: linear-gradient(180deg, #f3d58a 0%, #c9a227 55%, #b08a1c 100%) !important;
   color: #1a1408 !important;
   opacity: 1 !important;
-  border: none !important;
-  box-shadow: 0 4px 14px rgba(0,0,0,0.35);
+  border: 1px solid #e8c96a !important;
+  box-shadow: 0 1px 0 rgba(255,236,180,.35) inset, 0 4px 14px rgba(0,0,0,0.35);
+}
+#waiting #leaveBtn {
+  background: linear-gradient(180deg, #1c2844 0%, #10182c 100%) !important;
+  color: #f0e0a8 !important;
+  border: 1px solid rgba(212,175,55,.65) !important;
+  box-shadow: 0 1px 0 rgba(255,255,255,.08) inset;
+}
+body.gfx-brassUI #waiting #leaveBtn,
+body.gfx-brassUI #waiting #startBtn.btn.primary {
+  background: linear-gradient(180deg, #1c2844 0%, #10182c 100%) !important;
+  color: #f0e0a8 !important;
+}
+body.gfx-brassUI #waiting #startBtn.btn.primary {
+  background: linear-gradient(180deg, #f3d58a 0%, #c9a227 55%, #b08a1c 100%) !important;
+  color: #1a1408 !important;
 }
 #waiting #startBtn:disabled {
   opacity: 0.55 !important;
@@ -8004,7 +8019,29 @@ body.is-spectator .action-panel { display:none !important; }
 .tutorial-actions .btn.primary { background:#3a2c12; color:#f3ead6; border-color:#8a6d2e; }
 .new-player-list { display:flex; flex-direction:column; gap:.4rem; margin-top:.35rem; }
 .new-player-row { display:flex; justify-content:space-between; align-items:center; gap:.5rem; background:#10182c; border:1px solid rgba(212,175,55,.35); border-radius:10px; padding:.45rem .55rem; color:#f0e6d0; }
-.new-player-row .btn { min-height:2rem; font-size:.8rem; }
+.new-player-row > span { min-width:0; flex:1 1 auto; overflow-wrap:anywhere; }
+.new-player-row .btn { min-height:2.2rem; font-size:.78rem; flex:0 0 auto; width:auto; max-width:46%; padding:.35rem .55rem; white-space:normal; line-height:1.15; text-align:center; }
+.new-player-actions {
+  margin-top: .65rem;
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: .45rem;
+}
+.new-player-actions .btn {
+  flex: none;
+  width: 100%;
+  min-width: 0;
+  min-height: 2.6rem;
+  padding: .45rem .4rem;
+  font-size: .88rem;
+  line-height: 1.2;
+  white-space: normal;
+  text-align: center;
+  overflow: hidden;
+}
+.new-player-actions .btn.primary {
+  grid-column: 1 / -1;
+}
 .illegal-why { position:fixed; z-index:21000; background:#1a120b; color:#f5e6c8; border:1px solid #c9a227; padding:.35rem .55rem; border-radius:8px; font-size:.8rem; pointer-events:none; }
 .illegal-why.hidden { display:none !important; }
 .score-teach { margin:.4rem 0 .7rem; line-height:1.35; }
@@ -11256,6 +11293,7 @@ body.no-avatar-motion .wait-seat-av {
 #newPlayersModal .btn {
   white-space: normal;
   line-height: 1.15;
+  overflow: hidden;
 }
 body.gfx-brassUI #cardBackModal .btn.primary,
 body.gfx-brassUI #newPlayersModal .btn.primary,
