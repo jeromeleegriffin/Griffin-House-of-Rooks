@@ -1,3 +1,3 @@
 /* House of Rooks live version beacon. Loaded cross-origin by downloaded copies. */
-window.HOR_LIVE_VERSION = 344;
-window.HOR_BUILD = 344;
+window.HOR_LIVE_VERSION = 345;
+window.HOR_BUILD = 345;
