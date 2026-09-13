@@ -926,7 +926,15 @@ function wireTargetScoreUI() {
 
 let botDifficulty = 'extreme';
 let handHistory = [];
-let handSortMode = 'suit';
+let handSortMode = (function () {
+  try {
+    const v = localStorage.getItem('horHandSortMode');
+    if (v === 'suit' || v === 'color-high') return 'color-high';
+    if (v === 'color-low' || v === 'rank' || v === 'counters') return v;
+    if (v === 'points') return 'counters';
+  } catch (e) {}
+  return 'color-high';
+})();
 let isSpectator = false;
 let isSoloPractice = false;
 /** Extra chance (0–50) the solo host is dealt Rook / Red 2 after a fair shuffle */
@@ -1137,7 +1145,7 @@ function syncOptionsUI() {
   if (cbCards) cbCards.checked = !!colorBlindCards;
   document.body.classList.toggle('color-blind-cards', !!colorBlindCards);
   const hsm = $('opt-hand-sort');
-  if (hsm) hsm.value = handSortMode;
+  if (hsm) hsm.value = normalizeHandSortMode(handSortMode);
   try { syncTargetScoreUI(); } catch (e) {
     const ts = $('opt-target-score');
     if (ts) ts.value = String(targetScore);
@@ -3862,7 +3870,7 @@ function handleMessage(data, conn) {
           colorBlindCards = data.colorBlindCards;
           document.body.classList.toggle('color-blind-cards', !!colorBlindCards);
         }
-        if (data.handSortMode) handSortMode = data.handSortMode;
+        if (data.handSortMode) handSortMode = normalizeHandSortMode(data.handSortMode);
         if (data.timeoutPolicy) timeoutPolicy = data.timeoutPolicy;
         if (typeof data.turnTimeSec === 'number') turnTimeSec = data.turnTimeSec;
         if (data.minBid) minBid = data.minBid;
@@ -4149,9 +4157,10 @@ function showWaiting() {
     });
     const hsm = $('opt-hand-sort');
     if (hsm) {
-      hsm.value = handSortMode;
+      hsm.value = normalizeHandSortMode(handSortMode);
       hsm.onchange = () => {
-        handSortMode = hsm.value || 'suit';
+        handSortMode = normalizeHandSortMode(hsm.value);
+        persistHandSortMode();
         try { if (game && game.myHand) renderHand(game.phase === 'discard' && game.bidder === myIndex); } catch (e) {}
       };
     }
@@ -5407,14 +5416,7 @@ function hostDealNow() {
   }
   try { applyLuckySpecialsToHostHand(); } catch (e) {}
   for (let i = 0; i < 4; i++) {
-    game.hands[i].sort((a, b) => {
-      if (a.color === 'rook') return 1;
-      if (b.color === 'rook') return -1;
-      if (isRed1(a) || isRed2(a)) return 1;
-      if (isRed1(b) || isRed2(b)) return -1;
-      if (a.color !== b.color) return COLORS.indexOf(a.color) - COLORS.indexOf(b.color);
-      return effectiveRank(a) - effectiveRank(b);
-    });
+    sortCardsDisplay(game.hands[i]);
   }
   // House rule: misdeal & redeal if any hand has zero counter cards (no
   // 5/10/14/one/Rook/Red 1/Red 2 at all) — nobody could bid meaningfully.
@@ -6114,27 +6116,8 @@ function finishBidding() {
   game.hands[game.bidder] = game.hands[game.bidder].concat(game.nest);
   game.nest = [];
 
-  // Sort by color then rank; specials stay in their color group (Red 2 with reds).
-  // Rook gets its own group after black so it's not pushed off-screen alone.
-  // fitHandToScreen always sizes so ALL cards are visible.
-  game.hands[game.bidder].sort((a, b) => {
-    const colorOrder = (c) => {
-      if (c.color === 'rook' || c.id === 'rook') return 4; // after black
-      if (isRed1(c) || isRed2(c)) return COLORS.indexOf('red'); // with reds
-      const i = COLORS.indexOf(c.color);
-      return i >= 0 ? i : 5;
-    };
-    const ca = colorOrder(a);
-    const cb = colorOrder(b);
-    if (ca !== cb) return ca - cb;
-    // Within red: normal ranks, then Red 2, then Red 1 (high)
-    if (ca === COLORS.indexOf('red')) {
-      const rankA = isRed1(a) ? 100 : isRed2(a) ? 2 : a.rank;
-      const rankB = isRed1(b) ? 100 : isRed2(b) ? 2 : b.rank;
-      return rankA - rankB;
-    }
-    return (a.rank || 0) - (b.rank || 0);
-  });
+  // Same display order as the rest of the game (default: by color, high → low).
+  sortCardsDisplay(game.hands[game.bidder]);
 
   // Sanity: hand size and specials must still be present
   if (game.hands[game.bidder].length !== beforeCount + nestSize) {
@@ -6305,7 +6288,7 @@ function showDiscardUI(showKitty) {
     const landscape = isLandscapeNow();
     let kittyBlock = '';
     if (includeKittyFlash && game.nestPreview && game.nestPreview.length) {
-      const kittyCards = game.nestPreview.map(c => {
+      const kittyCards = game.nestPreview.slice().sort(compareCardsDisplay).map(c => {
         const cls = cardClass(c);
         return `<div class="card-face ${cls} small kitty-flash-card">${cardInnerHTML(c)}</div>`;
       }).join('');
@@ -6321,7 +6304,7 @@ function showDiscardUI(showKitty) {
     // The bidder's existing hand stays completely hidden until the next
     // screen, where the discard picker is rendered.
     if (includeKittyFlash && game.nestPreview && game.nestPreview.length) {
-      const kittyCards = game.nestPreview.map(c => {
+      const kittyCards = game.nestPreview.slice().sort(compareCardsDisplay).map(c => {
         const cls = cardClass(c);
         return `<div class="card-face ${cls} kitty-flash-card">${cardInnerHTML(c)}</div>`;
       }).join('');
@@ -6340,13 +6323,7 @@ function showDiscardUI(showKitty) {
 
     const rows = groups.map(g => {
       const cards = game.myHand.filter(c => groupFor(c) === g.key)
-        .sort((a, b) => {
-          if (g.key === 'special') {
-            const ord = (c) => isRed2(c) ? 0 : isRed1(c) ? 1 : 2;
-            return ord(a) - ord(b);
-          }
-          return (a.rank || 0) - (b.rank || 0);
-        });
+        .sort(compareCardsDisplay);
       if (!cards.length) return '';
       return `<div class="discard-color-row discard-color-${g.key}">
         <div class="discard-color-label">${g.label}</div>
@@ -9969,62 +9946,69 @@ function trumpDefendStrength(card, trump) {
   return -1;
 }
 
+function normalizeHandSortMode(mode) {
+  if (mode === 'suit' || mode === 'color-high' || !mode) return 'color-high';
+  if (mode === 'points') return 'counters';
+  if (mode === 'color-low' || mode === 'rank' || mode === 'counters') return mode;
+  return 'color-high';
+}
+
+function persistHandSortMode() {
+  try { localStorage.setItem('horHandSortMode', handSortMode); } catch (e) {}
+}
+
+/** Color bucket for display: green, red, yellow, black, then Rook. */
+function displayColorGroup(card) {
+  if (!card) return 99;
+  if (card.color === 'rook' || card.id === 'rook') return 4;
+  const i = COLORS.indexOf(card.color);
+  return i >= 0 ? i : 5;
+}
+
+/**
+ * One comparator for every visible pile (hand, nest merge, discard rows, kitty flash).
+ * Default color-high: group by color, highest rank on the left of that group.
+ */
+function compareCardsDisplay(a, b) {
+  const mode = normalizeHandSortMode(handSortMode);
+  const trump = (game && game.trump) || null;
+
+  if (mode === 'rank') {
+    const d = effectiveRank(b) - effectiveRank(a);
+    if (d) return d;
+    return displayColorGroup(a) - displayColorGroup(b);
+  }
+  if (mode === 'counters') {
+    const d = cardPoints(b) - cardPoints(a);
+    if (d) return d;
+  }
+
+  if (trump) {
+    const aT = isTrumpCard(a, trump);
+    const bT = isTrumpCard(b, trump);
+    if (aT !== bT) return aT ? -1 : 1;
+    if (aT && bT) {
+      return trumpDefendStrength(b, trump) - trumpDefendStrength(a, trump);
+    }
+  }
+
+  const ca = displayColorGroup(a);
+  const cb = displayColorGroup(b);
+  if (ca !== cb) return ca - cb;
+  const ra = effectiveRank(a);
+  const rb = effectiveRank(b);
+  return mode === 'color-low' ? (ra - rb) : (rb - ra);
+}
+
+function sortCardsDisplay(arr) {
+  if (!arr || !arr.sort) return arr;
+  arr.sort(compareCardsDisplay);
+  return arr;
+}
+
 function sortMyHandInPlace() {
   if (!game || !game.myHand) return;
-  const mode = handSortMode || 'suit';
-  const trump = game.trump || null;
-  game.myHand.sort((a, b) => {
-    // After trump is called: all trumps (suit + Rook + Red 2 + Red 1) on the FAR LEFT,
-    // ordered by defending strength (strongest first).
-    if (trump) {
-      const aT = isTrumpCard(a, trump);
-      const bT = isTrumpCard(b, trump);
-      if (aT && !bT) return -1; // trump first (left)
-      if (!aT && bT) return 1;
-      if (aT && bT) {
-        const sa = trumpDefendStrength(a, trump);
-        const sb = trumpDefendStrength(b, trump);
-        if (sb !== sa) return sb - sa; // stronger first
-        return 0;
-      }
-      // non-trump: respect sort mode among off-suit cards
-      if (mode === 'counters') {
-        const pa = cardPoints(a), pb = cardPoints(b);
-        if (pb !== pa) return pb - pa;
-      }
-      if (mode === 'rank') {
-        const ra = effectiveRank(a), rb = effectiveRank(b);
-        if (rb !== ra) return rb - ra;
-      }
-      if (a.color !== b.color) return COLORS.indexOf(a.color) - COLORS.indexOf(b.color);
-      return (a.rank || 0) - (b.rank || 0);
-    }
-
-    // Before trump: original grouping (specials toward end of their groups)
-    if (mode === 'counters') {
-      const pa = cardPoints(a), pb = cardPoints(b);
-      if (pb !== pa) return pb - pa;
-    }
-    if (mode === 'rank') {
-      const ra = effectiveRank ? effectiveRank(a) : (a.rank || 0);
-      const rb = effectiveRank ? effectiveRank(b) : (b.rank || 0);
-      if (rb !== ra) return rb - ra;
-    }
-    const trumpKey = (c) => {
-      if (!c) return 0;
-      if (c.color === 'rook' || c.id === 'rook') return 90;
-      if (isRed2(c)) return 91;
-      if (isRed1(c)) return 92;
-      return COLORS.indexOf(c.color) + 1;
-    };
-    const ca = trumpKey(a);
-    const cb = trumpKey(b);
-    if (ca !== cb) return ca - cb;
-    if (ca >= 90) {
-      return effectiveRank(b) - effectiveRank(a);
-    }
-    return (a.rank || 0) - (b.rank || 0);
-  });
+  sortCardsDisplay(game.myHand);
 }
 
 function cardLegalClass(card, hand) {
@@ -10617,12 +10601,23 @@ function pickStyledCard(idx, legal) {
 
 
 function cycleHandSort() {
-  handSortMode = handSortMode === 'suit' ? 'rank' : handSortMode === 'rank' ? 'points' : 'suit';
+  const order = ['color-high', 'color-low', 'rank', 'counters'];
+  const cur = normalizeHandSortMode(handSortMode);
+  handSortMode = order[(order.indexOf(cur) + 1) % order.length];
+  persistHandSortMode();
+  const hsm = $('opt-hand-sort');
+  if (hsm) hsm.value = handSortMode;
   if (!game || !game.myHand) return;
   sortMyHand();
   renderHand(game.phase === 'discard' && game.bidder === myIndex);
+  const labels = {
+    'color-high': 'color, high to low',
+    'color-low': 'color, low to high',
+    'rank': 'rank',
+    'counters': 'counters first'
+  };
   const msg = $('messageArea');
-  if (msg) msg.textContent = `Hand sorted by ${handSortMode}`;
+  if (msg) msg.textContent = `Hand sorted by ${labels[handSortMode] || handSortMode}`;
 }
 
 function sortMyHand() {
@@ -10897,7 +10892,7 @@ function hostDealPerfectHand() {
     game.hands[i] = rest.splice(0, normalHandSize);
   }
   game.nest = rest.slice();
-  game.hands.forEach(h => h.sort((a,b) => effectiveRank(a)-effectiveRank(b)));
+  game.hands.forEach(h => sortCardsDisplay(h));
   knownVoids = [{}, {}, {}, {}];
   lastTurnIndex = -1;
   window._turnOppKey = '';

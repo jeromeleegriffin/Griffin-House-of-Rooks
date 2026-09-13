@@ -13,7 +13,7 @@
   <title>House of Rooks</title>
   <script>
     (function () {
-      var BUILD = '344';
+      var BUILD = '345';
       try {
         var params = new URLSearchParams(location.search);
         var seen = localStorage.getItem('horBuild') || '';
@@ -36,7 +36,7 @@
   <link rel="manifest" href="manifest.json">
   <link rel="icon" href="icon-192.png">
   <link rel="apple-touch-icon" href="apple-touch-icon.png">
-  <link rel="stylesheet" href="style.css?v=344">
+  <link rel="stylesheet" href="style.css?v=345">
   <script src="vendor/peerjs.min.js"></script>
   <style>
     /* Emergency layout if style.css fails to load — joiners still see a usable page */
@@ -601,8 +601,9 @@
             <div class="option-block">
               <span class="option-hint">Sort hand:</span>
               <select id="opt-hand-sort" class="select-input">
-                <option value="suit" selected>By color</option>
-                <option value="rank">By rank</option>
+                <option value="color-high" selected>By color · high to low</option>
+                <option value="color-low">By color · low to high</option>
+                <option value="rank">By rank (all colors mixed)</option>
                 <option value="counters">Counters first</option>
               </select>
             </div>
@@ -1116,10 +1117,10 @@
       paintInstall();
     })();
   </script>
-  <script src="rules.js?v=344"></script>
-  <script src="bots.js?v=344"></script>
-  <script src="game.js?v=344"></script>
-  <script src="polish.js?v=344"></script>
+  <script src="rules.js?v=345"></script>
+  <script src="bots.js?v=345"></script>
+  <script src="game.js?v=345"></script>
+  <script src="polish.js?v=345"></script>
   <div id="horBootError"></div>
   <script>
     window.addEventListener('error', function (ev) {
@@ -1133,7 +1134,7 @@
   </script>
   <script>
     if ('serviceWorker' in navigator) {
-      navigator.serviceWorker.register('sw.js?v=344', { updateViaCache: 'none' })
+      navigator.serviceWorker.register('sw.js?v=345', { updateViaCache: 'none' })
         .then(function (reg) { try { reg.update(); } catch (e) {} })
         .catch(() => {});
       let horSwAutoReloaded = false;
