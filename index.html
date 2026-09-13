@@ -14,7 +14,7 @@
   <link rel="manifest" href="manifest.json">
   <link rel="icon" href="icon-192.png">
   <link rel="apple-touch-icon" href="apple-touch-icon.png">
-  <link rel="stylesheet" href="style.css?v=195">
+  <link rel="stylesheet" href="style.css?v=197">
   <script src="vendor/peerjs.min.js"></script>
   <style>
     /* Emergency layout if style.css fails to load — joiners still see a usable page */
@@ -564,8 +564,18 @@
                 <button type="button" class="room-theme-btn" data-theme="riverboat" title="Riverboat">Riverboat</button>
                 <button type="button" class="room-theme-btn" data-theme="cabin" title="Pine Cabin">Cabin</button>
                 <button type="button" class="room-theme-btn" data-theme="speakeasy" title="Speakeasy">Speakeasy</button>
+                <button type="button" class="room-theme-btn" data-theme="slate" title="Slate Room">Slate</button>
+                <button type="button" class="room-theme-btn" data-theme="burgundy" title="Burgundy Hall">Burgundy</button>
+                <button type="button" class="room-theme-btn" data-theme="ember" title="Ember Den">Ember</button>
+                <button type="button" class="room-theme-btn" data-theme="harbor" title="Harbor House">Harbor</button>
+                <button type="button" class="room-theme-btn" data-theme="sandbar" title="Sandbar">Sandbar</button>
+                <button type="button" class="room-theme-btn" data-theme="ivy" title="Ivy Loft">Ivy</button>
+                <button type="button" class="room-theme-btn" data-theme="frost" title="Frost Parlor">Frost</button>
+                <button type="button" class="room-theme-btn" data-theme="cocoa" title="Cocoa Club">Cocoa</button>
+                <button type="button" class="room-theme-btn" data-theme="plum" title="Plum Study">Plum</button>
+                <button type="button" class="room-theme-btn" data-theme="ink" title="Ink Vault">Ink</button>
               </div>
-              <p class="option-hint" id="roomThemeHint">Griffin House — green felt, oak rail.</p>
+              <p class="option-hint" id="roomThemeHint">Midnight Club — navy felt, silver rail.</p>
             </div>
 
             <div class="option-block card-back-option">
@@ -1050,10 +1060,10 @@
       paintInstall();
     })();
   </script>
-  <script src="rules.js?v=195"></script>
-  <script src="bots.js?v=195"></script>
-  <script src="game.js?v=195"></script>
-  <script src="polish.js?v=195"></script>
+  <script src="rules.js?v=197"></script>
+  <script src="bots.js?v=197"></script>
+  <script src="game.js?v=197"></script>
+  <script src="polish.js?v=197"></script>
   <div id="horBootError"></div>
   <script>
     window.addEventListener('error', function (ev) {
@@ -1067,7 +1077,7 @@
   </script>
   <script>
     if ('serviceWorker' in navigator) {
-      navigator.serviceWorker.register('sw.js?v=195', { updateViaCache: 'none' }).catch(() => {});
+      navigator.serviceWorker.register('sw.js?v=197', { updateViaCache: 'none' }).catch(() => {});
       let horSwAutoReloaded = false;
       navigator.serviceWorker.addEventListener('controllerchange', () => {
         if (window.__horUpdating || horSwAutoReloaded) return;

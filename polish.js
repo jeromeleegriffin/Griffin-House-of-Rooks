@@ -546,11 +546,21 @@
     midnight: 'Midnight Club — navy felt, silver rail.',
     riverboat: 'Riverboat — crimson felt, gold rail.',
     cabin: 'Pine Cabin — moss felt, raw timber.',
-    speakeasy: 'Speakeasy — black felt, brass lamp light.'
+    speakeasy: 'Speakeasy — black felt, brass lamp light.',
+    slate: 'Slate Room — pewter felt, steel rail.',
+    burgundy: 'Burgundy Hall — wine felt, copper rail.',
+    ember: 'Ember Den — charcoal felt, copper glow.',
+    harbor: 'Harbor House — teal felt, weathered brass.',
+    sandbar: 'Sandbar — desert felt, bone rail.',
+    ivy: 'Ivy Loft — forest felt, antique gold.',
+    frost: 'Frost Parlor — ice felt, chrome rail.',
+    cocoa: 'Cocoa Club — chocolate felt, bronze rail.',
+    plum: 'Plum Study — violet felt, pale gold.',
+    ink: 'Ink Vault — indigo felt, gunsteel rail.'
   };
   function applyRoomTheme(id, persist) {
-    const theme = ROOM_THEMES[id] ? id : 'house';
-    document.body.classList.remove('room-theme-house', 'room-theme-midnight', 'room-theme-riverboat', 'room-theme-cabin', 'room-theme-speakeasy');
+    const theme = ROOM_THEMES[id] ? id : 'midnight';
+    Object.keys(ROOM_THEMES).forEach((k) => document.body.classList.remove('room-theme-' + k));
     document.body.classList.add('room-theme-' + theme);
     document.querySelectorAll('.room-theme-btn').forEach((b) => {
       b.classList.toggle('active', b.getAttribute('data-theme') === theme);
@@ -602,7 +612,7 @@
       experimentalHandOpt,
       buyBeerBots,
       whisperHumans,
-      roomTheme: loadPrefs().roomTheme || 'house',
+      roomTheme: loadPrefs().roomTheme || 'midnight',
       gfx: loadGfx(),
       gfxRev: 2,
       experimental: loadExperimental(),
@@ -649,7 +659,7 @@
     houseTeamB = asText(p.teamNameB, 'Raven');
     try { if (typeof recomputeHandAndNest === 'function') recomputeHandAndNest(); } catch (e) {}
     try { if (typeof syncOptionsUI === 'function') syncOptionsUI(); } catch (e) {}
-    applyRoomTheme(p.roomTheme || 'house', false);
+    applyRoomTheme(p.roomTheme || 'midnight', false);
     applyGfx(p.gfx || loadGfx());
     window.horExperimental = loadExperimental();
     applyExperimental();
@@ -1296,7 +1306,7 @@
     document.querySelectorAll('.room-theme-btn').forEach((b) => {
       b.onclick = () => applyRoomTheme(b.getAttribute('data-theme'), true);
     });
-    applyRoomTheme((p && p.roomTheme) || 'house', false);
+    applyRoomTheme((p && p.roomTheme) || 'midnight', false);
     applyGfx((p && p.gfx) || loadGfx());
     document.querySelectorAll('a.cash-app-link').forEach(function (a) {
       a.addEventListener('click', function (e) {

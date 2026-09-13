@@ -8228,6 +8228,187 @@ body.room-theme-speakeasy .waiting-felt {
   border-color: rgba(224,184,90,.5) !important;
 }
 
+body.room-theme-slate,
+body.room-theme-slate #lobby,
+body.room-theme-slate #waiting,
+body.room-theme-slate .game-room {
+  background: radial-gradient(120% 80% at 50% 0%, #3a424c 0%, #171b20 55%, #0b0d10 100%) !important;
+}
+body.room-theme-slate .table-felt {
+  background: radial-gradient(ellipse at 50% 40%, #5b6774 0%, #3a4552 45%, #1c232b 100%) !important;
+  box-shadow:
+    inset 0 0 50px rgba(0,0,0,.5),
+    0 0 0 6px #7d8793, 0 0 0 9px #d5dbe2, 0 0 0 12px #4a525c, 0 0 0 15px #1a1e24,
+    0 14px 36px rgba(0,0,0,.6) !important;
+}
+body.room-theme-slate .waiting-felt {
+  background: radial-gradient(120% 80% at 50% 40%, rgba(90,100,112,.5), rgba(16,18,22,.96) 70%) !important;
+  border-color: rgba(213,219,226,.45) !important;
+}
+
+body.room-theme-burgundy,
+body.room-theme-burgundy #lobby,
+body.room-theme-burgundy #waiting,
+body.room-theme-burgundy .game-room {
+  background: radial-gradient(120% 80% at 50% 0%, #4a1c28 0%, #1c0c12 55%, #0c0608 100%) !important;
+}
+body.room-theme-burgundy .table-felt {
+  background: radial-gradient(ellipse at 50% 40%, #8b2f45 0%, #5c1c2e 45%, #2a1018 100%) !important;
+  box-shadow:
+    inset 0 0 50px rgba(0,0,0,.48),
+    0 0 0 6px #8a4a2a, 0 0 0 9px #e0a070, 0 0 0 12px #5a3018, 0 0 0 15px #24140c,
+    0 14px 36px rgba(0,0,0,.6) !important;
+}
+body.room-theme-burgundy .waiting-felt {
+  background: radial-gradient(120% 80% at 50% 40%, rgba(120,40,60,.5), rgba(24,10,14,.96) 70%) !important;
+  border-color: rgba(224,160,112,.5) !important;
+}
+
+body.room-theme-ember,
+body.room-theme-ember #lobby,
+body.room-theme-ember #waiting,
+body.room-theme-ember .game-room {
+  background: radial-gradient(120% 80% at 50% 0%, #4a2a18 0%, #1a100c 55%, #0a0705 100%) !important;
+}
+body.room-theme-ember .table-felt {
+  background: radial-gradient(ellipse at 50% 40%, #3a322c 0%, #221c18 50%, #0e0c0a 100%) !important;
+  box-shadow:
+    inset 0 0 50px rgba(180,70,20,.22),
+    0 0 0 6px #8a4a22, 0 0 0 9px #e08948, 0 0 0 12px #5a2e14, 0 0 0 15px #1c1008,
+    0 0 36px rgba(224,137,72,.16),
+    0 14px 36px rgba(0,0,0,.65) !important;
+}
+body.room-theme-ember .waiting-felt {
+  background: radial-gradient(120% 80% at 50% 40%, rgba(90,45,20,.55), rgba(16,10,8,.97) 70%) !important;
+  border-color: rgba(224,137,72,.5) !important;
+}
+
+body.room-theme-harbor,
+body.room-theme-harbor #lobby,
+body.room-theme-harbor #waiting,
+body.room-theme-harbor .game-room {
+  background: radial-gradient(120% 80% at 50% 0%, #1a3a40 0%, #0c1c20 55%, #070e10 100%) !important;
+}
+body.room-theme-harbor .table-felt {
+  background: radial-gradient(ellipse at 50% 40%, #2a7a78 0%, #185552 45%, #0c2c2a 100%) !important;
+  box-shadow:
+    inset 0 0 50px rgba(0,0,0,.48),
+    0 0 0 6px #7a6230, 0 0 0 9px #d4b46a, 0 0 0 12px #4a3a18, 0 0 0 15px #1c160a,
+    0 14px 36px rgba(0,0,0,.6) !important;
+}
+body.room-theme-harbor .waiting-felt {
+  background: radial-gradient(120% 80% at 50% 40%, rgba(30,90,88,.5), rgba(10,22,24,.96) 70%) !important;
+  border-color: rgba(212,180,106,.5) !important;
+}
+
+body.room-theme-sandbar,
+body.room-theme-sandbar #lobby,
+body.room-theme-sandbar #waiting,
+body.room-theme-sandbar .game-room {
+  background: radial-gradient(120% 80% at 50% 0%, #5a4630 0%, #2a2016 55%, #120e0a 100%) !important;
+}
+body.room-theme-sandbar .table-felt {
+  background: radial-gradient(ellipse at 50% 40%, #c4a06a 0%, #8a6a3e 45%, #4a381c 100%) !important;
+  box-shadow:
+    inset 0 0 50px rgba(0,0,0,.4),
+    0 0 0 6px #8a7a60, 0 0 0 9px #f0e4c8, 0 0 0 12px #5a4c38, 0 0 0 15px #241c14,
+    0 14px 36px rgba(0,0,0,.55) !important;
+}
+body.room-theme-sandbar .waiting-felt {
+  background: radial-gradient(120% 80% at 50% 40%, rgba(160,120,70,.45), rgba(28,20,14,.96) 70%) !important;
+  border-color: rgba(240,228,200,.5) !important;
+}
+
+body.room-theme-ivy,
+body.room-theme-ivy #lobby,
+body.room-theme-ivy #waiting,
+body.room-theme-ivy .game-room {
+  background: radial-gradient(120% 80% at 50% 0%, #244028 0%, #101810 55%, #080a08 100%) !important;
+}
+body.room-theme-ivy .table-felt {
+  background: radial-gradient(ellipse at 50% 40%, #2f6b3c 0%, #1c4428 45%, #0e2416 100%) !important;
+  box-shadow:
+    inset 0 0 50px rgba(0,0,0,.48),
+    0 0 0 6px #7a5c22, 0 0 0 9px #d4b45a, 0 0 0 12px #4a3814, 0 0 0 15px #1c1608,
+    0 14px 36px rgba(0,0,0,.6) !important;
+}
+body.room-theme-ivy .waiting-felt {
+  background: radial-gradient(120% 80% at 50% 40%, rgba(40,90,50,.5), rgba(12,20,14,.96) 70%) !important;
+  border-color: rgba(212,180,90,.5) !important;
+}
+
+body.room-theme-frost,
+body.room-theme-frost #lobby,
+body.room-theme-frost #waiting,
+body.room-theme-frost .game-room {
+  background: radial-gradient(120% 80% at 50% 0%, #2a3a48 0%, #121820 55%, #080a0c 100%) !important;
+}
+body.room-theme-frost .table-felt {
+  background: radial-gradient(ellipse at 50% 40%, #6a8aaa 0%, #3a546c 45%, #1a2834 100%) !important;
+  box-shadow:
+    inset 0 0 50px rgba(0,0,0,.42),
+    0 0 0 6px #8a98a4, 0 0 0 9px #e8f0f6, 0 0 0 12px #4a545c, 0 0 0 15px #1a2024,
+    0 14px 36px rgba(0,0,0,.58) !important;
+}
+body.room-theme-frost .waiting-felt {
+  background: radial-gradient(120% 80% at 50% 40%, rgba(80,110,140,.48), rgba(14,18,24,.96) 70%) !important;
+  border-color: rgba(232,240,246,.5) !important;
+}
+
+body.room-theme-cocoa,
+body.room-theme-cocoa #lobby,
+body.room-theme-cocoa #waiting,
+body.room-theme-cocoa .game-room {
+  background: radial-gradient(120% 80% at 50% 0%, #3a2418 0%, #1a100c 55%, #0c0806 100%) !important;
+}
+body.room-theme-cocoa .table-felt {
+  background: radial-gradient(ellipse at 50% 40%, #6b3e28 0%, #422616 45%, #24140c 100%) !important;
+  box-shadow:
+    inset 0 0 50px rgba(0,0,0,.48),
+    0 0 0 6px #7a5a30, 0 0 0 9px #c9a06a, 0 0 0 12px #4a3418, 0 0 0 15px #1c140a,
+    0 14px 36px rgba(0,0,0,.6) !important;
+}
+body.room-theme-cocoa .waiting-felt {
+  background: radial-gradient(120% 80% at 50% 40%, rgba(90,50,30,.5), rgba(18,12,8,.96) 70%) !important;
+  border-color: rgba(201,160,106,.5) !important;
+}
+
+body.room-theme-plum,
+body.room-theme-plum #lobby,
+body.room-theme-plum #waiting,
+body.room-theme-plum .game-room {
+  background: radial-gradient(120% 80% at 50% 0%, #3a2040 0%, #180c1c 55%, #0a060c 100%) !important;
+}
+body.room-theme-plum .table-felt {
+  background: radial-gradient(ellipse at 50% 40%, #6a3a6e 0%, #422246 45%, #221226 100%) !important;
+  box-shadow:
+    inset 0 0 50px rgba(0,0,0,.48),
+    0 0 0 6px #7a6230, 0 0 0 9px #e6d08a, 0 0 0 12px #4a3a18, 0 0 0 15px #1c160a,
+    0 14px 36px rgba(0,0,0,.6) !important;
+}
+body.room-theme-plum .waiting-felt {
+  background: radial-gradient(120% 80% at 50% 40%, rgba(90,40,100,.48), rgba(16,10,20,.96) 70%) !important;
+  border-color: rgba(230,208,138,.5) !important;
+}
+
+body.room-theme-ink,
+body.room-theme-ink #lobby,
+body.room-theme-ink #waiting,
+body.room-theme-ink .game-room {
+  background: radial-gradient(120% 80% at 50% 0%, #1a2438 0%, #0c1018 55%, #06080c 100%) !important;
+}
+body.room-theme-ink .table-felt {
+  background: radial-gradient(ellipse at 50% 40%, #243056 0%, #141c34 45%, #0a101c 100%) !important;
+  box-shadow:
+    inset 0 0 50px rgba(0,0,0,.55),
+    0 0 0 6px #5a646e, 0 0 0 9px #b8c2cc, 0 0 0 12px #343a42, 0 0 0 15px #14181c,
+    0 14px 36px rgba(0,0,0,.65) !important;
+}
+body.room-theme-ink .waiting-felt {
+  background: radial-gradient(120% 80% at 50% 40%, rgba(40,50,80,.5), rgba(10,12,18,.97) 70%) !important;
+  border-color: rgba(184,194,204,.45) !important;
+}
+
 .lt-play.winner {
   transform: scale(1.08);
   z-index: 6;
