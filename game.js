@@ -7,7 +7,7 @@
 // It's exchanged during the join handshake so a stale host or joiner (e.g.
 // one still running old cached JS) gets caught and auto-updated instead of
 // silently failing or behaving unpredictably against a mismatched peer.
-const APP_VERSION = '337';
+const APP_VERSION = '338';
 
 function horThisIndex() {
   try {
@@ -2368,6 +2368,7 @@ function showWelcomeScreen(code) {
   try {
     document.body.classList.remove('in-game');
     document.body.classList.add('at-table', 'at-welcome');
+    setTimeout(syncLandscapeFullscreen, 50);
   } catch (e) {}
   const c = String(code || roomCode || '').trim().toUpperCase();
   const codeEl = $('welcomeCode');
@@ -3989,6 +3990,7 @@ function showWaiting() {
   waiting.classList.remove('hidden');
   gameScreen.classList.add('hidden');
   try { document.body.classList.remove('in-game'); document.body.classList.add('at-table'); } catch (e) {}
+  setTimeout(syncLandscapeFullscreen, 50);
   const codeEl = $('displayCode');
   if (codeEl) codeEl.textContent = roomCode;
   try { applyWaitingShareMode(); } catch (e) {}
@@ -4987,6 +4989,7 @@ function showGame() {
   }
   gameScreen.classList.remove('hidden');
   try { document.body.classList.add('in-game'); document.body.classList.remove('at-table'); } catch (e) {}
+  setTimeout(syncLandscapeFullscreen, 80);
   try { syncPortraitLast3Button(); } catch (e) {}
   try { requestAnimationFrame(() => { try { positionPortraitLast3Btn(); } catch (e) {} }); } catch (e) {}
   try { setTimeout(() => { try { positionPortraitLast3Btn(); } catch (e) {} }, 250); } catch (e) {}
@@ -10109,6 +10112,12 @@ function onViewportChange() {
 }
 window.addEventListener('resize', onViewportChange);
 window.addEventListener('orientationchange', onViewportChange);
+window.addEventListener('orientationchange', () => { setTimeout(syncLandscapeFullscreen, 120); });
+window.addEventListener('resize', () => { setTimeout(syncLandscapeFullscreen, 120); });
+document.addEventListener('pointerdown', () => {
+  if (wantLandscapeFullscreen()) enterLandscapeFullscreen();
+}, { passive: true });
+document.addEventListener('fullscreenchange', syncBrowserFitBtn);
 
 
 function hideActionPanel() {
@@ -10687,6 +10696,52 @@ function shareRoom() {
 
 function fullscreenElement() {
   return document.fullscreenElement || document.webkitFullscreenElement || document.msFullscreenElement || null;
+}
+
+function wantLandscapeFullscreen() {
+  try {
+    if (!document.body || !document.body.classList.contains('in-game')) return false;
+    if (window.matchMedia && window.matchMedia('(orientation: landscape)').matches) return true;
+  } catch (e) {}
+  return false;
+}
+
+function enterLandscapeFullscreen() {
+  if (!wantLandscapeFullscreen()) return;
+  try {
+    if (!fullscreenElement()) {
+      const el = document.documentElement;
+      const req = el.requestFullscreen || el.webkitRequestFullscreen || el.webkitRequestFullScreen || el.msRequestFullscreen;
+      if (req) {
+        const p = req.call(el);
+        if (p && typeof p.catch === 'function') p.catch(() => {});
+      }
+    }
+  } catch (e) {}
+  try {
+    if (screen.orientation && typeof screen.orientation.lock === 'function') {
+      const p = screen.orientation.lock('landscape');
+      if (p && typeof p.catch === 'function') p.catch(() => {});
+    }
+  } catch (e) {}
+}
+
+function exitLandscapeFullscreen() {
+  if (wantLandscapeFullscreen()) return;
+  try {
+    if (fullscreenElement()) {
+      const ex = document.exitFullscreen || document.webkitExitFullscreen || document.msExitFullscreen;
+      if (ex) {
+        const p = ex.call(document);
+        if (p && typeof p.catch === 'function') p.catch(() => {});
+      }
+    }
+  } catch (e) {}
+}
+
+function syncLandscapeFullscreen() {
+  if (wantLandscapeFullscreen()) enterLandscapeFullscreen();
+  else exitLandscapeFullscreen();
 }
 
 function syncBrowserFitBtn() {
