@@ -7388,7 +7388,7 @@ body.remaining-open #ltEndGame {
 #scoreModal.showing-remaining .claim-remaining-player {
   min-width: 0 !important;
   min-height: 0 !important;
-  overflow: hidden !important;
+  overflow: visible !important;
   padding: .45rem !important;
   display: flex !important;
   flex-direction: column !important;
@@ -8249,6 +8249,49 @@ body.reduce-motion .nest-beat { animation:none !important; transition:none !impo
   font-size: .68rem;
   letter-spacing: .04em;
   text-transform: uppercase;
+  white-space: nowrap;
+  vertical-align: middle;
+}
+#scoreModal.showing-remaining .claim-remaining-player-title {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: .35rem;
+  flex-wrap: wrap;
+}
+#scoreModal.showing-remaining .cr-name {
+  display: flex;
+  align-items: center;
+  gap: .35rem;
+  flex-wrap: wrap;
+  min-width: 0;
+}
+#scoreModal.showing-remaining .claim-remaining-grid {
+  overflow: visible !important;
+  padding: 6px;
+}
+#scoreModal.showing-remaining #scoreModalBody,
+#scoreModal.showing-remaining .claim-remaining-hands {
+  overflow: visible !important;
+}
+#scoreModal.showing-remaining .claim-remaining-player.is-laid-winner {
+  margin: 3px;
+}
+@media (orientation: landscape) {
+  #scoreModal.showing-remaining .modal-content.scoreboard-modal {
+    overflow: auto !important;
+  }
+  #scoreModal.showing-remaining .claim-remaining-grid {
+    grid-template-rows: auto auto !important;
+    gap: .7rem 1rem !important;
+  }
+  #scoreModal.showing-remaining .claim-remaining-player {
+    min-height: auto !important;
+  }
+  #scoreModal.showing-remaining .winner-tag {
+    font-size: .58rem;
+    padding: .04rem .32rem;
+  }
 }
 .player-slot.is-hand-winner {
   box-shadow: 0 0 0 3px #ffd54f, 0 0 22px rgba(255, 213, 79, 0.55);

@@ -7,7 +7,7 @@
 // It's exchanged during the join handshake so a stale host or joiner (e.g.
 // one still running old cached JS) gets caught and auto-updated instead of
 // silently failing or behaving unpredictably against a mismatched peer.
-const APP_VERSION = '340';
+const APP_VERSION = '341';
 
 function horThisIndex() {
   try {
@@ -8212,8 +8212,8 @@ function showClaimRemainingHands(summary) {
       ? h.cards.map(c => remainingHandCardHTML(c)).join('')
       : '<span class="claim-remaining-none">No cards left</span>';
     return '<div class="' + cls + '">'
-      + '<div class="claim-remaining-player-title"><b>'
-      + escapeHtmlSafe(h.name) + '</b>' + tag + '<span>' + teamName + '</span></div>'
+      + '<div class="claim-remaining-player-title"><span class="cr-name"><b>'
+      + escapeHtmlSafe(h.name) + '</b>' + tag + '</span><span class="cr-team">' + teamName + '</span></div>'
       + '<div class="claim-remaining-cards">' + cards + '</div></div>';
   }).join('');
   const claimerHand = hands.find(h => h.laidDown)
@@ -10720,9 +10720,8 @@ function enterLandscapeFullscreen() {
     }
   } catch (e) {}
   try {
-    if (screen.orientation && typeof screen.orientation.lock === 'function') {
-      const p = screen.orientation.lock('landscape');
-      if (p && typeof p.catch === 'function') p.catch(() => {});
+    if (screen.orientation && typeof screen.orientation.unlock === 'function') {
+      screen.orientation.unlock();
     }
   } catch (e) {}
 }
