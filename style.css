@@ -18,6 +18,10 @@
   --wood: #5c3a1e;
   --wood-light: #8b5a2b;
   --cream: #f7f1e3;
+  --room-felt: #0d5c2e;
+  --room-felt-hi: #128a42;
+  --room-rail: #c9a227;
+  --room-bg-top: #2a1c10;
 }
 
 /* Pre-bidding intro tip */
@@ -7648,17 +7652,49 @@ body.cardback-midnight {
   text-transform: none;
 }
 #lobby .lobby-quiet { display: none; }
+#lobby .lobby-card {
+  background:
+    linear-gradient(180deg, color-mix(in srgb, var(--room-felt-hi, var(--room-felt)) 28%, #120e0a) 0%, rgba(10,8,6,.94) 100%);
+  border: 1px solid color-mix(in srgb, var(--room-rail) 45%, transparent);
+  box-shadow: 0 10px 28px rgba(0,0,0,.35);
+}
 #lobby .rules-link {
   flex: 0 0 auto;
-  display: flex;
-  flex-wrap: wrap;
-  justify-content: center;
-  gap: 0.2rem 0.45rem;
-  margin-top: 0.45rem;
-  padding: 0.15rem 0 0.1rem;
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 0.4rem;
+  margin-top: 0.55rem;
+  padding: 0.1rem 0 0.15rem;
   position: relative;
   z-index: 2;
   background: transparent;
+}
+#lobby .rules-link .btn {
+  flex: none;
+  width: 100%;
+  min-height: 46px;
+  margin: 0;
+  padding: 0.4rem 0.35rem;
+  font-size: 0.72rem;
+  font-weight: 700;
+  line-height: 1.15;
+  text-decoration: none;
+  text-align: center;
+  white-space: normal;
+  border-radius: 14px;
+  border: 1px solid color-mix(in srgb, var(--room-rail) 70%, #fff 10%);
+  background:
+    linear-gradient(180deg,
+      color-mix(in srgb, var(--room-felt-hi) 35%, #2a1c10) 0%,
+      color-mix(in srgb, var(--room-felt) 55%, #0c0906) 100%);
+  color: #f6edd6;
+  box-shadow: inset 0 1px 0 rgba(255,255,255,.12);
+}
+#lobby .rules-link .version-tag {
+  grid-column: 1 / -1;
+  justify-self: end;
+  margin: 0;
+  padding-right: 0.15rem;
 }
 #lobby .legal-footer {
   flex: 0 0 auto;
@@ -7743,11 +7779,10 @@ body.cardback-midnight {
   }
   #lobby.screen:not(.hidden) .rules-link {
     position: static;
-    display: flex;
-    flex-wrap: wrap;
-    gap: 0.15rem 0.4rem;
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 0.35rem;
     max-width: none;
-    justify-content: center;
     margin-top: 0.4rem;
   }
   #lobby.screen:not(.hidden) .legal-footer {
@@ -8160,6 +8195,21 @@ body.room-theme-midnight .waiting-felt {
   background: radial-gradient(120% 80% at 50% 40%, rgba(50,80,140,.55), rgba(10,16,32,.96) 70%) !important;
   border-color: rgba(190,210,240,.45) !important;
 }
+body.room-theme-midnight { --room-felt:#16325f; --room-felt-hi:#2a4a86; --room-rail:#d7e3f0; --room-bg-top:#1a2744; }
+body.room-theme-house { --room-felt:#0d5c2e; --room-felt-hi:#128a42; --room-rail:#c9a227; --room-bg-top:#1a2a14; }
+body.room-theme-riverboat { --room-felt:#8b1e1e; --room-felt-hi:#c0392b; --room-rail:#e6c35c; --room-bg-top:#5a1d24; }
+body.room-theme-cabin { --room-felt:#2f4a24; --room-felt-hi:#4f7a3a; --room-rail:#c4a574; --room-bg-top:#3d4a28; }
+body.room-theme-speakeasy { --room-felt:#141414; --room-felt-hi:#2a2a2a; --room-rail:#e0b85a; --room-bg-top:#5a3a14; }
+body.room-theme-slate { --room-felt:#3a4552; --room-felt-hi:#5b6774; --room-rail:#d5dbe2; --room-bg-top:#3a424c; }
+body.room-theme-burgundy { --room-felt:#5c1c2e; --room-felt-hi:#8b2f45; --room-rail:#e0a070; --room-bg-top:#4a1c28; }
+body.room-theme-ember { --room-felt:#221c18; --room-felt-hi:#3a322c; --room-rail:#e08948; --room-bg-top:#4a2a18; }
+body.room-theme-harbor { --room-felt:#185552; --room-felt-hi:#2a7a78; --room-rail:#d4b46a; --room-bg-top:#1a3a40; }
+body.room-theme-sandbar { --room-felt:#8a6a3e; --room-felt-hi:#c4a06a; --room-rail:#f0e4c8; --room-bg-top:#5a4630; }
+body.room-theme-ivy { --room-felt:#1c4428; --room-felt-hi:#2f6b3c; --room-rail:#d4b45a; --room-bg-top:#244028; }
+body.room-theme-frost { --room-felt:#3a546c; --room-felt-hi:#6a8aaa; --room-rail:#e8f0f6; --room-bg-top:#2a3a48; }
+body.room-theme-cocoa { --room-felt:#422616; --room-felt-hi:#6b3e28; --room-rail:#c9a06a; --room-bg-top:#3a2418; }
+body.room-theme-plum { --room-felt:#422246; --room-felt-hi:#6a3a6e; --room-rail:#e6d08a; --room-bg-top:#3a2040; }
+body.room-theme-ink { --room-felt:#141c34; --room-felt-hi:#243056; --room-rail:#b8c2cc; --room-bg-top:#1a2438; }
 
 body.room-theme-riverboat,
 body.room-theme-riverboat #lobby,

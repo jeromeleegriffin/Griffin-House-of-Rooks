@@ -14,7 +14,7 @@
   <link rel="manifest" href="manifest.json">
   <link rel="icon" href="icon-192.png">
   <link rel="apple-touch-icon" href="apple-touch-icon.png">
-  <link rel="stylesheet" href="style.css?v=200">
+  <link rel="stylesheet" href="style.css?v=201">
   <script src="vendor/peerjs.min.js"></script>
   <style>
     /* Emergency layout if style.css fails to load — joiners still see a usable page */
@@ -150,7 +150,7 @@
         <button id="newPlayersLobbyBtn" class="btn link" type="button">New players</button>
         <button id="btnCardBackLobby" class="btn link" type="button">Card backs</button>
         <button id="toggleMuteLobby" class="btn link" type="button">🔊 Sound on</button>
-        <button id="btnForceRefreshLobby" class="btn link" type="button" title="Clear this app's cached files and reload the latest version">Trouble joining? Force refresh</button>
+        <button id="btnForceRefreshLobby" class="btn link" type="button" title="Clear this app's cached files and reload the latest version">Force refresh</button>
         <span id="appVersionTag" class="version-tag"></span>
       </div>
       <p class="legal-footer">House of Rooks by Jerome Griffin. Independent trick-taking table. Not affiliated with Hasbro.<br>
@@ -1060,10 +1060,10 @@
       paintInstall();
     })();
   </script>
-  <script src="rules.js?v=200"></script>
-  <script src="bots.js?v=200"></script>
-  <script src="game.js?v=200"></script>
-  <script src="polish.js?v=200"></script>
+  <script src="rules.js?v=201"></script>
+  <script src="bots.js?v=201"></script>
+  <script src="game.js?v=201"></script>
+  <script src="polish.js?v=201"></script>
   <div id="horBootError"></div>
   <script>
     window.addEventListener('error', function (ev) {
@@ -1077,7 +1077,7 @@
   </script>
   <script>
     if ('serviceWorker' in navigator) {
-      navigator.serviceWorker.register('sw.js?v=200', { updateViaCache: 'none' }).catch(() => {});
+      navigator.serviceWorker.register('sw.js?v=201', { updateViaCache: 'none' }).catch(() => {});
       let horSwAutoReloaded = false;
       navigator.serviceWorker.addEventListener('controllerchange', () => {
         if (window.__horUpdating || horSwAutoReloaded) return;
