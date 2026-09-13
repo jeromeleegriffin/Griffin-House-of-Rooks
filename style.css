@@ -8279,11 +8279,28 @@ body.reduce-motion .nest-beat { animation:none !important; transition:none !impo
 }
 @media (orientation: landscape) {
   #scoreModal.showing-remaining .modal-content.scoreboard-modal {
-    overflow: auto !important;
+    overflow: hidden !important;
+  }
+  #scoreModal.showing-remaining #scoreModalTitle,
+  #scoreModal.showing-remaining h2 {
+    display: none !important;
+  }
+  #scoreModal.showing-remaining .claim-remaining-title {
+    font-size: .8rem !important;
+    margin: 0 0 .15rem !important;
+    line-height: 1.2 !important;
+  }
+  #scoreModal.showing-remaining .claim-remaining-meta {
+    margin: 0 0 .3rem !important;
+    font-size: .82rem !important;
+  }
+  #scoreModal.showing-remaining .claim-remaining-hands {
+    padding: .2rem .35rem .15rem !important;
   }
   #scoreModal.showing-remaining .claim-remaining-grid {
     grid-template-rows: auto auto !important;
-    gap: .7rem 1rem !important;
+    gap: .45rem .7rem !important;
+    overflow: visible !important;
   }
   #scoreModal.showing-remaining .claim-remaining-player {
     min-height: auto !important;
@@ -8291,6 +8308,10 @@ body.reduce-motion .nest-beat { animation:none !important; transition:none !impo
   #scoreModal.showing-remaining .winner-tag {
     font-size: .58rem;
     padding: .04rem .32rem;
+  }
+  #scoreModal.showing-remaining .score-modal-actions {
+    margin-top: .2rem !important;
+    padding-top: .2rem !important;
   }
 }
 .player-slot.is-hand-winner {

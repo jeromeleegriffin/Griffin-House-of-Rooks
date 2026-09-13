@@ -7,7 +7,7 @@
 // It's exchanged during the join handshake so a stale host or joiner (e.g.
 // one still running old cached JS) gets caught and auto-updated instead of
 // silently failing or behaving unpredictably against a mismatched peer.
-const APP_VERSION = '341';
+const APP_VERSION = '342';
 
 function horThisIndex() {
   try {
@@ -8228,7 +8228,7 @@ function showClaimRemainingHands(summary) {
   const whoLine = claimerName
     ? ('<b>' + escapeHtmlSafe(claimerName) + '</b> laid down · Trump <b>' + escapeHtmlSafe(String(trumpName)) + '</b>')
     : ('Trump <b>' + escapeHtmlSafe(String(trumpName)) + '</b>');
-  section.innerHTML = '<div class="claim-remaining-title">Cards left when the winning cards were laid down</div>'
+  section.innerHTML = '<div class="claim-remaining-title">Cards left at lay-down</div>'
     + '<div class="claim-remaining-meta">' + whoLine + '</div>'
     + '<div class="claim-remaining-grid">' + cardsHtml + '</div>';
   body.innerHTML = '';
