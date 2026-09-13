@@ -3,7 +3,7 @@
   "short_name": "House of Rooks",
   "description": "Four-player partnership trick-taking by Jerome Griffin. Host a table from your phone.",
   "id": "./",
-  "start_url": "./index.html?v=325",
+  "start_url": "./index.html?v=326",
   "scope": "./",
   "display": "standalone",
   "background_color": "#0e1610",

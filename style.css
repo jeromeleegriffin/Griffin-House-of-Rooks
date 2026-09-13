@@ -3,10 +3,10 @@
  * Copyright (c) 2026 Jerome Griffin / Griffin House
  */
 :root {
-  --green: #1b7a3d;
-  --red: #c41e3a;
-  --yellow: #d4a017;
-  --black: #1a1a1a;
+  --green: #00c853;
+  --red: #ff1744;
+  --yellow: #ffd600;
+  --black: #111111;
   --bg: #1a120b;
   --card-bg: #2a1f14;
   --accent: #3d2914;
@@ -837,32 +837,44 @@ input:focus {
 
 /* Color identity */
 .card-face.green {
-  border-color: #1b7a3d;
-  color: #157a38;
+  border-color: #00c853;
+  color: #00b34a;
 }
+.card-face.green .c-num,
+.card-face.green .c-color,
+.card-face.green .c-center { color: #00b34a; }
 .card-face.green .c-bar {
-  background: linear-gradient(90deg, #0d5c2e, #2e9d56, #0d5c2e);
+  background: linear-gradient(90deg, #009624, #69f0ae, #00e676, #009624);
 }
 .card-face.red {
-  border-color: #c41e3a;
-  color: #c41e3a;
+  border-color: #ff1744;
+  color: #ff1744;
 }
+.card-face.red .c-num,
+.card-face.red .c-color,
+.card-face.red .c-center { color: #ff1744; }
 .card-face.red .c-bar {
-  background: linear-gradient(90deg, #8b1028, #e53955, #8b1028);
+  background: linear-gradient(90deg, #d50000, #ff5252, #ff1744, #d50000);
 }
 .card-face.yellow {
-  border-color: #c9a227;
-  color: #9a7b12;
+  border-color: #ffd600;
+  color: #e6b800;
 }
+.card-face.yellow .c-num,
+.card-face.yellow .c-color,
+.card-face.yellow .c-center { color: #e6b800; }
 .card-face.yellow .c-bar {
-  background: linear-gradient(90deg, #8a6d0f, #e0bc3a, #8a6d0f);
+  background: linear-gradient(90deg, #ffab00, #ffff00, #ffd600, #ffab00);
 }
 .card-face.black {
-  border-color: #2c2c2c;
-  color: #1a1a1a;
+  border-color: #111;
+  color: #111;
 }
+.card-face.black .c-num,
+.card-face.black .c-color,
+.card-face.black .c-center { color: #111; }
 .card-face.black .c-bar {
-  background: linear-gradient(90deg, #111, #555, #111);
+  background: linear-gradient(90deg, #000, #424242, #111, #000);
 }
 
 /* Rook specialty card — full-bleed photo, no text label */
