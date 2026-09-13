@@ -13,7 +13,7 @@
   <title>House of Rooks</title>
   <script>
     (function () {
-      var BUILD = '330';
+      var BUILD = '335';
       try {
         var params = new URLSearchParams(location.search);
         var seen = localStorage.getItem('horBuild') || '';
@@ -36,7 +36,7 @@
   <link rel="manifest" href="manifest.json">
   <link rel="icon" href="icon-192.png">
   <link rel="apple-touch-icon" href="apple-touch-icon.png">
-  <link rel="stylesheet" href="style.css?v=330">
+  <link rel="stylesheet" href="style.css?v=335">
   <script src="vendor/peerjs.min.js"></script>
   <style>
     /* Emergency layout if style.css fails to load — joiners still see a usable page */
@@ -869,6 +869,7 @@
         <div id="scoreModalBody" class="rules-text"></div>
         <div class="score-modal-actions">
           <button id="scoreModalRevealHands" class="btn hidden" type="button">Show remaining cards</button>
+          <button id="scoreModalLast3" class="btn hidden" type="button">Last 3</button>
           <button id="scoreModalHistory" class="btn" type="button">Full history</button>
           <button id="scoreModalCopy" class="btn" type="button">Copy night’s scores</button>
           <button id="scoreModalNext" class="btn primary" type="button">Next Hand</button>
@@ -1116,10 +1117,10 @@
       paintInstall();
     })();
   </script>
-  <script src="rules.js?v=330"></script>
-  <script src="bots.js?v=330"></script>
-  <script src="game.js?v=330"></script>
-  <script src="polish.js?v=330"></script>
+  <script src="rules.js?v=335"></script>
+  <script src="bots.js?v=335"></script>
+  <script src="game.js?v=335"></script>
+  <script src="polish.js?v=335"></script>
   <div id="horBootError"></div>
   <script>
     window.addEventListener('error', function (ev) {
@@ -1133,7 +1134,7 @@
   </script>
   <script>
     if ('serviceWorker' in navigator) {
-      navigator.serviceWorker.register('sw.js?v=330', { updateViaCache: 'none' })
+      navigator.serviceWorker.register('sw.js?v=335', { updateViaCache: 'none' })
         .then(function (reg) { try { reg.update(); } catch (e) {} })
         .catch(() => {});
       let horSwAutoReloaded = false;

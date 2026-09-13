@@ -7,7 +7,7 @@
 // It's exchanged during the join handshake so a stale host or joiner (e.g.
 // one still running old cached JS) gets caught and auto-updated instead of
 // silently failing or behaving unpredictably against a mismatched peer.
-const APP_VERSION = '330';
+const APP_VERSION = '335';
 
 function horThisIndex() {
   try {
@@ -7279,19 +7279,32 @@ function remainingCardsInHands() {
  * answer with a card that beats it. This is intentionally stricter than
  * merely proving the player can eventually take every remaining trick.
  */
+function handHasFollowColor(hand, color, trump) {
+  if (!hand || !color) return false;
+  return hand.some(c => {
+    if (typeof followsLedSuit === 'function') return followsLedSuit(c, color, trump);
+    return c && c.color === color;
+  });
+}
+
 function cardIsDefiniteWinner(card, seat) {
   if (!game || !game.hands || !card) return false;
   const trump = game.trump;
-  const ledColor = isTrumpCard(card, trump) ? trump : card.color;
+  const ledColor = isTrumpCard(card, trump) ? (trump || card.color) : card.color;
   if (!ledColor) return false;
-  const playFn = (typeof canPlay === 'function') ? canPlay : null;
 
   for (let i = 0; i < 4; i++) {
     if (i === seat) continue;
     const oppHand = game.hands[i] || [];
+    const mustFollow = handHasFollowColor(oppHand, ledColor, trump);
     for (const opp of oppHand) {
-      if (playFn && !playFn(opp, oppHand, ledColor, trump)) continue;
-      if (compareCards(opp, card, ledColor, trump) > 0) return false;
+      if (!opp) continue;
+      if (isTrumpCard(card, trump)) {
+        if (isTrumpCard(opp, trump) && compareCards(opp, card, trump, trump) > 0) return false;
+        continue;
+      }
+      if (opp.color === card.color && compareCards(opp, card, card.color, trump) > 0) return false;
+      if (!mustFollow && isTrumpCard(opp, trump)) return false;
     }
   }
   return true;
@@ -7302,49 +7315,17 @@ function allRemainingCardsAreDefiniteWinners(seat) {
   return hand.length > 0 && hand.every(c => cardIsDefiniteWinner(c, seat));
 }
 
-/** Seat can cash every remaining trick (known winners / all remaining trumps). */
+/** Only lay down when every leftover card is a stone-cold winner. */
 function playerCanForceRest(seat) {
   if (!game || !game.hands) return false;
   const my = game.hands[seat] || [];
   if (!my.length) return false;
-  if (allRemainingCardsAreDefiniteWinners(seat)) return true;
-
-  const trump = game.trump;
-  let opp = [];
+  let opp = 0;
   for (let i = 0; i < 4; i++) {
-    if (i !== seat) opp = opp.concat(game.hands[i] || []);
+    if (i !== seat) opp += (game.hands[i] || []).length;
   }
-  if (!opp.length) return true;
-
-  const oppTrumps = opp.filter(c => isTrumpCard(c, trump));
-  const myTrumps = my.filter(c => isTrumpCard(c, trump));
-  // All remaining trumps in this hand: cash trumps, then any leftover
-  // off-suit card must also be a known winner.
-  if (oppTrumps.length === 0 && myTrumps.length > 0) {
-    return true;
-  }
-  if (oppTrumps.length > 0) return false;
-
-  const byColor = {};
-  for (const c of my.concat(opp)) {
-    const col = isTrumpCard(c, trump) ? (trump || '_trump') : c.color;
-    (byColor[col] = byColor[col] || []).push({ c, mine: my.some(m => m.id === c.id) });
-  }
-  for (const col of Object.keys(byColor)) {
-    const list = byColor[col];
-    if (!list.some(x => !x.mine)) continue;
-    let bestMine = null;
-    let bestOpp = null;
-    for (const { c, mine } of list) {
-      if (mine) {
-        if (!bestMine || compareCards(c, bestMine, col, trump) > 0) bestMine = c;
-      } else if (!bestOpp || compareCards(c, bestOpp, col, trump) > 0) {
-        bestOpp = c;
-      }
-    }
-    if (!bestMine || (bestOpp && compareCards(bestOpp, bestMine, col, trump) > 0)) return false;
-  }
-  return true;
+  if (!opp) return true;
+  return allRemainingCardsAreDefiniteWinners(seat);
 }
 
 /**
@@ -7623,32 +7604,23 @@ function hostPromptPlay() {
   const claimInfo = getRestClaimInfo();
   game.trumpClaimPlayer = claimInfo ? claimInfo.seat : null;
   // Bot auto-claim only when it is that bot's turn (never block the human)
-  if (claimInfo && game.currentPlayer === claimInfo.seat) {
-    const seat = claimInfo.seat;
-    const botSeat = !!(players[seat] && players[seat].isBot);
-    if (botSeat || seat === myIndex) {
-      hideActionPanel();
-      setTimeout(() => {
-        if (!game || game.phase !== 'play' || game.claimAnimating) return;
-        const again = getRestClaimInfo();
-        if (!again || again.seat !== seat || game.currentPlayer !== seat) return;
-        if (isHost) hostProcessAllTrumpsClaim({ player: seat });
-        else if (hostConnection && hostConnection.open) hostConnection.send({ type: 'claimAllTrumps', player: seat });
-      }, botSeat ? 450 : 700);
-      return;
-    }
+  if (claimInfo
+      && players[claimInfo.seat]
+      && players[claimInfo.seat].isBot
+      && game.currentPlayer === claimInfo.seat) {
+    hideActionPanel();
+    setTimeout(() => {
+      if (!game || game.phase !== 'play' || game.claimAnimating) return;
+      const again = getRestClaimInfo();
+      if (again && again.seat === claimInfo.seat && game.currentPlayer === claimInfo.seat) {
+        hostProcessAllTrumpsClaim({ player: claimInfo.seat });
+      }
+    }, 450);
+    return;
   }
   // Pre-selecting a card ahead of your turn has been removed (it caused a
   // render-thrashing freeze when rapidly re-tapped) — plays only submit
   // when it's actually the player's turn now, so nothing to check here.
-
-  // Lay-down popup only when it is YOUR turn to play
-  if (game.trumpClaimPlayer === myIndex && game.currentPlayer === myIndex) {
-    showAllTrumpsClaimUI();
-  } else {
-    const panel = $('actionPanel');
-    if (panel && panel.classList.contains('trump-claim-panel')) hideActionPanel();
-  }
 
   const p = players[game.currentPlayer];
   const name = (p && p.name) || 'Player';
@@ -7662,6 +7634,7 @@ function hostPromptPlay() {
     renderHand();
     try { renderUI(); } catch (e) {}
     try { maybeRemindTurn(); } catch (e) {}
+    if (game.trumpClaimPlayer === myIndex) showAllTrumpsClaimUI();
   } else {
     lastTurnIndex = game.currentPlayer;
     // Don't hide claim panel if we just showed it for the holder
@@ -8129,6 +8102,13 @@ function hostEndHand() {
       cards: (h.cards || []).map(c => ({ ...c }))
     })) : null,
     claimer: (typeof game.trumpClaimPlayer === 'number') ? game.trumpClaimPlayer : null,
+    claimReason: (game.claimAnimation && game.claimAnimation.reason) || null,
+    lastTricks: (typeof recentTricks !== 'undefined' && recentTricks)
+      ? recentTricks.slice(0, 3).map(tr => ({
+          winner: tr.winner,
+          plays: (tr.plays || []).map(t => ({ player: t.player, card: t.card ? { ...t.card } : t.card }))
+        }))
+      : [],
   };
   handHistory.push(summary);
   matchStats.hands = (matchStats.hands || 0) + 1;
@@ -8205,7 +8185,16 @@ function showClaimRemainingHands(summary) {
       + escapeHtmlSafe(h.name) + '</b>' + tag + '<span>' + teamName + '</span></div>'
       + '<div class="claim-remaining-cards">' + cards + '</div></div>';
   }).join('');
+  const claimerHand = hands.find(h => typeof summary.claimer === 'number' && h.player === summary.claimer);
+  const claimerName = (claimerHand && claimerHand.name)
+    || (players[summary.claimer] && players[summary.claimer].name)
+    || 'A player';
+  const trumpName = (typeof COLOR_NAMES !== 'undefined' && COLOR_NAMES[summary.trump])
+    ? COLOR_NAMES[summary.trump]
+    : (summary.trump || '—');
   section.innerHTML = '<div class="claim-remaining-title">Cards left when the winning cards were laid down</div>'
+    + '<div class="claim-remaining-meta"><b>' + escapeHtmlSafe(claimerName)
+    + '</b> laid down · Trump <b>' + escapeHtmlSafe(String(trumpName)) + '</b></div>'
     + '<div class="claim-remaining-grid">' + cardsHtml + '</div>';
   body.innerHTML = '';
   body.appendChild(section);
@@ -8236,6 +8225,7 @@ function wireScoreModalActions(summary) {
   const goal = game?.targetScore || targetScore || 300;
   const gameOver = summary.scores[0] >= goal || summary.scores[1] >= goal;
   const revealBtn = $('scoreModalRevealHands');
+  const last3Btn = $('scoreModalLast3');
   const histBtn = $('scoreModalHistory');
   const nextBtn = $('scoreModalNext');
 
@@ -8243,7 +8233,7 @@ function wireScoreModalActions(summary) {
     const hasReveal = Array.isArray(summary.claimRevealHands) && summary.claimRevealHands.some(h => Array.isArray(h.cards));
     revealBtn.classList.toggle('hidden', !hasReveal);
     const showing = modal.classList.contains('showing-remaining');
-    revealBtn.textContent = showing ? 'Back to scoreboard' : 'Show remaining cards';
+    revealBtn.textContent = showing ? 'Scoreboard' : 'Show remaining';
     revealBtn.onclick = () => {
       if (modal.classList.contains('showing-remaining')) {
         modal.classList.remove('showing-remaining');
@@ -8256,13 +8246,24 @@ function wireScoreModalActions(summary) {
       showClaimRemainingHands(summary);
       const title = $('scoreModalTitle');
       if (title) title.textContent = 'Remaining Cards';
-      revealBtn.textContent = 'Back to scoreboard';
+      revealBtn.textContent = 'Scoreboard';
+      if (last3Btn) last3Btn.classList.remove('hidden');
       if (histBtn) histBtn.classList.remove('hidden');
       if (nextBtn) {
         nextBtn.classList.remove('hidden');
         nextBtn.textContent = gameOver ? 'OK' : (isHost ? 'Next Hand' : 'OK');
       }
       try { updateLandscapeTheater(); } catch (e) {}
+    };
+  }
+
+  if (last3Btn) {
+    const showing = modal.classList.contains('showing-remaining');
+    const hasTricks = Array.isArray(summary.lastTricks) && summary.lastTricks.length;
+    last3Btn.classList.toggle('hidden', !(showing && hasTricks));
+    last3Btn.onclick = () => {
+      if (hasTricks) window._scoreLastTricks = summary.lastTricks;
+      try { openPortraitLast3(); } catch (e) {}
     };
   }
 
@@ -11579,6 +11580,12 @@ function updateLandscapeTheater() {
         endEl.innerHTML = `
           <div class="lt-endgame-banner lt-remaining-banner">
             <div class="lt-endgame-title">Remaining Cards</div>
+            <div class="lt-remaining-meta">${(() => {
+              const ch = revealHands.find(h => typeof endSummary.claimer === 'number' && h.player === endSummary.claimer);
+              const nm = (ch && ch.name) || (players[endSummary.claimer] && players[endSummary.claimer].name) || 'A player';
+              const tp = (typeof COLOR_NAMES !== 'undefined' && COLOR_NAMES[endSummary.trump]) ? COLOR_NAMES[endSummary.trump] : (endSummary.trump || '—');
+              return `<b>${escapeHtmlSafe(nm)}</b> laid down · Trump <b>${escapeHtmlSafe(String(tp))}</b>`;
+            })()}</div>
             <div class="lt-remaining-grid">
               ${revealHands.map(h => {
                 const laid = isLaidDownWinnerSeat(h, endSummary);
@@ -11595,7 +11602,8 @@ function updateLandscapeTheater() {
               }).join('')}
             </div>
             <div class="lt-endgame-actions">
-              <button type="button" id="ltScoreBack" class="btn">Back to scoreboard</button>
+              <button type="button" id="ltScoreBack" class="btn">Scoreboard</button>
+              <button type="button" id="ltScoreLast3" class="btn">Last 3</button>
               ${isGameOver ? '' : `<button type="button" id="ltScoreNext" class="btn primary">Next Hand</button>`}
             </div>
           </div>`;
@@ -11644,6 +11652,13 @@ function updateLandscapeTheater() {
             const title = $('scoreModalTitle');
             if (title) title.textContent = 'Remaining Cards';
           }
+        };
+      }
+      const last3Lt = $('ltScoreLast3');
+      if (last3Lt) {
+        last3Lt.onclick = () => {
+          if (endSummary && Array.isArray(endSummary.lastTricks)) window._scoreLastTricks = endSummary.lastTricks;
+          try { openPortraitLast3(); } catch (e) {}
         };
       }
       const back = $('ltScoreBack');
@@ -12025,7 +12040,9 @@ function closePortraitLast3() {
 function renderPortraitLast3() {
   const body = $('portraitLast3Body');
   if (!body) return;
-  const list = ((typeof recentTricks !== 'undefined' && recentTricks) ? recentTricks : []).slice(0, 3);
+  const list = (window._scoreLastTricks && window._scoreLastTricks.length)
+    ? window._scoreLastTricks.slice(0, 3)
+    : ((typeof recentTricks !== 'undefined' && recentTricks) ? recentTricks : []).slice(0, 3);
   const plist = (game && game.players) || players || [];
   const nameOf = (idx) => {
     if (plist[idx] && plist[idx].name) return plist[idx].name;
