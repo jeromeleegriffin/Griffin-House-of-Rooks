@@ -1965,6 +1965,9 @@
       card.appendChild(wrap);
     }
     let img = wrap.querySelector('img') || document.getElementById('lobbyHeroImg');
+    const already = (img && img.getAttribute('src')) || '';
+    const file = already.split('?')[0].split('/').pop();
+    if (arts.indexOf(file) !== -1) return;
     const src = pick();
     wrap.style.backgroundImage = 'url("' + src + '")';
     if (img) img.src = src;

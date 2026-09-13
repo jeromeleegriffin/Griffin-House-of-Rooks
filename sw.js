@@ -2,7 +2,7 @@
  * Author: Jerome Griffin
  * Copyright (c) 2026 Jerome Griffin / Griffin House
  */
-const CACHE = 'house-of-rooks-v202-navy';
+const CACHE = 'house-of-rooks-v202-hero1';
 const SHELL = [
   './',
   './index.html',
@@ -66,16 +66,15 @@ self.addEventListener('activate', (e) => {
 });
 function cacheLookup(request) {
   const url = new URL(request.url);
-  const bare = url.origin + url.pathname;
-  return caches.match(request).then((hit) => {
-    if (hit) return hit;
-    return caches.match(bare);
-  }).then((hit) => {
-    if (hit) return hit;
-    const leaf = url.pathname.split('/').pop();
-    if (!leaf) return caches.match('./index.html');
-    return caches.match('./' + leaf);
-  });
+  const leaf = url.pathname.split('/').pop();
+  if (leaf === 'lobby-hero-2.jpg') return Promise.resolve(undefined);
+  return caches.open(CACHE).then((c) =>
+    c.match(request).then((hit) => {
+      if (hit) return hit;
+      if (!leaf) return c.match('./index.html');
+      return c.match('./' + leaf);
+    })
+  );
 }
 
 self.addEventListener('fetch', (e) => {

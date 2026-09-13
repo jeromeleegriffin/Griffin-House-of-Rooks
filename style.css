@@ -7667,7 +7667,7 @@ body.cardback-aftermath {
   overflow: hidden;
   position: relative;
   background-color: #0a0c12;
-  background-image: url('lobby-hero.jpg');
+  background-image: none;
   background-position: center center;
   background-size: contain;
   background-repeat: no-repeat;
