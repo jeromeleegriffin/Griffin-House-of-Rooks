@@ -1027,9 +1027,14 @@ const CARD_BACKS = [
   { id: 'classic', name: 'White Bird', hint: 'Default' },
   { id: 'raven', name: 'Black Raven', hint: 'Midnight bird' },
   { id: 'griffin', name: 'Griffin Crest', hint: 'House seal' },
-  { id: 'felt', name: 'Forest Felt', hint: 'Green & gold' },
-  { id: 'crimson', name: 'Crimson Court', hint: 'Red & gold' },
-  { id: 'midnight', name: 'Night Court', hint: 'Navy filigree' },
+  { id: 'felt', name: 'Nest Watch', hint: 'Cards in the nest' },
+  { id: 'crimson', name: 'Crimson Raven', hint: 'Red mantle' },
+  { id: 'midnight', name: 'Griffin Stare', hint: 'Seal vs bird' },
+  { id: 'faceoff', name: 'Face Off', hint: 'Black vs red' },
+  { id: 'clash', name: 'Beak War', hint: 'Mid-fight' },
+  { id: 'aerial', name: 'Air Duel', hint: 'Wings up' },
+  { id: 'dive', name: 'Red Dive', hint: 'Stooping strike' },
+  { id: 'aftermath', name: 'After the Trick', hint: 'Feathers down' },
 ];
 const CARD_BACK_CLASSES = CARD_BACKS.map(b => 'cardback-' + b.id);
 let cardBackId = 'griffin';
@@ -11330,7 +11335,7 @@ function cardBackPickerHTML() {
     <button type="button" class="card-back-choice${b.id === cardBackId ? ' selected' : ''}"
       data-back="${b.id}" aria-pressed="${b.id === cardBackId ? 'true' : 'false'}"
       title="${b.name}">
-      <span class="card-back-swatch card-back cardback-preview-${b.id}" aria-hidden="true"></span>
+      <span class="card-back-swatch cardback-preview-${b.id}" aria-hidden="true"></span>
       <span class="card-back-name">${b.name}</span>
       <span class="card-back-hint">${b.hint}</span>
     </button>

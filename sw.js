@@ -2,7 +2,7 @@
  * Author: Jerome Griffin
  * Copyright (c) 2026 Jerome Griffin / Griffin House
  */
-const CACHE = 'house-of-rooks-v202';
+const CACHE = 'house-of-rooks-v202-backs';
 const SHELL = [
   './',
   './index.html',
@@ -34,10 +34,26 @@ const SHELL = [
   './icon-512.png',
   './kitty-wait.jpg',
   './lobby-hero.jpg',
-  './lobby-hero-2.jpg',
   './lobby-hero-3.jpg',
   './lobby-hero-4.jpg',
-  './lobby-hero-5.jpg'
+  './lobby-hero-5.jpg',
+  './lobby-hero-6.jpg',
+  './lobby-hero-7.jpg',
+  './lobby-hero-8.jpg',
+  './lobby-hero-9.jpg',
+  './lobby-hero-10.jpg',
+  './lobby-hero-11.jpg',
+  './cardback-classic.jpg',
+  './cardback-raven.jpg',
+  './cardback-griffin.jpg',
+  './cardback-felt.jpg',
+  './cardback-crimson.jpg',
+  './cardback-midnight.jpg',
+  './cardback-faceoff.jpg',
+  './cardback-clash.jpg',
+  './cardback-aerial.jpg',
+  './cardback-dive.jpg',
+  './cardback-aftermath.jpg'
 ];
 self.addEventListener('install', (e) => {
   e.waitUntil(caches.open(CACHE).then((c) => c.addAll(SHELL).catch(() => {})).then(() => self.skipWaiting()));

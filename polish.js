@@ -1929,10 +1929,15 @@
 (function horLobbyHero() {
   const arts = [
     'lobby-hero.jpg',
-    'lobby-hero-2.jpg',
     'lobby-hero-3.jpg',
     'lobby-hero-4.jpg',
-    'lobby-hero-5.jpg'
+    'lobby-hero-5.jpg',
+    'lobby-hero-6.jpg',
+    'lobby-hero-7.jpg',
+    'lobby-hero-8.jpg',
+    'lobby-hero-9.jpg',
+    'lobby-hero-10.jpg',
+    'lobby-hero-11.jpg'
   ];
   function pick() {
     let last = '';

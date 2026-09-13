@@ -6885,63 +6885,79 @@ body,
 body.cardback-classic {
   --card-back-bg: #0a0a0c;
   --card-back-border: #c9a227;
-  --card-back-pos: center 28%;
+  --card-back-pos: center center;
   --card-back-size: cover;
-  --card-back-image:
-    linear-gradient(180deg, rgba(10,10,12,0.12) 0%, rgba(10,10,12,0.42) 100%),
-    url('Rook.png');
+  --card-back-image: url('cardback-classic.jpg');
 }
 body.cardback-raven {
-  --card-back-bg: #d8d4cc;
-  --card-back-border: #3a2a18;
-  --card-back-pos: center 22%;
+  --card-back-bg: #0a0c12;
+  --card-back-border: #c9a227;
+  --card-back-pos: center center;
   --card-back-size: cover;
-  --card-back-image:
-    linear-gradient(180deg, rgba(20,16,12,0.08) 0%, rgba(20,16,12,0.28) 100%),
-    url('Rook.png');
+  --card-back-image: url('cardback-raven.jpg');
 }
 body.cardback-griffin {
   --card-back-bg: #0e2418;
   --card-back-border: #d4b24a;
-  --card-back-pos: center 42%;
+  --card-back-pos: center center;
   --card-back-size: cover;
-  --card-back-image:
-    radial-gradient(ellipse at 50% 42%, rgba(212,178,74,0.18) 0%, transparent 62%),
-    url('griffin-icon.png');
+  --card-back-image: url('cardback-griffin.jpg');
 }
 body.cardback-felt {
   --card-back-bg: #12331f;
   --card-back-border: #d4b24a;
-  --card-back-pos: center 30%;
-  --card-back-size: 70% auto;
-  --card-back-image:
-    linear-gradient(180deg, rgba(8,24,14,0.15) 0%, rgba(8,24,14,0.55) 100%),
-    radial-gradient(circle at 50% 50%, rgba(212,178,74,0.16) 0 28%, transparent 30%),
-    repeating-linear-gradient(45deg, rgba(212,178,74,0.09) 0 2px, transparent 2px 11px),
-    repeating-linear-gradient(-45deg, rgba(212,178,74,0.07) 0 2px, transparent 2px 11px),
-    url('Rook.png');
+  --card-back-pos: center center;
+  --card-back-size: cover;
+  --card-back-image: url('cardback-felt.jpg');
 }
 body.cardback-crimson {
   --card-back-bg: #4a0b12;
   --card-back-border: #e0bc3a;
-  --card-back-pos: center 28%;
-  --card-back-size: 78% auto;
-  --card-back-image:
-    linear-gradient(180deg, rgba(80,10,16,0.12) 0%, rgba(20,0,4,0.55) 100%),
-    radial-gradient(circle at 50% 50%, rgba(224,188,58,0.2) 0 26%, transparent 28%),
-    repeating-linear-gradient(90deg, rgba(224,188,58,0.08) 0 1px, transparent 1px 10px),
-    url('Rook.png');
+  --card-back-pos: center center;
+  --card-back-size: cover;
+  --card-back-image: url('cardback-crimson.jpg');
 }
 body.cardback-midnight {
   --card-back-bg: #12102a;
   --card-back-border: #c9a227;
-  --card-back-pos: center 26%;
-  --card-back-size: 72% auto;
-  --card-back-image:
-    radial-gradient(ellipse at 50% 0%, rgba(201,162,39,0.22) 0%, transparent 55%),
-    repeating-linear-gradient(30deg, rgba(180,160,255,0.08) 0 1px, transparent 1px 12px),
-    repeating-linear-gradient(-30deg, rgba(201,162,39,0.07) 0 1px, transparent 1px 12px),
-    url('Rook.png');
+  --card-back-pos: center center;
+  --card-back-size: cover;
+  --card-back-image: url('cardback-midnight.jpg');
+}
+body.cardback-faceoff {
+  --card-back-bg: #0a0c12;
+  --card-back-border: #d4b24a;
+  --card-back-pos: center center;
+  --card-back-size: cover;
+  --card-back-image: url('cardback-faceoff.jpg');
+}
+body.cardback-clash {
+  --card-back-bg: #0a0c12;
+  --card-back-border: #e0bc3a;
+  --card-back-pos: center center;
+  --card-back-size: cover;
+  --card-back-image: url('cardback-clash.jpg');
+}
+body.cardback-aerial {
+  --card-back-bg: #0a0c12;
+  --card-back-border: #c9a227;
+  --card-back-pos: center center;
+  --card-back-size: cover;
+  --card-back-image: url('cardback-aerial.jpg');
+}
+body.cardback-dive {
+  --card-back-bg: #0e2418;
+  --card-back-border: #d4b24a;
+  --card-back-pos: center center;
+  --card-back-size: cover;
+  --card-back-image: url('cardback-dive.jpg');
+}
+body.cardback-aftermath {
+  --card-back-bg: #0a0c12;
+  --card-back-border: #c9a227;
+  --card-back-pos: center center;
+  --card-back-size: cover;
+  --card-back-image: url('cardback-aftermath.jpg');
 }
 
 .card-back-picker {
@@ -6973,8 +6989,8 @@ body.cardback-midnight {
   background: rgba(201,162,39,0.12);
 }
 .card-back-swatch {
-  width: 46px;
-  height: 66px;
+  width: 52px;
+  height: 76px;
   border-radius: 6px;
   border: 2px solid var(--card-back-border, #c9a227);
   box-shadow: 0 3px 8px rgba(0,0,0,0.35);
@@ -6996,65 +7012,49 @@ body.cardback-midnight {
 .card-back-modal { max-width: min(420px, 94vw); }
 .card-back-modal h2 { margin-bottom: 0.25rem; }
 
-/* Picker tiles preview each design even when another back is selected */
+/* Picker tiles use their own art, never the active body card-back vars */
 .card-back-swatch.cardback-preview-classic {
-  background-color: #0a0a0c;
-  background-image:
-    linear-gradient(180deg, rgba(10,10,12,0.12) 0%, rgba(10,10,12,0.42) 100%),
-    url('Rook.png');
-  background-size: cover;
-  background-position: center 28%;
+  background: #0a0a0c url('cardback-classic.jpg') center / cover no-repeat;
   border-color: #c9a227;
 }
 .card-back-swatch.cardback-preview-raven {
-  background-color: #d8d4cc;
-  background-image:
-    linear-gradient(180deg, rgba(20,16,12,0.08) 0%, rgba(20,16,12,0.28) 100%),
-    url('Rook.png');
-  background-size: cover;
-  background-position: center 22%;
-  border-color: #3a2a18;
+  background: #0a0c12 url('cardback-raven.jpg') center / cover no-repeat;
+  border-color: #c9a227;
 }
 .card-back-swatch.cardback-preview-griffin {
-  background-color: #0e2418;
-  background-image:
-    radial-gradient(ellipse at 50% 42%, rgba(212,178,74,0.18) 0%, transparent 62%),
-    url('griffin-icon.png');
-  background-size: cover;
-  background-position: center 42%;
+  background: #0e2418 url('cardback-griffin.jpg') center / cover no-repeat;
   border-color: #d4b24a;
 }
 .card-back-swatch.cardback-preview-felt {
-  background-color: #12331f;
-  background-image:
-    linear-gradient(180deg, rgba(8,24,14,0.15) 0%, rgba(8,24,14,0.55) 100%),
-    radial-gradient(circle at 50% 50%, rgba(212,178,74,0.16) 0 28%, transparent 30%),
-    repeating-linear-gradient(45deg, rgba(212,178,74,0.09) 0 2px, transparent 2px 11px),
-    url('Rook.png');
-  background-size: cover, auto, auto, 70% auto;
-  background-position: center, center, center, center 30%;
+  background: #12331f url('cardback-felt.jpg') center / cover no-repeat;
   border-color: #d4b24a;
 }
 .card-back-swatch.cardback-preview-crimson {
-  background-color: #4a0b12;
-  background-image:
-    linear-gradient(180deg, rgba(80,10,16,0.12) 0%, rgba(20,0,4,0.55) 100%),
-    radial-gradient(circle at 50% 50%, rgba(224,188,58,0.2) 0 26%, transparent 28%),
-    repeating-linear-gradient(90deg, rgba(224,188,58,0.08) 0 1px, transparent 1px 10px),
-    url('Rook.png');
-  background-size: cover, auto, auto, 78% auto;
-  background-position: center, center, center, center 28%;
+  background: #4a0b12 url('cardback-crimson.jpg') center / cover no-repeat;
   border-color: #e0bc3a;
 }
 .card-back-swatch.cardback-preview-midnight {
-  background-color: #12102a;
-  background-image:
-    radial-gradient(ellipse at 50% 0%, rgba(201,162,39,0.22) 0%, transparent 55%),
-    repeating-linear-gradient(30deg, rgba(180,160,255,0.08) 0 1px, transparent 1px 12px),
-    repeating-linear-gradient(-30deg, rgba(201,162,39,0.07) 0 1px, transparent 1px 12px),
-    url('Rook.png');
-  background-size: cover, auto, auto, 72% auto;
-  background-position: center, center, center, center 26%;
+  background: #12102a url('cardback-midnight.jpg') center / cover no-repeat;
+  border-color: #c9a227;
+}
+.card-back-swatch.cardback-preview-faceoff {
+  background: #0a0c12 url('cardback-faceoff.jpg') center / cover no-repeat;
+  border-color: #d4b24a;
+}
+.card-back-swatch.cardback-preview-clash {
+  background: #0a0c12 url('cardback-clash.jpg') center / cover no-repeat;
+  border-color: #e0bc3a;
+}
+.card-back-swatch.cardback-preview-aerial {
+  background: #0a0c12 url('cardback-aerial.jpg') center / cover no-repeat;
+  border-color: #c9a227;
+}
+.card-back-swatch.cardback-preview-dive {
+  background: #0e2418 url('cardback-dive.jpg') center / cover no-repeat;
+  border-color: #d4b24a;
+}
+.card-back-swatch.cardback-preview-aftermath {
+  background: #0a0c12 url('cardback-aftermath.jpg') center / cover no-repeat;
   border-color: #c9a227;
 }
 
@@ -7667,8 +7667,8 @@ body.cardback-midnight {
   position: relative;
   background-color: #0a0c12;
   background-image: url('lobby-hero.jpg');
-  background-position: center 42%;
-  background-size: cover;
+  background-position: center center;
+  background-size: contain;
   background-repeat: no-repeat;
   border: 1px solid color-mix(in srgb, var(--room-rail) 55%, transparent);
   box-shadow:
@@ -7679,8 +7679,8 @@ body.cardback-midnight {
   width: 100%;
   height: 100%;
   min-height: 240px;
-  object-fit: cover;
-  object-position: center 42%;
+  object-fit: contain;
+  object-position: center center;
   display: block;
 }
 #lobby .join-form #joinConfirmBtn {
@@ -11188,4 +11188,79 @@ body.no-avatar-motion .wait-seat-av {
   color: #f3ead6;
   border: 1px solid #c9a227;
   box-shadow: 0 10px 30px rgba(0,0,0,.45);
+}
+
+/* Lobby sheets: navy glass + champagne gold, no muddy mustard */
+#cardBackModal,
+#newPlayersModal,
+#rulesModal {
+  background: rgba(6, 10, 20, 0.92);
+}
+#cardBackModal .modal-content,
+#newPlayersModal .modal-content,
+#rulesModal .modal-content,
+#rulesModal .rules-text {
+  background: linear-gradient(180deg, #1a2744 0%, #0c1222 55%, #070b16 100%);
+  border: 1px solid rgba(212, 175, 55, 0.55);
+  color: #f0e6d0;
+}
+#rulesModal .rules-text p,
+#rulesModal .rules-text {
+  color: #e8dcc4;
+}
+#cardBackModal .modal-content h2,
+#newPlayersModal .modal-content h2,
+#rulesModal .modal-content h2 {
+  color: #f3ead6;
+}
+#cardBackModal .btn.primary,
+#newPlayersModal .btn.primary,
+#rulesModal .btn.primary {
+  background: linear-gradient(180deg, #f3d58a 0%, #c9a227 55%, #b08a1c 100%);
+  color: #1a1408;
+  border: 1px solid #e8c96a;
+  text-decoration: none;
+  box-shadow: 0 1px 0 rgba(255,236,180,.35) inset;
+}
+#cardBackModal .btn:not(.primary):not(.link),
+#newPlayersModal .btn:not(.primary):not(.link),
+#rulesModal .btn:not(.primary):not(.link) {
+  background: linear-gradient(180deg, #1c2844 0%, #10182c 100%);
+  color: #f0e0a8;
+  border: 1px solid rgba(212,175,55,.65);
+  text-decoration: none;
+  box-shadow: 0 1px 0 rgba(255,255,255,.08) inset;
+}
+#cardBackModal .card-back-choice {
+  background: rgba(8, 14, 28, 0.65);
+  border: 1px solid rgba(212,175,55,.28);
+  color: #f0e6d0;
+}
+#cardBackModal .card-back-choice.selected {
+  border-color: #e8c96a;
+  background: rgba(201,162,39,.16);
+  box-shadow: 0 0 0 2px rgba(232,201,106,.28);
+}
+#newPlayersModal .new-player-row {
+  background: #10182c;
+  border: 1px solid rgba(212,175,55,.35);
+  color: #f0e6d0;
+}
+#newPlayersModal .new-player-row .btn,
+#newPlayersModal .btn {
+  white-space: normal;
+  line-height: 1.15;
+}
+body.gfx-brassUI #cardBackModal .btn.primary,
+body.gfx-brassUI #newPlayersModal .btn.primary,
+body.gfx-brassUI #rulesModal .btn.primary {
+  background: linear-gradient(180deg, #f3d58a 0%, #c9a227 55%, #b08a1c 100%);
+  color: #1a1408;
+}
+body.gfx-brassUI #cardBackModal .btn:not(.primary),
+body.gfx-brassUI #newPlayersModal .btn:not(.primary),
+body.gfx-brassUI #rulesModal .btn:not(.primary) {
+  background: linear-gradient(180deg, #1c2844 0%, #10182c 100%);
+  color: #f0e0a8;
+  border: 1px solid rgba(212,175,55,.65);
 }
