@@ -7845,7 +7845,7 @@ body.remaining-open #ltEndGame {
   height: 100%;
   min-height: 0;
   object-fit: cover;
-  object-position: center 42%;
+  object-position: center center;
   display: block;
 }
 #lobby .join-form #joinConfirmBtn {
@@ -7927,7 +7927,10 @@ body.remaining-open #ltEndGame {
 }
 
 
-#lobby .lobby-hero-land { display: none; }
+/* Must beat `#lobby .lobby-hero img { display:block }` or the wide
+   banner paints on top of the portrait fight and crops "HOUSE OF ROOKS"
+   into stray letters (F ROOKS / ABLE). */
+#lobby .lobby-hero-land { display: none !important; }
 @media (orientation: landscape) {
   #lobby.screen:not(.hidden) .lobby-header { display: none !important; }
   #lobby.screen:not(.hidden) .lobby-hero-portrait { display: none !important; }
@@ -7938,7 +7941,7 @@ body.remaining-open #ltEndGame {
     width: 100%;
     height: 100%;
     object-fit: cover;
-    object-position: center 40%;
+    object-position: center 28%;
   }
   #lobby.screen:not(.hidden) .lobby-hero { order: -1; flex: 0 0 auto; height: 28vh; min-height: 120px; max-height: 200px; }
 }
