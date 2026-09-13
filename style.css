@@ -7715,10 +7715,13 @@ body.cardback-aftermath {
   box-shadow: 0 1px 0 rgba(255,255,255,.08) inset;
 }
 #lobby .lobby-card .lobby-main.btn.primary {
-  background: linear-gradient(180deg, #f3d58a 0%, #c9a227 55%, #b08a1c 100%);
-  color: #1a1408;
-  border: 1px solid #e8c96a;
-  box-shadow: 0 1px 0 rgba(255,236,180,.4) inset, 0 6px 14px rgba(0,0,0,.28);
+  background: linear-gradient(180deg, #1c2844 0%, #10182c 100%);
+  color: #f0e0a8;
+  border: 1px solid rgba(212,175,55,.7);
+  box-shadow: 0 1px 0 rgba(255,255,255,.08) inset;
+}
+#lobby .lobby-card .lobby-main.btn.primary .lobby-btn-sub {
+  color: rgba(240,224,168,.72);
 }
 #lobby .lobby-card .lobby-main.btn:not(.primary) {
   background: linear-gradient(180deg,
@@ -8815,11 +8818,15 @@ body.gfx-brassUI .btn, body.gfx-brassUI .icon-btn {
   box-shadow: inset 0 1px 0 rgba(255,230,160,.35);
 }
 body.gfx-brassUI .btn.primary { background: linear-gradient(#c9a227,#7a5a14); color:#1a1408; }
-body.gfx-brassUI #lobby .lobby-card .lobby-main.btn.primary,
+body.gfx-brassUI #lobby .lobby-card .lobby-main.btn.primary {
+  background: linear-gradient(180deg, #1c2844 0%, #10182c 100%);
+  color: #f0e0a8;
+  border: 1px solid rgba(212,175,55,.7);
+}
 body.gfx-brassUI #lobby .join-form #joinConfirmBtn {
-  background: linear-gradient(180deg, #f3d58a 0%, #c9a227 55%, #b08a1c 100%);
-  color: #1a1408;
-  border: 1px solid #e8c96a;
+  background: linear-gradient(180deg, #1c2844 0%, #10182c 100%);
+  color: #f0e0a8;
+  border: 1px solid rgba(212,175,55,.7);
 }
 body.gfx-brassUI #lobby .lobby-card .lobby-main.btn:not(.primary),
 body.gfx-brassUI #lobby .join-form #spectateBtn,

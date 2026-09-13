@@ -1024,12 +1024,9 @@ let ruleVariant = 'griffin';
 const THEMES = ['theme-classic', 'theme-felt', 'theme-night'];
 
 const CARD_BACKS = [
-  { id: 'classic', name: 'White Bird', hint: 'Default' },
-  { id: 'raven', name: 'Black Raven', hint: 'Midnight bird' },
   { id: 'griffin', name: 'Griffin Crest', hint: 'House seal' },
+  { id: 'classic', name: 'White Bird', hint: 'Ivory rook' },
   { id: 'felt', name: 'Nest Watch', hint: 'Cards in the nest' },
-  { id: 'crimson', name: 'Crimson Raven', hint: 'Red mantle' },
-  { id: 'midnight', name: 'Griffin Stare', hint: 'Seal vs bird' },
   { id: 'faceoff', name: 'Face Off', hint: 'Black vs red' },
   { id: 'clash', name: 'Beak War', hint: 'Mid-fight' },
   { id: 'aerial', name: 'Air Duel', hint: 'Wings up' },
@@ -11313,7 +11310,7 @@ bindClick('celeWaiting', () => { try { requestWaitingRoom(); } catch (e) { conso
 })();
 
 function normalizeCardBackId(id) {
-  return CARD_BACKS.some(b => b.id === id) ? id : 'classic';
+  return CARD_BACKS.some(b => b.id === id) ? id : 'griffin';
 }
 
 function applyCardBack(id, persist) {
