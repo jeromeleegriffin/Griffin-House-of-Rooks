@@ -11584,7 +11584,22 @@ body.gfx-brassUI .btn:not(.primary):not(.link):not(.danger) {
   border: 1px solid rgba(212,175,55,.65);
 }
 
-/* ===== 343: leftover cards shrink to fit each player panel ===== */
+/* ===== 344: remaining-cards view — no extra titles, cards pack to fit ===== */
+#scoreModal.showing-remaining #scoreModalTitle,
+#scoreModal.showing-remaining h2#scoreModalTitle,
+#scoreModal.showing-remaining .claim-remaining-title {
+  display: none !important;
+  height: 0 !important;
+  margin: 0 !important;
+  padding: 0 !important;
+  overflow: hidden !important;
+}
+#scoreModal.showing-remaining .claim-remaining-meta {
+  flex: 0 0 auto !important;
+  margin: 0 0 .35rem !important;
+  text-align: center !important;
+  font-size: clamp(.72rem, 2.4vw, .92rem) !important;
+}
 #scoreModal.showing-remaining .modal-content.scoreboard-modal {
   display: flex !important;
   flex-direction: column !important;
@@ -11608,6 +11623,7 @@ body.gfx-brassUI .btn:not(.primary):not(.link):not(.danger) {
   overflow: hidden !important;
   display: flex !important;
   flex-direction: column !important;
+  padding: .25rem .35rem 0 !important;
 }
 #scoreModal.showing-remaining .claim-remaining-grid {
   flex: 1 1 auto !important;
@@ -11616,6 +11632,7 @@ body.gfx-brassUI .btn:not(.primary):not(.link):not(.danger) {
   display: grid !important;
   grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
   grid-template-rows: repeat(2, minmax(0, 1fr)) !important;
+  gap: .4rem !important;
 }
 #scoreModal.showing-remaining .claim-remaining-player {
   min-width: 0 !important;
@@ -11623,29 +11640,42 @@ body.gfx-brassUI .btn:not(.primary):not(.link):not(.danger) {
   overflow: hidden !important;
   display: flex !important;
   flex-direction: column !important;
+  padding: .3rem !important;
+}
+#scoreModal.showing-remaining .claim-remaining-player-title {
+  flex: 0 0 auto !important;
+  margin-bottom: .2rem !important;
 }
 #scoreModal.showing-remaining .claim-remaining-cards {
   flex: 1 1 auto !important;
   min-height: 0 !important;
   overflow: hidden !important;
-  display: flex !important;
-  flex-wrap: wrap !important;
-  align-content: flex-start !important;
-  align-items: flex-start !important;
+  display: grid !important;
+  grid-template-columns: repeat(var(--remain-cols, 3), minmax(0, 1fr)) !important;
+  grid-template-rows: repeat(var(--remain-rows, 2), minmax(0, 1fr)) !important;
   gap: var(--remain-gap, 3px) !important;
+  justify-items: center !important;
+  align-items: center !important;
 }
 #scoreModal.showing-remaining .claim-remaining-card {
   width: var(--remain-card-w, 36px) !important;
   height: var(--remain-card-h, 52px) !important;
-  flex: 0 0 var(--remain-card-w, 36px) !important;
-  max-width: none !important;
-  max-height: none !important;
-  aspect-ratio: auto !important;
+  max-width: 100% !important;
+  max-height: 100% !important;
+  flex: none !important;
+  aspect-ratio: 58 / 84 !important;
 }
 @media (orientation: landscape) {
   #scoreModal.showing-remaining .modal-content.scoreboard-modal {
     width: min(98vw, 1200px) !important;
     height: 96dvh !important;
     max-height: 96dvh !important;
+  }
+  #scoreModal.showing-remaining .claim-remaining-grid {
+    grid-template-rows: repeat(2, minmax(0, 1fr)) !important;
+    overflow: hidden !important;
+  }
+  #scoreModal.showing-remaining .claim-remaining-player {
+    min-height: 0 !important;
   }
 }

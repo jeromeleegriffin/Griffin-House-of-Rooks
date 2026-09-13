@@ -7,7 +7,7 @@
 // It's exchanged during the join handshake so a stale host or joiner (e.g.
 // one still running old cached JS) gets caught and auto-updated instead of
 // silently failing or behaving unpredictably against a mismatched peer.
-const APP_VERSION = '343';
+const APP_VERSION = '344';
 
 function horThisIndex() {
   try {
@@ -8229,8 +8229,7 @@ function showClaimRemainingHands(summary) {
   const whoLine = claimerName
     ? ('<b>' + escapeHtmlSafe(claimerName) + '</b> laid down · Trump <b>' + escapeHtmlSafe(String(trumpName)) + '</b>')
     : ('Trump <b>' + escapeHtmlSafe(String(trumpName)) + '</b>');
-  section.innerHTML = '<div class="claim-remaining-title">Cards left at lay-down</div>'
-    + '<div class="claim-remaining-meta">' + whoLine + '</div>'
+  section.innerHTML = '<div class="claim-remaining-meta">' + whoLine + '</div>'
     + '<div class="claim-remaining-grid">' + cardsHtml + '</div>';
   body.innerHTML = '';
   body.appendChild(section);
@@ -8241,36 +8240,40 @@ function showClaimRemainingHands(summary) {
   setTimeout(() => { try { fitClaimRemainingCards(); } catch (e) {} }, 60);
 }
 
-/** Shrink leftover cards so every hand fits inside its player panel. */
+/** Pack leftover cards into a grid that fills the player panel without clipping. */
 function fitClaimRemainingCards() {
   const boxes = document.querySelectorAll('#scoreModal.showing-remaining .claim-remaining-cards');
   if (!boxes.length) return;
   const ratio = 58 / 84;
+  const modal = document.querySelector('#scoreModal.showing-remaining .modal-content');
+  const modalH = (modal && modal.clientHeight) || window.innerHeight;
   boxes.forEach((box) => {
     const cards = box.querySelectorAll('.claim-remaining-card');
     const n = cards.length;
     if (!n) return;
-    const w = box.clientWidth;
-    const h = box.clientHeight;
-    if (w < 12 || h < 12) return;
+    let w = box.clientWidth;
+    let h = box.clientHeight;
+    if (w < 20) w = Math.max(80, Math.floor(((modal && modal.clientWidth) || window.innerWidth) * 0.42));
+    if (h < 40) h = Math.max(90, Math.floor(modalH * 0.28) - 40);
     const gap = n >= 10 ? 2 : (n >= 7 ? 3 : 4);
-    box.style.setProperty('--remain-gap', gap + 'px');
-    let bestW = 18;
-    const maxCols = Math.min(n, 8);
+    let best = { cols: Math.min(3, n), rows: Math.ceil(n / Math.min(3, n)), area: -1, cw: 20, ch: 29 };
+    const maxCols = Math.min(n, 7);
     for (let cols = 1; cols <= maxCols; cols++) {
       const rows = Math.ceil(n / cols);
       const cellW = (w - gap * (cols - 1)) / cols;
       const cellH = (h - gap * (rows - 1)) / rows;
-      if (cellW <= 0 || cellH <= 0) continue;
-      const useH = Math.min(cellH, cellW / ratio);
-      const useW = useH * ratio;
-      if (useW > bestW) bestW = useW;
+      if (cellW < 12 || cellH < 16) continue;
+      let ch = Math.min(cellH, cellW / ratio);
+      let cw = ch * ratio;
+      if (cw > cellW) { cw = cellW; ch = cw / ratio; }
+      const area = cw * ch;
+      if (area > best.area) best = { cols, rows, area, cw, ch };
     }
-    const cap = Math.min(w, 72);
-    bestW = Math.max(16, Math.min(bestW, cap));
-    const bestH = bestW / ratio;
-    box.style.setProperty('--remain-card-w', bestW.toFixed(2) + 'px');
-    box.style.setProperty('--remain-card-h', bestH.toFixed(2) + 'px');
+    box.style.setProperty('--remain-gap', gap + 'px');
+    box.style.setProperty('--remain-cols', String(best.cols));
+    box.style.setProperty('--remain-rows', String(best.rows));
+    box.style.setProperty('--remain-card-w', best.cw.toFixed(2) + 'px');
+    box.style.setProperty('--remain-card-h', best.ch.toFixed(2) + 'px');
   });
 }
 
