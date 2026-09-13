@@ -22,13 +22,13 @@ function botBid() {
       }
     });
     const longest = Math.max(...Object.values(byColor));
-    if (botDifficulty === 'easy') strength *= 0.7;
+    if (botDifficulty === 'easy') strength *= 0.82;
     let bid = 0;
-    if (strength > 55 && game.highestBid < ceiling - 20) {
-      bid = Math.min(ceiling, game.highestBid + 5 + (Math.random() < 0.3 ? 5 : 0));
-    } else if (strength > 40 && game.highestBid < 90) {
+    if (strength > 46 && game.highestBid < ceiling - 15) {
+      bid = Math.min(ceiling, game.highestBid + 5 + (Math.random() < 0.35 ? 5 : 0));
+    } else if (strength > 32 && game.highestBid < 120) {
       bid = game.highestBid + 5;
-    } else if (game.highestBid < floor && Math.random() < (botDifficulty === 'easy' ? 0.25 : 0.45)) {
+    } else if (game.highestBid < floor && Math.random() < (botDifficulty === 'easy' ? 0.48 : 0.68)) {
       bid = floor;
     }
     bid = applyStyleToBid(botStyle, strength, bid, floor, ceiling, nextMin, game.highestBid);
@@ -39,7 +39,7 @@ function botBid() {
   // Extreme / Hard: distribution + counters estimate
   const { value, trump: estTrump, analysis } = estimateHandValue(hand);
   // Nest expected value ~15–25 average counters
-  let nestBoost = botDifficulty === 'extreme' ? 18 : 12;
+  let nestBoost = botDifficulty === 'extreme' ? 24 : 18;
   if (botStyle === 'bidHappy' || botStyle === 'aggressive') nestBoost += 10;
   if (botStyle === 'safe' || botStyle === 'passive') nestBoost -= 8;
   let target = Math.floor((value + nestBoost) / 5) * 5;
@@ -64,7 +64,7 @@ function botBid() {
   // Open at the floor when the hand has enough real strength to justify
   // owning the auction. The old 35-point cutoff made bots pass even with
   // useful Rook/special/long-trump combinations.
-  const openingThreshold = botDifficulty === 'extreme' ? Math.max(52, floor - 38) : Math.max(58, floor - 32);
+  const openingThreshold = botDifficulty === 'extreme' ? Math.max(44, floor - 46) : Math.max(50, floor - 40);
   if (game.highestBid < floor && value >= openingThreshold) {
     bid = floor;
   } else if (target > game.highestBid && nextMin <= ceiling) {
@@ -75,7 +75,7 @@ function botBid() {
       bid = nextMin;
     }
     // Never bid materially beyond the hand's estimated ceiling.
-    if (bid > target + 5) bid = 0;
+    if (bid > target + 15) bid = 0;
   }
   // Hard remains disciplined, but should still compete with a legitimate hand.
   if (botDifficulty === 'hard' && bid > 0 && value < openingThreshold) bid = 0;

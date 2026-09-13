@@ -7,7 +7,7 @@
 // It's exchanged during the join handshake so a stale host or joiner (e.g.
 // one still running old cached JS) gets caught and auto-updated instead of
 // silently failing or behaving unpredictably against a mismatched peer.
-const APP_VERSION = '328';
+const APP_VERSION = '330';
 
 function horThisIndex() {
   try {
@@ -7321,8 +7321,7 @@ function playerCanForceRest(seat) {
   // All remaining trumps in this hand: cash trumps, then any leftover
   // off-suit card must also be a known winner.
   if (oppTrumps.length === 0 && myTrumps.length > 0) {
-    const off = my.filter(c => !isTrumpCard(c, trump));
-    return off.every(c => cardIsDefiniteWinner(c, seat));
+    return true;
   }
   if (oppTrumps.length > 0) return false;
 
@@ -7624,19 +7623,20 @@ function hostPromptPlay() {
   const claimInfo = getRestClaimInfo();
   game.trumpClaimPlayer = claimInfo ? claimInfo.seat : null;
   // Bot auto-claim only when it is that bot's turn (never block the human)
-  if (claimInfo
-      && players[claimInfo.seat]
-      && players[claimInfo.seat].isBot
-      && game.currentPlayer === claimInfo.seat) {
-    hideActionPanel();
-    setTimeout(() => {
-      if (!game || game.phase !== 'play' || game.claimAnimating) return;
-      const again = getRestClaimInfo();
-      if (again && again.seat === claimInfo.seat && game.currentPlayer === claimInfo.seat) {
-        hostProcessAllTrumpsClaim({ player: claimInfo.seat });
-      }
-    }, 450);
-    return;
+  if (claimInfo && game.currentPlayer === claimInfo.seat) {
+    const seat = claimInfo.seat;
+    const botSeat = !!(players[seat] && players[seat].isBot);
+    if (botSeat || seat === myIndex) {
+      hideActionPanel();
+      setTimeout(() => {
+        if (!game || game.phase !== 'play' || game.claimAnimating) return;
+        const again = getRestClaimInfo();
+        if (!again || again.seat !== seat || game.currentPlayer !== seat) return;
+        if (isHost) hostProcessAllTrumpsClaim({ player: seat });
+        else if (hostConnection && hostConnection.open) hostConnection.send({ type: 'claimAllTrumps', player: seat });
+      }, botSeat ? 450 : 700);
+      return;
+    }
   }
   // Pre-selecting a card ahead of your turn has been removed (it caused a
   // render-thrashing freeze when rapidly re-tapped) — plays only submit
@@ -10323,17 +10323,17 @@ function botPersonaStyle(idx) {
 
 function applyStyleToBid(style, value, bid, floor, ceiling, nextMin, highest) {
   if (style === 'randomish') {
-    if (Math.random() < 0.4) return 0;
-    if (highest < floor && Math.random() < 0.5) return floor;
+    if (Math.random() < 0.22) return 0;
+    if (highest < floor && Math.random() < 0.7) return floor;
     return nextMin <= ceiling && Math.random() < 0.35 ? nextMin : 0;
   }
   if (style === 'passive') {
-    if (highest >= floor) return 0;
-    return value >= floor + 20 ? floor : 0;
+    if (highest >= floor + 20) return 0;
+    return value >= floor - 5 ? (highest < floor ? floor : nextMin <= ceiling ? nextMin : 0) : 0;
   }
   if (style === 'safe') {
-    if (bid > 0 && value < highest + 20) return 0;
-    if (bid > floor && bid > value - 10) return 0;
+    if (bid > 0 && value < highest + 8) return 0;
+    if (bid > floor && bid > value + 5) return 0;
     return bid;
   }
   if (style === 'bidHappy') {
