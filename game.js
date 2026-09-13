@@ -7,7 +7,7 @@
 // It's exchanged during the join handshake so a stale host or joiner (e.g.
 // one still running old cached JS) gets caught and auto-updated instead of
 // silently failing or behaving unpredictably against a mismatched peer.
-const APP_VERSION = '193';
+const APP_VERSION = '195';
 
 function horThisIndex() {
   try {
@@ -148,6 +148,7 @@ let soundMuted = localStorage.getItem('rookMuted') === '1';
 try {
   window.horAvatarMotion = localStorage.getItem('horAvatarMotion') !== '0';
   window.horTvDisplay = localStorage.getItem('horTvDisplay') === '1';
+  window.horHostKickMute = localStorage.getItem('horHostKickMute') === '1';
   document.body.classList.toggle('no-avatar-motion', window.horAvatarMotion === false);
   document.body.classList.toggle('hor-tv-display', !!window.horTvDisplay);
 } catch (e) {}
@@ -169,7 +170,6 @@ const HOR_FEATURE_ALWAYS_ON = {
   customTurnServers: true,
   thinkingPulse: true,
   spectatorLateJoin: true,
-  hostKickMute: true,
   partnerChatAfterNest: true,
   waitForMe: true,
   hostHonorHands: true,
@@ -1129,6 +1129,8 @@ function syncOptionsUI() {
   const tvOpt = $('opt-tv-display');
   if (tvOpt) tvOpt.checked = !!window.horTvDisplay;
   document.body.classList.toggle('hor-tv-display', !!window.horTvDisplay);
+  const kickMuteOpt = $('opt-host-kick-mute');
+  if (kickMuteOpt) kickMuteOpt.checked = !!window.horHostKickMute;
   const cbCards = $('opt-color-blind');
   if (cbCards) cbCards.checked = !!colorBlindCards;
   document.body.classList.toggle('color-blind-cards', !!colorBlindCards);
@@ -4135,6 +4137,11 @@ function showWaiting() {
       window.horTvDisplay = v;
       document.body.classList.toggle('hor-tv-display', !!v);
       try { localStorage.setItem('horTvDisplay', v ? '1' : '0'); } catch (e) {}
+    });
+    bindCoach('opt-host-kick-mute', () => !!window.horHostKickMute, v => {
+      window.horHostKickMute = v;
+      try { localStorage.setItem('horHostKickMute', v ? '1' : '0'); } catch (e) {}
+      try { document.querySelectorAll('.hor-kick-mute').forEach(n => { if (!v) n.remove(); }); } catch (e) {}
     });
     const hsm = $('opt-hand-sort');
     if (hsm) {
@@ -7273,16 +7280,15 @@ function remainingCardsInHands() {
 function cardIsDefiniteWinner(card, seat) {
   if (!game || !game.hands || !card) return false;
   const trump = game.trump;
-  const ledColor = (isSpecialCard(card) || card.color === 'rook') ? trump : card.color;
+  const ledColor = isTrumpCard(card, trump) ? trump : card.color;
   if (!ledColor) return false;
+  const playFn = (typeof canPlay === 'function') ? canPlay : null;
 
   for (let i = 0; i < 4; i++) {
     if (i === seat) continue;
     const oppHand = game.hands[i] || [];
     for (const opp of oppHand) {
-      // Use the game's actual legality rule. This catches both a higher
-      // same-suit card and a trump that can be legally played after a void.
-      if (typeof canPlay === 'function' && !canPlay(opp, oppHand, ledColor, trump)) continue;
+      if (playFn && !playFn(opp, oppHand, ledColor, trump)) continue;
       if (compareCards(opp, card, ledColor, trump) > 0) return false;
     }
   }
@@ -7294,45 +7300,48 @@ function allRemainingCardsAreDefiniteWinners(seat) {
   return hand.length > 0 && hand.every(c => cardIsDefiniteWinner(c, seat));
 }
 
-/**
- * True if `seat` can force every remaining trick:
- * no opponent has a trump, and for every color opponents still hold,
- * this player holds the highest remaining card of that color.
- */
+/** Seat can cash every remaining trick (known winners / all remaining trumps). */
 function playerCanForceRest(seat) {
   if (!game || !game.hands) return false;
   const my = game.hands[seat] || [];
   if (!my.length) return false;
+  if (allRemainingCardsAreDefiniteWinners(seat)) return true;
+
+  const trump = game.trump;
   let opp = [];
   for (let i = 0; i < 4; i++) {
     if (i !== seat) opp = opp.concat(game.hands[i] || []);
   }
   if (!opp.length) return true;
 
-  const trump = game.trump;
-  // Opponent trumps are only handled by the all-trumps case
-  if (opp.some(c => isTrumpCard(c, trump))) return false;
+  const oppTrumps = opp.filter(c => isTrumpCard(c, trump));
+  const myTrumps = my.filter(c => isTrumpCard(c, trump));
+  // All remaining trumps in this hand: cash trumps, then any leftover
+  // off-suit card must also be a known winner.
+  if (oppTrumps.length === 0 && myTrumps.length > 0) {
+    const off = my.filter(c => !isTrumpCard(c, trump));
+    return off.every(c => cardIsDefiniteWinner(c, seat));
+  }
+  if (oppTrumps.length > 0) return false;
 
   const byColor = {};
   for (const c of my.concat(opp)) {
-    const col = (c.color === 'rook' || isSpecialCard(c)) ? '_special' : c.color;
+    const col = isTrumpCard(c, trump) ? (trump || '_trump') : c.color;
     (byColor[col] = byColor[col] || []).push({ c, mine: my.some(m => m.id === c.id) });
   }
   for (const col of Object.keys(byColor)) {
     const list = byColor[col];
-    if (!list.some(x => !x.mine)) continue; // opponents have none of this color
-    let best = -Infinity;
-    let meHasBest = false;
+    if (!list.some(x => !x.mine)) continue;
+    let bestMine = null;
+    let bestOpp = null;
     for (const { c, mine } of list) {
-      const r = effectiveRank(c);
-      if (r > best) {
-        best = r;
-        meHasBest = mine;
-      } else if (r === best && mine) {
-        meHasBest = true;
+      if (mine) {
+        if (!bestMine || compareCards(c, bestMine, col, trump) > 0) bestMine = c;
+      } else if (!bestOpp || compareCards(c, bestOpp, col, trump) > 0) {
+        bestOpp = c;
       }
     }
-    if (!meHasBest) return false;
+    if (!bestMine || (bestOpp && compareCards(bestOpp, bestMine, col, trump) > 0)) return false;
   }
   return true;
 }
@@ -7350,31 +7359,20 @@ function getRestClaimInfo() {
   // Mid-trick: wait until the trick resolves
   if (game.trick && game.trick.length > 0 && game.trick.length < 4) return null;
   const left = remainingCardsInHands();
-  // Need more than one full trick left to bother claiming
-  if (left <= 4) return null;
+  if (left < 2) return null;
 
-  // Prefer the strict "force every remaining trick" test
   const force = [];
   for (let i = 0; i < 4; i++) {
-    // Only offer the lay-down when every card in that player's hand is an
-    // independently definite winner. This prevents a weak leftover card
-    // from being included in a supposed winning-card lay-down.
-    if (playerCanForceRest(i) && allRemainingCardsAreDefiniteWinners(i)) force.push(i);
+    if (playerCanForceRest(i)) force.push(i);
   }
   if (force.length === 1) {
     const seat = force[0];
     return { seat, reason: (getAllTrumpsHolder() === seat) ? 'trumps' : 'rest' };
   }
 
-  // Fallback: sole holder of every remaining trump AND at least as many
-  // cards as remaining tricks (classic "I have all the trumps left").
   const trumpHolder = getAllTrumpsHolder();
-  if (trumpHolder != null) {
-    const myLen = (game.hands[trumpHolder] || []).length;
-    const tricksLeft = Math.ceil(left / 4);
-    if (myLen >= tricksLeft && allRemainingCardsAreDefiniteWinners(trumpHolder)) {
-      return { seat: trumpHolder, reason: 'trumps' };
-    }
+  if (trumpHolder != null && playerCanForceRest(trumpHolder)) {
+    return { seat: trumpHolder, reason: 'trumps' };
   }
   return null;
 }

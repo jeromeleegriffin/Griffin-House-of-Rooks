@@ -26,7 +26,7 @@
     'netHoldTimerOnDisconnect','netSilentDropDetect','lobbyReconnect'
   ];
   const FEATURE_ALWAYS_ON = [
-    'customTurnServers','thinkingPulse','spectatorLateJoin','hostKickMute',
+    'customTurnServers','thinkingPulse','spectatorLateJoin',
     'partnerChatAfterNest','waitForMe','hostHonorHands','avatarPersonality','renderOptimization'
   ];
   function forceNetAlwaysOn(o) {
@@ -212,7 +212,8 @@
     if (exp.seatPips) paintSeatPips(); else document.querySelectorAll('.hor-seat-pip').forEach(n => n.remove());
     paintThinkingPulse();
     if (exp.botStrengthLabels) paintBotLabels(); else document.querySelectorAll('.hor-bot-label').forEach(n => n.remove());
-    paintKickMute();
+    if (window.horHostKickMute || exp.hostKickMute) paintKickMute();
+    else document.querySelectorAll('.hor-kick-mute').forEach(n => n.remove());
     ensureWaitForMeBtn();
     if (exp.shareHandCard) ensureShareHandBtn();
     if (exp.highlightReelTools) ensureHighlightTools();
