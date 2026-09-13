@@ -32,7 +32,12 @@ const SHELL = [
   './Red2-card.webp',
   './icon-192.png',
   './icon-512.png',
-  './kitty-wait.jpg'
+  './kitty-wait.jpg',
+  './lobby-hero.jpg',
+  './lobby-hero-2.jpg',
+  './lobby-hero-3.jpg',
+  './lobby-hero-4.jpg',
+  './lobby-hero-5.jpg'
 ];
 self.addEventListener('install', (e) => {
   e.waitUntil(caches.open(CACHE).then((c) => c.addAll(SHELL).catch(() => {})).then(() => self.skipWaiting()));

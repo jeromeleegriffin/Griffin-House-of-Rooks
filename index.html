@@ -133,6 +133,33 @@
           <button id="joinBtn" class="btn lobby-main" type="button">Join with a code<span class="lobby-btn-sub">Sit at a friend’s table</span></button>
           <button id="installAppBtn" class="btn lobby-main" type="button">Install on this phone<span class="lobby-btn-sub">Home screen app — no browser bar</span></button>
         </div>
+        <div class="lobby-hero" aria-hidden="true">
+          <img id="lobbyHeroImg" src="lobby-hero.jpg" alt="" width="900" height="1338">
+        </div>
+        <script>
+          (function () {
+            var arts = [
+              'lobby-hero.jpg',
+              'lobby-hero-2.jpg',
+              'lobby-hero-3.jpg',
+              'lobby-hero-4.jpg',
+              'lobby-hero-5.jpg'
+            ];
+            var img = document.getElementById('lobbyHeroImg');
+            if (!img) return;
+            var last = '';
+            try { last = sessionStorage.getItem('horLobbyHero') || ''; } catch (e) {}
+            var pick = arts[Math.floor(Math.random() * arts.length)];
+            if (arts.length > 1) {
+              var guard = 0;
+              while (pick === last && guard++ < 8) {
+                pick = arts[Math.floor(Math.random() * arts.length)];
+              }
+            }
+            try { sessionStorage.setItem('horLobbyHero', pick); } catch (e) {}
+            img.src = pick;
+          })();
+        </script>
         <div id="friendsPanel" class="friends-panel hidden">
           <button id="createBtn" class="btn hidden" type="button" aria-hidden="true">Create table</button>
           <button id="rejoinBtn" class="btn" type="button">Rejoin last code</button>
