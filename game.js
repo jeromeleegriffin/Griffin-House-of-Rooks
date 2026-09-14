@@ -7,7 +7,7 @@
 // It's exchanged during the join handshake so a stale host or joiner (e.g.
 // one still running old cached JS) gets caught and auto-updated instead of
 // silently failing or behaving unpredictably against a mismatched peer.
-const APP_VERSION = '373';
+const APP_VERSION = '377';
 
 function horThisIndex() {
   try {
@@ -203,6 +203,35 @@ try {
   document.body.classList.toggle('hor-tv-display', !!window.horTvDisplay);
 } catch (e) {}
 let targetScore = 500;
+
+/**
+ * A match ends only when a team reaches the positive target or the opposing
+ * team reaches the matching negative target. For example, a 500-point match
+ * may be won at +500 or lost at -500; scores between those bounds are still
+ * live.
+ */
+function getMatchResult(scores, goal) {
+  const a = Number(scores?.[0] || 0);
+  const b = Number(scores?.[1] || 0);
+  const g = Number(goal || 500);
+  if (!(g > 0)) return null;
+  // Positive target takes precedence if both thresholds are crossed in the
+  // same hand; otherwise a team loses only at or below -goal.
+  if (a >= g || b >= g) {
+    if (a >= g && b >= g) return a === b ? 'Tie' : (a > b ? 'Team A' : 'Team B');
+    return a >= g ? 'Team A' : 'Team B';
+  }
+  if (a <= -g || b <= -g) {
+    if (a <= -g && b <= -g) return a === b ? 'Tie' : (a > b ? 'Team A' : 'Team B');
+    return a <= -g ? 'Team B' : 'Team A';
+  }
+  return null;
+}
+
+function isMatchOver(scores, goal) {
+  return !!getMatchResult(scores, goal);
+}
+
 
 // Experimental polish features are deliberately OFF by default. They can be
 // enabled one at a time from the Experimental Polish tab in Game Options.
@@ -4218,9 +4247,9 @@ function handleMessage(data, conn) {
           }
           const goal = (game && game.targetScore) || targetScore || 500;
           const finalScores = data.summary.scores || (game && game.scores) || [0, 0];
-          if (finalScores[0] >= goal || finalScores[1] >= goal) {
-            const winner = finalScores[0] > finalScores[1] ? 'Team A'
-              : (finalScores[1] > finalScores[0] ? 'Team B' : 'Tie');
+          const matchResult = getMatchResult(finalScores, goal);
+          if (matchResult) {
+            const winner = matchResult;
             try { mergeLifetimeStats(winner); } catch (e) {}
             showWinCelebration(winner, [...finalScores]);
           }
@@ -5656,6 +5685,80 @@ function hostDeal() {
   hostDealNow();
 }
 
+/**
+ * Quiet comeback dealing: when a team is more than 75% of the match target
+ * behind, increase that team's normal odds of receiving each included special
+ * card by an additional 25% of those normal odds. This is deliberately hidden
+ * from the UI and applies independently to the Bird, Red 2, and special Red 1.
+ */
+function applyComebackSpecialChance() {
+  if (!game || !Array.isArray(game.hands) || !Array.isArray(players)) return;
+  const goal = Number(game.targetScore || targetScore || 500);
+  const scores = Array.isArray(game.scores) ? game.scores : [0, 0];
+  if (!(goal > 0) || scores.length < 2) return;
+
+  const high = Math.max(Number(scores[0] || 0), Number(scores[1] || 0));
+  const low = Math.min(Number(scores[0] || 0), Number(scores[1] || 0));
+  if ((high - low) <= goal * 0.75) return;
+
+  const losingTeam = Number(scores[0] || 0) < Number(scores[1] || 0) ? 0 : 1;
+  const losingSeats = players.map((p, i) => {
+    const team = (p && typeof p.team === 'number') ? p.team : (i % 2);
+    return team === losingTeam ? i : -1;
+  }).filter(i => i >= 0 && Array.isArray(game.hands[i]));
+  if (!losingSeats.length) return;
+
+  const specials = [];
+  if (includeRook) specials.push(c => c && (c.id === 'rook' || c.color === 'rook'));
+  if (includeRed2) specials.push(c => c && (typeof isRed2 === 'function' ? isRed2(c) : c.id === 'red-2'));
+  if (includeRed1) specials.push(c => c && (c.id === 'red1-special' || c.specialRed1 === true));
+
+  // A normal deal gives each included special the same chance of landing in
+  // either partnership's player hands. Boost that existing probability by 25%
+  // rather than replacing it with a flat 25% roll.
+  const totalPlayerCards = game.hands.reduce((n, h) => n + (Array.isArray(h) ? h.length : 0), 0);
+  const losingPlayerCards = losingSeats.reduce((n, i) => n + game.hands[i].length, 0);
+  const normalOdds = totalPlayerCards > 0 ? (losingPlayerCards / totalPlayerCards) : 0;
+  const boostedOdds = Math.min(1, normalOdds * 1.25);
+  if (!(boostedOdds > 0)) return;
+
+  const moveSpecialToLosingTeam = (predicate) => {
+    const alreadyThere = losingSeats.some(i => game.hands[i].some(predicate));
+    if (alreadyThere) return;
+
+    // Only use the hidden boost when the normal deal did not already give it
+    // to the losing team. The conditional probability below makes the final
+    // chance equal to normalOdds * 1.25, not a separate 25% chance.
+    const correction = (boostedOdds - normalOdds) / Math.max(0.000001, 1 - normalOdds);
+    if (Math.random() >= correction) return;
+
+    let source = null, sourceIndex = -1;
+    for (let i = 0; i < game.hands.length; i++) {
+      if (losingSeats.includes(i)) continue;
+      const hand = game.hands[i];
+      if (!Array.isArray(hand)) continue;
+      const idx = hand.findIndex(predicate);
+      if (idx >= 0) { source = hand; sourceIndex = idx; break; }
+    }
+    if (!source || sourceIndex < 0) {
+      const nest = Array.isArray(game.nest) ? game.nest : [];
+      const idx = nest.findIndex(predicate);
+      if (idx >= 0) { source = nest; sourceIndex = idx; }
+    }
+    if (!source || sourceIndex < 0) return;
+
+    const recipient = losingSeats[Math.floor(Math.random() * losingSeats.length)];
+    const hand = game.hands[recipient];
+    const special = source.splice(sourceIndex, 1)[0];
+    if (!hand.length) { hand.push(special); return; }
+    const dumpIndex = Math.floor(Math.random() * hand.length);
+    source.push(hand[dumpIndex]);
+    hand[dumpIndex] = special;
+  };
+
+  specials.forEach(moveSpecialToLosingTeam);
+}
+
 function hostDealNow() {
   recentTricks = [];
   lastCompletedTrick = null;
@@ -5685,6 +5788,7 @@ function hostDealNow() {
     game.hands[i] = deck.splice(0, hs);
   }
   try { applyLuckySpecialsToHostHand(); } catch (e) {}
+  try { applyComebackSpecialChance(); } catch (e) {}
   for (let i = 0; i < 4; i++) {
     sortCardsDisplay(game.hands[i]);
   }
@@ -8055,6 +8159,14 @@ function hostProcessPlay(data) {
       wStat.tricksWon++;
       wStat.points += trickPoints;
       wStat.trickPtsSum += trickPoints;
+      // Partnership scoring: a player's partner receives the same point credit
+      // for leaderboard/stats purposes. The actual team score is still counted once.
+      const partnerSeat = (winner.player + 2) % 4;
+      if (players[partnerSeat]) {
+        const partnerStat = ps(partnerSeat);
+        partnerStat.points += trickPoints;
+        partnerStat.trickPtsSum += trickPoints;
+      }
       if (trickPoints >= 30) wStat.bigTricks++;
       if (game.trick.some(t => t.card && (t.card.color === 'rook' || t.card.id === 'rook'))) wStat.rookCaptures++;
       if (game.trick.some(t => t.card && isRed2(t.card))) wStat.red2Captures++;
@@ -8295,6 +8407,13 @@ function hostEndHand() {
         const nStat = ps(nestSeat);
         nStat.nestWins++;
         nStat.nestPts += nestPtsShown;
+        // Partnership scoring: nest points count for the winner and their partner.
+        const nestPartnerSeat = (nestSeat + 2) % 4;
+        if (players[nestPartnerSeat]) {
+          const partnerNestStat = ps(nestPartnerSeat);
+          partnerNestStat.points += nestPtsShown;
+          partnerNestStat.nestPts += nestPtsShown;
+        }
       } catch (e) {}
       try { botMaybeTableTalk('nest', { name: nestWinnerName, pts: nestPtsShown, prefer: nestSeat }); } catch (e) {}
     } catch (e) {}
@@ -8465,8 +8584,9 @@ function hostEndHand() {
     broadcastState();
     showScoreModal(summary);
     const goal = game.targetScore || targetScore || 300;
-    if (game.scores[0] >= goal || game.scores[1] >= goal) {
-      const winner = game.scores[0] > game.scores[1] ? 'Team A' : (game.scores[1] > game.scores[0] ? 'Team B' : 'Tie');
+    const matchResult = getMatchResult(game.scores, goal);
+    if (matchResult) {
+      const winner = matchResult;
       try { mergeLifetimeStats(winner); } catch (e) {}
       showWinCelebration(winner, [...game.scores]);
     }
@@ -8649,13 +8769,25 @@ function renderPlayerStatCard(i, topScorerIdx) {
     </div>`;
 }
 
+// One-time record-book seed: 25 simulated all-bot matches provide populated
+// leaderboard data on a fresh install. Real matches continue accumulating on top.
+const SIMULATED_25_BOT_STATS = {"Blaze":{"hands":41,"bidsWon":6,"highBid":115,"bidSum":570,"bidsMade":6,"bidsSet":0,"points":1296,"tricksWon":41,"trickPtsSum":1161,"rookCaptures":1,"red2Captures":0,"bigTricks":6,"nestWins":2,"nestPts":135,"moonAttempts":0,"moonMade":0,"bags":0,"gamesPlayed":2,"gamesWon":1,"isBot":true,"avatar":"fox","botStyle":"aggressive"},"Fang":{"hands":72,"bidsWon":6,"highBid":125,"bidSum":630,"bidsMade":5,"bidsSet":1,"points":2122,"tricksWon":72,"trickPtsSum":1907,"rookCaptures":1,"red2Captures":3,"bigTricks":5,"nestWins":8,"nestPts":215,"moonAttempts":0,"moonMade":0,"bags":0,"gamesPlayed":4,"gamesWon":3,"isBot":true,"avatar":"wolf","botStyle":"aggressive"},"Wager":{"hands":169,"bidsWon":20,"highBid":130,"bidSum":2150,"bidsMade":20,"bidsSet":0,"points":4108,"tricksWon":169,"trickPtsSum":3813,"rookCaptures":5,"red2Captures":2,"bigTricks":12,"nestWins":4,"nestPts":295,"moonAttempts":0,"moonMade":0,"bags":0,"gamesPlayed":8,"gamesWon":3,"isBot":true,"avatar":"bluejay","botStyle":"bidHappy"},"Moss":{"hands":151,"bidsWon":15,"highBid":125,"bidSum":1555,"bidsMade":11,"bidsSet":4,"points":3821,"tricksWon":151,"trickPtsSum":3516,"rookCaptures":3,"red2Captures":3,"bigTricks":20,"nestWins":8,"nestPts":305,"moonAttempts":0,"moonMade":0,"bags":0,"gamesPlayed":8,"gamesWon":5,"isBot":true,"avatar":"moss","botStyle":"safe"},"Quill":{"hands":118,"bidsWon":8,"highBid":130,"bidSum":895,"bidsMade":8,"bidsSet":0,"points":2626,"tricksWon":118,"trickPtsSum":2471,"rookCaptures":1,"red2Captures":2,"bigTricks":6,"nestWins":2,"nestPts":155,"moonAttempts":0,"moonMade":0,"bags":0,"gamesPlayed":5,"gamesWon":1,"isBot":true,"avatar":"quill","botStyle":"countSaver"},"Halo":{"hands":45,"bidsWon":6,"highBid":125,"bidSum":610,"bidsMade":4,"bidsSet":2,"points":1107,"tricksWon":45,"trickPtsSum":1037,"rookCaptures":0,"red2Captures":0,"bigTricks":3,"nestWins":2,"nestPts":70,"moonAttempts":0,"moonMade":0,"bags":0,"gamesPlayed":2,"gamesWon":0,"isBot":true,"avatar":"stag","botStyle":"partnerFirst"},"Gable":{"hands":154,"bidsWon":12,"highBid":130,"bidSum":1260,"bidsMade":12,"bidsSet":0,"points":3772,"tricksWon":154,"trickPtsSum":3502,"rookCaptures":3,"red2Captures":2,"bigTricks":13,"nestWins":9,"nestPts":270,"moonAttempts":0,"moonMade":0,"bags":0,"gamesPlayed":7,"gamesWon":4,"isBot":true,"avatar":"gable","botStyle":"lastTrick"},"Titan":{"hands":14,"bidsWon":1,"highBid":125,"bidSum":125,"bidsMade":0,"bidsSet":1,"points":384,"tricksWon":14,"trickPtsSum":344,"rookCaptures":1,"red2Captures":0,"bigTricks":1,"nestWins":1,"nestPts":40,"moonAttempts":0,"moonMade":0,"bags":0,"gamesPlayed":1,"gamesWon":0,"isBot":true,"avatar":"badger","botStyle":"trumpHeavy"},"Crow":{"hands":88,"bidsWon":5,"highBid":125,"bidSum":535,"bidsMade":5,"bidsSet":0,"points":2006,"tricksWon":88,"trickPtsSum":1831,"rookCaptures":1,"red2Captures":3,"bigTricks":8,"nestWins":5,"nestPts":175,"moonAttempts":0,"moonMade":0,"bags":0,"gamesPlayed":4,"gamesWon":0,"isBot":true,"avatar":"raven","botStyle":"safe"},"Drift":{"hands":100,"bidsWon":9,"highBid":130,"bidSum":925,"bidsMade":8,"bidsSet":1,"points":2686,"tricksWon":100,"trickPtsSum":2506,"rookCaptures":1,"red2Captures":4,"bigTricks":9,"nestWins":7,"nestPts":180,"moonAttempts":0,"moonMade":0,"bags":0,"gamesPlayed":5,"gamesWon":3,"isBot":true,"avatar":"goldfinch","botStyle":"passive"},"Hollow":{"hands":51,"bidsWon":7,"highBid":125,"bidSum":710,"bidsMade":6,"bidsSet":1,"points":1629,"tricksWon":51,"trickPtsSum":1509,"rookCaptures":2,"red2Captures":1,"bigTricks":10,"nestWins":4,"nestPts":120,"moonAttempts":0,"moonMade":0,"bags":0,"gamesPlayed":3,"gamesWon":2,"isBot":true,"avatar":"grumpy","botStyle":"voidMaker"},"Vex":{"hands":81,"bidsWon":4,"highBid":110,"bidSum":370,"bidsMade":3,"bidsSet":1,"points":1844,"tricksWon":81,"trickPtsSum":1684,"rookCaptures":3,"red2Captures":2,"bigTricks":11,"nestWins":6,"nestPts":160,"moonAttempts":0,"moonMade":0,"bags":0,"gamesPlayed":3,"gamesWon":1,"isBot":true,"avatar":"cobra","botStyle":"tricky"},"Marrow":{"hands":71,"bidsWon":4,"highBid":130,"bidSum":405,"bidsMade":4,"bidsSet":0,"points":1613,"tricksWon":71,"trickPtsSum":1483,"rookCaptures":1,"red2Captures":5,"bigTricks":7,"nestWins":2,"nestPts":130,"moonAttempts":0,"moonMade":0,"bags":0,"gamesPlayed":3,"gamesWon":0,"isBot":true,"avatar":"marrow","botStyle":"countSaver"},"Pike":{"hands":75,"bidsWon":7,"highBid":130,"bidSum":720,"bidsMade":6,"bidsSet":1,"points":2122,"tricksWon":75,"trickPtsSum":1932,"rookCaptures":4,"red2Captures":2,"bigTricks":8,"nestWins":6,"nestPts":190,"moonAttempts":0,"moonMade":0,"bags":0,"gamesPlayed":4,"gamesWon":3,"isBot":true,"avatar":"cardshark","botStyle":"pointHungry"},"Thistle":{"hands":38,"bidsWon":4,"highBid":125,"bidSum":455,"bidsMade":4,"bidsSet":0,"points":1479,"tricksWon":38,"trickPtsSum":1259,"rookCaptures":1,"red2Captures":0,"bigTricks":6,"nestWins":3,"nestPts":220,"moonAttempts":0,"moonMade":0,"bags":0,"gamesPlayed":3,"gamesWon":2,"isBot":true,"avatar":"thistle","botStyle":"sandbag"},"Frost":{"hands":87,"bidsWon":5,"highBid":130,"bidSum":590,"bidsMade":4,"bidsSet":1,"points":2166,"tricksWon":87,"trickPtsSum":1966,"rookCaptures":0,"red2Captures":1,"bigTricks":5,"nestWins":6,"nestPts":200,"moonAttempts":0,"moonMade":0,"bags":0,"gamesPlayed":4,"gamesWon":3,"isBot":true,"avatar":"lynx","botStyle":"safe"},"Bramble":{"hands":89,"bidsWon":13,"highBid":130,"bidSum":1410,"bidsMade":13,"bidsSet":0,"points":2374,"tricksWon":89,"trickPtsSum":2239,"rookCaptures":1,"red2Captures":4,"bigTricks":9,"nestWins":1,"nestPts":135,"moonAttempts":0,"moonMade":0,"bags":0,"gamesPlayed":4,"gamesWon":2,"isBot":true,"avatar":"bramble","botStyle":"leadLong"},"Ember":{"hands":50,"bidsWon":4,"highBid":130,"bidSum":405,"bidsMade":4,"bidsSet":0,"points":1449,"tricksWon":50,"trickPtsSum":1224,"rookCaptures":1,"red2Captures":1,"bigTricks":8,"nestWins":5,"nestPts":225,"moonAttempts":0,"moonMade":0,"bags":0,"gamesPlayed":3,"gamesWon":2,"isBot":true,"avatar":"owl","botStyle":"balanced"},"Emberlyn":{"hands":166,"bidsWon":15,"highBid":130,"bidSum":1500,"bidsMade":14,"bidsSet":1,"points":4390,"tricksWon":166,"trickPtsSum":4075,"rookCaptures":0,"red2Captures":3,"bigTricks":18,"nestWins":9,"nestPts":315,"moonAttempts":0,"moonMade":0,"bags":0,"gamesPlayed":8,"gamesWon":4,"isBot":true,"avatar":"emberlyn","botStyle":"showboat"},"Pebble":{"hands":123,"bidsWon":7,"highBid":130,"bidSum":680,"bidsMade":5,"bidsSet":2,"points":2870,"tricksWon":123,"trickPtsSum":2605,"rookCaptures":2,"red2Captures":0,"bigTricks":11,"nestWins":8,"nestPts":265,"moonAttempts":0,"moonMade":0,"bags":0,"gamesPlayed":5,"gamesWon":4,"isBot":true,"avatar":"pebble","botStyle":"passive"},"Dice":{"hands":118,"bidsWon":6,"highBid":125,"bidSum":625,"bidsMade":4,"bidsSet":2,"points":3251,"tricksWon":118,"trickPtsSum":2951,"rookCaptures":3,"red2Captures":2,"bigTricks":13,"nestWins":8,"nestPts":300,"moonAttempts":0,"moonMade":0,"bags":0,"gamesPlayed":6,"gamesWon":4,"isBot":true,"avatar":"greenie","botStyle":"randomish"},"Nix":{"hands":67,"bidsWon":6,"highBid":130,"bidSum":600,"bidsMade":6,"bidsSet":0,"points":2068,"tricksWon":67,"trickPtsSum":1848,"rookCaptures":3,"red2Captures":2,"bigTricks":6,"nestWins":5,"nestPts":220,"moonAttempts":0,"moonMade":0,"bags":0,"gamesPlayed":4,"gamesWon":2,"isBot":true,"avatar":"jackal","botStyle":"tricky"},"Anchor":{"hands":52,"bidsWon":3,"highBid":130,"bidSum":330,"bidsMade":3,"bidsSet":0,"points":1357,"tricksWon":52,"trickPtsSum":1237,"rookCaptures":2,"red2Captures":3,"bigTricks":7,"nestWins":1,"nestPts":120,"moonAttempts":0,"moonMade":0,"bags":0,"gamesPlayed":3,"gamesWon":1,"isBot":true,"avatar":"rookling","botStyle":"partnerFirst"},"Cinder":{"hands":16,"bidsWon":0,"highBid":0,"bidSum":0,"bidsMade":0,"bidsSet":0,"points":350,"tricksWon":16,"trickPtsSum":340,"rookCaptures":1,"red2Captures":0,"bigTricks":1,"nestWins":0,"nestPts":10,"moonAttempts":0,"moonMade":0,"bags":0,"gamesPlayed":1,"gamesWon":0,"isBot":true,"avatar":"cinder","botStyle":"rookHunter"}};
+function seedSimulatedBotStats() {
+  try {
+    const existing = loadLifetimeStats();
+    if (existing && Object.keys(existing).length) return;
+    saveLifetimeStats(JSON.parse(JSON.stringify(SIMULATED_25_BOT_STATS)));
+  } catch (e) {}
+}
+seedSimulatedBotStats();
+
 function renderAllTimeLeaders() {
   const store = loadLifetimeStats();
   const names = Object.keys(store);
   if (!names.length) return '<div class="stats-empty">No all-time stats yet — finish a full game to start the record book.</div>';
   const rows = names.map(n => ({ name: n, ...store[n] })).sort((a, b) => (b.points || 0) - (a.points || 0)).slice(0, 8);
   const medals = ['🥇', '🥈', '🥉'];
-  return '<div class="alltime-list">' + rows.map((r, idx) => `
+  return `<div class="alltime-seed-note">25 simulated bot matches loaded into the record book. Real matches will continue to add to these totals.</div><div class="alltime-list">` + rows.map((r, idx) => `
     <div class="alltime-row">
       <span class="alltime-rank">${medals[idx] || ('#' + (idx + 1))}</span>
       <span class="alltime-name">${esc(r.name)}${r.isBot ? ' <em class="alltime-bot-tag">bot</em>' : ''}</span>
@@ -8688,8 +8820,17 @@ function showStatsModal() {
     const pts = ps(i).points || 0;
     if (pts > topPts) { topPts = pts; topScorerIdx = i; }
   });
-  const teamAPts = seats.filter(i => players[i].team === 0).reduce((sum, i) => sum + (ps(i).points || 0), 0);
-  const teamBPts = seats.filter(i => players[i].team === 1).reduce((sum, i) => sum + (ps(i).points || 0), 0);
+  // Player points are partnership-attributed, so each teammate carries the
+  // same team total. Average the two seats here to keep the team comparison
+  // from displaying a doubled total.
+  const teamAPointsSeats = seats.filter(i => players[i].team === 0);
+  const teamBPointsSeats = seats.filter(i => players[i].team === 1);
+  const teamAPts = teamAPointsSeats.length
+    ? teamAPointsSeats.reduce((sum, i) => sum + (ps(i).points || 0), 0) / teamAPointsSeats.length
+    : 0;
+  const teamBPts = teamBPointsSeats.length
+    ? teamBPointsSeats.reduce((sum, i) => sum + (ps(i).points || 0), 0) / teamBPointsSeats.length
+    : 0;
   const maxTeamPts = Math.max(teamAPts, teamBPts, 1);
   const teamAName = statTeamName(0), teamBName = statTeamName(1);
   const scores = (game && Array.isArray(game.scores)) ? game.scores : [0, 0];
@@ -8727,7 +8868,7 @@ function wireScoreModalActions(summary) {
   const modal = $('scoreModal');
   if (!modal || !summary) return;
   const goal = game?.targetScore || targetScore || 300;
-  const gameOver = summary.scores[0] >= goal || summary.scores[1] >= goal;
+  const gameOver = isMatchOver(summary.scores, goal);
   const revealBtn = $('scoreModalRevealHands');
   const last3Btn = $('scoreModalLast3');
   const histBtn = $('scoreModalHistory');
@@ -12143,23 +12284,6 @@ function updateLandscapeBidHint() {
   let el = document.getElementById('ghBidHint');
   if (el) el.remove();
   return null;
-  const landscape = window.matchMedia && window.matchMedia('(orientation: landscape)').matches;
-  if (landscapeBidHints === false || !game || game.phase !== 'bidding' || !landscape) {
-    if (el) el.remove();
-    return null;
-  }
-  const hand = (game.myHand && game.myHand.length) ? game.myHand
-    : (typeof myIndex === 'number' && myIndex >= 0 && game.hands ? game.hands[myIndex] : []);
-  const advice = coachBidAdvice(hand, game);
-  if (!el) {
-    el = document.createElement('div');
-    el.id = 'ghBidHint';
-    el.className = 'gh-bid-hint';
-    const mount = document.getElementById('landscapeTheater') || document.body;
-    mount.appendChild(el);
-  }
-  el.textContent = advice.text;
-  return advice;
 }
 
 function updateLandscapeTheater() {
@@ -12172,7 +12296,7 @@ function updateLandscapeTheater() {
     const scores = endSummary && Array.isArray(endSummary.scores)
       ? endSummary.scores
       : (game && game.scores ? game.scores : [0, 0]);
-    const isGameOver = scores[0] >= goal || scores[1] >= goal;
+    const isGameOver = isMatchOver(scores, goal);
     if (isLandscape && isScore && endSummary) {
       const winnerTeam = scores[0] === scores[1] ? 'Tie' : (scores[0] > scores[1] ? 'Team A' : 'Team B');
       const nestCards = Array.isArray(endSummary.nestCards) ? endSummary.nestCards : [];
