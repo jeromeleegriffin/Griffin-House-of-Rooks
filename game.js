@@ -101,6 +101,56 @@ let soundCard = true, soundTurn = true, soundRook = true, soundTick = true;
 let playLockUntil = 0;
 let knownVoids = [{}, {}, {}, {}]; // extreme bot: playerIdx -> {color: true}
 let matchStats = { hands: 0, highBid: 0, setsA: 0, setsB: 0, madeA: 0, madeB: 0, bidSum: 0, bidCount: 0 };
+// Per-seat stats for the current match — tracked for every seat, human or bot,
+// so the stats page can show a real breakdown instead of just team totals.
+function freshPlayerStat() {
+  return {
+    hands: 0, bidsWon: 0, highBid: 0, bidSum: 0, bidsMade: 0, bidsSet: 0,
+    points: 0, tricksWon: 0, trickPtsSum: 0,
+    rookCaptures: 0, red2Captures: 0, bigTricks: 0,
+    nestWins: 0, nestPts: 0, moonAttempts: 0, moonMade: 0, bags: 0,
+    gamesPlayed: 0, gamesWon: 0,
+  };
+}
+let playerStats = [freshPlayerStat(), freshPlayerStat(), freshPlayerStat(), freshPlayerStat()];
+function resetPlayerStats() { playerStats = [freshPlayerStat(), freshPlayerStat(), freshPlayerStat(), freshPlayerStat()]; }
+function ps(idx) {
+  if (idx == null || idx < 0 || idx > 3) return freshPlayerStat();
+  if (!playerStats[idx]) playerStats[idx] = freshPlayerStat();
+  return playerStats[idx];
+}
+// Lifetime ("all-time") stats, kept in localStorage keyed by player name so
+// bots (persistent named personas) build a career record right alongside you.
+function lifetimeStatsKey() { return 'rookLifetimeStats'; }
+function loadLifetimeStats() {
+  try { return JSON.parse(localStorage.getItem(lifetimeStatsKey())) || {}; } catch (e) { return {}; }
+}
+function saveLifetimeStats(obj) {
+  try { localStorage.setItem(lifetimeStatsKey(), JSON.stringify(obj)); } catch (e) {}
+}
+function mergeLifetimeStats(winnerLabel) {
+  try {
+    const store = loadLifetimeStats();
+    for (let i = 0; i < 4; i++) {
+      const p = players[i];
+      if (!p || !p.name) continue;
+      const cur = store[p.name] || freshPlayerStat();
+      const add = ps(i);
+      Object.keys(add).forEach((k) => {
+        if (k === 'highBid') cur.highBid = Math.max(cur.highBid || 0, add.highBid || 0);
+        else if (k !== 'gamesPlayed' && k !== 'gamesWon') cur[k] = (cur[k] || 0) + (add[k] || 0);
+      });
+      cur.isBot = !!p.isBot;
+      cur.avatar = p.avatar || cur.avatar || null;
+      cur.botStyle = p.botStyle || cur.botStyle || null;
+      cur.gamesPlayed = (cur.gamesPlayed || 0) + 1;
+      const won = (winnerLabel === 'Team A' && p.team === 0) || (winnerLabel === 'Team B' && p.team === 1);
+      cur.gamesWon = (cur.gamesWon || 0) + (won ? 1 : 0);
+      store[p.name] = cur;
+    }
+    saveLifetimeStats(store);
+  } catch (e) {}
+}
 const AVATARS = [
   'rookling','fox','badger','owl','cardshark','greenie','bluejay','grumpy','goldfinch',
   'jackal','wolf','raven','lynx','cobra','stag',
@@ -461,6 +511,74 @@ function pickBotTalkLine(kind, seat, ctx) {
       'The pad does not negotiate.',
       'You can hear the bid hitting the floor.',
       'Next time bid the cards, not the vibe.'
+    ],
+    winningTaunt: [
+      'Scoreboard’s ugly for you. Get used to it.',
+      'We’re not just winning, we’re renting this table.',
+      'Keep dealing. I like free money.',
+      'This isn’t a comeback story. It’s a eulogy.',
+      'You’re not losing, you’re spectating.',
+      'I’d say good game, but it hasn’t been one — for you.',
+      'Enjoy the view from second place.',
+      'We’ve lapped you and you’re still counting your cards.',
+      'This is what a beatdown looks like in cardboard.',
+      'Keep bidding. I love watching you dig.',
+      'You brought a nest egg. We brought a shovel.',
+      'At this rate the scorepad needs a new page just for us.',
+      'Y’all are playing checkers. We’re playing chess with feathers.',
+      'I’ve seen closer games at a coronation.',
+      'Don’t worry, participation trophies are in the mail.',
+      'We’re up so much I forgot what losing feels like.',
+      'Keep swinging. It’s cute.',
+      'Feel free to concede. I won’t tell anyone.',
+      'This lead’s got its own zip code.',
+      'You’re chasing ghosts and we’re the ghosts.',
+      'Nice try. Try again in another life.',
+      'We’re beating you so bad the Bird feels sorry for you.',
+      'Scoreboard says story time’s over.',
+      'I’d slow down, but why?',
+      'This game’s basically over. Somebody tell the nest.',
+      'You call that a fight? I call it a warm-up.',
+      'We’re up big enough to start tipping the dealer.',
+      'Keep chasing. The finish line moved.',
+      'Losing gracefully is still losing.',
+      'Bid all you want. Math already won.',
+      'Take notes. This is how it’s done.',
+      'We’re not sweating. You should be.'
+    ],
+    losingTaunt: [
+      'Enjoy the lead. Leases expire.',
+      'Big talk for a team that hasn’t won the game yet.',
+      'We’re not behind, we’re setting a trap.',
+      'This ain’t over till the last nest is counted.',
+      'Keep smiling. It’ll make the comeback sweeter.',
+      'You’re up now. Ask me again after the next hand.',
+      'Scoreboards don’t win games. Bids do.',
+      'We’re just getting the boring part out of the way.',
+      'Save the victory lap. You’ll need the energy.',
+      'This lead’s rented, not owned.',
+      'Talk’s cheap. So is your lead, apparently.',
+      'We like our comebacks dramatic.',
+      'Keep counting. We’re not done dealing.',
+      'You peaked early. We peak on time.',
+      'This is just the trailer. Wait for the movie.',
+      'Ahead now, worried later.',
+      'We’ve been down before. Ask the scorepad.',
+      'Ninth-inning energy, and we haven’t even started.',
+      'Cute lead. Won’t last past the next Bird.',
+      'Every big lead has a bigger nest waiting.',
+      'You’re loud for a team that hasn’t finished the job.',
+      'We’re not panicking. We’re plotting.',
+      'The math isn’t done. Neither are we.',
+      'Enjoy it now. Regret it at the finish line.',
+      'That lead’s got a short memory.',
+      'We don’t fold under pressure. Ask us later.',
+      'Talk to me after the nest flips.',
+      'Comebacks don’t RSVP. They just show up.',
+      'You’ll remember this lead. We’ll erase it.',
+      'We’re patient. Revenge is a slow-played hand.',
+      'Hold that pose. It won’t last.',
+      'Big lead, small hand left to prove it.'
     ]
   };
   const lines = pool[kind];
@@ -484,6 +602,38 @@ function botMaybeTableTalk(kind, ctx) {
     seat = ctx.prefer;
   }
   const text = pickBotTalkLine(kind, seat, ctx);
+  if (!text) return;
+  window._botTalkAt = now;
+  setSeatBank(seat, bankOfSeat(seat) - cost);
+  const nm = (players[seat] && players[seat].name) || 'Bot';
+  setTimeout(() => {
+    try { showTableMsgPopup(nm, text); } catch (e) {}
+    try { updateBankDisplays(); } catch (e) {}
+    try { broadcast({ type: 'tableMsg', name: nm, text, banks: players.map(p => p.bank || 0) }); } catch (e) {}
+  }, 450 + Math.floor(Math.random() * 800));
+}
+/** After a hand's scores land, let a random bot razz the table based on who's
+ * actually ahead in the match (not just who made/set this one hand). Only
+ * fires when there's a real gap, so it doesn't chirp on a near-tied game. */
+function botMaybeStandingsTaunt() {
+  if (!isHost) return;
+  if (!players || !players.length) return;
+  if (!game || !Array.isArray(game.scores)) return;
+  const now = Date.now();
+  if (window._botTalkAt && now - window._botTalkAt < 8000) return;
+  if (Math.random() > 0.42) return;
+  const diff = (game.scores[0] || 0) - (game.scores[1] || 0);
+  if (Math.abs(diff) < 20) return; // too close to bother taunting
+  const cost = tableMsgCost();
+  const rich = [];
+  players.forEach((p, i) => {
+    if (p && p.isBot && bankOfSeat(i) >= cost) rich.push(i);
+  });
+  if (!rich.length) return;
+  const seat = rich[Math.floor(Math.random() * rich.length)];
+  const seatIsAhead = (players[seat].team === 0) === (diff > 0);
+  const kind = seatIsAhead ? 'winningTaunt' : 'losingTaunt';
+  const text = pickBotTalkLine(kind, seat, {});
   if (!text) return;
   window._botTalkAt = now;
   setSeatBank(seat, bankOfSeat(seat) - cost);
@@ -1548,6 +1698,44 @@ function playClickSound() {
   osc.stop(t + 0.06);
 }
 
+/** Bid stepper nudged up (+5) — quick rising blip */
+function playBidUpSound() {
+  if (soundMuted || !soundCard) return;
+  const ctx = ensureAudio();
+  if (!ctx) return;
+  const t = ctx.currentTime;
+  const osc = ctx.createOscillator();
+  const g = ctx.createGain();
+  osc.type = 'triangle';
+  osc.frequency.setValueAtTime(500, t);
+  osc.frequency.exponentialRampToValueAtTime(780, t + 0.05);
+  g.gain.setValueAtTime(0.12, t);
+  g.gain.exponentialRampToValueAtTime(0.001, t + 0.07);
+  osc.connect(g);
+  g.connect(ctx.destination);
+  osc.start(t);
+  osc.stop(t + 0.08);
+}
+
+/** Bid stepper nudged down (−5) — quick dropping blip */
+function playBidDownSound() {
+  if (soundMuted || !soundCard) return;
+  const ctx = ensureAudio();
+  if (!ctx) return;
+  const t = ctx.currentTime;
+  const osc = ctx.createOscillator();
+  const g = ctx.createGain();
+  osc.type = 'triangle';
+  osc.frequency.setValueAtTime(620, t);
+  osc.frequency.exponentialRampToValueAtTime(330, t + 0.05);
+  g.gain.setValueAtTime(0.12, t);
+  g.gain.exponentialRampToValueAtTime(0.001, t + 0.07);
+  osc.connect(g);
+  g.connect(ctx.destination);
+  osc.start(t);
+  osc.stop(t + 0.08);
+}
+
 function playSitSound() {
   if (soundMuted) return;
   const ctx = ensureAudio();
@@ -2122,6 +2310,8 @@ function playSfx(name, { broadcastNet = false } = {}) {
     case 'turn': playTurnSound(); break;
     case 'tick': playTickSound(); break;
     case 'click': playClickSound(); break;
+    case 'bidUp': playBidUpSound(); break;
+    case 'bidDown': playBidDownSound(); break;
     case 'sit': playSitSound(); break;
     case 'bid': playBidSound(); break;
     case 'pass': playPassSound(); break;
@@ -4012,6 +4202,8 @@ function handleMessage(data, conn) {
       case 'handResult':
         if (data.history) handHistory = data.history;
         if (Array.isArray(data.matchTricks)) matchTricks = data.matchTricks;
+        if (data.matchStats) matchStats = data.matchStats;
+        if (Array.isArray(data.playerStats)) playerStats = data.playerStats;
         if (data.summary) {
           // Host already held the nest overlay; clients may still be watching it
           const stillNest = document.getElementById('ghNestAnim');
@@ -4029,6 +4221,7 @@ function handleMessage(data, conn) {
           if (finalScores[0] >= goal || finalScores[1] >= goal) {
             const winner = finalScores[0] > finalScores[1] ? 'Team A'
               : (finalScores[1] > finalScores[0] ? 'Team B' : 'Tie');
+            try { mergeLifetimeStats(winner); } catch (e) {}
             showWinCelebration(winner, [...finalScores]);
           }
         }
@@ -5236,6 +5429,7 @@ function hostStartGame() {
     try { updateBankDisplays(); } catch (e) {}
   } catch (e) {}
   handHistory = [];
+  resetPlayerStats();
   recentTricks = [];
   matchTricks = [];
   lastCompletedTrick = null;
@@ -5828,19 +6022,23 @@ function refreshLandscapeFeltBid() {
     const pass = $('ltFeltPassBtn');
     if (minus) minus.onclick = (e) => {
       e.preventDefault(); e.stopPropagation();
+      try { playSfx('bidDown'); } catch (err) {}
       const minv = auctionNextMin();
       if (_ltBidSuggested - 5 >= minv) { _ltBidSuggested -= 5; refreshLandscapeFeltBid(); }
     };
     if (plus) plus.onclick = (e) => {
       e.preventDefault(); e.stopPropagation();
+      try { playSfx('bidUp'); } catch (err) {}
       if (_ltBidSuggested + 5 <= bidCeilingFor(myIndex)) { _ltBidSuggested += 5; refreshLandscapeFeltBid(); }
     };
     if (bidBtn) bidBtn.onclick = (e) => {
       e.preventDefault(); e.stopPropagation();
+      try { playSfx('click'); } catch (err) {}
       submitBid(_ltBidSuggested);
     };
     if (pass) pass.onclick = (e) => {
       e.preventDefault(); e.stopPropagation();
+      try { playSfx('click'); } catch (err) {}
       submitBid(0);
     };
   }
@@ -5979,18 +6177,22 @@ function showBidUI() {
     const pass = $('bidPassBtn');
     if (minus) minus.onclick = (e) => {
       e.preventDefault(); e.stopPropagation();
+      try { playSfx('bidDown'); } catch (err) {}
       if (suggested - 5 >= nextMin) { suggested -= 5; sync(); }
     };
     if (plus) plus.onclick = (e) => {
       e.preventDefault(); e.stopPropagation();
+      try { playSfx('bidUp'); } catch (err) {}
       if (suggested + 5 <= ceiling) { suggested += 5; sync(); }
     };
     if (conf) conf.onclick = (e) => {
       e.preventDefault(); e.stopPropagation();
+      try { playSfx('click'); } catch (err) {}
       submitBid(suggested);
     };
     if (pass) pass.onclick = (e) => {
       e.preventDefault(); e.stopPropagation();
+      try { playSfx('click'); } catch (err) {}
       submitBid(0);
     };
   }
@@ -6170,6 +6372,12 @@ function nestCardsToText(cards) {
 
 function finishBidding() {
   game.phase = 'discard';
+  try {
+    const bs = ps(game.bidder);
+    bs.bidsWon++;
+    bs.bidSum += (game.bid || 0);
+    if ((game.bid || 0) > (bs.highBid || 0)) bs.highBid = game.bid;
+  } catch (e) {}
   try { playSfx('winBid', { broadcastNet: true }); } catch (e) {}
   // Pass-out only applied during the auction — restore full seats for discard/play
   document.querySelectorAll('.player-slot.is-passed, #slot-me.is-passed').forEach(el => {
@@ -6836,6 +7044,7 @@ function hostTransferHost() {
       specialsAnytime, mustTrumpWhenVoid, minBid, targetScore, handSize, nestSizeDefault, ruleVariant,
       botDifficulty, turnTimeSec },
     matchStats: { ...matchStats },
+    playerStats: playerStats.map(s => ({ ...s })),
     handHistory: handHistory.slice(),
   };
   window._horHandoffFrom = myPeerId;
@@ -6865,6 +7074,7 @@ function finishHostHandoff(newId) {
   if (typeof s.includeRed2 === 'boolean') includeRed2 = s.includeRed2;
   if (s.red2Points) red2Points = s.red2Points;
   matchStats = snapshot.matchStats || matchStats;
+  playerStats = snapshot.playerStats || playerStats;
   handHistory = snapshot.handHistory || [];
   const oldPlayers = snapshot.players || [];
   players = oldPlayers.map(p => {
@@ -7841,6 +8051,15 @@ function hostProcessPlay(data) {
     game.tricksTaken[team].push(...game.trick.map(t => t.card));
     try { creditCapture(winner.player, trickPoints); } catch (e) {}
     try {
+      const wStat = ps(winner.player);
+      wStat.tricksWon++;
+      wStat.points += trickPoints;
+      wStat.trickPtsSum += trickPoints;
+      if (trickPoints >= 30) wStat.bigTricks++;
+      if (game.trick.some(t => t.card && (t.card.color === 'rook' || t.card.id === 'rook'))) wStat.rookCaptures++;
+      if (game.trick.some(t => t.card && isRed2(t.card))) wStat.red2Captures++;
+    } catch (e) {}
+    try {
       const wName = (players[winner.player] && players[winner.player].name) || 'Player';
       const rookTaken = game.trick.some(t => t.card && (t.card.color === 'rook' || t.card.id === 'rook'));
       const red2Taken = game.trick.some(t => t.card && isRed2(t.card));
@@ -8072,6 +8291,11 @@ function hostEndHand() {
     try {
       const nestSeat = (nestGoesTo === 'bidder' && game.bidder != null) ? game.bidder : game.currentPlayer;
       creditCapture(nestSeat, nestPtsShown);
+      try {
+        const nStat = ps(nestSeat);
+        nStat.nestWins++;
+        nStat.nestPts += nestPtsShown;
+      } catch (e) {}
       try { botMaybeTableTalk('nest', { name: nestWinnerName, pts: nestPtsShown, prefer: nestSeat }); } catch (e) {}
     } catch (e) {}
   }
@@ -8159,6 +8383,7 @@ function hostEndHand() {
   }
 
   try { botMaybeTableTalk(made ? 'made' : 'set', { prefer: game.bidder }); } catch (e) {}
+  try { botMaybeStandingsTaunt(); } catch (e) {}
 
   game.phase = 'score';
   try { clearTrumpBanners(); } catch (e) {}
@@ -8221,14 +8446,28 @@ function hostEndHand() {
     if (bidderTeam === 0) matchStats.setsA = (matchStats.setsA || 0) + 1;
     else matchStats.setsB = (matchStats.setsB || 0) + 1;
   }
+  try {
+    for (let i = 0; i < 4; i++) { if (players[i]) ps(i).hands++; }
+    const bStat = ps(game.bidder);
+    if (made) bStat.bidsMade++; else bStat.bidsSet++;
+    if (game.shotTheMoon) {
+      bStat.moonAttempts++;
+      if (shotMoonResult === 'made') bStat.moonMade++;
+    }
+    if (sandbagOverAdded) bStat.bags += Math.floor(sandbagOverAdded / 10);
+  } catch (e) {}
 
   const finishToScore = () => {
-    broadcast({ type: 'handResult', summary, history: handHistory, matchTricks: matchTricks || [] });
+    broadcast({
+      type: 'handResult', summary, history: handHistory, matchTricks: matchTricks || [],
+      matchStats: { ...matchStats }, playerStats: playerStats.map(s => ({ ...s })),
+    });
     broadcastState();
     showScoreModal(summary);
     const goal = game.targetScore || targetScore || 300;
     if (game.scores[0] >= goal || game.scores[1] >= goal) {
       const winner = game.scores[0] > game.scores[1] ? 'Team A' : (game.scores[1] > game.scores[0] ? 'Team B' : 'Tie');
+      try { mergeLifetimeStats(winner); } catch (e) {}
       showWinCelebration(winner, [...game.scores]);
     }
   };
@@ -8354,21 +8593,134 @@ if (typeof window !== 'undefined' && !window._horRemainFitBound) {
   window.addEventListener('orientationchange', () => setTimeout(rerun, 80));
 }
 
+function statMadePct(s) {
+  const total = (s.bidsMade || 0) + (s.bidsSet || 0);
+  return total ? Math.round((s.bidsMade / total) * 100) : 0;
+}
+function statAvgBid(s) { return s.bidsWon ? Math.round(s.bidSum / s.bidsWon) : 0; }
+function statTeamClass(team) { return team === 0 ? 'team-a' : 'team-b'; }
+function statTeamName(team) {
+  return (typeof teamLabel === 'function') ? teamLabel(team) : (team === 0 ? 'Griffin' : 'Raven');
+}
+function esc(t) { return (typeof escapeHtmlSafe === 'function') ? escapeHtmlSafe(String(t == null ? '' : t)) : String(t == null ? '' : t); }
+
+function renderStatChips(s) {
+  const chips = [];
+  if (s.rookCaptures) chips.push(`<span class="stat-chip chip-rook" title="Rook captures">🐦 ${s.rookCaptures}</span>`);
+  if (s.red2Captures) chips.push(`<span class="stat-chip chip-red2" title="Red 2 captures">🔴 ${s.red2Captures}</span>`);
+  if (s.bigTricks) chips.push(`<span class="stat-chip chip-big" title="30+ point tricks">💥 ${s.bigTricks}</span>`);
+  if (s.nestWins) chips.push(`<span class="stat-chip chip-nest" title="Nest captures">🪺 ${s.nestWins}</span>`);
+  if (s.moonAttempts) chips.push(`<span class="stat-chip chip-moon" title="Shoot the Moon attempts / made">🌙 ${s.moonMade || 0}/${s.moonAttempts}</span>`);
+  if (s.bags) chips.push(`<span class="stat-chip chip-bag" title="Sandbag penalties">👝 ${s.bags}</span>`);
+  return chips.length ? `<div class="stat-chips">${chips.join('')}</div>` : '';
+}
+
+function renderPlayerStatCard(i, topScorerIdx) {
+  const p = players[i];
+  if (!p) return '';
+  const s = ps(i);
+  const pct = statMadePct(s);
+  const avgBid = statAvgBid(s);
+  const isLeader = (i === topScorerIdx && (s.points || 0) > 0);
+  const roleTag = p.isBot
+    ? `Bot · ${(typeof STYLE_TITLES !== 'undefined' && STYLE_TITLES[p.botStyle]) || 'Bot'}`
+    : (p.id === myPeerId ? 'You' : 'Player');
+  const avatarHtml = (typeof avatarHTML === 'function') ? avatarHTML(p.avatar || 'rookling') : '';
+  return `
+    <div class="stat-player-card ${statTeamClass(p.team)}${isLeader ? ' is-leader' : ''}">
+      ${isLeader ? '<div class="stat-crown" title="Top points this match">👑</div>' : ''}
+      <div class="stat-card-head">
+        <div class="stat-avatar">${avatarHtml}</div>
+        <div class="stat-name-block">
+          <div class="stat-player-name">${esc(p.name || 'Player')}</div>
+          <div class="stat-role-tag">${esc(roleTag)} <span class="stat-team-pill">${esc(statTeamName(p.team))}</span></div>
+        </div>
+      </div>
+      <div class="stat-metric-row">
+        <div class="stat-metric"><span class="stat-metric-num">${s.points || 0}</span><span class="stat-metric-label">Points</span></div>
+        <div class="stat-metric"><span class="stat-metric-num">${s.tricksWon || 0}</span><span class="stat-metric-label">Tricks</span></div>
+        <div class="stat-metric"><span class="stat-metric-num">${s.hands || 0}</span><span class="stat-metric-label">Hands</span></div>
+      </div>
+      <div class="stat-bid-line">
+        <div class="stat-bidbar-label">Bid record <b>${s.bidsMade || 0}-${s.bidsSet || 0}</b>${s.bidsWon ? ` (${pct}%)` : ''}${s.highBid ? ` · High ${s.highBid}` : ''}${avgBid ? ` · Avg ${avgBid}` : ''}</div>
+        <div class="stat-bidbar"><div class="stat-bidbar-fill" style="width:${pct}%"></div></div>
+      </div>
+      ${renderStatChips(s)}
+    </div>`;
+}
+
+function renderAllTimeLeaders() {
+  const store = loadLifetimeStats();
+  const names = Object.keys(store);
+  if (!names.length) return '<div class="stats-empty">No all-time stats yet — finish a full game to start the record book.</div>';
+  const rows = names.map(n => ({ name: n, ...store[n] })).sort((a, b) => (b.points || 0) - (a.points || 0)).slice(0, 8);
+  const medals = ['🥇', '🥈', '🥉'];
+  return '<div class="alltime-list">' + rows.map((r, idx) => `
+    <div class="alltime-row">
+      <span class="alltime-rank">${medals[idx] || ('#' + (idx + 1))}</span>
+      <span class="alltime-name">${esc(r.name)}${r.isBot ? ' <em class="alltime-bot-tag">bot</em>' : ''}</span>
+      <span class="alltime-pts">${r.points || 0} pts</span>
+      <span class="alltime-games">${r.gamesWon || 0}/${r.gamesPlayed || 0} games</span>
+    </div>`).join('') + '</div>';
+}
+
+function wireStatsAllTimeToggle() {
+  const btn = $('statsAllTimeBtn');
+  const box = $('statsAllTimeBody');
+  if (!btn || !box) return;
+  btn.onclick = () => {
+    const showing = !box.classList.contains('hidden');
+    if (showing) { box.classList.add('hidden'); btn.textContent = '🏆 All-time leaders'; return; }
+    box.innerHTML = renderAllTimeLeaders();
+    box.classList.remove('hidden');
+    btn.textContent = 'Hide all-time leaders';
+  };
+}
+
 function showStatsModal() {
   const modal = $('statsModal');
   const body = $('statsBody');
   if (!modal || !body) return;
   const avg = matchStats.bidCount ? Math.round(matchStats.bidSum / matchStats.bidCount) : 0;
+  const seats = [0, 1, 2, 3].filter(i => players[i]);
+  let topScorerIdx = -1, topPts = -1;
+  seats.forEach((i) => {
+    const pts = ps(i).points || 0;
+    if (pts > topPts) { topPts = pts; topScorerIdx = i; }
+  });
+  const teamAPts = seats.filter(i => players[i].team === 0).reduce((sum, i) => sum + (ps(i).points || 0), 0);
+  const teamBPts = seats.filter(i => players[i].team === 1).reduce((sum, i) => sum + (ps(i).points || 0), 0);
+  const maxTeamPts = Math.max(teamAPts, teamBPts, 1);
+  const teamAName = statTeamName(0), teamBName = statTeamName(1);
+  const scores = (game && Array.isArray(game.scores)) ? game.scores : [0, 0];
+  const cardsHtml = seats.map(i => renderPlayerStatCard(i, topScorerIdx)).join('');
+
   body.innerHTML = `
-    <div class="stats-grid">
-      <div><b>Hands played</b><br>${matchStats.hands || 0}</div>
-      <div><b>High bid</b><br>${matchStats.highBid || 0}</div>
-      <div><b>Avg bid</b><br>${avg}</div>
-      <div><b>Team A made / set</b><br>${matchStats.madeA || 0} / ${matchStats.setsA || 0}</div>
-      <div><b>Team B made / set</b><br>${matchStats.madeB || 0} / ${matchStats.setsB || 0}</div>
+    <div class="stats-fancy">
+      <div class="stats-hero">
+        <div class="stats-hero-title">Table Stats</div>
+        <div class="stats-hero-sub">${matchStats.hands || 0} hand${matchStats.hands === 1 ? '' : 's'} played · avg bid ${avg} · high bid ${matchStats.highBid || 0}</div>
+      </div>
+      <div class="team-compare">
+        <div class="team-compare-row">
+          <span class="team-compare-name team-a-text">${esc(teamAName)}</span>
+          <span class="team-compare-score">${scores[0] || 0}</span>
+        </div>
+        <div class="team-compare-bar"><div class="team-compare-fill fill-a" style="width:${Math.round((teamAPts / maxTeamPts) * 100)}%"></div></div>
+        <div class="team-compare-row">
+          <span class="team-compare-name team-b-text">${esc(teamBName)}</span>
+          <span class="team-compare-score">${scores[1] || 0}</span>
+        </div>
+        <div class="team-compare-bar"><div class="team-compare-fill fill-b" style="width:${Math.round((teamBPts / maxTeamPts) * 100)}%"></div></div>
+        <div class="team-compare-meta">Made/Set — ${esc(teamAName)} ${matchStats.madeA || 0}/${matchStats.setsA || 0} &nbsp;·&nbsp; ${esc(teamBName)} ${matchStats.madeB || 0}/${matchStats.setsB || 0}</div>
+      </div>
+      <div class="stat-player-grid">${cardsHtml}</div>
+      <div class="stats-alltime-toggle"><button id="statsAllTimeBtn" class="btn" type="button">🏆 All-time leaders</button></div>
+      <div id="statsAllTimeBody" class="stats-alltime hidden"></div>
     </div>
   `;
   modal.classList.remove('hidden');
+  try { wireStatsAllTimeToggle(); } catch (e) {}
 }
 
 function wireScoreModalActions(summary) {
