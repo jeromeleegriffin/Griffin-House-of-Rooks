@@ -7,7 +7,7 @@
 // It's exchanged during the join handshake so a stale host or joiner (e.g.
 // one still running old cached JS) gets caught and auto-updated instead of
 // silently failing or behaving unpredictably against a mismatched peer.
-const APP_VERSION = '372';
+const APP_VERSION = '373';
 
 function horThisIndex() {
   try {
@@ -1474,6 +1474,62 @@ function playTickSound() {
 }
 
 /** Soft UI click (buttons, selects) */
+function playDiscardPickSound(step) {
+  if (soundMuted || !soundCard) return;
+  const ctx = ensureAudio();
+  if (!ctx) return;
+  const t = ctx.currentTime;
+  const n = Math.max(0, Math.min(8, Number(step) || 0));
+  const freq = 280 + n * 95;
+  const osc = ctx.createOscillator();
+  const g = ctx.createGain();
+  osc.type = 'triangle';
+  osc.frequency.setValueAtTime(freq, t);
+  osc.frequency.exponentialRampToValueAtTime(freq * 1.35, t + 0.06);
+  g.gain.setValueAtTime(0.14, t);
+  g.gain.exponentialRampToValueAtTime(0.001, t + 0.09);
+  osc.connect(g);
+  g.connect(ctx.destination);
+  osc.start(t);
+  osc.stop(t + 0.1);
+}
+
+function playDiscardToggleSfx(removing) {
+  if (window._discardPickStep == null) window._discardPickStep = 0;
+  if (removing) {
+    playDiscardUnpickSound();
+    window._discardPickStep = Math.max(0, window._discardPickStep - 1);
+  } else {
+    playDiscardPickSound(window._discardPickStep);
+    window._discardPickStep += 1;
+  }
+}
+
+function playDiscardUnpickSound() {
+  if (soundMuted || !soundCard) return;
+  const ctx = ensureAudio();
+  if (!ctx) return;
+  const t = ctx.currentTime;
+  const osc = ctx.createOscillator();
+  const osc2 = ctx.createOscillator();
+  const g = ctx.createGain();
+  osc.type = 'sine';
+  osc2.type = 'triangle';
+  osc.frequency.setValueAtTime(420, t);
+  osc.frequency.exponentialRampToValueAtTime(160, t + 0.16);
+  osc2.frequency.setValueAtTime(210, t);
+  osc2.frequency.exponentialRampToValueAtTime(90, t + 0.16);
+  g.gain.setValueAtTime(0.13, t);
+  g.gain.exponentialRampToValueAtTime(0.001, t + 0.18);
+  osc.connect(g);
+  osc2.connect(g);
+  g.connect(ctx.destination);
+  osc.start(t);
+  osc2.start(t);
+  osc.stop(t + 0.2);
+  osc2.stop(t + 0.2);
+}
+
 function playClickSound() {
   if (soundMuted || !soundCard) return;
   const ctx = ensureAudio();
@@ -3806,6 +3862,7 @@ function handleMessage(data, conn) {
           // On iPhone Safari this can look like 6/6 selected after only a
           // couple of taps, and Confirm Discard then rejects the stale IDs.
           window.selectedForDiscard = new Set();
+          window._discardPickStep = 0;
           showDiscardUI(!!data.showKitty);
           try { renderHand(true); } catch (e) {}
           fitHandToScreen();
@@ -6184,6 +6241,7 @@ function finishBidding() {
     // Use the same array the host game uses so Rook cannot be dropped
     game.myHand = game.hands[game.bidder].slice();
     window.selectedForDiscard = new Set();
+    window._discardPickStep = 0;
     showDiscardUI(true);
     fitHandToScreen();
     setTimeout(fitHandToScreen, 100);
@@ -6391,14 +6449,15 @@ function showDiscardUI(showKitty) {
         e.preventDefault();
         e.stopPropagation();
       }
-      try { playSfx('click'); } catch (err) {}
       const id = String(el.dataset.id);
       if (window.selectedForDiscard.has(id)) {
         window.selectedForDiscard.delete(id);
         el.classList.remove('selected');
+        try { playDiscardToggleSfx(true); } catch (err) {}
       } else if (window.selectedForDiscard.size < count) {
         window.selectedForDiscard.add(id);
         el.classList.add('selected');
+        try { playDiscardToggleSfx(false); } catch (err) {}
       }
       const n = window.selectedForDiscard.size;
       const lab = $('discardCountLabel');
@@ -7355,6 +7414,10 @@ function getRestClaimInfo() {
   if (game.trick && game.trick.length > 0 && game.trick.length < 4) return null;
   const left = remainingCardsInHands();
   if (left < 2) return null;
+  // Last trick (one card each) — just play it out. No lay-down.
+  let maxLeft = 0;
+  for (let i = 0; i < 4; i++) maxLeft = Math.max(maxLeft, ((game.hands[i] || []).length));
+  if (maxLeft <= 1) return null;
 
   const force = [];
   for (let i = 0; i < 4; i++) {
@@ -10107,13 +10170,14 @@ function renderHand(discardMode = false, opts = {}) {
             const id = String(el.dataset.id);
             if (!window.selectedForDiscard) window.selectedForDiscard = new Set();
             const needed = game.discardCount || 5;
-            try { playSfx('click'); } catch (err) {}
             if (window.selectedForDiscard.has(id)) {
               window.selectedForDiscard.delete(id);
               el.classList.remove('selected');
+              try { playDiscardToggleSfx(true); } catch (err) {}
             } else if (window.selectedForDiscard.size < needed) {
               window.selectedForDiscard.add(id);
               el.classList.add('selected');
+              try { playDiscardToggleSfx(false); } catch (err) {}
             }
             try { showDiscardUI(false); } catch (e) {}
           };
@@ -10137,14 +10201,15 @@ function renderHand(discardMode = false, opts = {}) {
       if (discardMode) {
         if (!window.selectedForDiscard) window.selectedForDiscard = new Set();
         const needed = game.discardCount || 5;
-        try { playSfx('click'); } catch (err) {}
         // Normalize set to strings
         if (window.selectedForDiscard.has(id)) {
           window.selectedForDiscard.delete(id);
           el.classList.remove('selected');
+          try { playDiscardToggleSfx(true); } catch (err) {}
         } else if (window.selectedForDiscard.size < needed) {
           window.selectedForDiscard.add(id);
           el.classList.add('selected');
+          try { playDiscardToggleSfx(false); } catch (err) {}
         }
         const btn = $('confirmDiscard');
         if (btn) {
