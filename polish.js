@@ -1320,7 +1320,7 @@
     applyGfx((p && p.gfx) || loadGfx());
     document.querySelectorAll('a.cash-app-link').forEach(function (a) {
       a.addEventListener('click', function (e) {
-        var url = 'https://cash.app/$heargodtalk';
+        var url = 'https://cash.app/$JeromeLeeGriffin';
         var standalone = false;
         try {
           standalone = !!(window.matchMedia && window.matchMedia('(display-mode: standalone)').matches) || navigator.standalone === true;
@@ -1330,9 +1330,9 @@
         var opened = null;
         try { opened = window.open(url, '_blank'); } catch (err) {}
         if (opened) return;
-        try { if (navigator.clipboard && navigator.clipboard.writeText) navigator.clipboard.writeText('$heargodtalk'); } catch (err) {}
+        try { if (navigator.clipboard && navigator.clipboard.writeText) navigator.clipboard.writeText('$JeromeLeeGriffin'); } catch (err) {}
         var st = $('lobbyStatus');
-        if (st) st.textContent = 'Cashtag copied: $heargodtalk — open Cash App and send there. This page stays put so the table does not reload.';
+        if (st) st.textContent = 'Cashtag copied: $JeromeLeeGriffin — open Cash App and send there. This page stays put so the table does not reload.';
       });
     });
     if (name) name.addEventListener('change', persistPlayer);
