@@ -36,7 +36,7 @@
   <link rel="manifest" href="manifest.json">
   <link rel="icon" href="icon-192.png">
   <link rel="apple-touch-icon" href="apple-touch-icon.png">
-  <link rel="stylesheet" href="style.css?v=380">
+  <link rel="stylesheet" href="style.css?v=381">
   <script src="vendor/peerjs.min.js"></script>
   <style>
     /* Emergency layout if style.css fails to load — joiners still see a usable page */
@@ -46,6 +46,14 @@
       background:#4a1010;color:#ffd9d9;padding:10px 12px;border-radius:8px;font-size:14px}
     #horBootError.show{display:block}
   </style>
+
+<style id="lobby-info-card-style">
+.lobby-info-card{margin:12px auto 14px;max-width:760px;padding:14px 16px;border:1px solid rgba(201,162,39,.55);border-radius:14px;background:rgba(20,13,8,.86);box-shadow:0 5px 18px rgba(0,0,0,.22);text-align:center}
+.lobby-info-title{font-weight:800;letter-spacing:.08em;font-size:.82rem;margin-bottom:9px;color:#f3d889}
+.lobby-info-links{display:flex;flex-wrap:wrap;justify-content:center;gap:8px 16px}
+.lobby-info-links a{color:#f7e8bd;text-decoration:underline;font-weight:700;padding:4px 2px}
+.lobby-info-links a:hover{color:#fff}
+</style>
 </head>
 
 <body class="theme-classic cardback-griffin room-theme-midnight">
@@ -164,6 +172,22 @@
           <button id="joinBtn" class="btn lobby-main" type="button">Join with a code<span class="lobby-btn-sub">Sit at a friend’s table</span></button>
           <button id="installAppBtn" class="btn lobby-main" type="button">Install on this phone<span class="lobby-btn-sub">Home screen app — no browser bar</span></button>
         </div>
+        <section class="lobby-info-card" aria-label="Game information and support">
+          <div class="lobby-info-title">HOUSE OF ROOKS INFO & SUPPORT</div>
+          <div class="lobby-info-links">
+            <a href="privacy.html">🔒 Privacy</a>
+            <a href="mailto:jeromeleegriffin@gmail.com">✉️ Contact / Questions</a>
+            <a class="cash-app-link" href="https://cash.app/%24heargodtalk" target="_blank" rel="noopener noreferrer">💵 Support the game — Cash App $heargodtalk</a>
+          </div>
+        </section>
+        <a class="lobby-stats-card" href="shuffle-statistics.html" aria-label="View shuffle statistics">
+          <span class="lobby-stats-icon" aria-hidden="true">📊</span>
+          <span class="lobby-stats-copy">
+            <strong>HOW RANDOM IS THE DEAL?</strong>
+            <span>See 100,000 simulated hands and compare the results to real-life odds.</span>
+          </span>
+          <span class="lobby-stats-arrow" aria-hidden="true">›</span>
+        </a>
         <div class="lobby-hero" aria-hidden="true">
           <img id="lobbyHeroImg" class="lobby-hero-portrait" alt="Black rook and red rook in a mid-air fight" width="1400" height="920" src="lobby-hero-port-362.jpg">
           <img class="lobby-hero-land" alt="Griffin House of Rooks" width="2400" height="420" src="lobby-banner-land-361.jpg">
@@ -1141,10 +1165,10 @@
       paintInstall();
     })();
   </script>
-  <script src="rules.js?v=380"></script>
-  <script src="bots.js?v=380"></script>
-  <script src="game.js?v=380"></script>
-  <script src="polish.js?v=380"></script>
+  <script src="rules.js?v=381"></script>
+  <script src="bots.js?v=381"></script>
+  <script src="game.js?v=381"></script>
+  <script src="polish.js?v=381"></script>
   <div id="horBootError"></div>
   <script>
     window.addEventListener('error', function (ev) {
@@ -1158,7 +1182,7 @@
   </script>
   <script>
     if ('serviceWorker' in navigator) {
-      navigator.serviceWorker.register('sw.js?v=380', { updateViaCache: 'none' })
+      navigator.serviceWorker.register('sw.js?v=381', { updateViaCache: 'none' })
         .then(function (reg) { try { reg.update(); } catch (e) {} })
         .catch(() => {});
       let horSwAutoReloaded = false;
