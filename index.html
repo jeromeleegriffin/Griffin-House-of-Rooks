@@ -13,7 +13,7 @@
   <title>House of Rooks</title>
   <script>
     (function () {
-      var BUILD = '362';
+      var BUILD = '364';
       try {
         var params = new URLSearchParams(location.search);
         var seen = localStorage.getItem('horBuild') || '';
@@ -36,7 +36,7 @@
   <link rel="manifest" href="manifest.json">
   <link rel="icon" href="icon-192.png">
   <link rel="apple-touch-icon" href="apple-touch-icon.png">
-  <link rel="stylesheet" href="style.css?v=362">
+  <link rel="stylesheet" href="style.css?v=364">
   <script src="vendor/peerjs.min.js"></script>
   <style>
     /* Emergency layout if style.css fails to load — joiners still see a usable page */
@@ -160,7 +160,7 @@
         </div>
         <div class="lobby-actions">
           <button id="soloPracticeBtn" class="btn primary lobby-main" type="button">Play offline<span class="lobby-btn-sub">You vs three bots</span></button>
-          <button id="friendsToggleBtn" class="btn lobby-main" type="button">Play with friends<span class="lobby-btn-sub">Host a table · share a code</span></button>
+          <button id="friendsToggleBtn" class="btn lobby-main" type="button">Play with friends<span class="lobby-btn-sub">Host a table · they join from the website</span></button>
           <button id="joinBtn" class="btn lobby-main" type="button">Join with a code<span class="lobby-btn-sub">Sit at a friend’s table</span></button>
           <button id="installAppBtn" class="btn lobby-main" type="button">Install on this phone<span class="lobby-btn-sub">Home screen app — no browser bar</span></button>
         </div>
@@ -948,7 +948,7 @@
           Nearby play uses the 4-letter table code. The guest must open House of Rooks on their own phone — do not send a file or a phone-only link. That is what shows a broken page.
         </p>
         <ol class="nearby-steps">
-          <li><strong>Everyone:</strong> Same Wi‑Fi (not guest). Both phones open this same game.</li>
+          <li><strong>Everyone:</strong> Open this same website (or the same saved game). Same Wi‑Fi is only needed for a file/local copy — not for this hosted site.</li>
           <li><strong>Host:</strong> Play with friends. Keep this tab open. Read the 4-letter code out loud.</li>
           <li><strong>Guest:</strong> Open their own copy of House of Rooks (same website, or their own saved game). Tap Join with a code. Type the 4 letters. Tap Sit down, then a chair.</li>
           <li><strong>Do not</strong> text a file:// link, a Files-app link, or a QR from a copy that is not on https. That page is broken on the other phone.</li>
@@ -1079,22 +1079,50 @@
         deferredPrompt = null;
         paintInstall();
       });
+      function showInstallHelp() {
+        var old = document.getElementById('horPwaSheet');
+        if (old) old.remove();
+        var ios = isIos();
+        var sheet = document.createElement('div');
+        sheet.id = 'horPwaSheet';
+        sheet.className = 'hor-pwa-sheet';
+        sheet.setAttribute('role', 'dialog');
+        var how = ios
+          ? 'On iPhone: tap the Share button, then <strong>Add to Home Screen</strong>.'
+          : 'This browser did not offer an install popup. In the browser menu tap <strong>Install app</strong> or <strong>Add to Home screen</strong>. Use Chrome or Samsung Internet — not an in-app browser like TikTok or Messenger.';
+        sheet.innerHTML = '<p style="margin:0 0 8px;font-weight:700;color:#e8c96a;">Install House of Rooks</p>' +
+          '<p style="margin:0 0 12px;line-height:1.4;font-size:0.92rem;">' + how + '</p>' +
+          '<button type="button" class="btn primary" id="horPwaSheetOk" style="width:100%;">Got it</button>';
+        document.body.appendChild(sheet);
+        var close = function () { try { sheet.remove(); } catch (e) {} };
+        var ok = document.getElementById('horPwaSheetOk');
+        if (ok) ok.addEventListener('click', close);
+        sheet.addEventListener('click', function (ev) { if (ev.target === sheet) close(); });
+      }
       function onInstall() {
         if (isStandalone()) return;
         if (deferredPrompt && deferredPrompt.prompt) {
           try {
-            var p = deferredPrompt.prompt();
+            var held = deferredPrompt;
+            var p = held.prompt();
             if (p && p.then) {
               p.then(function () {
-                return deferredPrompt.userChoice;
+                return held.userChoice;
               }).then(function (choice) {
                 if (choice && choice.outcome === 'accepted') installed = true;
                 deferredPrompt = null;
                 paintInstall();
-              }).catch(function () {});
+              }).catch(function () {
+                showInstallHelp();
+              });
+              return;
             }
-          } catch (e) {}
+          } catch (e) {
+            showInstallHelp();
+            return;
+          }
         }
+        showInstallHelp();
       }
       window.horInstallApp = onInstall;
       document.addEventListener('click', function (ev) {
@@ -1107,10 +1135,10 @@
       paintInstall();
     })();
   </script>
-  <script src="rules.js?v=362"></script>
-  <script src="bots.js?v=362"></script>
-  <script src="game.js?v=362"></script>
-  <script src="polish.js?v=362"></script>
+  <script src="rules.js?v=364"></script>
+  <script src="bots.js?v=364"></script>
+  <script src="game.js?v=364"></script>
+  <script src="polish.js?v=364"></script>
   <div id="horBootError"></div>
   <script>
     window.addEventListener('error', function (ev) {
@@ -1124,7 +1152,7 @@
   </script>
   <script>
     if ('serviceWorker' in navigator) {
-      navigator.serviceWorker.register('sw.js?v=362', { updateViaCache: 'none' })
+      navigator.serviceWorker.register('sw.js?v=364', { updateViaCache: 'none' })
         .then(function (reg) { try { reg.update(); } catch (e) {} })
         .catch(() => {});
       let horSwAutoReloaded = false;

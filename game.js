@@ -7,7 +7,7 @@
 // It's exchanged during the join handshake so a stale host or joiner (e.g.
 // one still running old cached JS) gets caught and auto-updated instead of
 // silently failing or behaving unpredictably against a mismatched peer.
-const APP_VERSION = '362';
+const APP_VERSION = '364';
 
 function horThisIndex() {
   try {
@@ -2636,7 +2636,7 @@ function applyWaitingShareMode() {
   if (speak) {
     speak.textContent = qrOk
       ? 'Share this code or QR. Friends tap an open seat to sit.'
-      : 'Wi‑Fi table. Read this code out loud. Friends open House of Rooks on their own phone and join with the code.';
+      : 'Read this code out loud. Friends open House of Rooks on their own phone and join with the code.';
   }
   if (hint) {
     hint.textContent = qrOk
@@ -2867,7 +2867,9 @@ function createRoom() {
     saveSession();
     if ($('lobbyStatus')) $('lobbyStatus').textContent = '';
     if ($('waitingStatus')) {
-      $('waitingStatus').textContent = 'Table is live. Friends on the same Wi‑Fi can join with this code.';
+      $('waitingStatus').textContent = canShareJoinQr()
+        ? 'Table is live. Friends open this same website and join with the code — they do not need your Wi‑Fi.'
+        : 'Table is live. Friends open House of Rooks on their own phone and join with this code.';
     }
     // Give the public broker a moment to actually register the id
     // before guests start connecting — a common PeerJS race.
