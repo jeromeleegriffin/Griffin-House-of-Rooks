@@ -2,20 +2,20 @@
  * Author: Jerome Griffin
  * Copyright (c) 2026 Jerome Griffin / Griffin House
  */
-const CACHE = 'house-of-rooks-v367';
+const CACHE = 'house-of-rooks-v368';
 const SHELL = [
   './',
   './index.html',
   './rules.js',
-  './rules.js?v=367',
+  './rules.js?v=368',
   './bots.js',
-  './bots.js?v=367',
+  './bots.js?v=368',
   './game.js',
-  './game.js?v=367',
+  './game.js?v=368',
   './polish.js',
-  './polish.js?v=367',
+  './polish.js?v=368',
   './style.css',
-  './style.css?v=367',
+  './style.css?v=368',
   './hor-version.js',
   './splash-battle.png',
   './wait-nest-portrait.jpg',

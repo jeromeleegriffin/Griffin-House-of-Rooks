@@ -6949,8 +6949,8 @@ body:not(.in-game) #app {
     padding: 0.5rem 0.7rem 0.6rem;
   }
   .cele-play .card-face {
-    width: min(12vw, 72px);
-    height: calc(min(12vw, 72px) * 1.4);
+    width: min(18vw, 26vh, 112px);
+    height: calc(min(18vw, 26vh, 112px) * 1.4);
   }
   .cele-actions {
     width: 100%;
@@ -9712,10 +9712,14 @@ body:not(.buy-beer-on) .buy-beer-btn { display:none !important; }
 body:not(.buy-beer-on) .buy-beer-btn { display:none !important; }
 body:not(.whisper-on) .whisper-btn { display:none !important; }
 @media (orientation: landscape) {
-  .cele-plays { gap:0.2rem; }
-  .cele-play .card-face { width:min(10.5vh, 11vw, 54px); height:calc(min(10.5vh, 11vw, 54px) * 1.38); overflow:visible; }
-  .cele-trick { overflow:visible; }
-  .cele-stage { overflow:visible; max-width:100%; }
+  .cele-plays { gap: 0.55rem; }
+  .cele-play .card-face {
+    width: min(20vw, 28vh, 118px) !important;
+    height: calc(min(20vw, 28vh, 118px) * 1.4) !important;
+    overflow: visible;
+  }
+  .cele-trick { overflow: visible; }
+  .cele-stage { overflow: visible; max-width: 100%; }
 }
 .tutorial-overlay { z-index:40000; }
 
@@ -9770,13 +9774,13 @@ body.gfx-seatPlaques .player-slot .name[data-plaque-team="1"] {
   .cele-actions-right { grid-column: 3; grid-row: 1; display: flex; flex-direction: column; gap: 0.28rem; align-items: flex-end; }
   .cele-head { grid-column: 2; grid-row: 1; width: auto; min-width: 0; padding: 0 0.2rem; }
   .cele-recap { grid-column: 1 / -1; grid-row: 2; }
-  .cele-stage { grid-column: 1 / -1; grid-row: 3; width: 100%; max-width: 100%; overflow: auto !important; min-height: 0; max-height: 48svh; }
+  .cele-stage { grid-column: 1 / -1; grid-row: 3; width: 100%; max-width: 100%; overflow: visible !important; min-height: 0; max-height: none; }
   .cele-actions .btn { min-width: 0; min-height: 1.85rem; font-size: 0.72rem; padding: 0.18rem 0.5rem; }
   .cele-play .card-face {
-    width: min(8svh, 10vw, 44px) !important;
-    height: calc(min(8svh, 10vw, 44px) * 1.38) !important;
+    width: min(18vw, 26vh, 112px) !important;
+    height: calc(min(18vw, 26vh, 112px) * 1.4) !important;
   }
-  .cele-plays { gap: 0.16rem; }
+  .cele-plays { gap: 0.5rem; justify-content: center; }
 }
 @media (orientation: landscape) and (max-height: 480px) {
   .cele-page { padding: 0.2rem 0.35rem; }
@@ -9784,10 +9788,10 @@ body.gfx-seatPlaques .player-slot .name[data-plaque-team="1"] {
   .cele-head h1 { font-size: clamp(1rem, 4.2svh, 1.45rem) !important; }
   .cele-head p { font-size: 0.78rem; }
   .cele-recap { font-size: 0.72rem; }
-  .cele-stage { max-height: 42svh; }
+  .cele-stage { max-height: none; }
   .cele-play .card-face {
-    width: min(7svh, 9vw, 38px) !important;
-    height: calc(min(7svh, 9vw, 38px) * 1.35) !important;
+    width: min(16vw, 24vh, 96px) !important;
+    height: calc(min(16vw, 24vh, 96px) * 1.4) !important;
   }
 }
 @media (orientation: portrait) {
