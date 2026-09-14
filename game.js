@@ -7,7 +7,7 @@
 // It's exchanged during the join handshake so a stale host or joiner (e.g.
 // one still running old cached JS) gets caught and auto-updated instead of
 // silently failing or behaving unpredictably against a mismatched peer.
-const APP_VERSION = '369';
+const APP_VERSION = '372';
 
 function horThisIndex() {
   try {
@@ -2246,6 +2246,26 @@ function maxBid() {
 function isShootMoonBid(n) {
   const v = parseInt(n, 10);
   return !!(shootMoonEnabled && Number.isFinite(v) && v === maxBid());
+}
+
+function teamScoreForSeat(seat) {
+  const i = Number(seat);
+  const team = (players[i] && typeof players[i].team === 'number')
+    ? players[i].team
+    : (Number.isFinite(i) ? i % 2 : 0);
+  const scores = (game && game.scores) || [0, 0];
+  return Number(scores[team] || 0);
+}
+
+function moonBidAllowed(seat) {
+  if (!shootMoonEnabled) return false;
+  return teamScoreForSeat(seat) >= 0;
+}
+
+function bidCeilingFor(seat) {
+  const cap = maxBid();
+  if (shootMoonEnabled && !moonBidAllowed(seat)) return Math.max((minBid || 70), cap - 5);
+  return cap;
 }
 
 /** Label used in the bidding UI when Shoot the Moon is on and the amount
@@ -5725,7 +5745,7 @@ function refreshLandscapeFeltBid() {
     return;
   }
   const nextMin = auctionNextMin();
-  const ceiling = maxBid();
+  const ceiling = bidCeilingFor(myIndex);
   if (!_ltBidSuggested || _ltBidSuggested < nextMin || _ltBidSuggested > ceiling) {
     _ltBidSuggested = Math.min(ceiling, Math.max(nextMin, minBid || 70));
   }
@@ -5756,7 +5776,7 @@ function refreshLandscapeFeltBid() {
     };
     if (plus) plus.onclick = (e) => {
       e.preventDefault(); e.stopPropagation();
-      if (_ltBidSuggested + 5 <= maxBid()) { _ltBidSuggested += 5; refreshLandscapeFeltBid(); }
+      if (_ltBidSuggested + 5 <= bidCeilingFor(myIndex)) { _ltBidSuggested += 5; refreshLandscapeFeltBid(); }
     };
     if (bidBtn) bidBtn.onclick = (e) => {
       e.preventDefault(); e.stopPropagation();
@@ -5842,7 +5862,7 @@ function syncLandscapeKittyWait() {
 function showBidUI() {
   const landscape = !!(window.matchMedia && window.matchMedia('(orientation: landscape)').matches);
   const nextMin = auctionNextMin();
-  const ceiling = maxBid() || 180;
+  const ceiling = bidCeilingFor(myIndex) || 180;
   let suggested = Math.min(ceiling, Math.max(nextMin, parseInt(minBid, 10) || 100));
   if (!Number.isFinite(suggested)) suggested = nextMin;
   _ltBidSuggested = suggested;
@@ -5937,6 +5957,11 @@ function submitBid(val) {
     if (ma) ma.textContent = 'Bid did not go through — pick an amount and tap Bid again.';
     return;
   }
+  if (value !== 0 && isShootMoonBid(value) && !moonBidAllowed(myIndex)) {
+    const ma = $('messageArea');
+    if (ma) ma.textContent = 'Shoot the moon is only allowed when your team is not in the hole.';
+    return;
+  }
   if (isHost) {
     hostProcessBid({ player: myIndex, value, actionId: horNewActionId('bid') });
   } else {
@@ -6018,6 +6043,7 @@ function hostProcessBid(data) {
   } else {
     const high = auctionHigh();
     if (data.value <= high || data.value > maxBid() || data.value % 5 !== 0) return;
+    if (isShootMoonBid(data.value) && !moonBidAllowed(data.player)) return;
     game.highestBid = data.value;
     game.bid = data.value;
     game.bidder = data.player;
@@ -6034,6 +6060,10 @@ function hostProcessBid(data) {
     broadcast({ type: 'message', text: bidMsg });
     try { playSfx('bid', { broadcastNet: true }); } catch (e) {}
     try { botMaybeTableTalk('bid', { name: pname, prefer: data.player }); } catch (e) {}
+    if (game.shotTheMoon) {
+      finishBidding();
+      return;
+    }
   }
 
   // Auction ends as soon as 3 seats have passed and there is a high bidder
@@ -6361,6 +6391,7 @@ function showDiscardUI(showKitty) {
         e.preventDefault();
         e.stopPropagation();
       }
+      try { playSfx('click'); } catch (err) {}
       const id = String(el.dataset.id);
       if (window.selectedForDiscard.has(id)) {
         window.selectedForDiscard.delete(id);
@@ -10076,6 +10107,7 @@ function renderHand(discardMode = false, opts = {}) {
             const id = String(el.dataset.id);
             if (!window.selectedForDiscard) window.selectedForDiscard = new Set();
             const needed = game.discardCount || 5;
+            try { playSfx('click'); } catch (err) {}
             if (window.selectedForDiscard.has(id)) {
               window.selectedForDiscard.delete(id);
               el.classList.remove('selected');
@@ -10105,6 +10137,7 @@ function renderHand(discardMode = false, opts = {}) {
       if (discardMode) {
         if (!window.selectedForDiscard) window.selectedForDiscard = new Set();
         const needed = game.discardCount || 5;
+        try { playSfx('click'); } catch (err) {}
         // Normalize set to strings
         if (window.selectedForDiscard.has(id)) {
           window.selectedForDiscard.delete(id);

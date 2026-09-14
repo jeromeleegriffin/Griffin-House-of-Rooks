@@ -3,7 +3,7 @@
 function botBid() {
   const hand = game.hands[game.currentPlayer];
   const botStyle = players[game.currentPlayer]?.botStyle || 'balanced';
-  const ceiling = maxBid();
+  const ceiling = (typeof bidCeilingFor === 'function') ? bidCeilingFor(game.currentPlayer) : maxBid();
   const floor = (minBid || 70);
   const nextMin = game.highestBid + 5;
 
