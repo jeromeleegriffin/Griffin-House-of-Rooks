@@ -7,7 +7,7 @@
 // It's exchanged during the join handshake so a stale host or joiner (e.g.
 // one still running old cached JS) gets caught and auto-updated instead of
 // silently failing or behaving unpredictably against a mismatched peer.
-const APP_VERSION = '377';
+const APP_VERSION = '379';
 
 function horThisIndex() {
   try {
@@ -2602,6 +2602,24 @@ function welcomeVisible() {
   return !!(welcome && !welcome.classList.contains('hidden'));
 }
 
+// Keep an active table view stable across transient PeerJS reconnects.
+// A reconnect can deliver a fresh `welcome` packet before the authoritative
+// `state` packet; that packet must never send an already-playing client back
+// to the welcome/lobby UI.
+function horMarkActiveTable(active) {
+  try {
+    if (active) sessionStorage.setItem('rookActiveTable', '1');
+    else sessionStorage.removeItem('rookActiveTable');
+  } catch (e) {}
+}
+function horHasActiveTable() {
+  try { return sessionStorage.getItem('rookActiveTable') === '1'; } catch (e) { return false; }
+}
+function horClientIsPlaying() {
+  return !!(game && game.phase && !['lobby','waiting'].includes(game.phase));
+}
+
+
 function hideWelcomeScreen() {
   if (welcome) {
     welcome.classList.add('hidden');
@@ -3977,8 +3995,12 @@ function handleMessage(data, conn) {
           const s = $('lobbyStatus');
           const weAreStale = horVersionNum(APP_VERSION) < horVersionNum(data.hostVersion);
           if (weAreStale) {
-            if (s) s.textContent = 'This device is running an outdated version. Updating automatically…';
-            setTimeout(horForceUpdate, 1500);
+            if (horClientIsPlaying() || horHasActiveTable()) {
+              if (s) s.textContent = 'Update available; staying at the table until this hand is finished.';
+            } else {
+              if (s) s.textContent = 'This device is running an outdated version. Updating automatically…';
+              setTimeout(horForceUpdate, 1500);
+            }
           } else if (s) {
             s.textContent = 'The host appears to be on an older version. Ask them to reopen the app, then try again.';
           }
@@ -4004,8 +4026,11 @@ function handleMessage(data, conn) {
           if (data.settings.targetScore) targetScore = data.settings.targetScore;
           if (typeof data.settings.layDownWinningCards === 'boolean') layDownWinningCards = data.settings.layDownWinningCards;
         }
-        // Mid-game reclaim should not yank the player back to the lobby.
-        if (!horExpOn('netResyncOnReclaim') || !data.reclaimed || !game || game.phase === 'lobby' || game.phase === 'waiting') {
+        // Never navigate an already-playing client back to the welcome/lobby
+        // screen just because PeerJS delivered a reconnect `welcome` packet.
+        // The authoritative `state` packet will follow and refresh the table.
+        const activeTable = horClientIsPlaying() || horHasActiveTable();
+        if (!activeTable && (!horExpOn('netResyncOnReclaim') || !data.reclaimed || !game || game.phase === 'lobby' || game.phase === 'waiting')) {
           if (joinedFromWelcome || welcomeVisible() || data.preview || pendingPreviewJoin) {
             showWelcomeScreen(roomCode);
             try { updateWelcomeSeats(); } catch (e) {}
@@ -4256,6 +4281,7 @@ function handleMessage(data, conn) {
         }
         break;
       case 'hostGone':
+        horMarkActiveTable(false);
         alert(data.message || 'Host disconnected. Game ended.');
         try { sessionStorage.removeItem('rookSession'); } catch (e) {}
         location.reload();
@@ -4264,6 +4290,7 @@ function handleMessage(data, conn) {
         try { hideCelePage(); } catch (e) {}
         break;
       case 'returnWaiting':
+        horMarkActiveTable(false);
         try { applyReturnToWaiting(); } catch (e) {}
         break;
       case 'matchHighlights':
@@ -7833,6 +7860,25 @@ function hostProcessAllTrumpsClaim(data) {
   if (!game.tricksTaken) game.tricksTaken = [[], []];
   game.tricksTaken[game.earlyClaimTeam].push(...claimCards);
 
+  // A winning lay-down represents one won trick for every remaining card
+  // laid down. Example: laying down 6 cards = 6 additional won tricks.
+  // Points are credited to the claimer and, for leaderboard/stat purposes,
+  // to the claimer's partner just like a normally won trick.
+  try {
+    const laidDownTricks = holderCards.length;
+    const laidDownPoints = claimCards.reduce((sum, c) => sum + cardPoints(c), 0);
+    const holderStat = ps(holder);
+    holderStat.tricksWon += laidDownTricks;
+    holderStat.points += laidDownPoints;
+    holderStat.trickPtsSum += laidDownPoints;
+    const partnerSeat = (holder + 2) % 4;
+    if (players[partnerSeat]) {
+      const partnerStat = ps(partnerSeat);
+      partnerStat.points += laidDownPoints;
+      partnerStat.trickPtsSum += laidDownPoints;
+    }
+  } catch (e) {}
+
   // Clear table / hands
   game.trick = [];
   game.ledColor = null;
@@ -8769,17 +8815,28 @@ function renderPlayerStatCard(i, topScorerIdx) {
     </div>`;
 }
 
-// One-time record-book seed: 25 simulated all-bot matches provide populated
-// leaderboard data on a fresh install. Real matches continue accumulating on top.
-const SIMULATED_25_BOT_STATS = {"Blaze":{"hands":41,"bidsWon":6,"highBid":115,"bidSum":570,"bidsMade":6,"bidsSet":0,"points":1296,"tricksWon":41,"trickPtsSum":1161,"rookCaptures":1,"red2Captures":0,"bigTricks":6,"nestWins":2,"nestPts":135,"moonAttempts":0,"moonMade":0,"bags":0,"gamesPlayed":2,"gamesWon":1,"isBot":true,"avatar":"fox","botStyle":"aggressive"},"Fang":{"hands":72,"bidsWon":6,"highBid":125,"bidSum":630,"bidsMade":5,"bidsSet":1,"points":2122,"tricksWon":72,"trickPtsSum":1907,"rookCaptures":1,"red2Captures":3,"bigTricks":5,"nestWins":8,"nestPts":215,"moonAttempts":0,"moonMade":0,"bags":0,"gamesPlayed":4,"gamesWon":3,"isBot":true,"avatar":"wolf","botStyle":"aggressive"},"Wager":{"hands":169,"bidsWon":20,"highBid":130,"bidSum":2150,"bidsMade":20,"bidsSet":0,"points":4108,"tricksWon":169,"trickPtsSum":3813,"rookCaptures":5,"red2Captures":2,"bigTricks":12,"nestWins":4,"nestPts":295,"moonAttempts":0,"moonMade":0,"bags":0,"gamesPlayed":8,"gamesWon":3,"isBot":true,"avatar":"bluejay","botStyle":"bidHappy"},"Moss":{"hands":151,"bidsWon":15,"highBid":125,"bidSum":1555,"bidsMade":11,"bidsSet":4,"points":3821,"tricksWon":151,"trickPtsSum":3516,"rookCaptures":3,"red2Captures":3,"bigTricks":20,"nestWins":8,"nestPts":305,"moonAttempts":0,"moonMade":0,"bags":0,"gamesPlayed":8,"gamesWon":5,"isBot":true,"avatar":"moss","botStyle":"safe"},"Quill":{"hands":118,"bidsWon":8,"highBid":130,"bidSum":895,"bidsMade":8,"bidsSet":0,"points":2626,"tricksWon":118,"trickPtsSum":2471,"rookCaptures":1,"red2Captures":2,"bigTricks":6,"nestWins":2,"nestPts":155,"moonAttempts":0,"moonMade":0,"bags":0,"gamesPlayed":5,"gamesWon":1,"isBot":true,"avatar":"quill","botStyle":"countSaver"},"Halo":{"hands":45,"bidsWon":6,"highBid":125,"bidSum":610,"bidsMade":4,"bidsSet":2,"points":1107,"tricksWon":45,"trickPtsSum":1037,"rookCaptures":0,"red2Captures":0,"bigTricks":3,"nestWins":2,"nestPts":70,"moonAttempts":0,"moonMade":0,"bags":0,"gamesPlayed":2,"gamesWon":0,"isBot":true,"avatar":"stag","botStyle":"partnerFirst"},"Gable":{"hands":154,"bidsWon":12,"highBid":130,"bidSum":1260,"bidsMade":12,"bidsSet":0,"points":3772,"tricksWon":154,"trickPtsSum":3502,"rookCaptures":3,"red2Captures":2,"bigTricks":13,"nestWins":9,"nestPts":270,"moonAttempts":0,"moonMade":0,"bags":0,"gamesPlayed":7,"gamesWon":4,"isBot":true,"avatar":"gable","botStyle":"lastTrick"},"Titan":{"hands":14,"bidsWon":1,"highBid":125,"bidSum":125,"bidsMade":0,"bidsSet":1,"points":384,"tricksWon":14,"trickPtsSum":344,"rookCaptures":1,"red2Captures":0,"bigTricks":1,"nestWins":1,"nestPts":40,"moonAttempts":0,"moonMade":0,"bags":0,"gamesPlayed":1,"gamesWon":0,"isBot":true,"avatar":"badger","botStyle":"trumpHeavy"},"Crow":{"hands":88,"bidsWon":5,"highBid":125,"bidSum":535,"bidsMade":5,"bidsSet":0,"points":2006,"tricksWon":88,"trickPtsSum":1831,"rookCaptures":1,"red2Captures":3,"bigTricks":8,"nestWins":5,"nestPts":175,"moonAttempts":0,"moonMade":0,"bags":0,"gamesPlayed":4,"gamesWon":0,"isBot":true,"avatar":"raven","botStyle":"safe"},"Drift":{"hands":100,"bidsWon":9,"highBid":130,"bidSum":925,"bidsMade":8,"bidsSet":1,"points":2686,"tricksWon":100,"trickPtsSum":2506,"rookCaptures":1,"red2Captures":4,"bigTricks":9,"nestWins":7,"nestPts":180,"moonAttempts":0,"moonMade":0,"bags":0,"gamesPlayed":5,"gamesWon":3,"isBot":true,"avatar":"goldfinch","botStyle":"passive"},"Hollow":{"hands":51,"bidsWon":7,"highBid":125,"bidSum":710,"bidsMade":6,"bidsSet":1,"points":1629,"tricksWon":51,"trickPtsSum":1509,"rookCaptures":2,"red2Captures":1,"bigTricks":10,"nestWins":4,"nestPts":120,"moonAttempts":0,"moonMade":0,"bags":0,"gamesPlayed":3,"gamesWon":2,"isBot":true,"avatar":"grumpy","botStyle":"voidMaker"},"Vex":{"hands":81,"bidsWon":4,"highBid":110,"bidSum":370,"bidsMade":3,"bidsSet":1,"points":1844,"tricksWon":81,"trickPtsSum":1684,"rookCaptures":3,"red2Captures":2,"bigTricks":11,"nestWins":6,"nestPts":160,"moonAttempts":0,"moonMade":0,"bags":0,"gamesPlayed":3,"gamesWon":1,"isBot":true,"avatar":"cobra","botStyle":"tricky"},"Marrow":{"hands":71,"bidsWon":4,"highBid":130,"bidSum":405,"bidsMade":4,"bidsSet":0,"points":1613,"tricksWon":71,"trickPtsSum":1483,"rookCaptures":1,"red2Captures":5,"bigTricks":7,"nestWins":2,"nestPts":130,"moonAttempts":0,"moonMade":0,"bags":0,"gamesPlayed":3,"gamesWon":0,"isBot":true,"avatar":"marrow","botStyle":"countSaver"},"Pike":{"hands":75,"bidsWon":7,"highBid":130,"bidSum":720,"bidsMade":6,"bidsSet":1,"points":2122,"tricksWon":75,"trickPtsSum":1932,"rookCaptures":4,"red2Captures":2,"bigTricks":8,"nestWins":6,"nestPts":190,"moonAttempts":0,"moonMade":0,"bags":0,"gamesPlayed":4,"gamesWon":3,"isBot":true,"avatar":"cardshark","botStyle":"pointHungry"},"Thistle":{"hands":38,"bidsWon":4,"highBid":125,"bidSum":455,"bidsMade":4,"bidsSet":0,"points":1479,"tricksWon":38,"trickPtsSum":1259,"rookCaptures":1,"red2Captures":0,"bigTricks":6,"nestWins":3,"nestPts":220,"moonAttempts":0,"moonMade":0,"bags":0,"gamesPlayed":3,"gamesWon":2,"isBot":true,"avatar":"thistle","botStyle":"sandbag"},"Frost":{"hands":87,"bidsWon":5,"highBid":130,"bidSum":590,"bidsMade":4,"bidsSet":1,"points":2166,"tricksWon":87,"trickPtsSum":1966,"rookCaptures":0,"red2Captures":1,"bigTricks":5,"nestWins":6,"nestPts":200,"moonAttempts":0,"moonMade":0,"bags":0,"gamesPlayed":4,"gamesWon":3,"isBot":true,"avatar":"lynx","botStyle":"safe"},"Bramble":{"hands":89,"bidsWon":13,"highBid":130,"bidSum":1410,"bidsMade":13,"bidsSet":0,"points":2374,"tricksWon":89,"trickPtsSum":2239,"rookCaptures":1,"red2Captures":4,"bigTricks":9,"nestWins":1,"nestPts":135,"moonAttempts":0,"moonMade":0,"bags":0,"gamesPlayed":4,"gamesWon":2,"isBot":true,"avatar":"bramble","botStyle":"leadLong"},"Ember":{"hands":50,"bidsWon":4,"highBid":130,"bidSum":405,"bidsMade":4,"bidsSet":0,"points":1449,"tricksWon":50,"trickPtsSum":1224,"rookCaptures":1,"red2Captures":1,"bigTricks":8,"nestWins":5,"nestPts":225,"moonAttempts":0,"moonMade":0,"bags":0,"gamesPlayed":3,"gamesWon":2,"isBot":true,"avatar":"owl","botStyle":"balanced"},"Emberlyn":{"hands":166,"bidsWon":15,"highBid":130,"bidSum":1500,"bidsMade":14,"bidsSet":1,"points":4390,"tricksWon":166,"trickPtsSum":4075,"rookCaptures":0,"red2Captures":3,"bigTricks":18,"nestWins":9,"nestPts":315,"moonAttempts":0,"moonMade":0,"bags":0,"gamesPlayed":8,"gamesWon":4,"isBot":true,"avatar":"emberlyn","botStyle":"showboat"},"Pebble":{"hands":123,"bidsWon":7,"highBid":130,"bidSum":680,"bidsMade":5,"bidsSet":2,"points":2870,"tricksWon":123,"trickPtsSum":2605,"rookCaptures":2,"red2Captures":0,"bigTricks":11,"nestWins":8,"nestPts":265,"moonAttempts":0,"moonMade":0,"bags":0,"gamesPlayed":5,"gamesWon":4,"isBot":true,"avatar":"pebble","botStyle":"passive"},"Dice":{"hands":118,"bidsWon":6,"highBid":125,"bidSum":625,"bidsMade":4,"bidsSet":2,"points":3251,"tricksWon":118,"trickPtsSum":2951,"rookCaptures":3,"red2Captures":2,"bigTricks":13,"nestWins":8,"nestPts":300,"moonAttempts":0,"moonMade":0,"bags":0,"gamesPlayed":6,"gamesWon":4,"isBot":true,"avatar":"greenie","botStyle":"randomish"},"Nix":{"hands":67,"bidsWon":6,"highBid":130,"bidSum":600,"bidsMade":6,"bidsSet":0,"points":2068,"tricksWon":67,"trickPtsSum":1848,"rookCaptures":3,"red2Captures":2,"bigTricks":6,"nestWins":5,"nestPts":220,"moonAttempts":0,"moonMade":0,"bags":0,"gamesPlayed":4,"gamesWon":2,"isBot":true,"avatar":"jackal","botStyle":"tricky"},"Anchor":{"hands":52,"bidsWon":3,"highBid":130,"bidSum":330,"bidsMade":3,"bidsSet":0,"points":1357,"tricksWon":52,"trickPtsSum":1237,"rookCaptures":2,"red2Captures":3,"bigTricks":7,"nestWins":1,"nestPts":120,"moonAttempts":0,"moonMade":0,"bags":0,"gamesPlayed":3,"gamesWon":1,"isBot":true,"avatar":"rookling","botStyle":"partnerFirst"},"Cinder":{"hands":16,"bidsWon":0,"highBid":0,"bidSum":0,"bidsMade":0,"bidsSet":0,"points":350,"tricksWon":16,"trickPtsSum":340,"rookCaptures":1,"red2Captures":0,"bigTricks":1,"nestWins":0,"nestPts":10,"moonAttempts":0,"moonMade":0,"bags":0,"gamesPlayed":1,"gamesWon":0,"isBot":true,"avatar":"cinder","botStyle":"rookHunter"}};
-function seedSimulatedBotStats() {
+// v378: remove the old simulated 25-match record-book seed.
+// This migration only removes the known synthetic bot records; real records
+// created under other player names are preserved.
+const LEGACY_SIMULATED_BOT_NAMES = [
+  'Blaze','Fang','Wager','Moss','Quill','Halo','Gable','Titan','Crow','Drift',
+  'Hollow','Vex','Marrow','Pike','Thistle','Frost','Bramble','Ember','Emberlyn',
+  'Pebble','Dice','Nix','Anchor','Cinder'
+];
+function purgeLegacySimulatedBotStats() {
   try {
-    const existing = loadLifetimeStats();
-    if (existing && Object.keys(existing).length) return;
-    saveLifetimeStats(JSON.parse(JSON.stringify(SIMULATED_25_BOT_STATS)));
+    const store = loadLifetimeStats();
+    let changed = false;
+    LEGACY_SIMULATED_BOT_NAMES.forEach(name => {
+      if (Object.prototype.hasOwnProperty.call(store, name) && store[name] && store[name].isBot) {
+        delete store[name];
+        changed = true;
+      }
+    });
+    if (changed) saveLifetimeStats(store);
   } catch (e) {}
 }
-seedSimulatedBotStats();
+purgeLegacySimulatedBotStats();
 
 function renderAllTimeLeaders() {
   const store = loadLifetimeStats();
@@ -8787,7 +8844,7 @@ function renderAllTimeLeaders() {
   if (!names.length) return '<div class="stats-empty">No all-time stats yet — finish a full game to start the record book.</div>';
   const rows = names.map(n => ({ name: n, ...store[n] })).sort((a, b) => (b.points || 0) - (a.points || 0)).slice(0, 8);
   const medals = ['🥇', '🥈', '🥉'];
-  return `<div class="alltime-seed-note">25 simulated bot matches loaded into the record book. Real matches will continue to add to these totals.</div><div class="alltime-list">` + rows.map((r, idx) => `
+  return `<div class="alltime-list">` + rows.map((r, idx) => `
     <div class="alltime-row">
       <span class="alltime-rank">${medals[idx] || ('#' + (idx + 1))}</span>
       <span class="alltime-name">${esc(r.name)}${r.isBot ? ' <em class="alltime-bot-tag">bot</em>' : ''}</span>
@@ -9523,6 +9580,8 @@ function applyState(data) {
     resolvingTrickPoints: Number(data.resolvingTrickPoints || 0),
     nestRevealCards: Array.isArray(data.nestRevealCards) ? data.nestRevealCards.map(c => ({ ...c })) : (game.nestRevealCards || []),
   });
+  if (data.phase && !['lobby','waiting'].includes(data.phase)) horMarkActiveTable(true);
+  else if (data.phase === 'lobby' || data.phase === 'waiting') horMarkActiveTable(false);
   if (Array.isArray(data.players)) {
     // Public state is authoritative about table order. Keep the local
     // human index synchronized by stable peer id; this is especially
