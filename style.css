@@ -12360,7 +12360,7 @@ body.gfx-brassUI .btn:not(.primary):not(.link):not(.danger) {
 }
 
 
-/* RookGame384 lobby polish: compact support/stat links at the bottom, full photo visible. */
+/* RookGame385 lobby polish: compact support/stat links at the bottom, full photo visible. */
 #lobby.screen:not(.hidden) .lobby-info-card {
   order: 4;
   flex: 0 0 auto;
@@ -12386,18 +12386,21 @@ body.gfx-brassUI .btn:not(.primary):not(.link):not(.danger) {
 #lobby.screen:not(.hidden) .lobby-info-links a {
   min-width: 0;
   box-sizing: border-box;
-  overflow: hidden;
-  text-overflow: ellipsis;
-  white-space: nowrap;
-  font-size: 0.58rem;
-  line-height: 1.05;
-  padding: 0.18rem 0.12rem;
+  overflow: visible;
+  text-overflow: clip;
+  white-space: normal;
+  overflow-wrap: anywhere;
+  word-break: normal;
+  text-align: center;
+  font-size: 0.68rem;
+  line-height: 1.15;
+  padding: 0.22rem 0.14rem;
   border-radius: 6px;
   background: rgba(255,255,255,.035);
 }
 #lobby.screen:not(.hidden) .lobby-info-links .cash-app-link {
-  font-size: 0.57rem;
-  letter-spacing: -0.01em;
+  font-size: 0.67rem;
+  letter-spacing: 0;
 }
 #lobby.screen:not(.hidden) .lobby-stats-card {
   order: 5;
@@ -12427,13 +12430,13 @@ body.gfx-brassUI .btn:not(.primary):not(.link):not(.danger) {
 @media (orientation: landscape) {
   #lobby.screen:not(.hidden) .lobby-info-card { margin-top: 0.15rem; padding: 0.2rem 0.35rem; }
   #lobby.screen:not(.hidden) .lobby-info-title { display: none; }
-  #lobby.screen:not(.hidden) .lobby-info-links a { font-size: 0.55rem; padding: 0.15rem 0.1rem; }
+  #lobby.screen:not(.hidden) .lobby-info-links a { font-size: 0.62rem; padding: 0.18rem 0.08rem; }
   #lobby.screen:not(.hidden) .lobby-stats-card { margin-top: 0.15rem; padding: 0.25rem 0.4rem; }
 }
 @media (max-height: 720px) {
   #lobby.screen:not(.hidden) .lobby-info-card { padding: 0.2rem 0.32rem; margin-top: 0.12rem; }
   #lobby.screen:not(.hidden) .lobby-info-title { display: none; }
-  #lobby.screen:not(.hidden) .lobby-info-links a { font-size: 0.54rem; padding: 0.13rem 0.08rem; }
+  #lobby.screen:not(.hidden) .lobby-info-links a { font-size: 0.59rem; padding: 0.15rem 0.06rem; }
   #lobby.screen:not(.hidden) .lobby-stats-card { margin-top: 0.12rem; padding: 0.24rem 0.38rem; }
   #lobby.screen:not(.hidden) .lobby-stats-copy strong { font-size: 0.61rem; }
   #lobby.screen:not(.hidden) .lobby-stats-copy span { font-size: 0.49rem; }

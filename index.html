@@ -36,7 +36,7 @@
   <link rel="manifest" href="manifest.json">
   <link rel="icon" href="icon-192.png">
   <link rel="apple-touch-icon" href="apple-touch-icon.png">
-  <link rel="stylesheet" href="style.css?v=384">
+  <link rel="stylesheet" href="style.css?v=385">
   <script src="vendor/peerjs.min.js"></script>
   <style>
     /* Emergency layout if style.css fails to load — joiners still see a usable page */
@@ -176,7 +176,7 @@
           <div class="lobby-info-title">HOUSE OF ROOKS INFO & SUPPORT</div>
           <div class="lobby-info-links">
             <a href="privacy.html">🔒 Privacy</a>
-            <a href="mailto:jeromeleegriffin@gmail.com">✉️ Contact / Questions</a>
+            <a href="mailto:jeromeleegriffin@gmail.com">✉️ Contact</a>
             <a class="cash-app-link" href="https://cash.app/%24heargodtalk" target="_blank" rel="noopener noreferrer">💵 Cash App $heargodtalk</a>
           </div>
         </section>
@@ -1165,10 +1165,10 @@
       paintInstall();
     })();
   </script>
-  <script src="rules.js?v=384"></script>
-  <script src="bots.js?v=384"></script>
-  <script src="game.js?v=384"></script>
-  <script src="polish.js?v=384"></script>
+  <script src="rules.js?v=385"></script>
+  <script src="bots.js?v=385"></script>
+  <script src="game.js?v=385"></script>
+  <script src="polish.js?v=385"></script>
   <div id="horBootError"></div>
   <script>
     window.addEventListener('error', function (ev) {
@@ -1182,7 +1182,7 @@
   </script>
   <script>
     if ('serviceWorker' in navigator) {
-      navigator.serviceWorker.register('sw.js?v=384', { updateViaCache: 'none' })
+      navigator.serviceWorker.register('sw.js?v=385', { updateViaCache: 'none' })
         .then(function (reg) { try { reg.update(); } catch (e) {} })
         .catch(() => {});
       let horSwAutoReloaded = false;
