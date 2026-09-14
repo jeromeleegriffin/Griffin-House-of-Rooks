@@ -7,7 +7,7 @@
 // It's exchanged during the join handshake so a stale host or joiner (e.g.
 // one still running old cached JS) gets caught and auto-updated instead of
 // silently failing or behaving unpredictably against a mismatched peer.
-const APP_VERSION = '366';
+const APP_VERSION = '367';
 
 function horThisIndex() {
   try {
@@ -9156,6 +9156,7 @@ function renderUI() {
   const ltA = $('ltScoreA'), ltB = $('ltScoreB'), ltT = $('ltTarget');
   if (ltA) ltA.textContent = game.scores[0];
   if (ltB) ltB.textContent = game.scores[1];
+  try { if (typeof paintTeamChrome === 'function') paintTeamChrome(); } catch (e) {}
   if (ltT) ltT.textContent = String(game.targetScore || targetScore || 500);
   const ltSand = $('ltSandbagScore');
   const sb = game.sandbagOverpoints || [0, 0];

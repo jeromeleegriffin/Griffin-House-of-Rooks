@@ -527,6 +527,18 @@
     return Number(i) === 1 ? houseTeamB : houseTeamA;
   }
   window.teamLabel = teamLabel;
+  function paintTeamChrome() {
+    const a = teamLabel(0);
+    const b = teamLabel(1);
+    const set = (id, v) => { const el = $(id); if (el) el.textContent = v; };
+    set('ltTeamNameA', a);
+    set('ltTeamNameB', b);
+    set('scoreTeamNameA', a);
+    set('scoreTeamNameB', b);
+    set('waitTeamLabelA', a);
+    set('waitTeamLabelB', b);
+  }
+  window.paintTeamChrome = paintTeamChrome;
 
   function loadPrefs() {
     try {
@@ -1242,6 +1254,7 @@
     const ta = $('hor-team-a'); const tb = $('hor-team-b');
     if (ta) ta.value = houseTeamA;
     if (tb) tb.value = houseTeamB;
+    try { paintTeamChrome(); } catch (e) {}
     const friendsBtn = $('friendsToggleBtn');
     const panel = $('friendsPanel');
     if (friendsBtn) {
@@ -1322,8 +1335,10 @@
       });
     });
     if (name) name.addEventListener('change', persistPlayer);
-    if (ta) ta.addEventListener('change', () => { houseTeamA = asText(ta.value, 'Griffin'); persistPlayer(); });
-    if (tb) tb.addEventListener('change', () => { houseTeamB = asText(tb.value, 'Raven'); persistPlayer(); });
+    if (ta) ta.addEventListener('change', () => { houseTeamA = asText(ta.value, 'Griffin'); persistPlayer(); try { paintTeamChrome(); } catch (e) {} });
+    if (tb) tb.addEventListener('change', () => { houseTeamB = asText(tb.value, 'Raven'); persistPlayer(); try { paintTeamChrome(); } catch (e) {} });
+    if (ta) ta.addEventListener('input', () => { houseTeamA = asText(ta.value, 'Griffin'); try { paintTeamChrome(); } catch (e) {} });
+    if (tb) tb.addEventListener('input', () => { houseTeamB = asText(tb.value, 'Raven'); try { paintTeamChrome(); } catch (e) {} });
     // Rejoin first if session exists
     try {
       const sess = JSON.parse(sessionStorage.getItem('rookSession') || 'null');
@@ -1799,6 +1814,7 @@
 
   document.addEventListener('DOMContentLoaded', () => {});
   applyPrefsToEngine();
+  try { paintTeamChrome(); } catch (e) {}
   wireLobby();
   wireExperimentalOptions();
   updateMuteButtons();

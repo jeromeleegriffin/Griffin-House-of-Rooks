@@ -13,7 +13,7 @@
   <title>House of Rooks</title>
   <script>
     (function () {
-      var BUILD = '366';
+      var BUILD = '367';
       try {
         var params = new URLSearchParams(location.search);
         var seen = localStorage.getItem('horBuild') || '';
@@ -36,7 +36,7 @@
   <link rel="manifest" href="manifest.json">
   <link rel="icon" href="icon-192.png">
   <link rel="apple-touch-icon" href="apple-touch-icon.png">
-  <link rel="stylesheet" href="style.css?v=366">
+  <link rel="stylesheet" href="style.css?v=367">
   <script src="vendor/peerjs.min.js"></script>
   <style>
     /* Emergency layout if style.css fails to load — joiners still see a usable page */
@@ -95,8 +95,8 @@
     <div class="lt-inner">
       <div class="lt-header">
         <div class="lt-scorebar" id="ltScoreBar" aria-live="polite">
-          <span>Team A <b id="ltScoreA">0</b></span>
-          <span>Team B <b id="ltScoreB">0</b></span>
+          <span><span id="ltTeamNameA">Griffin</span> <b id="ltScoreA">0</b></span>
+          <span><span id="ltTeamNameB">Raven</span> <b id="ltScoreB">0</b></span>
           <span>To <b id="ltTarget">500</b></span>
           <span id="ltSandbagScore" class="lt-sandbag-score hidden">Sandbags A <b id="ltSandA">0</b> · B <b id="ltSandB">0</b></span>
           <button type="button" class="table-msg-btn table-msg-btn-top" data-open-table-msg="1" title="Send a table message">Message Table $100</button>
@@ -289,10 +289,10 @@
       </div>
       <div class="players-list hidden" id="playersList"></div>
       <div class="team-name-row host-only-teams">
-        <label class="option-hint">Team names
+        <label class="option-hint"><span id="waitTeamLabelA">Griffin</span>
           <input type="text" id="hor-team-a" maxlength="14" placeholder="Griffin" autocomplete="off">
         </label>
-        <label class="option-hint">
+        <label class="option-hint"><span id="waitTeamLabelB">Raven</span>
           <input type="text" id="hor-team-b" maxlength="14" placeholder="Raven" autocomplete="off">
         </label>
       </div>
@@ -712,8 +712,8 @@
       <div class="top-bar opts-collapsed" id="topBar">
         <div class="top-bar-main">
           <div class="scores" id="scoreRow">
-            <span>A: <b id="scoreA">0</b></span>
-            <span>B: <b id="scoreB">0</b></span>
+            <span><span id="scoreTeamNameA">Griffin</span>: <b id="scoreA">0</b></span>
+            <span><span id="scoreTeamNameB">Raven</span>: <b id="scoreB">0</b></span>
             <span class="target-label">to <b id="targetDisplay">500</b></span>
             <span id="sandbagScore" class="sandbag-score hidden">Sandbags: A <b id="sandbagA">0</b> · B <b id="sandbagB">0</b></span>
             <button type="button" id="btnTableMsg" class="table-msg-btn table-msg-btn-top" data-open-table-msg="1" title="Send a table message">Message Table $100</button>
@@ -1135,10 +1135,10 @@
       paintInstall();
     })();
   </script>
-  <script src="rules.js?v=366"></script>
-  <script src="bots.js?v=366"></script>
-  <script src="game.js?v=366"></script>
-  <script src="polish.js?v=366"></script>
+  <script src="rules.js?v=367"></script>
+  <script src="bots.js?v=367"></script>
+  <script src="game.js?v=367"></script>
+  <script src="polish.js?v=367"></script>
   <div id="horBootError"></div>
   <script>
     window.addEventListener('error', function (ev) {
@@ -1152,7 +1152,7 @@
   </script>
   <script>
     if ('serviceWorker' in navigator) {
-      navigator.serviceWorker.register('sw.js?v=366', { updateViaCache: 'none' })
+      navigator.serviceWorker.register('sw.js?v=367', { updateViaCache: 'none' })
         .then(function (reg) { try { reg.update(); } catch (e) {} })
         .catch(() => {});
       let horSwAutoReloaded = false;
