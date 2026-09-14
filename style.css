@@ -12281,3 +12281,80 @@ body.gfx-brassUI .btn:not(.primary):not(.link):not(.danger) {
     border-radius: 16px;
   }
 }
+
+/* RookGame383 lobby fit: keep the hero fully visible and move the two info cards to the bottom. */
+#lobby .lobby-info-card {
+  order: 4;
+  flex: 0 0 auto;
+  margin: 0.28rem 0 0;
+  max-width: none;
+  padding: 0.34rem 0.48rem;
+  border-radius: 10px;
+  box-shadow: none;
+}
+#lobby .lobby-info-title {
+  font-size: 0.62rem;
+  margin-bottom: 0.18rem;
+  letter-spacing: 0.055em;
+}
+#lobby .lobby-info-links {
+  flex-wrap: nowrap;
+  gap: 0.35rem 0.55rem;
+  justify-content: space-between;
+}
+#lobby .lobby-info-links a {
+  font-size: 0.58rem;
+  line-height: 1.05;
+  padding: 1px;
+  white-space: nowrap;
+}
+#lobby .lobby-stats-card {
+  order: 5;
+  flex: 0 0 auto;
+  min-height: 0;
+  margin: 0.28rem 0 0;
+  padding: 0.32rem 0.48rem;
+  border-radius: 10px;
+  gap: 0.42rem;
+}
+#lobby .lobby-stats-icon { width: 27px; height: 27px; font-size: 0.9rem; border-radius: 8px; }
+#lobby .lobby-stats-copy { gap: 0.05rem; }
+#lobby .lobby-stats-copy strong { font-size: 0.68rem; }
+#lobby .lobby-stats-copy span { font-size: 0.55rem; line-height: 1.1; }
+#lobby .lobby-stats-arrow { font-size: 1.25rem; }
+#lobby .lobby-hero {
+  order: 3;
+  flex: 1 1 auto;
+  min-height: 90px;
+  margin-top: 0.28rem;
+}
+#lobby .lobby-hero img.lobby-hero-portrait {
+  object-fit: contain;
+  object-position: center center;
+}
+
+@media (orientation: portrait) {
+  #lobby.screen:not(.hidden) { overflow: hidden; }
+  #lobby.screen:not(.hidden) .lobby-card { overflow: hidden; }
+  #lobby.screen:not(.hidden) .lobby-actions { gap: 0.28rem; }
+  #lobby.screen:not(.hidden) .lobby-card .lobby-main { min-height: 36px; padding: 0.28rem 0.35rem; }
+  #lobby.screen:not(.hidden) .lobby-btn-sub { font-size: 0.58rem; }
+  #lobby.screen:not(.hidden) .lobby-hero { flex: 1 1 auto; min-height: 90px; margin-top: 0.25rem; }
+}
+
+@media (orientation: landscape) {
+  #lobby.screen:not(.hidden) .lobby-hero { order: 3; flex: 1 1 auto; min-height: 60px; height: auto; max-height: none; }
+  #lobby.screen:not(.hidden) .lobby-info-card,
+  #lobby.screen:not(.hidden) .lobby-stats-card { flex: 0 0 auto; }
+  #lobby.screen:not(.hidden) .lobby-info-card { margin-top: 0.18rem; }
+  #lobby.screen:not(.hidden) .lobby-stats-card { margin-top: 0.18rem; }
+}
+
+@media (max-height: 720px) {
+  #lobby .lobby-info-card { padding: 0.25rem 0.4rem; margin-top: 0.2rem; }
+  #lobby .lobby-info-title { font-size: 0.58rem; }
+  #lobby .lobby-info-links a { font-size: 0.52rem; }
+  #lobby .lobby-stats-card { margin-top: 0.2rem; padding: 0.26rem 0.42rem; }
+  #lobby .lobby-stats-copy strong { font-size: 0.62rem; }
+  #lobby .lobby-stats-copy span { font-size: 0.5rem; }
+}
