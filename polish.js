@@ -618,7 +618,7 @@
       includeOnes, includeRed2, includeRed1, includeRook, rookLowest,
       red2Points, minBid, targetScore, specialsAnytime, mustTrumpWhenVoid,
       bidOnlyScoring, sandbagging, nestGoesTo, leadOrder,
-      misdealOnNoCounters, screwTheDealer, openWidow, shootMoonEnabled,
+      misdealOnNoCounters, screwTheDealer, comebackSpecialChance, openWidow, shootMoonEnabled,
       teamNameA: houseTeamA,
       teamNameB: houseTeamB,
       luckySpecialsEnabled, luckySpecialsMode, luckySpecialsBoost,
@@ -654,6 +654,7 @@
     if (p.leadOrder) leadOrder = p.leadOrder;
     if (typeof p.misdealOnNoCounters === 'boolean') misdealOnNoCounters = p.misdealOnNoCounters;
     if (typeof p.screwTheDealer === 'boolean') screwTheDealer = p.screwTheDealer;
+    if (typeof p.comebackSpecialChance === 'boolean') comebackSpecialChance = p.comebackSpecialChance;
     if (typeof p.openWidow === 'boolean') openWidow = p.openWidow;
     if (typeof p.shootMoonEnabled === 'boolean') shootMoonEnabled = p.shootMoonEnabled;
     if (typeof p.luckySpecialsEnabled === 'boolean') luckySpecialsEnabled = p.luckySpecialsEnabled;

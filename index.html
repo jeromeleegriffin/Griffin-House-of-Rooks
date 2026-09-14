@@ -13,7 +13,7 @@
   <title>House of Rooks</title>
   <script>
     (function () {
-      var BUILD = '374';
+      var BUILD = '380';
       try {
         var params = new URLSearchParams(location.search);
         var seen = localStorage.getItem('horBuild') || '';
@@ -36,7 +36,7 @@
   <link rel="manifest" href="manifest.json">
   <link rel="icon" href="icon-192.png">
   <link rel="apple-touch-icon" href="apple-touch-icon.png">
-  <link rel="stylesheet" href="style.css?v=379">
+  <link rel="stylesheet" href="style.css?v=380">
   <script src="vendor/peerjs.min.js"></script>
   <style>
     /* Emergency layout if style.css fails to load — joiners still see a usable page */
@@ -200,7 +200,7 @@
         <span id="appVersionTag" class="version-tag"></span>
       </div>
       <p class="legal-footer">House of Rooks by Jerome Griffin. Independent trick-taking table. Not affiliated with Hasbro.<br>
-        Names stay on this device. <a href="privacy.html">Privacy</a><br>
+        Names stay on this device. <a href="privacy.html">Privacy</a> · <a href="shuffle-statistics.html">Shuffle statistics</a><br>
         Questions, comments, or suggestions: <a href="mailto:jeromeleegriffin@gmail.com">jeromeleegriffin@gmail.com</a><br>
         Donations to further the game: Cash App <a class="cash-app-link" href="https://cash.app/%24heargodtalk" target="_blank" rel="noopener noreferrer">$heargodtalk</a></p>
     </div>
@@ -472,6 +472,12 @@
               Misdeal on a counter-less hand
             </label>
             <p class="option-hint">Off by default. If any hand has zero point cards (no 5/10/14/one/Rook/Red 1/Red 2), redeal automatically.</p>
+
+            <label class="option-label">
+              <input type="checkbox" id="opt-comeback-special-chance">
+              Comeback assist (+25% special-card chance)
+            </label>
+            <p class="option-hint">Off by default. If a team falls more than 75% of the match target behind, its normal chance of receiving each included special card (Bird, Red 2, or special Red 1) is increased by 25%. The assist is openly shown as a table option and does not replace the normal shuffle.</p>
 
             <label class="option-label">
               <input type="checkbox" id="opt-open-widow">
@@ -1135,10 +1141,10 @@
       paintInstall();
     })();
   </script>
-  <script src="rules.js?v=379"></script>
-  <script src="bots.js?v=379"></script>
-  <script src="game.js?v=379"></script>
-  <script src="polish.js?v=379"></script>
+  <script src="rules.js?v=380"></script>
+  <script src="bots.js?v=380"></script>
+  <script src="game.js?v=380"></script>
+  <script src="polish.js?v=380"></script>
   <div id="horBootError"></div>
   <script>
     window.addEventListener('error', function (ev) {
@@ -1152,7 +1158,7 @@
   </script>
   <script>
     if ('serviceWorker' in navigator) {
-      navigator.serviceWorker.register('sw.js?v=379', { updateViaCache: 'none' })
+      navigator.serviceWorker.register('sw.js?v=380', { updateViaCache: 'none' })
         .then(function (reg) { try { reg.update(); } catch (e) {} })
         .catch(() => {});
       let horSwAutoReloaded = false;

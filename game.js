@@ -7,7 +7,7 @@
 // It's exchanged during the join handshake so a stale host or joiner (e.g.
 // one still running old cached JS) gets caught and auto-updated instead of
 // silently failing or behaving unpredictably against a mismatched peer.
-const APP_VERSION = '379';
+const APP_VERSION = '380';
 
 function horThisIndex() {
   try {
@@ -69,6 +69,8 @@ let leadOrder = 'bidder';
 /** Alternate rules seen in other Rook groups online — all off by default:
  * misdeal & redeal if any hand has zero counter cards */
 let misdealOnNoCounters = false;
+/** Known, opt-in comeback assist. OFF by default. */
+let comebackSpecialChance = false;
 /** 'Screw the dealer': if everyone passes, the dealer must bid the
  * minimum instead of the hand being redealt */
 let screwTheDealer = false;
@@ -1286,6 +1288,8 @@ function syncOptionsUI() {
   if (mdc) mdc.checked = !!misdealOnNoCounters;
   const std = $('opt-screw-dealer');
   if (std) std.checked = !!screwTheDealer;
+  const cbComeback = $('opt-comeback-special-chance');
+  if (cbComeback) cbComeback.checked = !!comebackSpecialChance;
   const ow = $('opt-open-widow');
   if (ow) ow.checked = !!openWidow;
   const stm = $('opt-shoot-moon');
@@ -1381,7 +1385,7 @@ function broadcastPlaySettings() {
     type: 'settings',
     includeRed2, red2Points, includeRed1, includeOnes, onesHigh, includeRook, rookLowest,
     specialsAnytime, mustTrumpWhenVoid, turnTimeSec,
-    bidOnlyScoring, sandbagging, nestGoesTo, leadOrder, misdealOnNoCounters, screwTheDealer, openWidow, shootMoonEnabled, botSpeed, colorBlindCards, handSortMode, timeoutPolicy,
+    bidOnlyScoring, sandbagging, nestGoesTo, leadOrder, misdealOnNoCounters, screwTheDealer, comebackSpecialChance, openWidow, shootMoonEnabled, botSpeed, colorBlindCards, handSortMode, timeoutPolicy,
     partnerNeverKill, partnerFeedLast, dontStealPartnerBid, landscapeBidHints, nestLastTrickAnim, layDownWinningCards,
     minBid, targetScore, handSize, nestSizeDefault, ruleVariant, botDifficulty,
     luckySpecialsBoost, luckySpecialsEnabled, luckySpecialsMode, experimentalHandOpt,
@@ -4025,6 +4029,7 @@ function handleMessage(data, conn) {
           if (data.settings.red2Points) red2Points = data.settings.red2Points;
           if (data.settings.targetScore) targetScore = data.settings.targetScore;
           if (typeof data.settings.layDownWinningCards === 'boolean') layDownWinningCards = data.settings.layDownWinningCards;
+          if (typeof data.settings.comebackSpecialChance === 'boolean') comebackSpecialChance = data.settings.comebackSpecialChance;
         }
         // Never navigate an already-playing client back to the welcome/lobby
         // screen just because PeerJS delivered a reconnect `welcome` packet.
@@ -4180,6 +4185,7 @@ function handleMessage(data, conn) {
         if (data.leadOrder) leadOrder = data.leadOrder;
         if (typeof data.misdealOnNoCounters === 'boolean') misdealOnNoCounters = data.misdealOnNoCounters;
         if (typeof data.screwTheDealer === 'boolean') screwTheDealer = data.screwTheDealer;
+        if (typeof data.comebackSpecialChance === 'boolean') comebackSpecialChance = data.comebackSpecialChance;
         if (typeof data.openWidow === 'boolean') openWidow = data.openWidow;
         if (typeof data.shootMoonEnabled === 'boolean') shootMoonEnabled = data.shootMoonEnabled;
         if (data.botSpeed) botSpeed = data.botSpeed;
@@ -4418,6 +4424,14 @@ function showWaiting() {
       std.checked = !!screwTheDealer;
       std.onchange = () => {
         screwTheDealer = !!std.checked;
+        try { broadcastPlaySettings(); } catch (e) {}
+      };
+    }
+    const cbComeback = $('opt-comeback-special-chance');
+    if (cbComeback) {
+      cbComeback.checked = !!comebackSpecialChance;
+      cbComeback.onchange = () => {
+        comebackSpecialChance = !!cbComeback.checked;
         try { broadcastPlaySettings(); } catch (e) {}
       };
     }
@@ -5719,6 +5733,7 @@ function hostDeal() {
  * from the UI and applies independently to the Bird, Red 2, and special Red 1.
  */
 function applyComebackSpecialChance() {
+  if (!comebackSpecialChance) return;
   if (!game || !Array.isArray(game.hands) || !Array.isArray(players)) return;
   const goal = Number(game.targetScore || targetScore || 500);
   const scores = Array.isArray(game.scores) ? game.scores : [0, 0];
