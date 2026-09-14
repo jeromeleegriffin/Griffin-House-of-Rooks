@@ -11750,3 +11750,199 @@ body.gfx-brassUI .btn:not(.primary):not(.link):not(.danger) {
     min-height: 0 !important;
   }
 }
+
+/* ===== Waiting room — landscape dashboard (Play with friends) ===== */
+@media (orientation: landscape) {
+  #waiting.screen {
+    display: grid !important;
+    grid-template-columns: minmax(0, 1fr) auto;
+    grid-template-rows: auto minmax(0, 1fr) auto auto auto;
+    align-items: stretch;
+    justify-items: stretch;
+    gap: 0.28rem 0.45rem !important;
+    height: 100dvh !important;
+    max-height: 100dvh !important;
+    min-height: 0 !important;
+    padding: 0.28rem 0.55rem calc(0.28rem + env(safe-area-inset-bottom, 0px)) !important;
+    overflow: hidden !important;
+    box-sizing: border-box;
+  }
+  #waiting .waiting-header { grid-column: 1; grid-row: 1; }
+  #waiting .share-row { grid-column: 2; grid-row: 1; }
+  #waiting .waiting-table-wrap { grid-column: 1 / -1; grid-row: 2; }
+  #waiting .team-name-row { grid-column: 1 / -1; grid-row: 3; }
+  #waiting .host-options { grid-column: 1 / -1; grid-row: 4; }
+  #waiting .waiting-actions { grid-column: 1 / -1; grid-row: 5; }
+  #waiting .waiting-header {
+    display: flex !important;
+    flex-direction: row !important;
+    align-items: center !important;
+    gap: 0.45rem !important;
+    padding: 0 0 0 2.7rem !important;
+    margin: 0 !important;
+    min-height: 2.4rem;
+    position: relative !important;
+  }
+  #waiting .waiting-crest {
+    width: 2.35rem !important;
+    height: 2.35rem !important;
+    max-width: 2.35rem !important;
+    left: 0 !important;
+    top: 50% !important;
+    transform: translateY(-50%);
+  }
+  #waiting .waiting-header-copy { flex: 1 1 auto; min-width: 0; }
+  #waiting .header h1 {
+    font-size: 1.05rem !important;
+    margin: 0 !important;
+    line-height: 1.15;
+  }
+  #waiting .header p {
+    font-size: 0.68rem !important;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+  #waiting .share-row {
+    position: static !important;
+    margin: 0 !important;
+    flex-wrap: nowrap !important;
+    gap: 0.28rem !important;
+    z-index: 6;
+    justify-content: flex-end !important;
+    align-self: center;
+  }
+  #waiting .share-row .btn {
+    padding: 0.28rem 0.55rem !important;
+    font-size: 0.75rem !important;
+    min-height: 32px;
+    width: auto !important;
+  }
+  #waiting .waiting-nearby-hint,
+  #waiting > .hint,
+  #waiting #playersList,
+  #waiting #restartPracticeBtn,
+  #waiting .fill-seats-help,
+  #waiting .variant-hint,
+  #waiting .waiting-center-mark,
+  #waiting .waiting-center-status {
+    display: none !important;
+  }
+  #waiting .waiting-table-wrap {
+    min-height: 0 !important;
+    height: auto !important;
+    padding: 0 !important;
+    flex: 1 1 auto !important;
+    display: flex;
+  }
+  #waiting .waiting-felt {
+    flex: 1 1 auto;
+    width: 100%;
+    min-height: 0 !important;
+    height: 100% !important;
+    max-height: none !important;
+    padding: 0.35rem 0.55rem !important;
+    gap: 0.28rem !important;
+    grid-template-columns: minmax(7.5rem, 1fr) minmax(5rem, 0.9fr) minmax(7.5rem, 1fr) !important;
+    grid-template-rows: minmax(3.2rem, 0.7fr) minmax(0, 1.4fr) minmax(3.2rem, 0.7fr) !important;
+    border-radius: 18px !important;
+  }
+  #waiting .wait-seat {
+    min-height: 0 !important;
+    padding: 0.15rem 0.3rem !important;
+    gap: 0.06rem !important;
+  }
+  #waiting .wait-seat-name { font-size: 0.82rem !important; }
+  #waiting .wait-seat-tag { font-size: 0.62rem !important; }
+  #waiting .wait-seat-av { width: 28px !important; height: 28px !important; }
+  #waiting .waiting-center {
+    padding: 0 !important;
+    pointer-events: none;
+  }
+  #waiting .team-name-row {
+    display: grid !important;
+    grid-template-columns: 1fr 1fr;
+    gap: 0.4rem !important;
+    margin: 0 !important;
+    align-items: center;
+  }
+  #waiting .team-name-row label {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    gap: 0.35rem;
+    margin: 0 !important;
+    font-size: 0.68rem !important;
+  }
+  #waiting .team-name-row input {
+    flex: 1 1 auto;
+    margin: 0 !important;
+    padding: 0.28rem 0.45rem !important;
+    font-size: 0.82rem !important;
+    min-width: 0;
+  }
+  #waiting .host-options.host-options-bar {
+    display: flex !important;
+    flex-direction: row !important;
+    flex-wrap: nowrap !important;
+    align-items: center !important;
+    gap: 0.4rem !important;
+    padding: 0 !important;
+    margin: 0 !important;
+    max-height: none !important;
+    overflow: visible !important;
+  }
+  #waiting .host-options-bar .bot-count-row {
+    display: flex !important;
+    flex-direction: row !important;
+    align-items: center;
+    gap: 0.3rem !important;
+    margin: 0 !important;
+    flex: 0 0 auto;
+  }
+  #waiting .host-options-bar .select-input {
+    font-size: 0.75rem !important;
+    padding: 0.22rem 0.3rem !important;
+    min-width: 0 !important;
+  }
+  #waiting .fill-seats-btn {
+    display: none !important;
+  }
+  #waiting .waiting-actions {
+    position: static !important;
+    display: grid !important;
+    grid-template-columns: minmax(0, 2.2fr) minmax(0, 1fr) minmax(0, 1fr) !important;
+    gap: 0.35rem !important;
+    padding: 0 !important;
+    margin: 0 !important;
+    background: none !important;
+    border: 0 !important;
+    box-shadow: none !important;
+    left: auto !important;
+    right: auto !important;
+    bottom: auto !important;
+  }
+  #waiting .waiting-actions #startBtn {
+    grid-column: auto !important;
+    order: 0 !important;
+    width: 100% !important;
+    min-height: 38px !important;
+    padding: 0.4rem 0.5rem !important;
+    font-size: 0.88rem !important;
+  }
+  #waiting .waiting-actions .host-options-open-btn,
+  #waiting .waiting-actions #leaveBtn {
+    width: 100% !important;
+    min-height: 38px !important;
+    padding: 0.4rem 0.5rem !important;
+    font-size: 0.82rem !important;
+    margin: 0 !important;
+  }
+  #waiting #qrBox:not(.hidden) {
+    position: absolute;
+    inset: 0.4rem;
+    z-index: 30;
+    background: rgba(8,10,16,.94);
+    border-radius: 16px;
+  }
+}
