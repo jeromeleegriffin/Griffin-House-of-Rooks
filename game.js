@@ -7,7 +7,7 @@
 // It's exchanged during the join handshake so a stale host or joiner (e.g.
 // one still running old cached JS) gets caught and auto-updated instead of
 // silently failing or behaving unpredictably against a mismatched peer.
-const APP_VERSION = '389';
+const APP_VERSION = '395';
 
 function horThisIndex() {
   try {
@@ -4924,38 +4924,38 @@ const BOT_PERSONAS = [
   { name: 'Wager', style: 'bidHappy', avatar: 'bluejay', blurb: 'Loves the auction. Climbs bids.' },
   { name: 'Hollow', style: 'voidMaker', avatar: 'grumpy', blurb: 'Strips a color to ruff later.' },
   { name: 'Ember', style: 'balanced', avatar: 'owl', blurb: 'Steady book. No wild swings.' },
-  { name: 'Vex', style: 'tricky', avatar: 'cobra', blurb: 'Baits leads, then snaps trump.' },
-  { name: 'Frost', style: 'safe', avatar: 'lynx', blurb: 'Tight defense. Waits you out.' },
-  { name: 'Fang', style: 'aggressive', avatar: 'wolf', blurb: 'Takes command of the table.' },
-  { name: 'Halo', style: 'partnerFirst', avatar: 'stag', blurb: 'Never kills partner’s winner.' },
+  { name: 'Vex', style: 'ruffHappy', avatar: 'cobra', blurb: 'Ruffs the first chance it gets.' },
+  { name: 'Frost', style: 'scoreHawk', avatar: 'lynx', blurb: 'Only buys when the score says so.' },
+  { name: 'Fang', style: 'setDog', avatar: 'wolf', blurb: 'Lives to set the other team.' },
+  { name: 'Halo', style: 'partnerSignal', avatar: 'stag', blurb: 'Leads the color partner is void.' },
   { name: 'Quill', style: 'countSaver', avatar: 'quill', blurb: 'Hides counters until the trick is safe.' },
   { name: 'Bramble', style: 'leadLong', avatar: 'bramble', blurb: 'Leads the long color and stays there.' },
-  { name: 'Moss', style: 'safe', avatar: 'moss', blurb: 'Sits still. Only fights fat piles.' },
+  { name: 'Moss', style: 'trumpShy', avatar: 'moss', blurb: 'Has trump. Refuses to lead it.' },
   { name: 'Emberlyn', style: 'showboat', avatar: 'emberlyn', blurb: 'Flashes high cards just to be seen.' },
   { name: 'Cinder', style: 'rookHunter', avatar: 'cinder', blurb: 'Hunts the Bird and the painted two.' },
   { name: 'Gable', style: 'lastTrick', avatar: 'gable', blurb: 'Saves trump for the last pile.' },
   { name: 'Thistle', style: 'sandbag', avatar: 'thistle', blurb: 'Underbids, then plays tight defense.' },
-  { name: 'Marrow', style: 'countSaver', avatar: 'marrow', blurb: 'Won’t feed a counter into a fight.' },
-  { name: 'Pebble', style: 'passive', avatar: 'pebble', blurb: 'Ducks every trick it can.' },
-  { name: 'Rookery', style: 'trumpHeavy', avatar: 'rookery', blurb: 'Draws trump like it owes them rent.' },
-  { name: 'Sable', style: 'tricky', avatar: 'sable', blurb: 'Off-speed leads. Then a snap.' },
-  { name: 'Finch', style: 'partnerFirst', avatar: 'finch', blurb: 'Carries partner across the line.' },
-  { name: 'Dagger', style: 'aggressive', avatar: 'dagger', blurb: 'Takes the trick. Asks later.' },
-  { name: 'Willow', style: 'safe', avatar: 'willow', blurb: 'Low leads. Soft auction.' },
-  { name: 'Hearth', style: 'balanced', avatar: 'hearth', blurb: 'Keeps the book honest.' },
-  { name: 'Grit', style: 'voidMaker', avatar: 'grit', blurb: 'Strips a suit so it can ruff.' },
-  { name: 'Copper', style: 'pointHungry', avatar: 'copper', blurb: 'If it counts, Copper wants it.' },
-  { name: 'Moth', style: 'randomish', avatar: 'moth', blurb: 'Flits. No two hands the same.' },
-  { name: 'Brandy', style: 'bidHappy', avatar: 'brandy', blurb: 'Opens the auction for sport.' },
-  { name: 'Flint', style: 'aggressive', avatar: 'flint', blurb: 'Hard leads. Harder follows.' },
-  { name: 'Ivy', style: 'partnerFirst', avatar: 'ivy', blurb: 'Clings to partner’s winners.' },
-  { name: 'Shade', style: 'tricky', avatar: 'shade', blurb: 'Hides in mid ranks, then bites.' },
-  { name: 'Barrel', style: 'safe', avatar: 'barrel', blurb: 'Heavy seat. Won’t chase thin bids.' },
-  { name: 'Spark', style: 'bidHappy', avatar: 'spark', blurb: 'Lights the auction early.' },
-  { name: 'Nettle', style: 'voidMaker', avatar: 'nettle', blurb: 'Stings a short color down to zero.' },
-  { name: 'Cobalt', style: 'leadLong', avatar: 'cobalt', blurb: 'Pounds the long color all night.' },
-  { name: 'Ash', style: 'lastTrick', avatar: 'ash', blurb: 'Waits on the last trick’s nest.' },
-  { name: 'Harrier', style: 'rookHunter', avatar: 'harrier', blurb: 'Circles until the Bird drops.' },
+  { name: 'Marrow', style: 'fourteenHold', avatar: 'marrow', blurb: 'Sits on 14s until the pile is fat.' },
+  { name: 'Pebble', style: 'secondHandLow', avatar: 'pebble', blurb: 'Second to play, plays low.' },
+  { name: 'Rookery', style: 'trumpDown', avatar: 'rookery', blurb: 'Leads cheap trump, not the ace.' },
+  { name: 'Sable', style: 'shortLead', avatar: 'sable', blurb: 'Leads the shortest off color.' },
+  { name: 'Finch', style: 'climbOnly', avatar: 'finch', blurb: 'Never opens. Only overcalls.' },
+  { name: 'Dagger', style: 'trumpUp', avatar: 'dagger', blurb: 'Leads the highest trump it holds.' },
+  { name: 'Willow', style: 'eggSitter', avatar: 'willow', blurb: 'Will not lead a counter.' },
+  { name: 'Hearth', style: 'passFirst', avatar: 'hearth', blurb: 'Always passes the first chair.' },
+  { name: 'Grit', style: 'nestDump', avatar: 'grit', blurb: 'Parks nest counters if the last trick looks lost.' },
+  { name: 'Copper', style: 'fiveHunter', avatar: 'copper', blurb: 'Scoops every 5 that hits the felt.' },
+  { name: 'Moth', style: 'thirdHandHigh', avatar: 'moth', blurb: 'Third to play, plays high.' },
+  { name: 'Brandy', style: 'widowFiend', avatar: 'brandy', blurb: 'Buys a thin 100 just to see the nest.' },
+  { name: 'Flint', style: 'honorCash', avatar: 'flint', blurb: 'Cashes a 1 the first chance it gets.' },
+  { name: 'Ivy', style: 'bidOnce', avatar: 'ivy', blurb: 'Opens, then sits. Will not climb.' },
+  { name: 'Shade', style: 'midRank', avatar: 'shade', blurb: 'Leads a middle card and waits.' },
+  { name: 'Barrel', style: 'quietDealer', avatar: 'barrel', blurb: 'Tight when dealing. Loose left of dealer.' },
+  { name: 'Spark', style: 'moonDreamer', avatar: 'spark', blurb: 'Looks for Shoot the Moon more than the book.' },
+  { name: 'Nettle', style: 'colorStubborn', avatar: 'nettle', blurb: 'Names its pet color even when another is longer.' },
+  { name: 'Cobalt', style: 'leftHandVoid', avatar: 'cobalt', blurb: 'Leads through LHO’s known void.' },
+  { name: 'Ash', style: 'lastBidder', avatar: 'ash', blurb: 'Speaks last. Rarely opens early.' },
+  { name: 'Harrier', style: 'antiMoon', avatar: 'harrier', blurb: 'Will not climb near 200.' },
 ];
 const STYLE_TITLES = {
   safe: 'Safe',
@@ -4975,6 +4975,77 @@ const STYLE_TITLES = {
   rookHunter: 'Bird hunter',
   lastTrick: 'Last trick',
   sandbag: 'Sandbag',
+  widowFiend: 'Widow fiend',
+  trumpShy: 'Trump shy',
+  setDog: 'Set dog',
+  scoreHawk: 'Score hawk',
+  colorStubborn: 'Stubborn color',
+  quietDealer: 'Quiet dealer',
+  nestDump: 'Nest dumper',
+  ruffHappy: 'Ruff happy',
+  honorCash: 'Cashes honors',
+  secondHandLow: 'Second-hand low',
+  thirdHandHigh: 'Third-hand high',
+  eggSitter: 'Egg sitter',
+  bidOnce: 'Bids once',
+  climbOnly: 'Climb only',
+  moonDreamer: 'Moon dreamer',
+  antiMoon: 'No moon',
+  leftHandVoid: 'Through the void',
+  partnerSignal: 'Partner’s void',
+  shortLead: 'Short lead',
+  midRank: 'Mid rank',
+  fiveHunter: 'Five hunter',
+  fourteenHold: 'Holds the 14',
+  trumpUp: 'Trump up',
+  trumpDown: 'Trump down',
+  passFirst: 'Passes first',
+  lastBidder: 'Last bidder',
+};
+const STYLE_HABIT = {
+  safe: 'tight auction',
+  aggressive: 'opens more 100s',
+  tricky: 'off-speed leads',
+  trumpHeavy: 'pulls trump early',
+  pointHungry: 'fights every 10',
+  passive: 'ducks the thin ones',
+  randomish: 'chaos seat',
+  partnerFirst: 'never contests partner',
+  bidHappy: 'climbs the auction',
+  voidMaker: 'strips a color in the nest',
+  balanced: 'straight book',
+  countSaver: 'hides counters',
+  leadLong: 'pounds the long color',
+  showboat: 'flashes high cards',
+  rookHunter: 'hunts the Bird',
+  lastTrick: 'saves trump for the nest',
+  sandbag: 'underbids, plays tight',
+  widowFiend: 'buys the nest',
+  trumpShy: 'will not lead trump',
+  setDog: 'hunts the set',
+  scoreHawk: 'bids the scoreboard',
+  colorStubborn: 'names a pet color',
+  quietDealer: 'tight in the deal seat',
+  nestDump: 'parks nest points',
+  ruffHappy: 'ruffs early',
+  honorCash: 'cashes a 1',
+  secondHandLow: 'second hand low',
+  thirdHandHigh: 'third hand high',
+  eggSitter: 'never leads a counter',
+  bidOnce: 'opens and sits',
+  climbOnly: 'only overcalls',
+  moonDreamer: 'eyes the moon',
+  antiMoon: 'won’t climb to 200',
+  leftHandVoid: 'leads through LHO',
+  partnerSignal: 'leads partner’s void',
+  shortLead: 'leads the short color',
+  midRank: 'leads a middle card',
+  fiveHunter: 'scoops the fives',
+  fourteenHold: 'holds the 14',
+  trumpUp: 'leads high trump',
+  trumpDown: 'leads low trump',
+  passFirst: 'passes first chair',
+  lastBidder: 'waits to speak last',
 };
 const STYLE_HOWTO = {
   safe: 'Shy auction. Leads low. Only fights fat tricks.',
@@ -4994,6 +5065,32 @@ const STYLE_HOWTO = {
   rookHunter: 'Goes looking for the Bird and Red 2.',
   lastTrick: 'Saves trump to fight the last pile.',
   sandbag: 'Underbids, then plays defense.',
+  widowFiend: 'Opens a thin 100 to see the nest.',
+  trumpShy: 'Same book. Will not lead trump.',
+  setDog: 'Throws winners at their bid to set them.',
+  scoreHawk: 'Buys when behind. Passes when ahead.',
+  colorStubborn: 'Names a favorite color even if another is longer.',
+  quietDealer: 'Tight when dealing. Looser left of the dealer.',
+  nestDump: 'Buries nest counters if the last trick looks lost.',
+  ruffHappy: 'Ruffs the first off-suit chance.',
+  honorCash: 'Cashes a 1 as soon as the lead is safe.',
+  secondHandLow: 'If second to play, ducks.',
+  thirdHandHigh: 'If third to play, plays high.',
+  eggSitter: 'Leads only non-counters.',
+  bidOnce: 'Opens the floor, then never climbs.',
+  climbOnly: 'Passes the open. Overcalls later.',
+  moonDreamer: 'Will shoot the moon on a big book.',
+  antiMoon: 'Stops short of 200.',
+  leftHandVoid: 'Leads a color LHO already showed void.',
+  partnerSignal: 'Leads a color partner is void in.',
+  shortLead: 'Leads the shortest off color.',
+  midRank: 'Leads an 8–11, not the top or bottom.',
+  fiveHunter: 'Beats a 5 whenever it can.',
+  fourteenHold: 'Keeps 14s unless the pile is fat.',
+  trumpUp: 'Leads the highest plain trump.',
+  trumpDown: 'Leads the cheapest plain trump.',
+  passFirst: 'Always passes if first to speak.',
+  lastBidder: 'Rarely opens unless last to speak.',
 };
 function personaByName(name) {
   return BOT_PERSONAS.find(p => p.name === name) || null;
@@ -5001,8 +5098,9 @@ function personaByName(name) {
 function botHowToHTML(p) {
   if (!p) return '';
   const title = STYLE_TITLES[p.style] || p.style;
+  const habit = (typeof STYLE_HABIT !== 'undefined' && STYLE_HABIT[p.style]) || title;
   const how = STYLE_HOWTO[p.style] || p.blurb || '';
-  return '<b>' + escapeHtmlSafe(p.name) + '</b> · ' + escapeHtmlSafe(title)
+  return '<b>' + escapeHtmlSafe(p.name) + '</b> · ' + escapeHtmlSafe(habit)
     + '<span>' + escapeHtmlSafe(how) + '</span>';
 }
 function hideBotStyleTip() {
@@ -5013,12 +5111,6 @@ function showBotStyleTip(name, ev) {
   if (ev) { ev.preventDefault(); ev.stopPropagation(); }
   const tip = $('botStyleTip');
   if (!tip) return;
-  // Extreme plays a single book — long-press must not leak persona style.
-  if (typeof extremeOn === 'function' ? extremeOn() : botDifficulty === 'extreme') {
-    tip.classList.add('hidden');
-    tip.innerHTML = '';
-    return;
-  }
   const p = personaByName(name);
   if (!p) return;
   tip.innerHTML = botHowToHTML(p);
@@ -5040,7 +5132,12 @@ function applyBotNameAttr(el, p) {
 
 function availableBotPersonas() {
   const used = new Set((players || []).filter(p => p && p.isBot).map(p => p.name));
-  return BOT_PERSONAS.filter(p => !used.has(p.name));
+  let list = BOT_PERSONAS.filter(p => !used.has(p.name));
+  const d = (typeof botDifficulty === 'string') ? botDifficulty : '';
+  if (d === 'extreme' || d === 'hard') {
+    list = list.filter(p => p.style !== 'randomish' && p.style !== 'showboat');
+  }
+  return list;
 }
 
 function addBot(seat, personaPick) {
@@ -8818,9 +8915,7 @@ function renderPlayerStatCard(i, topScorerIdx) {
   const avgBid = statAvgBid(s);
   const isLeader = (i === topScorerIdx && (s.points || 0) > 0);
   const roleTag = p.isBot
-    ? ((typeof extremeOn === 'function' ? extremeOn() : botDifficulty === 'extreme')
-      ? 'Bot'
-      : `Bot · ${(typeof STYLE_TITLES !== 'undefined' && STYLE_TITLES[p.botStyle]) || 'Bot'}`)
+    ? `Bot · ${(typeof STYLE_TITLES !== 'undefined' && STYLE_TITLES[p.botStyle]) || 'Bot'}`
     : (p.id === myPeerId ? 'You' : 'Player');
   const avatarHtml = (typeof avatarHTML === 'function') ? avatarHTML(p.avatar || 'rookling') : '';
   return `
@@ -11877,10 +11972,6 @@ bindClick('leaveReplaceBtn', () => { try { clientLeaveReplace(); } catch (e) { c
     const name = sourceName(e.target);
     shown = false;
     if (!name) return;
-    if (typeof extremeOn === 'function' ? extremeOn() : botDifficulty === 'extreme') {
-      hideBotStyleTip();
-      return;
-    }
     cancel();
     armedName = name;
     const x = e.clientX || 24;
@@ -12276,7 +12367,7 @@ function ensureBotDifficultyOptions() {
     ['easy', 'Easy'],
     ['normal', 'Normal'],
     ['hard', 'Hard'],
-    ['extreme', 'Extreme (no persona)'],
+    ['extreme', 'Extreme'],
   ];
   ['opt-bot-difficulty', 'opt-bot-difficulty-ingame'].forEach((id) => {
     const bd = $(id);
