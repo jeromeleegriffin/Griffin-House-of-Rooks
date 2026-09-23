@@ -36,7 +36,7 @@
   <link rel="manifest" href="manifest.json">
   <link rel="icon" href="icon-192.png">
   <link rel="apple-touch-icon" href="apple-touch-icon.png">
-  <link rel="stylesheet" href="style.css?v=395">
+  <link rel="stylesheet" href="style.css?v=396">
   <script src="vendor/peerjs.min.js"></script>
   <style>
     /* Emergency layout if style.css fails to load — joiners still see a usable page */
@@ -1165,10 +1165,10 @@
       paintInstall();
     })();
   </script>
-  <script src="rules.js?v=395"></script>
-  <script src="bots.js?v=395"></script>
-  <script src="game.js?v=395"></script>
-  <script src="polish.js?v=395"></script>
+  <script src="rules.js?v=396"></script>
+  <script src="bots.js?v=396"></script>
+  <script src="game.js?v=396"></script>
+  <script src="polish.js?v=396"></script>
   <div id="horBootError"></div>
   <script>
     window.addEventListener('error', function (ev) {
@@ -1182,7 +1182,7 @@
   </script>
   <script>
     if ('serviceWorker' in navigator) {
-      navigator.serviceWorker.register('sw.js?v=395', { updateViaCache: 'none' })
+      navigator.serviceWorker.register('sw.js?v=396', { updateViaCache: 'none' })
         .then(function (reg) { try { reg.update(); } catch (e) {} })
         .catch(() => {});
       let horSwAutoReloaded = false;

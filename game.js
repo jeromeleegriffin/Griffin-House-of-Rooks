@@ -7,7 +7,7 @@
 // It's exchanged during the join handshake so a stale host or joiner (e.g.
 // one still running old cached JS) gets caught and auto-updated instead of
 // silently failing or behaving unpredictably against a mismatched peer.
-const APP_VERSION = '395';
+const APP_VERSION = '396';
 
 function horThisIndex() {
   try {
@@ -5389,19 +5389,25 @@ function updateWaitingUI() {
     }
   }
   const startBtn = $('startBtn');
+  const tableFull = seatedCount() >= 4;
+  const waitingRoot = $('waiting');
+  if (waitingRoot) waitingRoot.classList.toggle('table-full', tableFull);
   if (startBtn) {
     if (isHost) {
-      startBtn.disabled = players.length !== 4;
+      startBtn.disabled = !tableFull;
       startBtn.classList.remove('hidden');
+      startBtn.classList.toggle('table-ready', tableFull);
+      startBtn.classList.toggle('table-waiting', !tableFull);
       startBtn.style.display = '';
-      if (players.length === 4) {
-        startBtn.textContent = 'Start Game';
+      startBtn.setAttribute('aria-live', 'polite');
+      if (tableFull) {
+        startBtn.innerHTML = 'Start Game<span class="start-btn-sub">Table full — deal</span>';
       } else {
-        startBtn.textContent = `Start Game (${players.length}/4 — need ${empty} more)`;
+        startBtn.innerHTML = 'Start Game<span class="start-btn-sub">' + players.length + '/4 — need ' + empty + ' more</span>';
       }
     } else {
-      // Guests never see start
       startBtn.classList.add('hidden');
+      startBtn.classList.remove('table-ready', 'table-waiting');
     }
   }
   const fillHint = $('fillSeatsHint');
