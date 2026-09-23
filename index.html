@@ -36,7 +36,7 @@
   <link rel="manifest" href="manifest.json">
   <link rel="icon" href="icon-192.png">
   <link rel="apple-touch-icon" href="apple-touch-icon.png">
-  <link rel="stylesheet" href="style.css?v=385">
+  <link rel="stylesheet" href="style.css?v=389">
   <script src="vendor/peerjs.min.js"></script>
   <style>
     /* Emergency layout if style.css fails to load — joiners still see a usable page */
@@ -336,7 +336,7 @@
             <option value="easy">Easy</option>
             <option value="normal">Normal</option>
             <option value="hard">Hard</option>
-            <option value="extreme" selected>Extreme</option>
+            <option value="extreme" selected>Extreme (no persona)</option>
           </select>
         </div>
         <button type="button" id="fillSeatsBtn" class="btn fill-seats-btn">Fill empty seats with bots</button>
@@ -492,10 +492,10 @@
             <p class="option-hint">Off by default. If everyone passes, the dealer is forced to bid the minimum instead of the hand being redealt.</p>
 
             <label class="option-label">
-              <input type="checkbox" id="opt-misdeal-no-counters">
+              <input type="checkbox" id="opt-misdeal-no-counters" checked>
               Misdeal on a counter-less hand
             </label>
-            <p class="option-hint">Off by default. If any hand has zero point cards (no 5/10/14/one/Rook/Red 1/Red 2), redeal automatically.</p>
+            <p class="option-hint">On by default. If any hand has zero point cards (no 5/10/14/one/Rook/Red 1/Red 2), redeal automatically.</p>
 
             <label class="option-label">
               <input type="checkbox" id="opt-comeback-special-chance">
@@ -510,10 +510,10 @@
             <p class="option-hint">Off by default. Reveal the nest to everyone the moment the bidder picks it up, instead of only at hand's end.</p>
 
             <label class="option-label">
-              <input type="checkbox" id="opt-shoot-moon">
+              <input type="checkbox" id="opt-shoot-moon" checked>
               Allow "Shoot the Moon"
             </label>
-            <p class="option-hint">Off by default. Bidding every counter in the deck (shown as “Shoot the moon 200” when that is the max) is all-or-nothing: make it and win the game outright, miss it and go set as usual.</p>
+            <p class="option-hint">On by default. Bidding every counter in the deck (shown as “Shoot the moon 200” when that is the max) is all-or-nothing: make it and win the game outright, miss it and go set as usual.</p>
 
             </div>
             <div id="optPaneTable" class="opt-pane hidden">
@@ -605,7 +605,7 @@
                 <option value="easy">Easy</option>
                 <option value="normal">Normal</option>
                 <option value="hard">Hard</option>
-                <option value="extreme" selected>Extreme</option>
+                <option value="extreme" selected>Extreme (no persona)</option>
               </select>
             </div>
 
@@ -1165,10 +1165,10 @@
       paintInstall();
     })();
   </script>
-  <script src="rules.js?v=385"></script>
-  <script src="bots.js?v=385"></script>
-  <script src="game.js?v=385"></script>
-  <script src="polish.js?v=385"></script>
+  <script src="rules.js?v=389"></script>
+  <script src="bots.js?v=389"></script>
+  <script src="game.js?v=389"></script>
+  <script src="polish.js?v=389"></script>
   <div id="horBootError"></div>
   <script>
     window.addEventListener('error', function (ev) {
@@ -1182,7 +1182,7 @@
   </script>
   <script>
     if ('serviceWorker' in navigator) {
-      navigator.serviceWorker.register('sw.js?v=385', { updateViaCache: 'none' })
+      navigator.serviceWorker.register('sw.js?v=389', { updateViaCache: 'none' })
         .then(function (reg) { try { reg.update(); } catch (e) {} })
         .catch(() => {});
       let horSwAutoReloaded = false;

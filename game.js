@@ -7,7 +7,7 @@
 // It's exchanged during the join handshake so a stale host or joiner (e.g.
 // one still running old cached JS) gets caught and auto-updated instead of
 // silently failing or behaving unpredictably against a mismatched peer.
-const APP_VERSION = '385';
+const APP_VERSION = '389';
 
 function horThisIndex() {
   try {
@@ -68,7 +68,7 @@ let nestGoesTo = 'lastTrick';
 let leadOrder = 'bidder';
 /** Alternate rules seen in other Rook groups online — all off by default:
  * misdeal & redeal if any hand has zero counter cards */
-let misdealOnNoCounters = false;
+let misdealOnNoCounters = true;
 /** Known, opt-in comeback assist. OFF by default. */
 let comebackSpecialChance = false;
 /** 'Screw the dealer': if everyone passes, the dealer must bid the
@@ -79,7 +79,7 @@ let screwTheDealer = false;
 let openWidow = false;
 /** Shoot the Moon: bidding every counter in the deck is an all-or-nothing
  * bid — make it and win the game outright, miss it and go set as usual */
-let shootMoonEnabled = false;
+let shootMoonEnabled = true;
 /** Bot delay: blitz | normal | slow */
 let botSpeed = 'normal';
 /** Partner discipline + coach (default ON) */
@@ -1264,6 +1264,8 @@ function applyGriffinDefaults({ broadcastChange = false } = {}) {
   specialsAnytime = false;
   mustTrumpWhenVoid = false;
   leadOrder = 'bidder';
+  misdealOnNoCounters = true;
+  shootMoonEnabled = true;
   recomputeHandAndNest();
   syncOptionsUI();
   if (broadcastChange && isHost) {
@@ -4533,6 +4535,7 @@ function showWaiting() {
       bdg.value = botDifficulty || 'extreme';
       bdg.onchange = () => {
         botDifficulty = bdg.value || 'extreme';
+        if (botDifficulty === 'extreme') hideBotStyleTip();
         try { broadcastPlaySettings(); } catch (e) {}
       };
     }
@@ -5008,9 +5011,16 @@ function hideBotStyleTip() {
 }
 function showBotStyleTip(name, ev) {
   if (ev) { ev.preventDefault(); ev.stopPropagation(); }
-  const p = personaByName(name);
   const tip = $('botStyleTip');
-  if (!p || !tip) return;
+  if (!tip) return;
+  // Extreme plays a single book — long-press must not leak persona style.
+  if (typeof extremeOn === 'function' ? extremeOn() : botDifficulty === 'extreme') {
+    tip.classList.add('hidden');
+    tip.innerHTML = '';
+    return;
+  }
+  const p = personaByName(name);
+  if (!p) return;
   tip.innerHTML = botHowToHTML(p);
   tip.classList.remove('hidden');
   const x = ev && ev.clientX ? ev.clientX : 24;
@@ -8191,10 +8201,14 @@ function hostProcessPlay(data) {
   hand.splice(idx, 1);
   if (!game.ledColor) {
     game.ledColor = (card.color === 'rook' || isRed2(card) || isRed1(card)) ? game.trump : card.color;
-  } else if (game.ledColor && card.color !== game.ledColor && !isSpecialCard(card)) {
-    // Player failed to follow — mark void for extreme AI
-    if (!knownVoids[data.player]) knownVoids[data.player] = {};
-    knownVoids[data.player][game.ledColor] = true;
+  } else if (game.ledColor && typeof followsLedSuit === 'function' && !followsLedSuit(card, game.ledColor, game.trump)) {
+    // Failed to follow — mark void for extreme AI. Playing a special on a
+    // color lead also proves the void unless specials-anytime is on.
+    const specialEscape = !!(typeof specialsAnytime !== 'undefined' && specialsAnytime && isSpecialCard(card));
+    if (!specialEscape) {
+      if (!knownVoids[data.player]) knownVoids[data.player] = {};
+      knownVoids[data.player][game.ledColor] = true;
+    }
   }
 
   game.trick.push({ player: data.player, card });
@@ -8804,7 +8818,9 @@ function renderPlayerStatCard(i, topScorerIdx) {
   const avgBid = statAvgBid(s);
   const isLeader = (i === topScorerIdx && (s.points || 0) > 0);
   const roleTag = p.isBot
-    ? `Bot · ${(typeof STYLE_TITLES !== 'undefined' && STYLE_TITLES[p.botStyle]) || 'Bot'}`
+    ? ((typeof extremeOn === 'function' ? extremeOn() : botDifficulty === 'extreme')
+      ? 'Bot'
+      : `Bot · ${(typeof STYLE_TITLES !== 'undefined' && STYLE_TITLES[p.botStyle]) || 'Bot'}`)
     : (p.id === myPeerId ? 'You' : 'Player');
   const avatarHtml = (typeof avatarHTML === 'function') ? avatarHTML(p.avatar || 'rookling') : '';
   return `
@@ -11861,6 +11877,10 @@ bindClick('leaveReplaceBtn', () => { try { clientLeaveReplace(); } catch (e) { c
     const name = sourceName(e.target);
     shown = false;
     if (!name) return;
+    if (typeof extremeOn === 'function' ? extremeOn() : botDifficulty === 'extreme') {
+      hideBotStyleTip();
+      return;
+    }
     cancel();
     armedName = name;
     const x = e.clientX || 24;
@@ -12252,22 +12272,25 @@ window.hideDiscardOverlay = hideDiscardOverlay;
 
 /** Guarantee difficulty options include Extreme (fixes stale DOM / cache). */
 function ensureBotDifficultyOptions() {
-  const bd = $('opt-bot-difficulty');
-  if (!bd) return;
   const wanted = [
     ['easy', 'Easy'],
     ['normal', 'Normal'],
     ['hard', 'Hard'],
-    ['extreme', 'Extreme'],
+    ['extreme', 'Extreme (no persona)'],
   ];
-  const have = new Set(Array.from(bd.options).map(o => o.value));
-  wanted.forEach(([val, label]) => {
-    if (!have.has(val)) {
-      const opt = document.createElement('option');
-      opt.value = val;
-      opt.textContent = label;
-      bd.appendChild(opt);
-    }
+  ['opt-bot-difficulty', 'opt-bot-difficulty-ingame'].forEach((id) => {
+    const bd = $(id);
+    if (!bd) return;
+    const have = new Set(Array.from(bd.options).map(o => o.value));
+    wanted.forEach(([val, label]) => {
+      let opt = Array.from(bd.options).find(o => o.value === val);
+      if (!opt && !have.has(val)) {
+        opt = document.createElement('option');
+        opt.value = val;
+        bd.appendChild(opt);
+      }
+      if (opt) opt.textContent = label;
+    });
   });
 }
 ensureBotDifficultyOptions();
