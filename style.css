@@ -1943,10 +1943,11 @@ body.theme-night {
   box-shadow: none !important;
 }
 #waiting #startBtn.table-ready {
-  background: linear-gradient(180deg, #f0d56a 0%, #c4921c 55%, #8a6410 100%) !important;
-  color: #1a1408 !important;
-  border: 2px solid #f8e7a4 !important;
-  box-shadow: 0 0 0 2px rgba(240,213,106,.35), 0 8px 22px rgba(196,146,28,.45) !important;
+  background: #ffe000 !important;
+  background-image: none !important;
+  color: #000 !important;
+  border: 2px solid #000 !important;
+  box-shadow: 0 0 0 2px #ffe000, 0 8px 20px rgba(0,0,0,.35) !important;
   animation: startReadyPulse 1.5s ease-in-out infinite;
   min-height: 54px !important;
   font-size: 1.12rem !important;
@@ -1954,11 +1955,12 @@ body.theme-night {
   text-transform: uppercase;
 }
 #waiting #startBtn.table-ready .start-btn-sub {
-  color: #3a2a08;
-  opacity: 0.9;
+  color: #000 !important;
+  opacity: 1 !important;
   text-transform: none;
   letter-spacing: 0;
   font-size: 0.72em;
+  font-weight: 800;
 }
 @keyframes startReadyPulse {
   0%, 100% { transform: translateY(0) scale(1); filter: brightness(1); }
@@ -1968,9 +1970,10 @@ body.theme-night {
   box-shadow: 0 0 0 2px rgba(240,213,106,.35), 0 10px 28px rgba(0,0,0,.35);
 }
 body.gfx-brassUI #waiting #startBtn.table-ready {
-  background: linear-gradient(180deg, #f0d56a 0%, #c4921c 55%, #8a6410 100%) !important;
-  color: #1a1408 !important;
-  border: 2px solid #f8e7a4 !important;
+  background: #ffe000 !important;
+  background-image: none !important;
+  color: #000 !important;
+  border: 2px solid #000 !important;
 }
 @media (prefers-reduced-motion: reduce) {
   #waiting #startBtn.table-ready { animation: none; }
