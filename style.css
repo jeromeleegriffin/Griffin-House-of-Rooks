@@ -1941,6 +1941,10 @@ body.theme-night {
   color: #d7c48a !important;
   border: 1px dashed rgba(212,175,55,.45) !important;
   box-shadow: none !important;
+  text-align: center !important;
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
 }
 #waiting #startBtn.table-ready {
   background: #ffe000 !important;
@@ -1953,6 +1957,12 @@ body.theme-night {
   font-size: 1.12rem !important;
   letter-spacing: 0.03em;
   text-transform: uppercase;
+  text-align: center !important;
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  line-height: 1 !important;
+  padding: 0.7rem 0.8rem !important;
 }
 #waiting #startBtn.table-ready .start-btn-sub {
   color: #000 !important;
@@ -1986,7 +1996,6 @@ body.gfx-brassUI #waiting #startBtn.table-ready {
   box-shadow: 0 1px 0 rgba(255,255,255,.08) inset;
 }
 body.gfx-brassUI #waiting #leaveBtn,
-body.gfx-brassUI #waiting #startBtn.btn.primary,
 body.gfx-brassUI #waiting #shareBtn {
   background: linear-gradient(180deg, #1c2844 0%, #10182c 100%) !important;
   color: #f0e0a8 !important;
@@ -12493,4 +12502,23 @@ body.gfx-brassUI .btn:not(.primary):not(.link):not(.danger) {
   #lobby.screen:not(.hidden) .lobby-stats-card { margin-top: 0.12rem; padding: 0.24rem 0.38rem; }
   #lobby.screen:not(.hidden) .lobby-stats-copy strong { font-size: 0.61rem; }
   #lobby.screen:not(.hidden) .lobby-stats-copy span { font-size: 0.49rem; }
+}
+
+
+/* v399: table-full Start Game — beat every theme / media query */
+body.gfx-brassUI #waiting .waiting-actions #startBtn.btn.primary.table-ready,
+body #waiting .waiting-actions #startBtn.btn.primary.table-ready,
+#waiting .waiting-actions #startBtn.btn.primary.table-ready,
+#waiting #startBtn.btn.primary.table-ready {
+  background: #ffe000 !important;
+  background-image: none !important;
+  color: #000 !important;
+  border: 2px solid #000 !important;
+  box-shadow: 0 0 0 2px #ffe000 !important;
+  text-align: center !important;
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  line-height: 1.1 !important;
+  font-weight: 800 !important;
 }

@@ -7,7 +7,7 @@
 // It's exchanged during the join handshake so a stale host or joiner (e.g.
 // one still running old cached JS) gets caught and auto-updated instead of
 // silently failing or behaving unpredictably against a mismatched peer.
-const APP_VERSION = '397';
+const APP_VERSION = '399';
 
 function horThisIndex() {
   try {
@@ -4908,7 +4908,8 @@ function updateBotButtons() {
   if (fillBtn) {
     const empty = Math.max(0, 4 - seatedCount());
     fillBtn.disabled = empty <= 0;
-    fillBtn.textContent = empty > 0 ? `Fill ${empty} empty seat${empty === 1 ? '' : 's'} with bots` : 'Table full';
+    fillBtn.classList.toggle('hidden', empty <= 0);
+    fillBtn.textContent = empty > 0 ? `Fill ${empty} empty seat${empty === 1 ? '' : 's'} with bots` : '';
   }
 }
 
@@ -5400,10 +5401,25 @@ function updateWaitingUI() {
       startBtn.classList.toggle('table-waiting', !tableFull);
       startBtn.style.display = '';
       startBtn.setAttribute('aria-live', 'polite');
+      startBtn.textContent = 'Start Game';
       if (tableFull) {
-        startBtn.innerHTML = 'Start Game<span class="start-btn-sub">Table full — deal</span>';
+        startBtn.style.setProperty('background', '#ffe000', 'important');
+        startBtn.style.setProperty('background-image', 'none', 'important');
+        startBtn.style.setProperty('color', '#000', 'important');
+        startBtn.style.setProperty('border', '2px solid #000', 'important');
+        startBtn.style.setProperty('text-align', 'center', 'important');
+        startBtn.style.setProperty('display', 'flex', 'important');
+        startBtn.style.setProperty('align-items', 'center', 'important');
+        startBtn.style.setProperty('justify-content', 'center', 'important');
       } else {
-        startBtn.innerHTML = 'Start Game<span class="start-btn-sub">' + players.length + '/4 — need ' + empty + ' more</span>';
+        startBtn.style.removeProperty('background');
+        startBtn.style.removeProperty('background-image');
+        startBtn.style.removeProperty('color');
+        startBtn.style.removeProperty('border');
+        startBtn.style.removeProperty('text-align');
+        startBtn.style.removeProperty('display');
+        startBtn.style.removeProperty('align-items');
+        startBtn.style.removeProperty('justify-content');
       }
     } else {
       startBtn.classList.add('hidden');
@@ -5414,7 +5430,8 @@ function updateWaitingUI() {
   if (fillHint) {
     fillHint.textContent = empty > 0
       ? `Need ${empty} more seat${empty === 1 ? '' : 's'}: invite friends or set Bots to ${bots + empty}.`
-      : 'Table is full — start when ready.';
+      : '';
+    fillHint.classList.toggle('hidden', empty <= 0);
   }
   if (isHost) updateBotButtons();
   try { syncSoloHostExtrasUI(); } catch (e) {}
