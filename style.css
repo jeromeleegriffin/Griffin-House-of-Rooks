@@ -12791,8 +12791,21 @@ body.nest-on-felt .player-slot.is-turn .seat-avatar {
   width: 48px;
   height: 68px;
   z-index: 8;
-  background-image: none !important;
   box-shadow: 0 4px 12px rgba(0,0,0,.45);
+}
+#nestArea .card-face.rook.nest-face-up,
+#nestArea .card-face.rook.nest-stay-face {
+  background: #14081a !important;
+  border: 2px solid #ce93d8 !important;
+  color: #f3e5f5 !important;
+}
+#nestArea .nest-bird-label,
+#nestArea .nest-red2-label {
+  display: none !important;
+}
+#nestArea .card-face.red2.nest-face-up,
+#nestArea .card-face.red2.nest-stay-face {
+  border: 2px solid #ff5252 !important;
 }
 
 #nestArea .table-nest-flip-face.nest-face-up,
@@ -12811,9 +12824,13 @@ body.nest-on-felt .player-slot.is-turn .seat-avatar {
   width: 48px;
   height: 68px;
   z-index: 12;
-  background: #f4ead2 !important;
-  background-image: none !important;
+  overflow: hidden;
   box-shadow: 0 4px 14px rgba(0,0,0,.5);
+}
+#nestArea .nest-stay-face .c-num,
+#nestArea .nest-stay-face .c-color {
+  opacity: 1 !important;
+  visibility: visible !important;
 }
 #nestArea .nest-face-up.green { background: #e8f8ee !important; }
 #nestArea .nest-face-up.red { background: #fdecee !important; }

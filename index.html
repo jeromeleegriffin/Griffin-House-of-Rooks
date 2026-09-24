@@ -36,7 +36,7 @@
   <link rel="manifest" href="manifest.json">
   <link rel="icon" href="icon-192.png">
   <link rel="apple-touch-icon" href="apple-touch-icon.png">
-  <link rel="stylesheet" href="style.css?v=436">
+  <link rel="stylesheet" href="style.css?v=442">
   <script src="vendor/peerjs.min.js"></script>
   <style>
     /* Emergency layout if style.css fails to load — joiners still see a usable page */
@@ -508,6 +508,13 @@
               Reveal top nest card
             </label>
             <p class="option-hint">Off by default. The top card of the nest is face-up for everyone during the auction.</p>
+            <label class="option-label" for="opt-force-nest-reveal">Force nest reveal (test)</label>
+            <select id="opt-force-nest-reveal">
+              <option value="">Off — random top card</option>
+              <option value="rook">Always Bird</option>
+              <option value="red2">Always Red 2</option>
+            </select>
+            <p class="option-hint">Host test only. Puts the Bird or Red 2 on top of the nest so you can check the reveal art. Turn it off when you play for real.</p>
 
             <label class="option-label">
               <input type="checkbox" id="opt-open-widow">
@@ -1173,10 +1180,10 @@
       paintInstall();
     })();
   </script>
-  <script src="rules.js?v=436"></script>
-  <script src="bots.js?v=436"></script>
-  <script src="game.js?v=436"></script>
-  <script src="polish.js?v=436"></script>
+  <script src="rules.js?v=442"></script>
+  <script src="bots.js?v=442"></script>
+  <script src="game.js?v=442"></script>
+  <script src="polish.js?v=442"></script>
   <div id="horBootError"></div>
   <script>
     window.addEventListener('error', function (ev) {
@@ -1190,7 +1197,7 @@
   </script>
   <script>
     if ('serviceWorker' in navigator) {
-      navigator.serviceWorker.register('sw.js?v=436', { updateViaCache: 'none' })
+      navigator.serviceWorker.register('sw.js?v=442', { updateViaCache: 'none' })
         .then(function (reg) { try { reg.update(); } catch (e) {} })
         .catch(() => {});
       let horSwAutoReloaded = false;

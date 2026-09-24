@@ -7,7 +7,7 @@
 // It's exchanged during the join handshake so a stale host or joiner (e.g.
 // one still running old cached JS) gets caught and auto-updated instead of
 // silently failing or behaving unpredictably against a mismatched peer.
-const APP_VERSION = '436';
+const APP_VERSION = '442';
 
 function horThisIndex() {
   try {
@@ -79,6 +79,8 @@ let screwTheDealer = false;
 let openWidow = false;
 /** Face-up top nest card during the auction */
 let revealTopNest = false;
+/** Test hook: '' | 'rook' | 'red2' — force that card onto the nest reveal */
+let forceNestReveal = '';
 /** Shoot the Moon: bidding every counter in the deck is an all-or-nothing
  * bid — make it and win the game outright, miss it and go set as usual */
 let shootMoonEnabled = true;
@@ -1413,6 +1415,8 @@ function syncOptionsUI() {
   if (cbComeback) cbComeback.checked = !!comebackSpecialChance;
   const rtn = $('opt-reveal-top-nest');
   if (rtn) rtn.checked = !!revealTopNest;
+  const fnr = $('opt-force-nest-reveal');
+  if (fnr) fnr.value = forceNestReveal || '';
   const ow = $('opt-open-widow');
   if (ow) ow.checked = !!openWidow;
   const stm = $('opt-shoot-moon');
@@ -1508,7 +1512,7 @@ function broadcastPlaySettings() {
     type: 'settings',
     includeRed2, red2Points, includeRed1, includeOnes, onesHigh, includeRook, rookLowest,
     specialsAnytime, mustTrumpWhenVoid, turnTimeSec,
-    bidOnlyScoring, sandbagging, nestGoesTo, leadOrder, misdealOnNoCounters, screwTheDealer, comebackSpecialChance, openWidow, revealTopNest, shootMoonEnabled, botSpeed, colorBlindCards, handSortMode, timeoutPolicy,
+    bidOnlyScoring, sandbagging, nestGoesTo, leadOrder, misdealOnNoCounters, screwTheDealer, comebackSpecialChance, openWidow, revealTopNest, forceNestReveal, shootMoonEnabled, botSpeed, colorBlindCards, handSortMode, timeoutPolicy,
     partnerNeverKill, partnerFeedLast, dontStealPartnerBid, landscapeBidHints, nestLastTrickAnim, layDownWinningCards,
     minBid, targetScore, handSize, nestSizeDefault, ruleVariant, botDifficulty,
     luckySpecialsBoost, luckySpecialsEnabled, luckySpecialsMode, experimentalHandOpt,
@@ -4395,6 +4399,7 @@ function handleMessage(data, conn) {
         if (typeof data.comebackSpecialChance === 'boolean') comebackSpecialChance = data.comebackSpecialChance;
         if (typeof data.openWidow === 'boolean') openWidow = data.openWidow;
         if (typeof data.revealTopNest === 'boolean') revealTopNest = data.revealTopNest;
+        if (typeof data.forceNestReveal === 'string') forceNestReveal = data.forceNestReveal;
         if (typeof data.shootMoonEnabled === 'boolean') shootMoonEnabled = data.shootMoonEnabled;
         if (data.botSpeed) botSpeed = data.botSpeed;
         if (typeof data.partnerNeverKill === 'boolean') partnerNeverKill = data.partnerNeverKill;
@@ -4654,6 +4659,14 @@ function showWaiting() {
         revealTopNest = !!rtn.checked;
         try { broadcastPlaySettings(); } catch (e) {}
         try { renderTopNestPeek(); } catch (e) {}
+      };
+    }
+    const fnr = $('opt-force-nest-reveal');
+    if (fnr) {
+      fnr.value = forceNestReveal || '';
+      fnr.onchange = () => {
+        forceNestReveal = fnr.value || '';
+        try { broadcastPlaySettings(); } catch (e) {}
       };
     }
     const ow = $('opt-open-widow');
@@ -5592,8 +5605,37 @@ function freezeTopNestCard() {
     if (c && c.id && !handIds.has(c.id)) { card = c; break; }
   }
   if (card && handIds.has(card.id)) card = null;
-  game.topNestCard = card ? { color: card.color, rank: card.rank, id: card.id } : null;
+  game.topNestCard = card ? hydrateNestCard(card) : null;
   return game.topNestCard;
+}
+function applyForcedNestReveal() {
+  const want = (typeof window !== 'undefined' && window.horForceNest) || forceNestReveal || '';
+  if (!game || !revealTopNest || !want) return null;
+  const nest = game.nest = Array.isArray(game.nest) ? game.nest : [];
+  const isBird = (c) => c && (c.id === 'rook' || c.color === 'rook');
+  const isR2 = (c) => c && (c.id === 'red-2' || (typeof isRed2 === 'function' && isRed2(c)));
+  const wantBird = (want === 'rook' || want === 'bird');
+  const pred = wantBird ? isBird : isR2;
+  const fallback = wantBird
+    ? { color: 'rook', rank: 99, id: 'rook' }
+    : { color: 'red', rank: 2, id: 'red-2' };
+  let card = null;
+  let idx = nest.findIndex(pred);
+  if (idx >= 0) card = nest.splice(idx, 1)[0];
+  if (!card && Array.isArray(game.hands)) {
+    for (let i = 0; i < game.hands.length; i++) {
+      const h = game.hands[i];
+      if (!Array.isArray(h)) continue;
+      idx = h.findIndex(pred);
+      if (idx < 0) continue;
+      card = h.splice(idx, 1)[0];
+      if (nest.length) h.push(nest.shift());
+      break;
+    }
+  }
+  if (!card) card = fallback;
+  nest.push(card);
+  return pinNestRevealFace(card);
 }
 
 function nestCountOnTable() {
@@ -5609,20 +5651,74 @@ function nestPileSignature() {
   const stage = (game && game.nestFlipStage) || 0;
   return [n, face && face.id, stage, !!(game && game.phase)].join('|');
 }
-function pinNestRevealFace(card) {
+function hydrateNestCard(card) {
   if (!card) return null;
-  const copy = { color: card.color, rank: card.rank, id: card.id };
+  let color = card.color;
+  let rank = card.rank;
+  let id = card.id;
+  if ((!color || rank == null || rank === '') && id) {
+    if (id === 'rook') { color = 'rook'; rank = 99; }
+    else if (id === 'red-2') { color = 'red'; rank = 2; }
+    else if (id === 'red1-special') { color = 'red'; rank = 1; }
+    else {
+      const m = String(id).match(/^([a-z]+)-(\d+)$/i);
+      if (m) { color = m[1].toLowerCase(); rank = parseInt(m[2], 10); }
+    }
+  }
+  if (!id && color && rank != null) id = color === 'rook' ? 'rook' : (color + '-' + rank);
+  return {
+    color: color || 'black',
+    rank: rank != null ? rank : '?',
+    id: id || ((color || 'x') + '-' + rank),
+    specialRed1: !!(card.specialRed1 || id === 'red1-special')
+  };
+}
+function nestCardClass(card) {
+  const c = hydrateNestCard(card);
+  if (!c) return 'black';
+  if (typeof isRed1 === 'function' && isRed1(c)) return 'red1';
+  if (typeof isRed2 === 'function' && isRed2(c)) return 'red2';
+  if (c.color === 'rook' || c.id === 'rook') return 'rook';
+  return c.color || 'black';
+}
+function pinNestRevealFace(card) {
+  const copy = hydrateNestCard(card);
+  if (!copy) return null;
   window._horPinnedNestFace = copy;
   if (game) game.topNestCard = copy;
   return copy;
 }
 function pinnedNestRevealFace() {
-  return (game && game.topNestCard) || window._horPinnedNestFace || null;
+  return hydrateNestCard((game && game.topNestCard) || window._horPinnedNestFace || null);
 }
 function nestFaceMarkup(face) {
-  const cls = (typeof cardClass === 'function') ? cardClass(face) : '';
-  const inner = (typeof cardInnerHTML === 'function') ? cardInnerHTML(face) : ((face.rank || face.id) || '?');
-  return '<div class="card-face ' + cls + ' small nest-face-up nest-stay-face">' + inner + '</div>';
+  const card = hydrateNestCard(face);
+  const cls = nestCardClass(card);
+  let inner = '';
+  try {
+    inner = (typeof cardInnerHTML === 'function') ? cardInnerHTML(card) : '';
+  } catch (e) { inner = ''; }
+  if (!inner || !String(inner).trim()) {
+    inner = '<div class="c-bar top"></div><div class="c-stack"><div class="c-num">'
+      + (card.rank === 99 ? 'R' : card.rank)
+      + '</div><div class="c-color">' + (card.color || '') + '</div></div><div class="c-bar bot"></div>';
+  }
+  const rook = (cls === 'rook');
+  const red2 = (cls === 'red2');
+  if (rook && inner.indexOf('rook-bird-img') < 0) {
+    inner = '<div class="c-stack rook-stack">'
+      + '<img class="rook-bird-img" src="Rook.webp" alt="Bird" draggable="false" '
+      + 'onerror="this.onerror=null;this.src=\'Rook.png\';">'
+      + '</div>';
+  }
+  if (red2 && inner.indexOf('red2-img') < 0) {
+    inner = '<div class="c-stack red2-stack">'
+      + '<img class="red2-img" src="Red2.webp" alt="Red 2" draggable="false" '
+      + 'onerror="this.onerror=null;this.src=\'Red2.png\';">'
+      + '</div>';
+  }
+  return '<div class="card-face ' + cls + ' small nest-face-up nest-stay-face'
+    + (rook ? ' is-bird' : '') + (red2 ? ' is-red2 red2-art' : '') + '">' + inner + '</div>';
 }
 function renderTopNestPeek() {
   const bar = $('topNestPeek');
@@ -5653,7 +5749,8 @@ function renderTopNestPeek() {
 
   if (faceUp) {
     const staySig = 'stay:' + (face && face.id) + ':' + n;
-    if (window._horNestPileSig === staySig && el.querySelector('.nest-stay-face')) return;
+    const stayEl = el.querySelector('.nest-stay-face');
+    if (window._horNestPileSig === staySig && stayEl && stayEl.querySelector('.c-num, .rook-bird-img, .red2-img, .c-stack')) return;
     window._horNestPileSig = staySig;
     const backs = Math.max(0, n - 1);
     let html = '<div class="table-nest-pile" aria-label="Nest">';
@@ -5682,12 +5779,10 @@ function renderTopNestPeek() {
     html += '<div class="card-back table-nest-under" style="--nest-i:' + i + '"></div>';
   }
   if (flipping) {
-    const cls = (typeof cardClass === 'function') ? cardClass(face) : '';
-    const inner = (typeof cardInnerHTML === 'function') ? cardInnerHTML(face) : ((face.rank || face.id) || '?');
     html += '<div class="table-nest-flip">'
       + '<div class="table-nest-flip-inner">'
       + '<div class="card-back table-nest-flip-back"></div>'
-      + '<div class="card-face ' + cls + ' small nest-face-up table-nest-flip-face">' + inner + '</div>'
+      + nestFaceMarkup(face).replace(' nest-stay-face', ' table-nest-flip-face')
       + '</div></div>';
   } else {
     html += '<div class="card-back table-nest-top"></div>';
@@ -6034,6 +6129,18 @@ function startGameWithToast() {
   });
 }
 
+/** Seats from the host: 0 bottom, 1 left, 2 partner, 3 right.
+ *  "To the right" of a seat is -1 (0→3→2→1→0). */
+function rotateDealerRight(seat) {
+  const s = Number(seat);
+  return (Number.isFinite(s) ? s + 3 : 0) % 4;
+}
+/** First to bid is the seat left of the dealer (standard Rook). */
+function firstActorSeat(dealer) {
+  const d = Number(dealer);
+  return (Number.isFinite(d) ? d + 1 : 0) % 4;
+}
+
 function hostStartGame() {
   if (!isHost) return;
   if (tourCardOpen()) {
@@ -6092,7 +6199,7 @@ function hostStartGame() {
   try { horMarkActiveTable(true); } catch (e) {}
   game = {
     phase: 'deal',
-    dealer: Math.floor(Math.random() * 4),
+    dealer: Math.floor(Math.random() * 4), // first hand of a match: random dealer / first-to-act
     scores: [0, 0], // team A, team B
     sandbagOverpoints: [0, 0], // accumulated 10-point overage units for each team
     hands: [[], [], [], []],
@@ -6423,7 +6530,8 @@ function hostDealNow() {
     sortCardsDisplay(game.hands[i]);
   }
   try { freezeTopNestCard(); } catch (e) { game.topNestCard = null; }
-  // House rule: misdeal & redeal if any hand has zero counter cards (no
+  try { applyForcedNestReveal(); } catch (e) {}
+  // House rule: misdeal & redeal if any hand has zero counter cards (no)
   // 5/10/14/one/Rook/Red 1/Red 2 at all) — nobody could bid meaningfully.
   // Bounded retry count so a pathological deck config can't loop forever.
   if (misdealOnNoCounters) {
@@ -6445,7 +6553,7 @@ function hostDealNow() {
   window._lastTurnBeepKey = '';
   lastTrickLen = 0;
 
-  game.currentPlayer = (game.dealer + 1) % 4;
+  game.currentPlayer = firstActorSeat(game.dealer);
   game.passCount = 0;
   game.highestBid = (minBid || 70) - 5;
   game.bidder = -1;
@@ -9788,7 +9896,7 @@ function hostStartNextHand() {
   window._ltShowRemaining = false;
   landscapeLastSummary = null;
   try { clearTableForShuffle(); } catch (e) {}
-  if (game) game.dealer = (game.dealer + 1) % 4;
+  if (game) game.dealer = rotateDealerRight(game.dealer);
   hostDeal();
 }
 
@@ -12224,12 +12332,13 @@ function hostDealPerfectHand() {
   game.nest = rest.slice();
   game.hands.forEach(h => sortCardsDisplay(h));
   try { freezeTopNestCard(); } catch (e) { game.topNestCard = null; }
+  try { applyForcedNestReveal(); } catch (e) {}
   knownVoids = [{}, {}, {}, {}];
   lastTurnIndex = -1;
   window._turnOppKey = '';
   window._lastTurnBeepKey = '';
   lastTrickLen = 0;
-  game.currentPlayer = (game.dealer + 1) % 4;
+  game.currentPlayer = firstActorSeat(game.dealer);
   game.passCount = 0;
   game.highestBid = (minBid || 70) - 5;
   game.bidder = -1;
