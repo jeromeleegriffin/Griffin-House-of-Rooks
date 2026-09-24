@@ -7,7 +7,7 @@
 // It's exchanged during the join handshake so a stale host or joiner (e.g.
 // one still running old cached JS) gets caught and auto-updated instead of
 // silently failing or behaving unpredictably against a mismatched peer.
-const APP_VERSION = '421';
+const APP_VERSION = '424';
 
 function horThisIndex() {
   try {
@@ -2684,7 +2684,16 @@ function notifyYourTurn() {
     const ctx = ensureAudio();
     if (ctx && ctx.state === 'suspended') ctx.resume();
   } catch (e) {}
-  try { playTurnSound(); } catch (e) {}
+  let skipTurnSfx = false;
+  try {
+    if (game && game.phase === 'bidding' && !game._firstBidTurnSounded) {
+      game._firstBidTurnSounded = true;
+      skipTurnSfx = true;
+    }
+  } catch (e) {}
+  if (!skipTurnSfx) {
+    try { playTurnSound(); } catch (e) {}
+  }
   // Phone buzz (Android Chrome; many iPhones ignore Vibration API)
   try {
     if (typeof navigator !== 'undefined' && typeof navigator.vibrate === 'function') {
@@ -5675,6 +5684,31 @@ function renderWidowSpread() {
   el.innerHTML = '<span class="widow-spread-label">Widow</span><div class="widow-spread-row">' + faces + '</div>';
 }
 
+
+function openNestAuction() {
+  if (!game) return;
+  if (game.nestAuctionOpen && !nestAuctionLocked()) {
+    try { if (isHost) hostPromptBid(); } catch (e) {}
+    return;
+  }
+  game.nestAuctionOpen = true;
+  if (revealTopNest) {
+    game.nestFlipStage = 2;
+    game.nestFlipped = true;
+    window._horNestPileSig = '';
+    try { renderTopNestPeek(); } catch (e) {}
+  }
+  try { broadcastState(); } catch (e) {}
+  try {
+    if (isHost) {
+      showBiddingIntro(() => { try { hostPromptBid(); } catch (e) {} });
+      broadcast({ type: 'biddingIntro', minBid: minBid || 100 });
+    } else if (game.phase === 'bidding' && game.currentPlayer === myIndex) {
+      showBidUI();
+    }
+  } catch (e) {}
+}
+
 function nestAuctionLocked() {
   return !!(typeof revealTopNest !== 'undefined' && revealTopNest && game && !game.nestAuctionOpen);
 }
@@ -5697,39 +5731,17 @@ function scheduleTopNestFlip() {
     if (!game || (game.phase !== 'bidding' && game.phase !== 'dealing')) return;
     game.nestFlipStage = 1;
     try { renderTopNestPeek(); } catch (e) {}
-    requestAnimationFrame(() => {
-      const flip = document.querySelector('#nestArea .table-nest-flip');
-      if (!flip) return;
-      flip.classList.add('is-reveal');
-      requestAnimationFrame(() => {
-        flip.classList.add('is-turning');
-        try { playNestRevealSequence(); } catch (e) {}
-        setTimeout(() => {
-          if (game) game.nestFlipStage = 2;
-          window._horNestPileSig = '';
-          try { renderTopNestPeek(); } catch (e) {}
-        }, 1400);
-        setTimeout(() => {
-          if (game) game.nestFlipped = true;
-          try { flip.classList.remove('is-reveal'); flip.classList.remove('is-turning'); } catch (e) {}
-        }, 2800);
-        setTimeout(() => {
-          if (tok !== window._horNestFlipTok) return;
-          if (game) game.nestAuctionOpen = true;
-          try { broadcastState(); } catch (e) {}
-          try {
-            if (isHost) {
-              showBiddingIntro(() => {
-                try { hostPromptBid(); } catch (e) {}
-              });
-              broadcast({ type: 'biddingIntro', minBid: minBid || 100 });
-            } else if (game.phase === 'bidding' && game.currentPlayer === myIndex) {
-              showBidUI();
-            }
-          } catch (e) {}
-        }, 2900);
-      });
-    });
+    try { playNestRevealSequence(); } catch (e) {}
+    setTimeout(() => {
+      if (tok !== window._horNestFlipTok) return;
+      if (game) { game.nestFlipStage = 2; game.nestFlipped = true; }
+      window._horNestPileSig = '';
+      try { renderTopNestPeek(); } catch (e) {}
+    }, 1400);
+    setTimeout(() => {
+      if (tok !== window._horNestFlipTok) return;
+      try { openNestAuction(); } catch (e) {}
+    }, 2900);
   }, 3000);
 }
 
@@ -6122,6 +6134,7 @@ function clearTableForShuffle() {
       game.trick = [];
       game.trump = null;
       if (game.phase === 'score') game.phase = 'dealing';
+  game._firstBidTurnSounded = false;
     }
     try { clearTrumpBanners(); } catch (e) {}
     try { updateLandscapeTheater(); } catch (e) {}
@@ -6453,6 +6466,12 @@ function hostDealNow() {
     game.myHand = (game.hands[myIndex] || []).map(c => ({ ...c }));
     try { renderTopNestPeek(); } catch (e) {}
     broadcastState();
+    try { scheduleTopNestFlip(); } catch (e) {}
+    setTimeout(() => {
+      try {
+        if (game && game.phase === 'bidding' && !game.nestAuctionOpen) openNestAuction();
+      } catch (e) {}
+    }, 8000);
     if (revealTopNest) return;
     try {
       showBiddingIntro(() => {
