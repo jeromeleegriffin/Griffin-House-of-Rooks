@@ -7,7 +7,7 @@
 // It's exchanged during the join handshake so a stale host or joiner (e.g.
 // one still running old cached JS) gets caught and auto-updated instead of
 // silently failing or behaving unpredictably against a mismatched peer.
-const APP_VERSION = '431';
+const APP_VERSION = '434';
 
 function horThisIndex() {
   try {
@@ -2170,40 +2170,20 @@ function playShuffleSound() {
   }
 }
 
-/** Short pre-auction tip so everyone knows how bidding works */
+/** Bidding intro popup removed — jump straight to the auction. */
 let biddingIntroTimer = null;
 function showBiddingIntro(onDone, minBidOverride) {
+  try {
+    const el = $('biddingIntro');
+    if (el) el.classList.add('hidden');
+  } catch (e) {}
   if (typeof nestAuctionLocked === 'function' && nestAuctionLocked()) {
     window._horPendingBidIntro = { onDone, minBidOverride };
     return;
   }
-  const min = minBidOverride != null ? minBidOverride : (minBid || 100);
-  let el = $('biddingIntro');
-  if (!el) {
-    el = document.createElement('div');
-    el.id = 'biddingIntro';
-    el.className = 'bidding-intro hidden';
-    el.setAttribute('role', 'status');
-    el.innerHTML = `
-      <div class="bidding-intro-card">
-        <div class="bidding-intro-title">Bidding</div>
-        <p class="bidding-intro-body"></p>
-      </div>`;
-    document.body.appendChild(el);
+  if (typeof onDone === 'function') {
+    try { onDone(); } catch (e) {}
   }
-  const body = el.querySelector('.bidding-intro-body');
-  if (body) {
-    body.innerHTML =
-      `Bids start at <strong>${min}</strong> and climbs by <strong>5</strong>.`;
-  }
-  el.classList.remove('hidden');
-  if (biddingIntroTimer) clearTimeout(biddingIntroTimer);
-  const ms = 3200;
-  biddingIntroTimer = setTimeout(() => {
-    el.classList.add('hidden');
-    biddingIntroTimer = null;
-    if (typeof onDone === 'function') onDone();
-  }, ms);
 }
 
 /** Fanfare when Rook captures Red 2 or a trump 1 is taken */
@@ -2623,8 +2603,30 @@ function applyRookPlayPulse() {
 /** Until this timestamp, keep re-applying the turn flash after every renderUI */
 let turnFlashUntil = 0;
 
+function isFirstHandOfMatch() {
+  try {
+    if (matchStats && matchStats.hands) return false;
+    if (game && Array.isArray(game.scores) && (game.scores[0] || game.scores[1])) return false;
+    const tricks = game && game.tricksTaken;
+    if (tricks && ((tricks[0] && tricks[0].length) || (tricks[1] && tricks[1].length))) return false;
+    return true;
+  } catch (e) {
+    return true;
+  }
+}
+function applyFirstHandChrome() {
+  try {
+    document.body.classList.toggle('hor-first-hand', isFirstHandOfMatch());
+  } catch (e) {}
+}
 function pulseTurnFlash() {
-  // Visual "your turn" flashes removed — keep the seat is-turn marker only.
+  if (isFirstHandOfMatch()) {
+    try {
+      const theater = $('landscapeTheater');
+      if (theater) theater.classList.remove('lt-your-turn');
+    } catch (e) {}
+    return;
+  }
   try {
     const me = $('slot-me');
     if (me) me.classList.add('is-turn');
@@ -5613,19 +5615,25 @@ function renderTopNestPeek() {
     return;
   }
   let face = (revealTopNest) ? (game.topNestCard || null) : null;
-  if (face && collectDealtHandIds().has(face.id)) {
+  const stage = (game && game.nestFlipStage) || 0;
+  if (face && collectDealtHandIds().has(face.id) && !game.nestFlipped && stage < 2) {
     face = freezeTopNestCard();
   }
   const auctionLive = !!(game && (game.nestAuctionOpen || game.bidder >= 0 || (game.bid && game.bid > 0)));
   const showFace = !!(face && revealTopNest);
-  const stage = (game && game.nestFlipStage) || 0;
   const faceUp = !!(face && (game.nestFlipped || stage >= 2 || auctionLive));
-  const flipping = !!(showFace && !faceUp && stage === 1);
+  const flipping = !!(showFace && stage === 1 && !faceUp);
   el.classList.remove('hidden');
   try { document.body.classList.add('nest-on-felt'); } catch (e) {}
+  const existingFlip = el.querySelector('.table-nest-flip');
+  if (existingFlip && showFace && (flipping || faceUp)) {
+    if (faceUp) existingFlip.classList.add('is-turning', 'is-reveal', 'is-flipped', 'is-face');
+    window._horNestPileSig = nestPileSignature() + ':' + (faceUp ? 'up' : 'flip') + ':' + (face && face.id);
+    return;
+  }
   const sig = nestPileSignature() + ':' + (faceUp ? 'up' : (flipping ? 'flip' : 'dn')) + ':' + (face && face.id);
   if (window._horNestPileSig === sig && el.querySelector('.nest-face-up, .table-nest-flip, .table-nest-pile')) {
-    if (faceUp && !el.querySelector('.nest-face-up, .table-nest-flip.is-flipped')) window._horNestPileSig = '';
+    if (faceUp && !el.querySelector('.table-nest-flip.is-flipped, .nest-face-up')) window._horNestPileSig = '';
     else return;
   }
   window._horNestPileSig = sig;
@@ -5637,7 +5645,7 @@ function renderTopNestPeek() {
   if (showFace && (flipping || faceUp)) {
     const cls = (typeof cardClass === 'function') ? cardClass(face) : '';
     const inner = (typeof cardInnerHTML === 'function') ? cardInnerHTML(face) : ((face.rank || face.id) || '?');
-    const flipState = faceUp ? ' is-flipped is-face' : '';
+    const flipState = faceUp ? ' is-turning is-reveal is-flipped is-face' : '';
     html += '<div class="table-nest-flip' + flipState + '">'
       + '<div class="table-nest-flip-inner">'
       + '<div class="card-back table-nest-flip-back"></div>'
@@ -5737,14 +5745,13 @@ function scheduleTopNestFlip() {
     setTimeout(() => {
       if (tok !== window._horNestFlipTok) return;
       if (game) { game.nestFlipStage = 2; game.nestFlipped = true; }
-      window._horNestPileSig = '';
       try { renderTopNestPeek(); } catch (e) {}
-    }, 1400);
+    }, 1600);
     setTimeout(() => {
       if (tok !== window._horNestFlipTok) return;
       try { openNestAuction(); } catch (e) {}
-    }, 2900);
-  }, 3000);
+    }, 2000);
+  }, 280);
 }
 
 
@@ -6466,6 +6473,7 @@ function hostDealNow() {
     if (!game) return;
     game.phase = 'bidding';
     game.myHand = (game.hands[myIndex] || []).map(c => ({ ...c }));
+    try { applyFirstHandChrome(); } catch (e) {}
     try { renderTopNestPeek(); } catch (e) {}
     broadcastState();
     try { scheduleTopNestFlip(); } catch (e) {}
@@ -6473,7 +6481,7 @@ function hostDealNow() {
       try {
         if (game && game.phase === 'bidding' && !game.nestAuctionOpen) openNestAuction();
       } catch (e) {}
-    }, 8000);
+    }, 2800);
     if (revealTopNest) return;
     try {
       showBiddingIntro(() => {
@@ -10405,10 +10413,7 @@ function renderUI() {
     window.__horUiSig = sig;
     window.__horUiAt = now;
   }
-  try {
-    const firstHand = !matchStats || !matchStats.hands;
-    document.body.classList.toggle('hor-first-hand', !!firstHand);
-  } catch (e) {}
+  try { applyFirstHandChrome(); } catch (e) {}
   if ($('scoreA')) $('scoreA').textContent = game.scores[0];
   if ($('scoreB')) $('scoreB').textContent = game.scores[1];
   if ($('targetDisplay')) $('targetDisplay').textContent = String(game.targetScore || targetScore || 500);
@@ -10596,7 +10601,7 @@ function renderUI() {
           bb.classList.remove('hidden');
         } else if (typeof st === 'number' && st > 0) {
           bb.textContent = isShootMoonBid(st) ? formatBidAmount(st, { short: true }) : ('BID ' + st);
-          bb.className = 'bid-badge bid-value-badge' + (game.bidder === idx ? ' bid-high' : '') + (isShootMoonBid(st) ? ' bid-moon' : '');
+          bb.className = 'bid-badge bid-value-badge' + ((game.bidder === idx && !isFirstHandOfMatch()) ? ' bid-high' : '') + (isShootMoonBid(st) ? ' bid-moon' : '');
           bb.classList.remove('hidden');
         } else {
           bb.textContent = '';
@@ -10604,15 +10609,16 @@ function renderUI() {
         }
       } else if (game.phase !== 'bidding' && game.bidder === idx && game.bid) {
         bb.textContent = isShootMoonBid(game.bid) ? formatBidAmount(game.bid, { short: true }) : ('BID ' + game.bid);
-        bb.className = 'bid-badge bid-value-badge bid-high' + (isShootMoonBid(game.bid) ? ' bid-moon' : '');
+        bb.className = 'bid-badge bid-value-badge' + (isFirstHandOfMatch() ? '' : ' bid-high') + (isShootMoonBid(game.bid) ? ' bid-moon' : '');
         bb.classList.remove('hidden');
       } else {
         bb.textContent = '';
         bb.classList.add('hidden');
       }
     }
-    el.classList.toggle('is-turn', idx === whoseTurn && !game.resolvingTrick);
-    el.classList.toggle('is-trick-lead', idx === trickLeadIdx);
+    const quietSeats = isFirstHandOfMatch();
+    el.classList.toggle('is-turn', !quietSeats && idx === whoseTurn && !game.resolvingTrick);
+    el.classList.toggle('is-trick-lead', !quietSeats && idx === trickLeadIdx);
     el.classList.toggle('is-hand-winner', !!(game.claimAnimating && game.trumpClaimPlayer === idx));
     let leadTag = el.querySelector(':scope > .seat-lead-tag');
     if (!leadTag) {
@@ -10620,7 +10626,7 @@ function renderUI() {
       leadTag.className = 'seat-lead-tag';
       el.appendChild(leadTag);
     }
-    if (idx === trickLeadIdx) {
+    if (idx === trickLeadIdx && !quietSeats) {
       leadTag.textContent = 'LEADING';
       leadTag.classList.remove('hidden');
     } else {
@@ -10650,8 +10656,9 @@ function renderUI() {
       applyBotNameAttr(meNameEl, meP);
       try { updateBankDisplays(); } catch (e) {}
     }
-    meSlot.classList.toggle('is-turn', seatBase === whoseTurn && !game.resolvingTrick);
-    meSlot.classList.toggle('is-trick-lead', seatBase === trickLeadIdx);
+    const quietMe = isFirstHandOfMatch();
+    meSlot.classList.toggle('is-turn', !quietMe && seatBase === whoseTurn && !game.resolvingTrick);
+    meSlot.classList.toggle('is-trick-lead', !quietMe && seatBase === trickLeadIdx);
     meSlot.classList.toggle('is-hand-winner', !!(game.claimAnimating && game.trumpClaimPlayer === seatBase));
     let meLead = meSlot.querySelector(':scope > .seat-lead-tag');
     if (!meLead) {
@@ -10659,7 +10666,7 @@ function renderUI() {
       meLead.className = 'seat-lead-tag';
       meSlot.appendChild(meLead);
     }
-    if (seatBase === trickLeadIdx) {
+    if (seatBase === trickLeadIdx && !quietMe) {
       meLead.textContent = 'LEADING';
       meLead.classList.remove('hidden');
     } else {
@@ -10681,7 +10688,7 @@ function renderUI() {
         bb.classList.remove('hidden');
       } else if (typeof st === 'number' && st > 0) {
         bb.textContent = isShootMoonBid(st) ? formatBidAmount(st, { short: true }) : ('BID ' + st);
-        bb.className = 'bid-badge bid-value-badge' + (game.bidder === seatBase ? ' bid-high' : '') + (isShootMoonBid(st) ? ' bid-moon' : '');
+        bb.className = 'bid-badge bid-value-badge' + ((game.bidder === seatBase && !isFirstHandOfMatch()) ? ' bid-high' : '') + (isShootMoonBid(st) ? ' bid-moon' : '');
         bb.classList.remove('hidden');
       } else {
         bb.textContent = '';
@@ -10689,7 +10696,7 @@ function renderUI() {
       }
     } else if (game.phase !== 'bidding' && game.bidder === seatBase && game.bid) {
       bb.textContent = isShootMoonBid(game.bid) ? formatBidAmount(game.bid, { short: true }) : ('BID ' + game.bid);
-      bb.className = 'bid-badge bid-value-badge bid-high' + (isShootMoonBid(game.bid) ? ' bid-moon' : '');
+      bb.className = 'bid-badge bid-value-badge' + (isFirstHandOfMatch() ? '' : ' bid-high') + (isShootMoonBid(game.bid) ? ' bid-moon' : '');
       bb.classList.remove('hidden');
     } else {
       bb.textContent = '';
@@ -13157,17 +13164,17 @@ function updateLandscapeTheater() {
         const av = p.avatar || (p.id && playerAvatars[p.id]) || AVATARS[0];
         const cls = [
           'lt-bid-seat',
-          high ? 'high' : '',
+          (!isFirstHandOfMatch() && high) ? 'high' : '',
           st === 'pass' ? 'passed' : '',
           me ? 'me' : '',
           partner ? 'partner' : '',
-          toAct ? 'to-act' : '',
+          (!isFirstHandOfMatch() && toAct) ? 'to-act' : '',
         ].filter(Boolean).join(' ');
         let line = 'waiting';
         if (st === 'pass') line = 'PASS';
         else if (high && game.highestBid) line = formatBidAmount(game.highestBid, { short: true });
         else if (typeof st === 'number' && st > 0) line = formatBidAmount(st, { short: true });
-        const tag = toAct ? '<div class="lt-bid-turn">TO BID</div>' : (high ? '<div class="lt-bid-high">HIGH</div>' : '');
+        const tag = isFirstHandOfMatch() ? '' : (toAct ? '<div class="lt-bid-turn">TO BID</div>' : (high ? '<div class="lt-bid-high">HIGH</div>' : ''));
         return '<div class="' + cls + '">' +
           '<img class="lt-bid-av" src="' + avatarSrc(av) + '" alt="">' +
           '<div class="lt-bid-copy">' +
