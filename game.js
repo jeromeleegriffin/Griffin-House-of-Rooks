@@ -7,7 +7,7 @@
 // It's exchanged during the join handshake so a stale host or joiner (e.g.
 // one still running old cached JS) gets caught and auto-updated instead of
 // silently failing or behaving unpredictably against a mismatched peer.
-const APP_VERSION = '409';
+const APP_VERSION = '410';
 
 function horThisIndex() {
   try {
@@ -5555,6 +5555,12 @@ function nestCountOnTable() {
   return (typeof nestSizeDefault === 'number' && nestSizeDefault) || 6;
 }
 
+function nestPileSignature() {
+  const n = nestCountOnTable();
+  const face = (revealTopNest) ? (game && (game.topNestCard || (game.nest && game.nest[0]))) : null;
+  const stage = (game && game.nestFlipStage) || 0;
+  return [n, face && face.id, stage, !!(game && game.phase)].join('|');
+}
 function renderTopNestPeek() {
   const bar = $('topNestPeek');
   if (bar) { bar.classList.add('hidden'); bar.innerHTML = ''; }
@@ -5565,6 +5571,7 @@ function renderTopNestPeek() {
   if (!phaseOk || n < 1) {
     el.classList.add('hidden');
     el.innerHTML = '';
+    window._horNestPileSig = '';
     try { document.body.classList.remove('nest-on-felt'); } catch (e) {}
     return;
   }
@@ -5573,6 +5580,15 @@ function renderTopNestPeek() {
   const flipped = !!(game && game.nestFlipped);
   el.classList.remove('hidden');
   try { document.body.classList.add('nest-on-felt'); } catch (e) {}
+  const sig = nestPileSignature();
+  const flipEl = el.querySelector('.table-nest-flip');
+  if (window._horNestPileSig === sig && el.querySelector('.table-nest-pile')) {
+    if (flipEl) {
+      flipEl.classList.toggle('is-flipped', flipped);
+    }
+    return;
+  }
+  window._horNestPileSig = sig;
   const backs = Math.max(0, n - (showFace ? 1 : 0));
   let html = '<div class="table-nest-pile" aria-label="Nest">';
   for (let i = 0; i < backs; i++) {
@@ -5620,8 +5636,10 @@ function scheduleTopNestFlip() {
       requestAnimationFrame(() => {
         flip.classList.add('is-flipped');
         try { playSfx('nestFlip'); } catch (e) {}
-        if (game) game.nestFlipped = true;
-        setTimeout(() => { try { flip.classList.remove('is-reveal'); } catch (e) {} }, 1100);
+        setTimeout(() => {
+          if (game) game.nestFlipped = true;
+          try { flip.classList.remove('is-reveal'); } catch (e) {}
+        }, 2800);
         setTimeout(() => {
           if (tok !== window._horNestFlipTok) return;
           if (game) game.nestAuctionOpen = true;
