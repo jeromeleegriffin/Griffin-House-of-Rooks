@@ -2236,6 +2236,30 @@ body.modal-open {
   justify-content: flex-start;
 }
 
+/* First hand: no turn/bid glow on seats */
+body.hor-first-hand .player-slot.is-turn .name,
+body.hor-first-hand #slot-me.is-turn .name {
+  background: transparent !important;
+  box-shadow: none !important;
+  color: inherit !important;
+  font-weight: inherit;
+  padding: 0;
+  border-radius: 0;
+}
+body.hor-first-hand .player-slot.is-turn::after,
+body.hor-first-hand #slot-me.is-turn::after {
+  display: none !important;
+}
+body.hor-first-hand .player-slot.is-turn .seat-avatar,
+body.hor-first-hand .player-slot.is-turn .seat-avatar-img,
+body.hor-first-hand .bid-badge.bid-high {
+  animation: none !important;
+}
+body.hor-first-hand .player-slot.is-turn .cards-count {
+  color: inherit;
+  opacity: inherit;
+}
+
 /* Highlight player whose turn it is — tight pill around name/count only */
 .player-slot.is-turn {
   background: transparent !important;
@@ -12592,11 +12616,21 @@ body #waiting .waiting-actions #startBtn.btn.primary.table-ready,
   transform-style: preserve-3d;
   transition: transform 2.8s cubic-bezier(.22,.62,.18,1);
 }
-.table-nest-flip.is-turning .table-nest-flip-inner {
-  transform: rotateY(90deg);
-}
-.table-nest-flip.is-flipped .table-nest-flip-inner {
+.table-nest-flip-inner {
   transform: rotateY(0deg);
+}
+.table-nest-flip.is-turning .table-nest-flip-inner,
+.table-nest-flip.is-flipped .table-nest-flip-inner,
+.table-nest-flip.is-face .table-nest-flip-inner {
+  transform: rotateY(180deg);
+}
+.table-nest-flip-back,
+.table-nest-flip-face {
+  -webkit-backface-visibility: hidden;
+  backface-visibility: hidden;
+}
+.table-nest-flip-face {
+  transform: rotateY(180deg);
 }
 .table-nest-flip.is-reveal {
   animation: nestRevealLift 2.8s cubic-bezier(.18,.82,.22,1) 1;
@@ -12644,6 +12678,9 @@ body #waiting .waiting-actions #startBtn.btn.primary.table-ready,
 .table-nest-flip.is-flipped .table-nest-flip-back,
 .table-nest-flip.is-face .table-nest-flip-back {
   display: none !important;
+}
+.table-nest-flip.is-turning .table-nest-flip-face {
+  opacity: 1;
 }
 .table-nest-flip.is-flipped .table-nest-flip-face,
 .table-nest-flip.is-face .table-nest-flip-face {

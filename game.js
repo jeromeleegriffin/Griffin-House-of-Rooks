@@ -7,7 +7,7 @@
 // It's exchanged during the join handshake so a stale host or joiner (e.g.
 // one still running old cached JS) gets caught and auto-updated instead of
 // silently failing or behaving unpredictably against a mismatched peer.
-const APP_VERSION = '430';
+const APP_VERSION = '431';
 
 function horThisIndex() {
   try {
@@ -5618,12 +5618,14 @@ function renderTopNestPeek() {
   }
   const auctionLive = !!(game && (game.nestAuctionOpen || game.bidder >= 0 || (game.bid && game.bid > 0)));
   const showFace = !!(face && revealTopNest);
-  const faceUp = !!(face && (game.nestFlipped || game.nestFlipStage >= 2 || auctionLive));
+  const stage = (game && game.nestFlipStage) || 0;
+  const faceUp = !!(face && (game.nestFlipped || stage >= 2 || auctionLive));
+  const flipping = !!(showFace && !faceUp && stage === 1);
   el.classList.remove('hidden');
   try { document.body.classList.add('nest-on-felt'); } catch (e) {}
-  const sig = nestPileSignature() + ':' + (faceUp ? 'up' : 'dn') + ':' + (face && face.id);
-  if (window._horNestPileSig === sig && el.querySelector('.nest-face-up, .table-nest-pile')) {
-    if (faceUp && !el.querySelector('.nest-face-up')) window._horNestPileSig = '';
+  const sig = nestPileSignature() + ':' + (faceUp ? 'up' : (flipping ? 'flip' : 'dn')) + ':' + (face && face.id);
+  if (window._horNestPileSig === sig && el.querySelector('.nest-face-up, .table-nest-flip, .table-nest-pile')) {
+    if (faceUp && !el.querySelector('.nest-face-up, .table-nest-flip.is-flipped')) window._horNestPileSig = '';
     else return;
   }
   window._horNestPileSig = sig;
@@ -5632,15 +5634,31 @@ function renderTopNestPeek() {
   for (let i = 0; i < backs; i++) {
     html += '<div class="card-back table-nest-under" style="--nest-i:' + i + '"></div>';
   }
-  if (showFace && faceUp) {
+  if (showFace && (flipping || faceUp)) {
     const cls = (typeof cardClass === 'function') ? cardClass(face) : '';
     const inner = (typeof cardInnerHTML === 'function') ? cardInnerHTML(face) : ((face.rank || face.id) || '?');
-    html += '<div class="card-face ' + cls + ' small nest-face-up">' + inner + '</div>';
+    const flipState = faceUp ? ' is-flipped is-face' : '';
+    html += '<div class="table-nest-flip' + flipState + '">'
+      + '<div class="table-nest-flip-inner">'
+      + '<div class="card-back table-nest-flip-back"></div>'
+      + '<div class="card-face ' + cls + ' small nest-face-up table-nest-flip-face">' + inner + '</div>'
+      + '</div></div>';
   } else {
-    html += '<div class="card-back table-nest-top' + (showFace ? ' is-turning' : '') + '"></div>';
+    html += '<div class="card-back table-nest-top"></div>';
   }
   html += '</div>';
   el.innerHTML = html;
+  if (flipping) {
+    const flip = el.querySelector('.table-nest-flip');
+    if (flip) {
+      void flip.offsetWidth;
+      requestAnimationFrame(() => {
+        try {
+          flip.classList.add('is-turning', 'is-reveal');
+        } catch (e) {}
+      });
+    }
+  }
 }
 
 
@@ -10387,6 +10405,10 @@ function renderUI() {
     window.__horUiSig = sig;
     window.__horUiAt = now;
   }
+  try {
+    const firstHand = !matchStats || !matchStats.hands;
+    document.body.classList.toggle('hor-first-hand', !!firstHand);
+  } catch (e) {}
   if ($('scoreA')) $('scoreA').textContent = game.scores[0];
   if ($('scoreB')) $('scoreB').textContent = game.scores[1];
   if ($('targetDisplay')) $('targetDisplay').textContent = String(game.targetScore || targetScore || 500);
