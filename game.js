@@ -7,7 +7,7 @@
 // It's exchanged during the join handshake so a stale host or joiner (e.g.
 // one still running old cached JS) gets caught and auto-updated instead of
 // silently failing or behaving unpredictably against a mismatched peer.
-const APP_VERSION = '406';
+const APP_VERSION = '407';
 
 function horThisIndex() {
   try {
@@ -5535,12 +5535,20 @@ function renderTopNestPeek() {
   el.innerHTML = html;
 }
 
+
+function nestAuctionLocked() {
+  return !!(typeof revealTopNest !== 'undefined' && revealTopNest && game && !game.nestAuctionOpen);
+}
 function scheduleTopNestFlip() {
-  if (!revealTopNest) return;
   if (!game) return;
+  if (!revealTopNest) {
+    game.nestAuctionOpen = true;
+    return;
+  }
   const tok = (window._horNestFlipTok = (window._horNestFlipTok || 0) + 1);
   game.nestFlipStage = 0;
   game.nestFlipped = false;
+  game.nestAuctionOpen = false;
   try { renderTopNestPeek(); } catch (e) {}
   setTimeout(() => {
     if (tok !== window._horNestFlipTok) return;
@@ -5556,6 +5564,13 @@ function scheduleTopNestFlip() {
         try { playSfx('card'); } catch (e) {}
         if (game) game.nestFlipped = true;
         setTimeout(() => { try { flip.classList.remove('is-hop'); } catch (e) {} }, 1100);
+        setTimeout(() => {
+          if (tok !== window._horNestFlipTok) return;
+          if (game) game.nestAuctionOpen = true;
+          try { broadcastState(); } catch (e) {}
+          try { if (isHost) hostPromptBid(); } catch (e) {}
+          try { if (!isHost && game.phase === 'bidding' && game.currentPlayer === myIndex) showBidUI(); } catch (e) {}
+        }, 2900);
       });
     });
   }, 5000);
@@ -6350,6 +6365,11 @@ function hostHandleAllPassed() {
 function hostPromptBid() {
   try { renderTopNestPeek(); } catch (e) {}
   if (!game || game.paused) return;
+  if (nestAuctionLocked()) {
+    const msg = 'Watch the nest…';
+    try { const ma = $('messageArea'); if (ma) ma.textContent = msg; } catch (e) {}
+    return;
+  }
   // Auction already decided — don't re-prompt
   if (game.bidder >= 0 && countPassedBids() >= 3) {
     finishBidding();
@@ -6616,6 +6636,7 @@ function syncLandscapeKittyWait() {
 }
 
 function showBidUI() {
+  if (nestAuctionLocked()) return;
   const landscape = !!(window.matchMedia && window.matchMedia('(orientation: landscape)').matches);
   const nextMin = auctionNextMin();
   const ceiling = bidCeilingFor(myIndex) || 180;
@@ -6742,6 +6763,7 @@ function submitBid(val) {
 
 function hostProcessBid(data) {
   if (!game || game.paused) return;
+  if (nestAuctionLocked()) return;
   if (!data || data.player !== game.currentPlayer) return;
   if (players[data.player] && players[data.player].disconnected) return;
   if (horRememberAction(data)) return;
@@ -9849,6 +9871,10 @@ function broadcastState() {
     paused: !!game.paused,
     bidStatus: game.bidStatus || [null, null, null, null],
     discardCount: game.discardCount || 0,
+    nestAuctionOpen: !!game.nestAuctionOpen,
+    nestFlipped: !!game.nestFlipped,
+    topNestCard: game.topNestCard ? { ...game.topNestCard } : null,
+    nestFlipStage: game.nestFlipStage || 0,
     handPoints: [handPtsA, handPtsB],
     recentTricks: (typeof recentTricks !== 'undefined' && recentTricks) ? (horExpOn('netDelta') ? recentTricks.slice(-3) : recentTricks) : [],
     matchTricks: (typeof matchTricks !== 'undefined' && matchTricks) ? (horExpOn('netDelta') ? matchTricks.slice(-8) : matchTricks) : [],
@@ -9967,6 +9993,10 @@ function applyState(data) {
     paused: !!data.paused,
     bidStatus: data.bidStatus || game.bidStatus || [null, null, null, null],
     discardCount: data.discardCount != null ? data.discardCount : (game.discardCount || 0),
+    nestAuctionOpen: data.nestAuctionOpen != null ? !!data.nestAuctionOpen : !!game.nestAuctionOpen,
+    nestFlipped: data.nestFlipped != null ? !!data.nestFlipped : !!game.nestFlipped,
+    topNestCard: data.topNestCard || game.topNestCard || null,
+    nestFlipStage: data.nestFlipStage != null ? data.nestFlipStage : (game.nestFlipStage || 0),
     handPoints: data.handPoints || game.handPoints || [0, 0],
     trumpClaimPlayer: data.trumpClaimPlayer != null ? data.trumpClaimPlayer : null,
     revealedHands: null,

@@ -164,6 +164,7 @@ function extremeAnalyze(hand) {
 }
 
 function botBid() {
+  if (typeof nestAuctionLocked === 'function' && nestAuctionLocked()) return;
   const hand = game.hands[game.currentPlayer];
   const ceiling = (typeof bidCeilingFor === 'function') ? bidCeilingFor(game.currentPlayer) : maxBid();
   const floor = (minBid || 70);
