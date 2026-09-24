@@ -7,7 +7,7 @@
 // It's exchanged during the join handshake so a stale host or joiner (e.g.
 // one still running old cached JS) gets caught and auto-updated instead of
 // silently failing or behaving unpredictably against a mismatched peer.
-const APP_VERSION = '400';
+const APP_VERSION = '401';
 
 function horThisIndex() {
   try {
@@ -2315,6 +2315,7 @@ function runDealPresentation(fullHand, onDone) {
 
   showShuffleOverlay();
   try { playShuffleSound(); } catch (e) {}
+  try { renderTopNestPeek(); } catch (e) {}
 
   setTimeout(() => {
     if (token !== dealAnimToken) return;
@@ -5355,23 +5356,57 @@ function setBotCount(desired) {
 
 
 
+function nestCountOnTable() {
+  if (!game) return 0;
+  if (game.nest && game.nest.length) return game.nest.length;
+  if (typeof game.nestCount === 'number' && game.nestCount > 0) return game.nestCount;
+  return (typeof nestSizeDefault === 'number' && nestSizeDefault) || 6;
+}
+
 function renderTopNestPeek() {
-  const el = $('topNestPeek');
+  const bar = $('topNestPeek');
+  if (bar) { bar.classList.add('hidden'); bar.innerHTML = ''; }
+  const el = $('nestArea');
   if (!el) return;
   const phaseOk = !!(game && (game.phase === 'bidding' || game.phase === 'dealing'));
-  const card = (revealTopNest && phaseOk)
-    ? (game.topNestCard || (game.nest && game.nest[0]) || null)
-    : null;
-  if (!card) {
+  const n = nestCountOnTable();
+  if (!phaseOk || n < 1) {
     el.classList.add('hidden');
     el.innerHTML = '';
     return;
   }
-  const cls = (typeof cardClass === 'function') ? cardClass(card) : '';
-  const inner = (typeof cardInnerHTML === 'function') ? cardInnerHTML(card) : ((card.rank || card.id) || '?');
+  const face = (revealTopNest) ? (game.topNestCard || (game.nest && game.nest[0]) || null) : null;
+  const flipKey = (game && (game.handNumber || 0)) + ':' + (face && face.id) + ':' + (game.phase || '');
+  const already = window._horNestFlipKey === flipKey;
   el.classList.remove('hidden');
-  el.innerHTML = '<span class="top-nest-label">Top nest</span>'
-    + '<div class="card-face ' + cls + ' small top-nest-card">' + inner + '</div>';
+  const backs = Math.max(0, n - 1);
+  let html = '<div class="table-nest-pile" aria-label="Nest">';
+  for (let i = 0; i < backs; i++) {
+    html += '<div class="card-back table-nest-under" style="--nest-i:' + i + '"></div>';
+  }
+  if (face) {
+    const cls = (typeof cardClass === 'function') ? cardClass(face) : '';
+    const inner = (typeof cardInnerHTML === 'function') ? cardInnerHTML(face) : ((face.rank || face.id) || '?');
+    html += '<div class="table-nest-flip' + (already ? ' is-flipped' : '') + '">'
+      + '<div class="table-nest-flip-inner">'
+      + '<div class="card-back table-nest-flip-back"></div>'
+      + '<div class="card-face ' + cls + ' small table-nest-flip-face">' + inner + '</div>'
+      + '</div></div>';
+  } else {
+    html += '<div class="card-back table-nest-top"></div>';
+  }
+  html += '<span class="table-nest-caption">Nest</span></div>';
+  el.innerHTML = html;
+  if (face && !already) {
+    window._horNestFlipKey = flipKey;
+    requestAnimationFrame(() => {
+      requestAnimationFrame(() => {
+        const flip = el.querySelector('.table-nest-flip');
+        if (flip) flip.classList.add('is-flipped');
+        try { playSfx('card'); } catch (e) {}
+      });
+    });
+  }
 }
 
 

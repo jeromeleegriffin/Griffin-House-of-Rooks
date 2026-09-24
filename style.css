@@ -12546,3 +12546,77 @@ body #waiting .waiting-actions #startBtn.btn.primary.table-ready,
   font-size: 0.7rem;
   box-shadow: 0 2px 8px rgba(0,0,0,.4);
 }
+
+#nestArea.nest {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  pointer-events: none;
+  z-index: 3;
+  min-height: 72px;
+}
+#nestArea.nest.hidden { display: none !important; }
+.table-nest-pile {
+  position: relative;
+  width: 54px;
+  height: 76px;
+}
+.table-nest-under,
+.table-nest-top,
+.table-nest-flip {
+  position: absolute;
+  left: 0; top: 0;
+  width: 48px;
+  height: 68px;
+  border-radius: 6px;
+}
+.table-nest-under {
+  transform: translate(calc(var(--nest-i, 0) * 2px), calc(var(--nest-i, 0) * -2px));
+  box-shadow: 0 1px 3px rgba(0,0,0,.35);
+}
+.table-nest-top { z-index: 4; }
+.table-nest-flip {
+  z-index: 6;
+  perspective: 700px;
+  left: 6px;
+  top: -6px;
+}
+.table-nest-flip-inner {
+  position: relative;
+  width: 48px;
+  height: 68px;
+  transform-style: preserve-3d;
+  transition: transform 0.55s cubic-bezier(.2,.7,.2,1);
+}
+.table-nest-flip.is-flipped .table-nest-flip-inner {
+  transform: rotateY(180deg);
+}
+.table-nest-flip-back,
+.table-nest-flip-face {
+  position: absolute;
+  inset: 0;
+  width: 48px;
+  height: 68px;
+  backface-visibility: hidden;
+  -webkit-backface-visibility: hidden;
+  border-radius: 6px;
+}
+.table-nest-flip-face {
+  transform: rotateY(180deg);
+  font-size: 0.62rem;
+}
+.table-nest-caption {
+  position: absolute;
+  left: 50%;
+  bottom: -16px;
+  transform: translateX(-50%);
+  font-size: 0.62rem;
+  font-weight: 800;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: #f0d56a;
+  text-shadow: 0 1px 2px #000;
+}
+@media (prefers-reduced-motion: reduce) {
+  .table-nest-flip-inner { transition: none; }
+}
