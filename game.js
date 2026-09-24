@@ -7,7 +7,7 @@
 // It's exchanged during the join handshake so a stale host or joiner (e.g.
 // one still running old cached JS) gets caught and auto-updated instead of
 // silently failing or behaving unpredictably against a mismatched peer.
-const APP_VERSION = '424';
+const APP_VERSION = '428';
 
 function horThisIndex() {
   try {
@@ -4301,7 +4301,8 @@ function handleMessage(data, conn) {
             runDealPresentation(data.hand, () => {
               game.myHand = data.hand;
               try { renderHand(false); } catch (e) {}
-              if (game.phase === 'bidding' && game.currentPlayer === myIndex) showBidUI();
+              try { scheduleTopNestFlip(); } catch (e) {}
+              if (game.phase === 'bidding' && game.currentPlayer === myIndex && !nestAuctionLocked()) showBidUI();
               else if (game.phase === 'trump' && game.bidder === myIndex) showTrumpUI();
             });
             break;
@@ -5637,12 +5638,16 @@ function renderTopNestPeek() {
   if (face && collectDealtHandIds().has(face.id)) {
     face = freezeTopNestCard();
   }
-  const showFace = !!(face && game && game.nestFlipStage);
-  const faceUp = !!(game && (game.nestFlipped || game.nestFlipStage >= 2));
+  const auctionLive = !!(game && (game.nestAuctionOpen || game.bidder >= 0 || (game.bid && game.bid > 0)));
+  const showFace = !!(face && revealTopNest);
+  const faceUp = !!(face && (game.nestFlipped || game.nestFlipStage >= 2 || auctionLive));
   el.classList.remove('hidden');
   try { document.body.classList.add('nest-on-felt'); } catch (e) {}
-  const sig = nestPileSignature() + ':' + (faceUp ? 'up' : 'dn');
-  if (window._horNestPileSig === sig && el.querySelector('.table-nest-pile')) return;
+  const sig = nestPileSignature() + ':' + (faceUp ? 'up' : 'dn') + ':' + (face && face.id);
+  if (window._horNestPileSig === sig && el.querySelector('.nest-face-up, .table-nest-pile')) {
+    if (faceUp && !el.querySelector('.nest-face-up')) window._horNestPileSig = '';
+    else return;
+  }
   window._horNestPileSig = sig;
   const backs = Math.max(0, n - 1);
   let html = '<div class="table-nest-pile" aria-label="Nest">';
@@ -5656,10 +5661,7 @@ function renderTopNestPeek() {
   } else {
     html += '<div class="card-back table-nest-top' + (showFace ? ' is-turning' : '') + '"></div>';
   }
-  const cap = (showFace && face)
-    ? ('Nest · ' + (face.color === 'rook' ? 'Rook' : ((face.color || '') + ' ' + (face.rank || ''))))
-    : 'Nest';
-  html += '<span class="table-nest-caption">' + cap + '</span></div>';
+  html += '</div>';
   el.innerHTML = html;
 }
 
@@ -5721,6 +5723,9 @@ function scheduleTopNestFlip() {
     try { renderTopNestPeek(); } catch (e) {}
     return;
   }
+  const handKey = String(game.handNumber || 0) + ':' + String(game.dealer) + ':' + (game.topNestCard && game.topNestCard.id);
+  if (window._horNestFlipHand === handKey && game.nestFlipStage > 0) return;
+  window._horNestFlipHand = handKey;
   const tok = (window._horNestFlipTok = (window._horNestFlipTok || 0) + 1);
   game.nestFlipStage = 0;
   game.nestFlipped = false;
@@ -10191,6 +10196,7 @@ function applyState(data) {
     resolvingTrickPoints: Number(data.resolvingTrickPoints || 0),
     nestRevealCards: Array.isArray(data.nestRevealCards) ? data.nestRevealCards.map(c => ({ ...c })) : (game.nestRevealCards || []),
   });
+  try { renderTopNestPeek(); } catch (e) {}
   if (data.phase && !['lobby','waiting'].includes(data.phase)) horMarkActiveTable(true);
   else if (data.phase === 'lobby' || data.phase === 'waiting') horMarkActiveTable(false);
   if (Array.isArray(data.players)) {

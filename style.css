@@ -12738,3 +12738,19 @@ body.nest-on-felt .player-slot.is-turn .seat-avatar {
   background-image: none !important;
   box-shadow: 0 4px 12px rgba(0,0,0,.45);
 }
+
+#nestArea .nest-face-up {
+  position: absolute;
+  left: 3px;
+  top: -8px;
+  width: 52px;
+  height: 72px;
+  z-index: 12;
+  background: #f4ead2 !important;
+  background-image: none !important;
+  box-shadow: 0 4px 14px rgba(0,0,0,.5);
+}
+#nestArea .nest-face-up.green { background: #e8f8ee !important; }
+#nestArea .nest-face-up.red { background: #fdecee !important; }
+#nestArea .nest-face-up.yellow { background: #fbf3d2 !important; }
+#nestArea .nest-face-up.black { background: #f3f3f3 !important; }
