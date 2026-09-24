@@ -7,7 +7,7 @@
 // It's exchanged during the join handshake so a stale host or joiner (e.g.
 // one still running old cached JS) gets caught and auto-updated instead of
 // silently failing or behaving unpredictably against a mismatched peer.
-const APP_VERSION = '434';
+const APP_VERSION = '435';
 
 function horThisIndex() {
   try {
@@ -5600,6 +5600,21 @@ function nestPileSignature() {
   const stage = (game && game.nestFlipStage) || 0;
   return [n, face && face.id, stage, !!(game && game.phase)].join('|');
 }
+function pinNestRevealFace(card) {
+  if (!card) return null;
+  const copy = { color: card.color, rank: card.rank, id: card.id };
+  window._horPinnedNestFace = copy;
+  if (game) game.topNestCard = copy;
+  return copy;
+}
+function pinnedNestRevealFace() {
+  return (game && game.topNestCard) || window._horPinnedNestFace || null;
+}
+function nestFaceMarkup(face) {
+  const cls = (typeof cardClass === 'function') ? cardClass(face) : '';
+  const inner = (typeof cardInnerHTML === 'function') ? cardInnerHTML(face) : ((face.rank || face.id) || '?');
+  return '<div class="card-face ' + cls + ' small nest-face-up nest-stay-face">' + inner + '</div>';
+}
 function renderTopNestPeek() {
   const bar = $('topNestPeek');
   if (bar) { bar.classList.add('hidden'); bar.innerHTML = ''; }
@@ -5614,27 +5629,42 @@ function renderTopNestPeek() {
     try { document.body.classList.remove('nest-on-felt'); } catch (e) {}
     return;
   }
-  let face = (revealTopNest) ? (game.topNestCard || null) : null;
+  let face = revealTopNest ? pinnedNestRevealFace() : null;
   const stage = (game && game.nestFlipStage) || 0;
-  if (face && collectDealtHandIds().has(face.id) && !game.nestFlipped && stage < 2) {
+  if (revealTopNest && !face) {
     face = freezeTopNestCard();
   }
+  if (face) pinNestRevealFace(face);
   const auctionLive = !!(game && (game.nestAuctionOpen || game.bidder >= 0 || (game.bid && game.bid > 0)));
   const showFace = !!(face && revealTopNest);
-  const faceUp = !!(face && (game.nestFlipped || stage >= 2 || auctionLive));
+  const faceUp = !!(showFace && (game.nestFlipped || stage >= 2 || auctionLive));
   const flipping = !!(showFace && stage === 1 && !faceUp);
   el.classList.remove('hidden');
   try { document.body.classList.add('nest-on-felt'); } catch (e) {}
-  const existingFlip = el.querySelector('.table-nest-flip');
-  if (existingFlip && showFace && (flipping || faceUp)) {
-    if (faceUp) existingFlip.classList.add('is-turning', 'is-reveal', 'is-flipped', 'is-face');
-    window._horNestPileSig = nestPileSignature() + ':' + (faceUp ? 'up' : 'flip') + ':' + (face && face.id);
+
+  if (faceUp) {
+    const staySig = 'stay:' + (face && face.id) + ':' + n;
+    if (window._horNestPileSig === staySig && el.querySelector('.nest-stay-face')) return;
+    window._horNestPileSig = staySig;
+    const backs = Math.max(0, n - 1);
+    let html = '<div class="table-nest-pile" aria-label="Nest">';
+    for (let i = 0; i < backs; i++) {
+      html += '<div class="card-back table-nest-under" style="--nest-i:' + i + '"></div>';
+    }
+    html += nestFaceMarkup(face) + '</div>';
+    el.innerHTML = html;
     return;
   }
-  const sig = nestPileSignature() + ':' + (faceUp ? 'up' : (flipping ? 'flip' : 'dn')) + ':' + (face && face.id);
-  if (window._horNestPileSig === sig && el.querySelector('.nest-face-up, .table-nest-flip, .table-nest-pile')) {
-    if (faceUp && !el.querySelector('.table-nest-flip.is-flipped, .nest-face-up')) window._horNestPileSig = '';
-    else return;
+
+  const sig = nestPileSignature() + ':' + (flipping ? 'flip' : 'dn') + ':' + (face && face.id);
+  if (window._horNestPileSig === sig && el.querySelector('.table-nest-flip, .table-nest-pile')) {
+    if (flipping) {
+      const flip = el.querySelector('.table-nest-flip');
+      if (flip && !flip.classList.contains('is-turning')) {
+        requestAnimationFrame(() => { try { flip.classList.add('is-turning', 'is-reveal'); } catch (e) {} });
+      }
+    }
+    return;
   }
   window._horNestPileSig = sig;
   const backs = Math.max(0, n - 1);
@@ -5642,11 +5672,10 @@ function renderTopNestPeek() {
   for (let i = 0; i < backs; i++) {
     html += '<div class="card-back table-nest-under" style="--nest-i:' + i + '"></div>';
   }
-  if (showFace && (flipping || faceUp)) {
+  if (flipping) {
     const cls = (typeof cardClass === 'function') ? cardClass(face) : '';
     const inner = (typeof cardInnerHTML === 'function') ? cardInnerHTML(face) : ((face.rank || face.id) || '?');
-    const flipState = faceUp ? ' is-turning is-reveal is-flipped is-face' : '';
-    html += '<div class="table-nest-flip' + flipState + '">'
+    html += '<div class="table-nest-flip">'
       + '<div class="table-nest-flip-inner">'
       + '<div class="card-back table-nest-flip-back"></div>'
       + '<div class="card-face ' + cls + ' small nest-face-up table-nest-flip-face">' + inner + '</div>'
@@ -5661,9 +5690,7 @@ function renderTopNestPeek() {
     if (flip) {
       void flip.offsetWidth;
       requestAnimationFrame(() => {
-        try {
-          flip.classList.add('is-turning', 'is-reveal');
-        } catch (e) {}
+        try { flip.classList.add('is-turning', 'is-reveal'); } catch (e) {}
       });
     }
   }
@@ -6359,6 +6386,8 @@ function hostDealNow() {
     if (endEl) { endEl.classList.add('hidden'); endEl.innerHTML = ''; }
   } catch (e) {}
   if (game) { game.topNestCard = null; game.nestFlipStage = 0; game.nestFlipped = false; }
+  window._horPinnedNestFace = null;
+  window._horNestPileSig = '';
   const deck = shuffle(makeDeck());
   const hs = handSize || 9;
   const needed = hs * 4;
