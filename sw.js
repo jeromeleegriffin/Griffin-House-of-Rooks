@@ -2,19 +2,37 @@
  * Author: Jerome Griffin
  * Copyright (c) 2026 Jerome Griffin / Griffin House
  */
-const CACHE = 'house-of-rooks-v429';
+const CACHE = 'house-of-rooks-v430';
 const SHELL = [
   './',
   './index.html',
   './shuffle-statistics.html',
   './rules.js',
-  './rules.js?v=429',
+  './rules.js?v=430',
   './bots.js',
-  './bots.js?v=429',
+  './bots.js?v=430',
   './game.js',
-  './game.js?v=429',
+  './game.js?v=430',
+  './game-p01.js?v=430',
+  './game-p02.js?v=430',
+  './game-p03.js?v=430',
+  './game-p04.js?v=430',
+  './game-p05.js?v=430',
+  './game-p06.js?v=430',
+  './game-p07.js?v=430',
+  './game-p08.js?v=430',
+  './game-p09.js?v=430',
+  './game-p10.js?v=430',
+  './game-p11.js?v=430',
+  './game-p12.js?v=430',
+  './game-p13.js?v=430',
+  './game-p14.js?v=430',
+  './game-p15.js?v=430',
+  './game-p16.js?v=430',
+  './game-p17.js?v=430',
+  './game-p18.js?v=430',
   './polish.js',
-  './polish.js?v=429',
+  './polish.js?v=430',
   './style.css',
   './style.css?v=380',
   './hor-version.js',
@@ -87,8 +105,6 @@ self.addEventListener('fetch', (e) => {
   const url = new URL(e.request.url);
   if (url.origin !== location.origin) return;
 
-  // Never let Safari boot an old cached game shell/code when online.
-  // Network-first for the app's HTML/JS/CSS; cache is only an offline fallback.
   const path = url.pathname;
   const isAppAsset = /\.(html|js|css)$/.test(path) || path.endsWith('/');
   const forceFresh = url.searchParams.has('fresh') || url.searchParams.has('v');
