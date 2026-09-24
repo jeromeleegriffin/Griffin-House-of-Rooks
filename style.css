@@ -12592,8 +12592,11 @@ body #waiting .waiting-actions #startBtn.btn.primary.table-ready,
   transform-style: preserve-3d;
   transition: transform 2.8s cubic-bezier(.22,.62,.18,1);
 }
+.table-nest-flip.is-turning .table-nest-flip-inner {
+  transform: rotateY(90deg);
+}
 .table-nest-flip.is-flipped .table-nest-flip-inner {
-  transform: rotateY(180deg);
+  transform: rotateY(0deg);
 }
 .table-nest-flip.is-reveal {
   animation: nestRevealLift 2.8s cubic-bezier(.18,.82,.22,1) 1;
@@ -12627,13 +12630,26 @@ body #waiting .waiting-actions #startBtn.btn.primary.table-ready,
   inset: 0;
   width: 48px;
   height: 68px;
-  backface-visibility: hidden;
-  -webkit-backface-visibility: hidden;
   border-radius: 6px;
 }
+.table-nest-flip-back {
+  z-index: 2;
+}
 .table-nest-flip-face {
-  transform: rotateY(180deg);
+  z-index: 1;
   font-size: 0.62rem;
+  opacity: 0;
+  background-image: none !important;
+}
+.table-nest-flip.is-flipped .table-nest-flip-back,
+.table-nest-flip.is-face .table-nest-flip-back {
+  display: none !important;
+}
+.table-nest-flip.is-flipped .table-nest-flip-face,
+.table-nest-flip.is-face .table-nest-flip-face {
+  opacity: 1;
+  transform: none;
+  background-image: none !important;
 }
 .table-nest-caption {
   position: absolute;
@@ -12660,13 +12676,9 @@ body.nest-on-felt #trickArea .trick-caption {
 }
 .table-nest-under,
 .table-nest-top,
-.table-nest-flip-back,
-.table-nest-flip-face {
+.table-nest-flip-back {
   background-color: #140e08 !important;
   box-shadow: 0 2px 8px rgba(0,0,0,.55);
-}
-.table-nest-flip-face {
-  background-color: #f4ead2 !important;
 }
 
 body.nest-on-felt .seat-avatar-img,

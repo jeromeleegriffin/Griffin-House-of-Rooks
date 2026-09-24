@@ -7,7 +7,7 @@
 // It's exchanged during the join handshake so a stale host or joiner (e.g.
 // one still running old cached JS) gets caught and auto-updated instead of
 // silently failing or behaving unpredictably against a mismatched peer.
-const APP_VERSION = '416';
+const APP_VERSION = '419';
 
 function horThisIndex() {
   try {
@@ -5565,14 +5565,23 @@ function setBotCount(desired) {
 
 
 
+function collectDealtHandIds() {
+  const ids = new Set();
+  const add = (c) => { if (c && c.id) ids.add(c.id); };
+  (game && game.hands || []).forEach((h) => (h || []).forEach(add));
+  (game && game.myHand || []).forEach(add);
+  return ids;
+}
 function freezeTopNestCard() {
   if (!game) return null;
   const nest = Array.isArray(game.nest) ? game.nest : [];
-  const handIds = new Set();
-  (game.hands || []).forEach((h) => {
-    (h || []).forEach((c) => { if (c && c.id) handIds.add(c.id); });
-  });
-  let card = nest.find((c) => c && c.id && !handIds.has(c.id)) || null;
+  const handIds = collectDealtHandIds();
+  let card = null;
+  for (let i = nest.length - 1; i >= 0; i--) {
+    const c = nest[i];
+    if (c && c.id && !handIds.has(c.id)) { card = c; break; }
+  }
+  if (card && handIds.has(card.id)) card = null;
   game.topNestCard = card ? { color: card.color, rank: card.rank, id: card.id } : null;
   return game.topNestCard;
 }
@@ -5586,7 +5595,7 @@ function nestCountOnTable() {
 
 function nestPileSignature() {
   const n = nestCountOnTable();
-  const face = (revealTopNest) ? (game && (game.topNestCard || (game.nest && game.nest[0]))) : null;
+  const face = (revealTopNest) ? (game && game.topNestCard) : null;
   const stage = (game && game.nestFlipStage) || 0;
   return [n, face && face.id, stage, !!(game && game.phase)].join('|');
 }
@@ -5605,9 +5614,8 @@ function renderTopNestPeek() {
     return;
   }
   let face = (revealTopNest) ? (game.topNestCard || null) : null;
-  if (face && Array.isArray(game.hands)) {
-    const stolen = game.hands.some(h => (h || []).some(c => c && face && c.id === face.id));
-    if (stolen) face = freezeTopNestCard();
+  if (face && collectDealtHandIds().has(face.id)) {
+    face = freezeTopNestCard();
   }
   const showFace = !!(face && game && game.nestFlipStage);
   const flipped = !!(game && game.nestFlipped);
@@ -5638,7 +5646,10 @@ function renderTopNestPeek() {
   } else {
     html += '<div class="card-back table-nest-top"></div>';
   }
-  html += '<span class="table-nest-caption">Nest</span></div>';
+  const cap = (showFace && face)
+    ? ('Nest · ' + (face.color === 'rook' ? 'Rook' : ((face.color || '') + ' ' + (face.rank || ''))))
+    : 'Nest';
+  html += '<span class="table-nest-caption">' + cap + '</span></div>';
   el.innerHTML = html;
 }
 
@@ -5690,11 +5701,15 @@ function scheduleTopNestFlip() {
       if (!flip) return;
       flip.classList.add('is-reveal');
       requestAnimationFrame(() => {
-        flip.classList.add('is-flipped');
+        flip.classList.add('is-turning');
         try { playNestRevealSequence(); } catch (e) {}
         setTimeout(() => {
+          flip.classList.add('is-face');
+          flip.classList.add('is-flipped');
+        }, 1400);
+        setTimeout(() => {
           if (game) game.nestFlipped = true;
-          try { flip.classList.remove('is-reveal'); } catch (e) {}
+          try { flip.classList.remove('is-reveal'); flip.classList.remove('is-turning'); } catch (e) {}
         }, 2800);
         setTimeout(() => {
           if (tok !== window._horNestFlipTok) return;
@@ -6311,6 +6326,7 @@ function hostDealNow() {
     const endEl = $('ltEndGame');
     if (endEl) { endEl.classList.add('hidden'); endEl.innerHTML = ''; }
   } catch (e) {}
+  if (game) { game.topNestCard = null; game.nestFlipStage = 0; game.nestFlipped = false; }
   const deck = shuffle(makeDeck());
   const hs = handSize || 9;
   const needed = hs * 4;
@@ -6405,6 +6421,7 @@ function hostDealNow() {
       players: players.map(p => ({ name: p.name, team: p.team, id: p.id, isBot: !!p.isBot, bank: p.bank || 0 })),
       dealer: game.dealer,
       nestCount: game.nest.length,
+      topNestCard: game.topNestCard ? { ...game.topNestCard } : null,
       handsCount: [0, 0, 0, 0],
       targetScore: game.targetScore || targetScore,
       bidStatus: game.bidStatus,
@@ -10133,7 +10150,7 @@ function applyState(data) {
     discardCount: data.discardCount != null ? data.discardCount : (game.discardCount || 0),
     nestAuctionOpen: data.nestAuctionOpen != null ? !!data.nestAuctionOpen : !!game.nestAuctionOpen,
     nestFlipped: data.nestFlipped != null ? !!data.nestFlipped : !!game.nestFlipped,
-    topNestCard: data.topNestCard || game.topNestCard || null,
+    topNestCard: (data.topNestCard !== undefined) ? (data.topNestCard ? { ...data.topNestCard } : null) : (game.topNestCard || null),
     nestFlipStage: data.nestFlipStage != null ? data.nestFlipStage : (game.nestFlipStage || 0),
     widowSpread: Array.isArray(data.widowSpread) ? data.widowSpread.map(c => ({ ...c })) : (game.widowSpread || []),
     handPoints: data.handPoints || game.handPoints || [0, 0],
