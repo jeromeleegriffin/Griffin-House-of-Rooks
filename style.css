@@ -12522,3 +12522,27 @@ body #waiting .waiting-actions #startBtn.btn.primary.table-ready,
   line-height: 1.1 !important;
   font-weight: 800 !important;
 }
+
+.top-nest-peek {
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+  margin: 0.15rem 0 0.25rem;
+  min-height: 0;
+}
+.top-nest-peek.hidden { display: none !important; }
+.top-nest-label {
+  font-size: 0.68rem;
+  font-weight: 800;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: #f0d56a;
+  white-space: nowrap;
+}
+.top-nest-peek .top-nest-card {
+  width: 42px;
+  min-width: 42px;
+  height: 58px;
+  font-size: 0.7rem;
+  box-shadow: 0 2px 8px rgba(0,0,0,.4);
+}

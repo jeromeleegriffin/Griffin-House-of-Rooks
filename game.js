@@ -7,7 +7,7 @@
 // It's exchanged during the join handshake so a stale host or joiner (e.g.
 // one still running old cached JS) gets caught and auto-updated instead of
 // silently failing or behaving unpredictably against a mismatched peer.
-const APP_VERSION = '399';
+const APP_VERSION = '400';
 
 function horThisIndex() {
   try {
@@ -77,6 +77,8 @@ let screwTheDealer = false;
 /** Open widow: reveal the nest to everyone (not just the bidder) the
  * moment it's picked up, before the bidder discards */
 let openWidow = false;
+/** Face-up top nest card during the auction */
+let revealTopNest = false;
 /** Shoot the Moon: bidding every counter in the deck is an all-or-nothing
  * bid — make it and win the game outright, miss it and go set as usual */
 let shootMoonEnabled = true;
@@ -1292,6 +1294,8 @@ function syncOptionsUI() {
   if (std) std.checked = !!screwTheDealer;
   const cbComeback = $('opt-comeback-special-chance');
   if (cbComeback) cbComeback.checked = !!comebackSpecialChance;
+  const rtn = $('opt-reveal-top-nest');
+  if (rtn) rtn.checked = !!revealTopNest;
   const ow = $('opt-open-widow');
   if (ow) ow.checked = !!openWidow;
   const stm = $('opt-shoot-moon');
@@ -1387,7 +1391,7 @@ function broadcastPlaySettings() {
     type: 'settings',
     includeRed2, red2Points, includeRed1, includeOnes, onesHigh, includeRook, rookLowest,
     specialsAnytime, mustTrumpWhenVoid, turnTimeSec,
-    bidOnlyScoring, sandbagging, nestGoesTo, leadOrder, misdealOnNoCounters, screwTheDealer, comebackSpecialChance, openWidow, shootMoonEnabled, botSpeed, colorBlindCards, handSortMode, timeoutPolicy,
+    bidOnlyScoring, sandbagging, nestGoesTo, leadOrder, misdealOnNoCounters, screwTheDealer, comebackSpecialChance, openWidow, revealTopNest, shootMoonEnabled, botSpeed, colorBlindCards, handSortMode, timeoutPolicy,
     partnerNeverKill, partnerFeedLast, dontStealPartnerBid, landscapeBidHints, nestLastTrickAnim, layDownWinningCards,
     minBid, targetScore, handSize, nestSizeDefault, ruleVariant, botDifficulty,
     luckySpecialsBoost, luckySpecialsEnabled, luckySpecialsMode, experimentalHandOpt,
@@ -4105,6 +4109,7 @@ function handleMessage(data, conn) {
         if (typeof data.bidder === 'number') game.bidder = data.bidder;
         if (typeof data.discardCount === 'number') game.discardCount = data.discardCount;
         if (Array.isArray(data.nestPreview)) game.nestPreview = data.nestPreview.map(c => ({ ...c }));
+        if (data.topNestCard) game.topNestCard = { ...data.topNestCard };
         if (Array.isArray(data.hand) && data.hand.length) game.myHand = data.hand.map(c => ({ ...c }));
         if (game.bidder === myIndex || data.peerId === myPeerId) {
           // A discard selection belongs to exactly one hand.  Always start a
@@ -4189,6 +4194,7 @@ function handleMessage(data, conn) {
         if (typeof data.screwTheDealer === 'boolean') screwTheDealer = data.screwTheDealer;
         if (typeof data.comebackSpecialChance === 'boolean') comebackSpecialChance = data.comebackSpecialChance;
         if (typeof data.openWidow === 'boolean') openWidow = data.openWidow;
+        if (typeof data.revealTopNest === 'boolean') revealTopNest = data.revealTopNest;
         if (typeof data.shootMoonEnabled === 'boolean') shootMoonEnabled = data.shootMoonEnabled;
         if (data.botSpeed) botSpeed = data.botSpeed;
         if (typeof data.partnerNeverKill === 'boolean') partnerNeverKill = data.partnerNeverKill;
@@ -4435,6 +4441,15 @@ function showWaiting() {
       cbComeback.onchange = () => {
         comebackSpecialChance = !!cbComeback.checked;
         try { broadcastPlaySettings(); } catch (e) {}
+      };
+    }
+    const rtn = $('opt-reveal-top-nest');
+    if (rtn) {
+      rtn.checked = !!revealTopNest;
+      rtn.onchange = () => {
+        revealTopNest = !!rtn.checked;
+        try { broadcastPlaySettings(); } catch (e) {}
+        try { renderTopNestPeek(); } catch (e) {}
       };
     }
     const ow = $('opt-open-widow');
@@ -5340,6 +5355,26 @@ function setBotCount(desired) {
 
 
 
+function renderTopNestPeek() {
+  const el = $('topNestPeek');
+  if (!el) return;
+  const phaseOk = !!(game && (game.phase === 'bidding' || game.phase === 'dealing'));
+  const card = (revealTopNest && phaseOk)
+    ? (game.topNestCard || (game.nest && game.nest[0]) || null)
+    : null;
+  if (!card) {
+    el.classList.add('hidden');
+    el.innerHTML = '';
+    return;
+  }
+  const cls = (typeof cardClass === 'function') ? cardClass(card) : '';
+  const inner = (typeof cardInnerHTML === 'function') ? cardInnerHTML(card) : ((card.rank || card.id) || '?');
+  el.classList.remove('hidden');
+  el.innerHTML = '<span class="top-nest-label">Top nest</span>'
+    + '<div class="card-face ' + cls + ' small top-nest-card">' + inner + '</div>';
+}
+
+
 function updateWaitingUI() {
   const list = $('playersList');
   if (list) list.innerHTML = '';
@@ -5952,6 +5987,7 @@ function hostDealNow() {
     nestCount = nestSizeDefault;
   }
   game.nest = deck.splice(0, nestCount);
+  game.topNestCard = (game.nest[0] && { ...game.nest[0] }) || null;
   // Any leftover cards beyond 4 hands go into nest
   while (deck.length > needed) {
     game.nest.push(deck.pop());
@@ -6124,6 +6160,7 @@ function hostHandleAllPassed() {
 }
 
 function hostPromptBid() {
+  try { renderTopNestPeek(); } catch (e) {}
   if (!game || game.paused) return;
   // Auction already decided — don't re-prompt
   if (game.bidder >= 0 && countPassedBids() >= 3) {
@@ -6665,6 +6702,8 @@ function finishBidding() {
   // House rule: Open Widow — show everyone what was in the nest the moment
   // it's picked up, instead of only the bidder ever seeing it before the
   // final hand-end reveal.
+  game.topNestCard = null;
+  try { renderTopNestPeek(); } catch (e) {}
   if (openWidow) {
     const bname = (players[game.bidder] && players[game.bidder].name) || ('P' + (game.bidder + 1));
     const widowMsg = `Widow revealed — ${bname} picked up: ${nestCardsToText(game.nestPreview)}`;
@@ -6758,6 +6797,7 @@ function hostSendDiscardStart(playerIdx, peerId, showKitty) {
     discardCount: game.discardCount || hand.length && (hand.length - (handSize || 9)),
     hand,
     nestPreview: (game.nestPreview || []).map(c => ({ ...c })),
+        topNestCard: game.topNestCard ? { ...game.topNestCard } : null,
     showKitty: !!showKitty,
   });
 }
@@ -7313,7 +7353,7 @@ function hostTransferHost() {
       ledColor: game.ledColor, tricksTaken: game.tricksTaken, nestCards: game.nestCards,
       passCount: game.passCount, highestBid: game.highestBid, discardCount: game.discardCount,
       nestDiscardCount: game.nestDiscardCount, targetScore: game.targetScore,
-      nestPreview: game.nestPreview, nestRevealCards: game.nestRevealCards, sandbagOverpoints: game.sandbagOverpoints || [0, 0], paused: false,
+      nestPreview: game.nestPreview, topNestCard: game.topNestCard || null, nestRevealCards: game.nestRevealCards, sandbagOverpoints: game.sandbagOverpoints || [0, 0], paused: false,
     })),
     players: players.map(p => ({ ...p })),
     settings: { includeRed2, red2Points, includeRed1, includeOnes, onesHigh, includeRook, rookLowest,
@@ -7674,6 +7714,7 @@ function hostResyncClient(conn, playerId) {
         discardCount: game.discardCount || 0,
         hand: (game.hands[idx] || []).map(c => ({ ...c })),
         nestPreview: (game.nestPreview || []).map(c => ({ ...c })),
+        topNestCard: game.topNestCard ? { ...game.topNestCard } : null,
         showKitty: false
       });
     }
@@ -9634,6 +9675,7 @@ function broadcastState() {
           discardCount: game.discardCount || 0,
           hand: handCopy,
           nestPreview: (game.nestPreview || []).map(c => ({ ...c })),
+        topNestCard: game.topNestCard ? { ...game.topNestCard } : null,
           showKitty: false,
         });
       }
@@ -9927,6 +9969,8 @@ function playTrumpStampFx(el) {
 
 // ========== Rendering ==========
 function renderUI() {
+  try { renderTopNestPeek(); } catch (e) {}
+
   if (!game) return;
   if (horExpOn('renderOptimization')) {
     const handIds = (game.myHand || []).map(c => c && c.id).join(',');

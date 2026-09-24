@@ -62,6 +62,7 @@ function extremeSeenCards(seat) {
   if (typeof openWidow !== 'undefined' && openWidow && game.nestPreview) {
     game.nestPreview.forEach(push);
   }
+  if (typeof revealTopNest !== 'undefined' && revealTopNest && game.topNestCard) push(game.topNestCard);
   return seen;
 }
 

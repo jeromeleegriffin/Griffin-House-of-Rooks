@@ -36,7 +36,7 @@
   <link rel="manifest" href="manifest.json">
   <link rel="icon" href="icon-192.png">
   <link rel="apple-touch-icon" href="apple-touch-icon.png">
-  <link rel="stylesheet" href="style.css?v=399">
+  <link rel="stylesheet" href="style.css?v=400">
   <script src="vendor/peerjs.min.js"></script>
   <style>
     /* Emergency layout if style.css fails to load — joiners still see a usable page */
@@ -504,6 +504,12 @@
             <p class="option-hint">Off by default. If a team falls more than 75% of the match target behind, its normal chance of receiving each included special card (Bird, Red 2, or special Red 1) is increased by 25%. The assist is openly shown as a table option and does not replace the normal shuffle.</p>
 
             <label class="option-label">
+              <input type="checkbox" id="opt-reveal-top-nest">
+              Reveal top nest card
+            </label>
+            <p class="option-hint">Off by default. The top card of the nest is face-up for everyone during the auction.</p>
+
+            <label class="option-label">
               <input type="checkbox" id="opt-open-widow">
               Open widow
             </label>
@@ -753,6 +759,7 @@
             <span id="horConnectionBadge" class="hor-connection-badge hidden">● Connected</span>
           </div>
           <div class="trump" id="trumpDisplay"></div>
+          <div id="topNestPeek" class="top-nest-peek hidden" aria-label="Top nest card"></div>
           <div class="bid-progress hidden" id="bidProgress" title="Bid progress this hand"></div>
         </div>
         <div class="toolbar" id="topToolbar">
@@ -1165,10 +1172,10 @@
       paintInstall();
     })();
   </script>
-  <script src="rules.js?v=399"></script>
-  <script src="bots.js?v=399"></script>
-  <script src="game.js?v=399"></script>
-  <script src="polish.js?v=399"></script>
+  <script src="rules.js?v=400"></script>
+  <script src="bots.js?v=400"></script>
+  <script src="game.js?v=400"></script>
+  <script src="polish.js?v=400"></script>
   <div id="horBootError"></div>
   <script>
     window.addEventListener('error', function (ev) {
@@ -1182,7 +1189,7 @@
   </script>
   <script>
     if ('serviceWorker' in navigator) {
-      navigator.serviceWorker.register('sw.js?v=399', { updateViaCache: 'none' })
+      navigator.serviceWorker.register('sw.js?v=400', { updateViaCache: 'none' })
         .then(function (reg) { try { reg.update(); } catch (e) {} })
         .catch(() => {});
       let horSwAutoReloaded = false;
