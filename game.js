@@ -7,7 +7,7 @@
 // It's exchanged during the join handshake so a stale host or joiner (e.g.
 // one still running old cached JS) gets caught and auto-updated instead of
 // silently failing or behaving unpredictably against a mismatched peer.
-const APP_VERSION = '407';
+const APP_VERSION = '408';
 
 function horThisIndex() {
   try {
@@ -2335,6 +2335,63 @@ function detectSpecialCaptures(trick, winnerPlay) {
 }
 
 /** Short single-card deal snap */
+
+/** Nest reveal — paper whoosh, lift chime, slap when the face lands */
+function playNestFlipSound() {
+  if (soundMuted || !soundCard) return;
+  const ctx = ensureAudio();
+  if (!ctx) return;
+  const t = ctx.currentTime;
+  const noiseLen = Math.floor(ctx.sampleRate * 0.45);
+  const buf = ctx.createBuffer(1, noiseLen, ctx.sampleRate);
+  const data = buf.getChannelData(0);
+  for (let i = 0; i < noiseLen; i++) {
+    data[i] = (Math.random() * 2 - 1) * Math.exp(-i / (noiseLen * 0.38));
+  }
+  const whoosh = ctx.createBufferSource();
+  whoosh.buffer = buf;
+  const bp = ctx.createBiquadFilter();
+  bp.type = 'bandpass';
+  bp.Q.value = 0.7;
+  bp.frequency.setValueAtTime(500, t);
+  bp.frequency.exponentialRampToValueAtTime(2400, t + 0.28);
+  const wg = ctx.createGain();
+  wg.gain.setValueAtTime(0.0001, t);
+  wg.gain.exponentialRampToValueAtTime(0.22, t + 0.05);
+  wg.gain.exponentialRampToValueAtTime(0.001, t + 0.5);
+  whoosh.connect(bp); bp.connect(wg); wg.connect(ctx.destination);
+  whoosh.start(t); whoosh.stop(t + 0.5);
+
+  [330, 494, 660].forEach((f, i) => {
+    const osc = ctx.createOscillator();
+    const g = ctx.createGain();
+    osc.type = 'triangle';
+    osc.frequency.value = f;
+    const s = t + 0.08 + i * 0.09;
+    g.gain.setValueAtTime(0.0001, s);
+    g.gain.exponentialRampToValueAtTime(0.08, s + 0.03);
+    g.gain.exponentialRampToValueAtTime(0.001, s + 0.35);
+    osc.connect(g); g.connect(ctx.destination);
+    osc.start(s); osc.stop(s + 0.38);
+  });
+
+  const slapAt = t + 1.35;
+  const slapSize = Math.floor(ctx.sampleRate * 0.05);
+  const slapBuf = ctx.createBuffer(1, slapSize, ctx.sampleRate);
+  const sd = slapBuf.getChannelData(0);
+  for (let i = 0; i < slapSize; i++) sd[i] = (Math.random() * 2 - 1) * Math.exp(-i / (slapSize * 0.2));
+  const slap = ctx.createBufferSource();
+  slap.buffer = slapBuf;
+  const sbp = ctx.createBiquadFilter();
+  sbp.type = 'bandpass';
+  sbp.frequency.value = 1100;
+  const sg = ctx.createGain();
+  sg.gain.setValueAtTime(0.28, slapAt);
+  sg.gain.exponentialRampToValueAtTime(0.01, slapAt + 0.09);
+  slap.connect(sbp); sbp.connect(sg); sg.connect(ctx.destination);
+  slap.start(slapAt); slap.stop(slapAt + 0.1);
+}
+
 function playDealCardSound() {
   if (soundMuted || !soundCard) return;
   const ctx = ensureAudio();
@@ -2482,6 +2539,7 @@ function playSfx(name, { broadcastNet = false } = {}) {
     case 'deal': playDealSound(); break;
     case 'shuffle': playShuffleSound(); break;
     case 'dealCard': playDealCardSound(); break;
+    case 'nestFlip': playNestFlipSound(); break;
     default: break;
   }
   if (broadcastNet && isHost) {
@@ -5558,12 +5616,12 @@ function scheduleTopNestFlip() {
     requestAnimationFrame(() => {
       const flip = document.querySelector('#nestArea .table-nest-flip');
       if (!flip) return;
-      flip.classList.add('is-hop');
+      flip.classList.add('is-reveal');
       requestAnimationFrame(() => {
         flip.classList.add('is-flipped');
-        try { playSfx('card'); } catch (e) {}
+        try { playSfx('nestFlip'); } catch (e) {}
         if (game) game.nestFlipped = true;
-        setTimeout(() => { try { flip.classList.remove('is-hop'); } catch (e) {} }, 1100);
+        setTimeout(() => { try { flip.classList.remove('is-reveal'); } catch (e) {} }, 1100);
         setTimeout(() => {
           if (tok !== window._horNestFlipTok) return;
           if (game) game.nestAuctionOpen = true;

@@ -12595,18 +12595,31 @@ body #waiting .waiting-actions #startBtn.btn.primary.table-ready,
 .table-nest-flip.is-flipped .table-nest-flip-inner {
   transform: rotateY(180deg);
 }
-.table-nest-flip.is-hop {
-  animation: nestHop 1.05s ease-out 1;
+.table-nest-flip.is-reveal {
+  animation: nestRevealLift 2.8s cubic-bezier(.18,.82,.22,1) 1;
+  filter: drop-shadow(0 8px 16px rgba(0,0,0,.55)) drop-shadow(0 0 14px rgba(240,213,106,.55));
+  z-index: 9;
 }
-@keyframes nestHop {
-  0%   { transform: translateY(0); }
-  10%  { transform: translateY(-16px); }
-  20%  { transform: translateY(0); }
-  32%  { transform: translateY(-12px); }
-  44%  { transform: translateY(0); }
-  54%  { transform: translateY(-8px); }
-  66%  { transform: translateY(0); }
-  100% { transform: translateY(0); }
+.table-nest-flip.is-reveal::after {
+  content: "";
+  position: absolute;
+  inset: -10px;
+  border-radius: 10px;
+  pointer-events: none;
+  box-shadow: 0 0 0 2px rgba(255,224,80,.0);
+  animation: nestGlowRing 2.8s ease-out 1;
+}
+@keyframes nestRevealLift {
+  0%   { transform: translateY(0) scale(1) rotate(-1deg); }
+  16%  { transform: translateY(-26px) scale(1.16) rotate(-8deg); }
+  38%  { transform: translateY(-34px) scale(1.22) rotate(5deg); }
+  62%  { transform: translateY(-14px) scale(1.1) rotate(-2deg); }
+  100% { transform: translateY(0) scale(1) rotate(0deg); }
+}
+@keyframes nestGlowRing {
+  0%   { box-shadow: 0 0 0 0 rgba(255,224,80,.0); }
+  25%  { box-shadow: 0 0 0 6px rgba(255,224,80,.45); }
+  100% { box-shadow: 0 0 0 14px rgba(255,224,80,0); }
 }
 .table-nest-flip-back,
 .table-nest-flip-face {
@@ -12636,7 +12649,7 @@ body #waiting .waiting-actions #startBtn.btn.primary.table-ready,
 }
 @media (prefers-reduced-motion: reduce) {
   .table-nest-flip-inner { transition: none; }
-  .table-nest-flip.is-hop { animation: none; }
+  .table-nest-flip.is-reveal { animation: none; }
 }
 
 body.nest-on-felt .trick-caption,
