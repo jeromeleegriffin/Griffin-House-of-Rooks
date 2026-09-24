@@ -36,7 +36,7 @@
   <link rel="manifest" href="manifest.json">
   <link rel="icon" href="icon-192.png">
   <link rel="apple-touch-icon" href="apple-touch-icon.png">
-  <link rel="stylesheet" href="style.css?v=410">
+  <link rel="stylesheet" href="style.css?v=415">
   <script src="vendor/peerjs.min.js"></script>
   <style>
     /* Emergency layout if style.css fails to load — joiners still see a usable page */
@@ -813,6 +813,7 @@
             <div class="center-area">
               <div id="trickArea" class="trick"></div>
               <div id="nestArea" class="nest hidden"></div>
+              <div id="widowSpread" class="widow-spread hidden" aria-label="Widow"></div>
               <div id="botThinking" class="bot-thinking hidden">Thinking…</div>
               <div id="ptWaitBanner" class="pt-wait-banner hidden" aria-live="polite">
                 <img id="ptWaitArtNest" class="pt-wait-art" src="wait-nest-portrait.jpg?v=1" alt="">
@@ -1172,10 +1173,10 @@
       paintInstall();
     })();
   </script>
-  <script src="rules.js?v=410"></script>
-  <script src="bots.js?v=410"></script>
-  <script src="game.js?v=410"></script>
-  <script src="polish.js?v=410"></script>
+  <script src="rules.js?v=415"></script>
+  <script src="bots.js?v=415"></script>
+  <script src="game.js?v=415"></script>
+  <script src="polish.js?v=415"></script>
   <div id="horBootError"></div>
   <script>
     window.addEventListener('error', function (ev) {
@@ -1189,7 +1190,7 @@
   </script>
   <script>
     if ('serviceWorker' in navigator) {
-      navigator.serviceWorker.register('sw.js?v=410', { updateViaCache: 'none' })
+      navigator.serviceWorker.register('sw.js?v=415', { updateViaCache: 'none' })
         .then(function (reg) { try { reg.update(); } catch (e) {} })
         .catch(() => {});
       let horSwAutoReloaded = false;

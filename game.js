@@ -7,7 +7,7 @@
 // It's exchanged during the join handshake so a stale host or joiner (e.g.
 // one still running old cached JS) gets caught and auto-updated instead of
 // silently failing or behaving unpredictably against a mismatched peer.
-const APP_VERSION = '410';
+const APP_VERSION = '415';
 
 function horThisIndex() {
   try {
@@ -2357,39 +2357,41 @@ function playNestFlipSound() {
   bp.frequency.exponentialRampToValueAtTime(2400, t + 0.28);
   const wg = ctx.createGain();
   wg.gain.setValueAtTime(0.0001, t);
-  wg.gain.exponentialRampToValueAtTime(0.22, t + 0.05);
-  wg.gain.exponentialRampToValueAtTime(0.001, t + 0.5);
+  wg.gain.exponentialRampToValueAtTime(0.08, t + 0.08);
+  wg.gain.exponentialRampToValueAtTime(0.001, t + 0.55);
   whoosh.connect(bp); bp.connect(wg); wg.connect(ctx.destination);
-  whoosh.start(t); whoosh.stop(t + 0.5);
+  whoosh.start(t); whoosh.stop(t + 0.55);
+}
 
-  [330, 494, 660].forEach((f, i) => {
-    const osc = ctx.createOscillator();
-    const g = ctx.createGain();
-    osc.type = 'triangle';
-    osc.frequency.value = f;
-    const s = t + 0.08 + i * 0.09;
-    g.gain.setValueAtTime(0.0001, s);
-    g.gain.exponentialRampToValueAtTime(0.08, s + 0.03);
-    g.gain.exponentialRampToValueAtTime(0.001, s + 0.35);
-    osc.connect(g); g.connect(ctx.destination);
-    osc.start(s); osc.stop(s + 0.38);
-  });
-
-  const slapAt = t + 1.35;
-  const slapSize = Math.floor(ctx.sampleRate * 0.05);
+function playNestLandSound() {
+  if (soundMuted || !soundCard) return;
+  const ctx = ensureAudio();
+  if (!ctx) return;
+  const t = ctx.currentTime;
+  const slapSize = Math.floor(ctx.sampleRate * 0.06);
   const slapBuf = ctx.createBuffer(1, slapSize, ctx.sampleRate);
   const sd = slapBuf.getChannelData(0);
-  for (let i = 0; i < slapSize; i++) sd[i] = (Math.random() * 2 - 1) * Math.exp(-i / (slapSize * 0.2));
+  for (let i = 0; i < slapSize; i++) sd[i] = (Math.random() * 2 - 1) * Math.exp(-i / (slapSize * 0.22));
   const slap = ctx.createBufferSource();
   slap.buffer = slapBuf;
   const sbp = ctx.createBiquadFilter();
   sbp.type = 'bandpass';
-  sbp.frequency.value = 1100;
+  sbp.frequency.value = 900;
+  sbp.Q.value = 0.9;
   const sg = ctx.createGain();
-  sg.gain.setValueAtTime(0.28, slapAt);
-  sg.gain.exponentialRampToValueAtTime(0.01, slapAt + 0.09);
+  sg.gain.setValueAtTime(0.32, t);
+  sg.gain.exponentialRampToValueAtTime(0.01, t + 0.11);
   slap.connect(sbp); sbp.connect(sg); sg.connect(ctx.destination);
-  slap.start(slapAt); slap.stop(slapAt + 0.1);
+  slap.start(t); slap.stop(t + 0.12);
+  const osc = ctx.createOscillator();
+  const og = ctx.createGain();
+  osc.type = 'sine';
+  osc.frequency.setValueAtTime(160, t);
+  osc.frequency.exponentialRampToValueAtTime(70, t + 0.08);
+  og.gain.setValueAtTime(0.16, t);
+  og.gain.exponentialRampToValueAtTime(0.01, t + 0.1);
+  osc.connect(og); og.connect(ctx.destination);
+  osc.start(t); osc.stop(t + 0.11);
 }
 
 function playDealCardSound() {
@@ -2540,6 +2542,7 @@ function playSfx(name, { broadcastNet = false } = {}) {
     case 'shuffle': playShuffleSound(); break;
     case 'dealCard': playDealCardSound(); break;
     case 'nestFlip': playNestFlipSound(); break;
+    case 'nestLand': playNestLandSound(); break;
     default: break;
   }
   if (broadcastNet && isHost) {
@@ -5548,6 +5551,19 @@ function setBotCount(desired) {
 
 
 
+
+function freezeTopNestCard() {
+  if (!game) return null;
+  const nest = Array.isArray(game.nest) ? game.nest : [];
+  const handIds = new Set();
+  (game.hands || []).forEach((h) => {
+    (h || []).forEach((c) => { if (c && c.id) handIds.add(c.id); });
+  });
+  let card = nest.find((c) => c && c.id && !handIds.has(c.id)) || null;
+  game.topNestCard = card ? { color: card.color, rank: card.rank, id: card.id } : null;
+  return game.topNestCard;
+}
+
 function nestCountOnTable() {
   if (!game) return 0;
   if (game.nest && game.nest.length) return game.nest.length;
@@ -5575,7 +5591,11 @@ function renderTopNestPeek() {
     try { document.body.classList.remove('nest-on-felt'); } catch (e) {}
     return;
   }
-  const face = (revealTopNest) ? (game.topNestCard || (game.nest && game.nest[0]) || null) : null;
+  let face = (revealTopNest) ? (game.topNestCard || null) : null;
+  if (face && Array.isArray(game.hands)) {
+    const stolen = game.hands.some(h => (h || []).some(c => c && face && c.id === face.id));
+    if (stolen) face = freezeTopNestCard();
+  }
   const showFace = !!(face && game && game.nestFlipStage);
   const flipped = !!(game && game.nestFlipped);
   el.classList.remove('hidden');
@@ -5610,6 +5630,26 @@ function renderTopNestPeek() {
 }
 
 
+
+function renderWidowSpread() {
+  const el = $('widowSpread');
+  if (!el) return;
+  const phaseOk = !!(game && (game.phase === 'discard' || game.phase === 'trump'));
+  const cards = (openWidow && game && Array.isArray(game.widowSpread)) ? game.widowSpread : [];
+  if (!phaseOk || !cards.length) {
+    el.classList.add('hidden');
+    el.innerHTML = '';
+    return;
+  }
+  const faces = cards.map((c) => {
+    const cls = (typeof cardClass === 'function') ? cardClass(c) : '';
+    const inner = (typeof cardInnerHTML === 'function') ? cardInnerHTML(c) : ((c.rank || c.id) || '?');
+    return '<div class="card-face ' + cls + ' widow-card">' + inner + '</div>';
+  }).join('');
+  el.classList.remove('hidden');
+  el.innerHTML = '<span class="widow-spread-label">Widow</span><div class="widow-spread-row">' + faces + '</div>';
+}
+
 function nestAuctionLocked() {
   return !!(typeof revealTopNest !== 'undefined' && revealTopNest && game && !game.nestAuctionOpen);
 }
@@ -5617,6 +5657,9 @@ function scheduleTopNestFlip() {
   if (!game) return;
   if (!revealTopNest) {
     game.nestAuctionOpen = true;
+    game.nestFlipStage = 0;
+    game.nestFlipped = false;
+    try { renderTopNestPeek(); } catch (e) {}
     return;
   }
   const tok = (window._horNestFlipTok = (window._horNestFlipTok || 0) + 1);
@@ -5637,6 +5680,7 @@ function scheduleTopNestFlip() {
         flip.classList.add('is-flipped');
         try { playSfx('nestFlip'); } catch (e) {}
         setTimeout(() => {
+          try { playSfx('nestLand'); } catch (e) {}
           if (game) game.nestFlipped = true;
           try { flip.classList.remove('is-reveal'); } catch (e) {}
         }, 2800);
@@ -5952,7 +5996,7 @@ function hostStartGame() {
 
   game = {
     phase: 'deal',
-    dealer: 0,
+    dealer: Math.floor(Math.random() * 4),
     scores: [0, 0], // team A, team B
     sandbagOverpoints: [0, 0], // accumulated 10-point overage units for each team
     hands: [[], [], [], []],
@@ -6266,7 +6310,6 @@ function hostDealNow() {
     nestCount = nestSizeDefault;
   }
   game.nest = deck.splice(0, nestCount);
-  game.topNestCard = (game.nest[0] && { ...game.nest[0] }) || null;
   // Any leftover cards beyond 4 hands go into nest
   while (deck.length > needed) {
     game.nest.push(deck.pop());
@@ -6279,6 +6322,7 @@ function hostDealNow() {
   for (let i = 0; i < 4; i++) {
     sortCardsDisplay(game.hands[i]);
   }
+  try { freezeTopNestCard(); } catch (e) { game.topNestCard = null; }
   // House rule: misdeal & redeal if any hand has zero counter cards (no
   // 5/10/14/one/Rook/Red 1/Red 2 at all) — nobody could bid meaningfully.
   // Bounded retry count so a pathological deck config can't loop forever.
@@ -6368,6 +6412,7 @@ function hostDealNow() {
     if (!game) return;
     game.phase = 'bidding';
     game.myHand = (game.hands[myIndex] || []).map(c => ({ ...c }));
+    try { renderTopNestPeek(); } catch (e) {}
     broadcastState();
     // Brief “how bidding works” tip, then open the auction
     try {
@@ -6991,7 +7036,9 @@ function finishBidding() {
   // it's picked up, instead of only the bidder ever seeing it before the
   // final hand-end reveal.
   game.topNestCard = null;
+  game.widowSpread = openWidow ? game.nestPreview.map(c => ({ ...c })) : [];
   try { renderTopNestPeek(); } catch (e) {}
+  try { renderWidowSpread(); } catch (e) {}
   if (openWidow) {
     const bname = (players[game.bidder] && players[game.bidder].name) || ('P' + (game.bidder + 1));
     const widowMsg = `Widow revealed — ${bname} picked up: ${nestCardsToText(game.nestPreview)}`;
@@ -7585,6 +7632,8 @@ function hostProcessTrump(data) {
   }
   game.trick = [];
   game.ledColor = null;
+  game.widowSpread = [];
+  try { renderWidowSpread(); } catch (e) {}
   game.tricksTaken = [[], []];
   try { playSfx('trump', { broadcastNet: true }); } catch (e) {}
   try {
@@ -9951,6 +10000,7 @@ function broadcastState() {
     nestFlipped: !!game.nestFlipped,
     topNestCard: game.topNestCard ? { ...game.topNestCard } : null,
     nestFlipStage: game.nestFlipStage || 0,
+    widowSpread: Array.isArray(game.widowSpread) ? game.widowSpread.map(c => ({ ...c })) : [],
     handPoints: [handPtsA, handPtsB],
     recentTricks: (typeof recentTricks !== 'undefined' && recentTricks) ? (horExpOn('netDelta') ? recentTricks.slice(-3) : recentTricks) : [],
     matchTricks: (typeof matchTricks !== 'undefined' && matchTricks) ? (horExpOn('netDelta') ? matchTricks.slice(-8) : matchTricks) : [],
@@ -10073,6 +10123,7 @@ function applyState(data) {
     nestFlipped: data.nestFlipped != null ? !!data.nestFlipped : !!game.nestFlipped,
     topNestCard: data.topNestCard || game.topNestCard || null,
     nestFlipStage: data.nestFlipStage != null ? data.nestFlipStage : (game.nestFlipStage || 0),
+    widowSpread: Array.isArray(data.widowSpread) ? data.widowSpread.map(c => ({ ...c })) : (game.widowSpread || []),
     handPoints: data.handPoints || game.handPoints || [0, 0],
     trumpClaimPlayer: data.trumpClaimPlayer != null ? data.trumpClaimPlayer : null,
     revealedHands: null,
@@ -10281,6 +10332,7 @@ function playTrumpStampFx(el) {
 // ========== Rendering ==========
 function renderUI() {
   try { renderTopNestPeek(); } catch (e) {}
+  try { renderWidowSpread(); } catch (e) {}
 
   if (!game) return;
   if (horExpOn('renderOptimization')) {
@@ -12061,6 +12113,7 @@ function hostDealPerfectHand() {
   }
   game.nest = rest.slice();
   game.hands.forEach(h => sortCardsDisplay(h));
+  try { freezeTopNestCard(); } catch (e) { game.topNestCard = null; }
   knownVoids = [{}, {}, {}, {}];
   lastTurnIndex = -1;
   window._turnOppKey = '';

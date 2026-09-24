@@ -12668,3 +12668,50 @@ body.nest-on-felt #trickArea .trick-caption {
 .table-nest-flip-face {
   background-color: #f4ead2 !important;
 }
+
+body.nest-on-felt .seat-avatar-img,
+body.nest-on-felt .wait-seat-av,
+body.nest-on-felt .player-slot.is-turn .seat-avatar {
+  animation: none !important;
+  transform: none !important;
+}
+
+.widow-spread {
+  position: relative;
+  z-index: 26;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.18rem;
+  margin: 0.1rem 0 0.15rem;
+  max-width: min(92%, 17rem);
+  pointer-events: none;
+}
+.widow-spread.hidden { display: none !important; }
+.widow-spread-label {
+  font-size: 0.62rem;
+  font-weight: 800;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: #f0d56a;
+  text-shadow: 0 1px 2px #000;
+}
+.widow-spread-row {
+  display: flex;
+  flex-wrap: nowrap;
+  justify-content: center;
+  gap: 0.18rem;
+}
+.widow-spread .widow-card {
+  width: 32px;
+  height: 44px;
+  min-width: 32px;
+  font-size: 0.52rem;
+  border-radius: 4px;
+  box-shadow: 0 2px 6px rgba(0,0,0,.45);
+  flex: 0 0 auto;
+}
+.widow-spread .widow-card .c-rank { font-size: 0.52rem; }
+@media (max-width: 360px) {
+  .widow-spread .widow-card { width: 28px; height: 40px; }
+}
