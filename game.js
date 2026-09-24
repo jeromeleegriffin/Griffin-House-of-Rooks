@@ -7,7 +7,7 @@
 // It's exchanged during the join handshake so a stale host or joiner (e.g.
 // one still running old cached JS) gets caught and auto-updated instead of
 // silently failing or behaving unpredictably against a mismatched peer.
-const APP_VERSION = '401';
+const APP_VERSION = '402';
 
 function horThisIndex() {
   try {
@@ -2327,6 +2327,7 @@ function runDealPresentation(fullHand, onDone) {
         game.myHand = hand.slice();
         try { sortMyHandInPlace(); } catch (e) {}
         try { renderHand(false); } catch (e) {}
+        try { scheduleTopNestFlip(); } catch (e) {}
         if (typeof onDone === 'function') onDone();
         return;
       }
@@ -5376,18 +5377,18 @@ function renderTopNestPeek() {
     return;
   }
   const face = (revealTopNest) ? (game.topNestCard || (game.nest && game.nest[0]) || null) : null;
-  const flipKey = (game && (game.handNumber || 0)) + ':' + (face && face.id) + ':' + (game.phase || '');
-  const already = window._horNestFlipKey === flipKey;
+  const showFace = !!(face && game && game.nestFlipStage);
+  const flipped = !!(game && game.nestFlipped);
   el.classList.remove('hidden');
-  const backs = Math.max(0, n - 1);
+  const backs = Math.max(0, n - (showFace ? 1 : 0));
   let html = '<div class="table-nest-pile" aria-label="Nest">';
   for (let i = 0; i < backs; i++) {
     html += '<div class="card-back table-nest-under" style="--nest-i:' + i + '"></div>';
   }
-  if (face) {
+  if (showFace) {
     const cls = (typeof cardClass === 'function') ? cardClass(face) : '';
     const inner = (typeof cardInnerHTML === 'function') ? cardInnerHTML(face) : ((face.rank || face.id) || '?');
-    html += '<div class="table-nest-flip' + (already ? ' is-flipped' : '') + '">'
+    html += '<div class="table-nest-flip' + (flipped ? ' is-flipped is-hop' : '') + '">'
       + '<div class="table-nest-flip-inner">'
       + '<div class="card-back table-nest-flip-back"></div>'
       + '<div class="card-face ' + cls + ' small table-nest-flip-face">' + inner + '</div>'
@@ -5397,16 +5398,31 @@ function renderTopNestPeek() {
   }
   html += '<span class="table-nest-caption">Nest</span></div>';
   el.innerHTML = html;
-  if (face && !already) {
-    window._horNestFlipKey = flipKey;
+}
+
+function scheduleTopNestFlip() {
+  if (!revealTopNest) return;
+  if (!game) return;
+  const tok = (window._horNestFlipTok = (window._horNestFlipTok || 0) + 1);
+  game.nestFlipStage = 0;
+  game.nestFlipped = false;
+  try { renderTopNestPeek(); } catch (e) {}
+  setTimeout(() => {
+    if (tok !== window._horNestFlipTok) return;
+    if (!game || (game.phase !== 'bidding' && game.phase !== 'dealing')) return;
+    game.nestFlipStage = 1;
+    try { renderTopNestPeek(); } catch (e) {}
     requestAnimationFrame(() => {
+      const flip = document.querySelector('#nestArea .table-nest-flip');
+      if (!flip) return;
+      flip.classList.add('is-hop');
       requestAnimationFrame(() => {
-        const flip = el.querySelector('.table-nest-flip');
-        if (flip) flip.classList.add('is-flipped');
+        flip.classList.add('is-flipped');
         try { playSfx('card'); } catch (e) {}
+        if (game) game.nestFlipped = true;
       });
     });
-  }
+  }, 1500);
 }
 
 
