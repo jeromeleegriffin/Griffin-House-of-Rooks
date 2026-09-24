@@ -7,7 +7,7 @@
 // It's exchanged during the join handshake so a stale host or joiner (e.g.
 // one still running old cached JS) gets caught and auto-updated instead of
 // silently failing or behaving unpredictably against a mismatched peer.
-const APP_VERSION = '404';
+const APP_VERSION = '406';
 
 function horThisIndex() {
   try {
@@ -155,6 +155,123 @@ function mergeLifetimeStats(winnerLabel) {
     saveLifetimeStats(store);
   } catch (e) {}
 }
+
+const HUMAN_STYLE_MIN_HANDS = 8;
+function playMemoryKey() { return 'horPlayMemory'; }
+function loadPlayMemoryStore() {
+  try { return JSON.parse(localStorage.getItem(playMemoryKey()) || '{}') || {}; } catch (e) { return {}; }
+}
+function savePlayMemoryStore(obj) {
+  try { localStorage.setItem(playMemoryKey(), JSON.stringify(obj)); } catch (e) {}
+}
+function playMemoryNameKey(name) {
+  return String(name || '').trim().toLowerCase() || '__device__';
+}
+function blankPlayMemory(name) {
+  return {
+    name: name || 'You',
+    hands: 0, bids: 0, passes: 0, wonBids: 0, made: 0, sets: 0,
+    highBids: 0, thinBids: 0, moons: 0, points: 0,
+    style: 'newPlayer', updatedAt: Date.now()
+  };
+}
+function getPlayMemory(name) {
+  const store = loadPlayMemoryStore();
+  const k = playMemoryNameKey(name);
+  return store[k] || blankPlayMemory(name);
+}
+function putPlayMemory(name, mem) {
+  const store = loadPlayMemoryStore();
+  const k = playMemoryNameKey(name);
+  mem = mem || blankPlayMemory(name);
+  mem.updatedAt = Date.now();
+  store[k] = mem;
+  savePlayMemoryStore(store);
+  return mem;
+}
+function inferHumanStyle(mem) {
+  const hands = mem.hands || 0;
+  if (hands < HUMAN_STYLE_MIN_HANDS) {
+    return { style: 'newPlayer', title: 'New player', habit: 'New player', how: 'Not enough hands yet to read a habit.' };
+  }
+  const bidRate = (mem.bids || 0) / hands;
+  const passRate = (mem.passes || 0) / hands;
+  const moonRate = (mem.moons || 0) / hands;
+  const thinRate = (mem.thinBids || 0) / Math.max(1, mem.wonBids || 0);
+  const highRate = (mem.highBids || 0) / Math.max(1, mem.wonBids || 0);
+  const setRate = (mem.sets || 0) / Math.max(1, mem.wonBids || 0);
+  let style = 'scoreHawk';
+  if (moonRate >= 0.12) style = 'moonDreamer';
+  else if (thinRate >= 0.45 && (mem.wonBids || 0) >= 3) style = 'widowFiend';
+  else if (highRate >= 0.4) style = 'aggressive';
+  else if (setRate >= 0.45 && (mem.wonBids || 0) >= 3) style = 'setDog';
+  else if (passRate >= 0.55 && bidRate <= 0.35) style = 'safe';
+  else if (bidRate >= 0.7) style = 'bidHappy';
+  else if ((mem.made || 0) > (mem.sets || 0) * 1.4) style = 'partnerFirst';
+  const title = (style === 'newPlayer') ? 'New player' : ((typeof STYLE_TITLES !== 'undefined' && STYLE_TITLES[style]) || style);
+  const habit = (typeof STYLE_HABIT !== 'undefined' && STYLE_HABIT[style]) || title;
+  const how = (typeof STYLE_HOWTO !== 'undefined' && STYLE_HOWTO[style]) || ('Read from ' + hands + ' hands on this device.');
+  return { style, title, habit, how };
+}
+function refreshHumanPersona(p) {
+  if (!p || p.isBot) return p;
+  const mem = getPlayMemory(p.name);
+  const inf = inferHumanStyle(mem);
+  p.humanHands = mem.hands || 0;
+  p.humanStyle = inf.style;
+  p.humanHabit = inf.habit;
+  p.humanHow = inf.how;
+  p.humanTitle = inf.title;
+  return p;
+}
+function noteHumanAuction(idx, kind, value) {
+  try {
+    const p = players[idx];
+    if (!p || p.isBot) return;
+    const mem = getPlayMemory(p.name);
+    if (kind === 'pass') mem.passes = (mem.passes || 0) + 1;
+    if (kind === 'bid') {
+      mem.bids = (mem.bids || 0) + 1;
+      if (value && value >= 130) mem.highBids = (mem.highBids || 0) + 1;
+      if (value && value <= 110) mem.thinBids = (mem.thinBids || 0) + 1;
+      if (value && typeof maxBid === 'function' && value >= maxBid()) mem.moons = (mem.moons || 0) + 1;
+    }
+    putPlayMemory(p.name, mem);
+    refreshHumanPersona(p);
+  } catch (e) {}
+}
+function noteHumanHandEnd() {
+  try {
+    for (let i = 0; i < 4; i++) {
+      const p = players[i];
+      if (!p || p.isBot) continue;
+      const mem = getPlayMemory(p.name);
+      mem.hands = (mem.hands || 0) + 1;
+      if (game && game.bidder === i) {
+        mem.wonBids = (mem.wonBids || 0) + 1;
+        const made = !!(game && game.lastMade);
+        // lastMade may not exist; infer from summary later if needed
+      }
+      putPlayMemory(p.name, mem);
+      refreshHumanPersona(p);
+    }
+  } catch (e) {}
+}
+function humanPersonaCard(name) {
+  const p = (players || []).find(x => x && !x.isBot && x.name === name);
+  const mem = getPlayMemory(name);
+  const inf = inferHumanStyle(mem);
+  return {
+    name: name,
+    style: inf.style,
+    blurb: inf.how,
+    habit: inf.habit,
+    title: inf.title,
+    hands: mem.hands || 0,
+    isHuman: true
+  };
+}
+
 const AVATARS = [
   'rookling','fox','badger','owl','cardshark','greenie','bluejay','grumpy','goldfinch',
   'jackal','wolf','raven','lynx','cobra','stag',
@@ -2764,6 +2881,7 @@ function updateWelcomeSeats() {
     const el = $('welcomeSeat' + s);
     if (!el) continue;
     const p = playerAtSeat(s);
+    if (p && !p.isBot) try { refreshHumanPersona(p); } catch (e) {}
     el.classList.toggle('occupied', !!p);
     el.classList.toggle('is-me', !!(p && p.id === myPeerId));
     el.classList.toggle('is-bot', !!(p && p.isBot));
@@ -4884,7 +5002,12 @@ function publicPlayersSnapshot() {
     bank: p.bank || 0,
     avatar: p.avatar || playerAvatars[p.id] || '',
     botStyle: p.botStyle || '',
-    isTempBot: !!p.isTempBot
+    isTempBot: !!p.isTempBot,
+    humanStyle: p.humanStyle || '',
+    humanTitle: p.humanTitle || '',
+    humanHabit: p.humanHabit || '',
+    humanHow: p.humanHow || '',
+    humanHands: p.humanHands || 0
   }));
 }
 
@@ -4892,6 +5015,7 @@ function applyPlayersSnapshot(list) {
   players = ensurePlayerSeats(Array.isArray(list) ? list.map((p) => Object.assign({}, p)) : []);
   players.forEach((p) => {
     if (p && p.id && p.avatar) playerAvatars[p.id] = p.avatar;
+    if (p && !p.isBot) refreshHumanPersona(p);
   });
 }
 function balanceTeams() {
@@ -4976,6 +5100,7 @@ const BOT_PERSONAS = [
   { name: 'Harrier', style: 'antiMoon', avatar: 'harrier', blurb: 'Will not climb near 200.' },
 ];
 const STYLE_TITLES = {
+  newPlayer: 'New player',
   safe: 'Safe',
   aggressive: 'Aggressive',
   tricky: 'Tricky',
@@ -5021,6 +5146,7 @@ const STYLE_TITLES = {
   lastBidder: 'Last bidder',
 };
 const STYLE_HABIT = {
+  newPlayer: 'New player',
   safe: 'tight auction',
   aggressive: 'opens more 100s',
   tricky: 'off-speed leads',
@@ -5066,6 +5192,7 @@ const STYLE_HABIT = {
   lastBidder: 'waits to speak last',
 };
 const STYLE_HOWTO = {
+  newPlayer: 'Not enough hands yet to read a habit.',
   safe: 'Shy auction. Leads low. Only fights fat tricks.',
   aggressive: 'Climbs the bid. Leads strong. Takes the trick.',
   tricky: 'Odd mid leads. Sometimes snaps. Feeds partner last.',
@@ -5129,9 +5256,15 @@ function showBotStyleTip(name, ev) {
   if (ev) { ev.preventDefault(); ev.stopPropagation(); }
   const tip = $('botStyleTip');
   if (!tip) return;
-  const p = personaByName(name);
+  let p = personaByName(name);
+  if (!p) {
+    const hp = humanPersonaCard(name);
+    p = { name: hp.name, style: hp.style, blurb: hp.how };
+  }
   if (!p) return;
-  tip.innerHTML = botHowToHTML(p);
+  const extra = (!personaByName(name) && humanPersonaCard(name).hands < HUMAN_STYLE_MIN_HANDS)
+    ? '<span>New player</span>' : '';
+  tip.innerHTML = botHowToHTML(p) + extra;
   tip.classList.remove('hidden');
   const x = ev && ev.clientX ? ev.clientX : 24;
   const y = ev && ev.clientY ? ev.clientY : 24;
@@ -5139,12 +5272,12 @@ function showBotStyleTip(name, ev) {
   tip.style.top = Math.max(8, y + 12) + 'px';
 }
 function botNameAttr(p) {
-  if (!p || !p.isBot || !p.name) return '';
+  if (!p || !p.name) return '';
   return ' data-botname="' + escapeHtmlSafe(p.name) + '"';
 }
 function applyBotNameAttr(el, p) {
   if (!el) return;
-  if (p && p.isBot && p.name) el.setAttribute('data-botname', p.name);
+  if (p && p.name) el.setAttribute('data-botname', p.name);
   else el.removeAttribute('data-botname');
 }
 
@@ -5374,12 +5507,14 @@ function renderTopNestPeek() {
   if (!phaseOk || n < 1) {
     el.classList.add('hidden');
     el.innerHTML = '';
+    try { document.body.classList.remove('nest-on-felt'); } catch (e) {}
     return;
   }
   const face = (revealTopNest) ? (game.topNestCard || (game.nest && game.nest[0]) || null) : null;
   const showFace = !!(face && game && game.nestFlipStage);
   const flipped = !!(game && game.nestFlipped);
   el.classList.remove('hidden');
+  try { document.body.classList.add('nest-on-felt'); } catch (e) {}
   const backs = Math.max(0, n - (showFace ? 1 : 0));
   let html = '<div class="table-nest-pile" aria-label="Nest">';
   for (let i = 0; i < backs; i++) {
@@ -5423,7 +5558,7 @@ function scheduleTopNestFlip() {
         setTimeout(() => { try { flip.classList.remove('is-hop'); } catch (e) {} }, 1100);
       });
     });
-  }, 3000);
+  }, 5000);
 }
 
 
@@ -5436,6 +5571,7 @@ function updateWaitingUI() {
     const el = $('waitSeat' + s);
     if (!el) continue;
     const p = playerAtSeat(s);
+    if (p && !p.isBot) try { refreshHumanPersona(p); } catch (e) {}
     el.classList.toggle('occupied', !!p);
     el.classList.toggle('is-me', !!(p && p.id === myPeerId));
     el.classList.toggle('is-bot', !!(p && p.isBot));
@@ -6639,6 +6775,7 @@ function hostProcessBid(data) {
     broadcast({ type: 'message', text: passMsg });
     try { playSfx('pass', { broadcastNet: true }); } catch (e) {}
     try { botMaybeTableTalk('pass', { name: pname, prefer: data.player }); } catch (e) {}
+    try { noteHumanAuction(data.player, 'pass', 0); } catch (e) {}
 
     // Only high bidder left active, or everyone else passed → end auction
     const activeLeft = game.bidStatus.filter(s => s !== 'pass').length;
@@ -6684,6 +6821,7 @@ function hostProcessBid(data) {
     broadcast({ type: 'message', text: bidMsg });
     try { playSfx('bid', { broadcastNet: true }); } catch (e) {}
     try { botMaybeTableTalk('bid', { name: pname, prefer: data.player }); } catch (e) {}
+    try { noteHumanAuction(data.player, 'bid', data.value); } catch (e) {}
     if (game.shotTheMoon) {
       finishBidding();
       return;
@@ -8855,6 +8993,21 @@ function hostEndHand() {
   }
   try {
     for (let i = 0; i < 4; i++) { if (players[i]) ps(i).hands++; }
+    try {
+      for (let i = 0; i < 4; i++) {
+        const hp = players[i];
+        if (!hp || hp.isBot) continue;
+        const mem = getPlayMemory(hp.name);
+        mem.hands = (mem.hands || 0) + 1;
+        if (game.bidder === i) {
+          mem.wonBids = (mem.wonBids || 0) + 1;
+          if (made) mem.made = (mem.made || 0) + 1;
+          else mem.sets = (mem.sets || 0) + 1;
+        }
+        putPlayMemory(hp.name, mem);
+        refreshHumanPersona(hp);
+      }
+    } catch (e) {}
     const bStat = ps(game.bidder);
     if (made) bStat.bidsMade++; else bStat.bidsSet++;
     if (game.shotTheMoon) {

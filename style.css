@@ -12552,11 +12552,12 @@ body #waiting .waiting-actions #startBtn.btn.primary.table-ready,
   align-items: center;
   justify-content: center;
   pointer-events: none;
-  z-index: 3;
+  z-index: 80;
   min-height: 72px;
   position: relative;
   top: -25%;
   transform: none;
+  isolation: isolate;
 }
 #nestArea.nest.hidden { display: none !important; }
 .table-nest-pile {
@@ -12589,7 +12590,7 @@ body #waiting .waiting-actions #startBtn.btn.primary.table-ready,
   width: 48px;
   height: 68px;
   transform-style: preserve-3d;
-  transition: transform 1.8s cubic-bezier(.22,.62,.18,1);
+  transition: transform 2.8s cubic-bezier(.22,.62,.18,1);
 }
 .table-nest-flip.is-flipped .table-nest-flip-inner {
   transform: rotateY(180deg);
@@ -12636,4 +12637,21 @@ body #waiting .waiting-actions #startBtn.btn.primary.table-ready,
 @media (prefers-reduced-motion: reduce) {
   .table-nest-flip-inner { transition: none; }
   .table-nest-flip.is-hop { animation: none; }
+}
+
+body.nest-on-felt .trick-caption,
+body.nest-on-felt .trick-count,
+body.nest-on-felt #trickArea .trick-caption {
+  visibility: hidden !important;
+  opacity: 0 !important;
+}
+.table-nest-under,
+.table-nest-top,
+.table-nest-flip-back,
+.table-nest-flip-face {
+  background-color: #140e08 !important;
+  box-shadow: 0 2px 8px rgba(0,0,0,.55);
+}
+.table-nest-flip-face {
+  background-color: #f4ead2 !important;
 }
