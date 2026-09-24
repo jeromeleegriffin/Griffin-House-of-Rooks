@@ -7,7 +7,7 @@
 // It's exchanged during the join handshake so a stale host or joiner (e.g.
 // one still running old cached JS) gets caught and auto-updated instead of
 // silently failing or behaving unpredictably against a mismatched peer.
-const APP_VERSION = '419';
+const APP_VERSION = '421';
 
 function horThisIndex() {
   try {
@@ -2159,6 +2159,10 @@ function playShuffleSound() {
 /** Short pre-auction tip so everyone knows how bidding works */
 let biddingIntroTimer = null;
 function showBiddingIntro(onDone, minBidOverride) {
+  if (typeof nestAuctionLocked === 'function' && nestAuctionLocked()) {
+    window._horPendingBidIntro = { onDone, minBidOverride };
+    return;
+  }
   const min = minBidOverride != null ? minBidOverride : (minBid || 100);
   let el = $('biddingIntro');
   if (!el) {
@@ -3375,6 +3379,13 @@ function createRoom() {
     myPeerId = id;
     if (window._horHandoffSnapshot) {
       try { finishHostHandoff(id); } catch (e) { console.error(e); }
+      return;
+    }
+    if (typeof horClientIsPlaying === 'function' && horClientIsPlaying()) {
+      horDebugLog('HOST: peer re-open during live hand — keep table');
+      return;
+    }
+    if (game && game.phase && !['lobby','waiting',''].includes(game.phase)) {
       return;
     }
     players = [{ id, name: myName, team: 0, isHost: true, isBot: false, seat: 0, bank: loadMyBank() }];
@@ -5618,33 +5629,23 @@ function renderTopNestPeek() {
     face = freezeTopNestCard();
   }
   const showFace = !!(face && game && game.nestFlipStage);
-  const flipped = !!(game && game.nestFlipped);
+  const faceUp = !!(game && (game.nestFlipped || game.nestFlipStage >= 2));
   el.classList.remove('hidden');
   try { document.body.classList.add('nest-on-felt'); } catch (e) {}
-  const sig = nestPileSignature();
-  const flipEl = el.querySelector('.table-nest-flip');
-  if (window._horNestPileSig === sig && el.querySelector('.table-nest-pile')) {
-    if (flipEl) {
-      flipEl.classList.toggle('is-flipped', flipped);
-    }
-    return;
-  }
+  const sig = nestPileSignature() + ':' + (faceUp ? 'up' : 'dn');
+  if (window._horNestPileSig === sig && el.querySelector('.table-nest-pile')) return;
   window._horNestPileSig = sig;
-  const backs = Math.max(0, n - (showFace ? 1 : 0));
+  const backs = Math.max(0, n - 1);
   let html = '<div class="table-nest-pile" aria-label="Nest">';
   for (let i = 0; i < backs; i++) {
     html += '<div class="card-back table-nest-under" style="--nest-i:' + i + '"></div>';
   }
-  if (showFace) {
+  if (showFace && faceUp) {
     const cls = (typeof cardClass === 'function') ? cardClass(face) : '';
     const inner = (typeof cardInnerHTML === 'function') ? cardInnerHTML(face) : ((face.rank || face.id) || '?');
-    html += '<div class="table-nest-flip' + (flipped ? ' is-flipped' : '') + '">'
-      + '<div class="table-nest-flip-inner">'
-      + '<div class="card-back table-nest-flip-back"></div>'
-      + '<div class="card-face ' + cls + ' small table-nest-flip-face">' + inner + '</div>'
-      + '</div></div>';
+    html += '<div class="card-face ' + cls + ' small nest-face-up">' + inner + '</div>';
   } else {
-    html += '<div class="card-back table-nest-top"></div>';
+    html += '<div class="card-back table-nest-top' + (showFace ? ' is-turning' : '') + '"></div>';
   }
   const cap = (showFace && face)
     ? ('Nest · ' + (face.color === 'rook' ? 'Rook' : ((face.color || '') + ' ' + (face.rank || ''))))
@@ -5704,8 +5705,9 @@ function scheduleTopNestFlip() {
         flip.classList.add('is-turning');
         try { playNestRevealSequence(); } catch (e) {}
         setTimeout(() => {
-          flip.classList.add('is-face');
-          flip.classList.add('is-flipped');
+          if (game) game.nestFlipStage = 2;
+          window._horNestPileSig = '';
+          try { renderTopNestPeek(); } catch (e) {}
         }, 1400);
         setTimeout(() => {
           if (game) game.nestFlipped = true;
@@ -5715,8 +5717,16 @@ function scheduleTopNestFlip() {
           if (tok !== window._horNestFlipTok) return;
           if (game) game.nestAuctionOpen = true;
           try { broadcastState(); } catch (e) {}
-          try { if (isHost) hostPromptBid(); } catch (e) {}
-          try { if (!isHost && game.phase === 'bidding' && game.currentPlayer === myIndex) showBidUI(); } catch (e) {}
+          try {
+            if (isHost) {
+              showBiddingIntro(() => {
+                try { hostPromptBid(); } catch (e) {}
+              });
+              broadcast({ type: 'biddingIntro', minBid: minBid || 100 });
+            } else if (game.phase === 'bidding' && game.currentPlayer === myIndex) {
+              showBidUI();
+            }
+          } catch (e) {}
         }, 2900);
       });
     });
@@ -6443,7 +6453,7 @@ function hostDealNow() {
     game.myHand = (game.hands[myIndex] || []).map(c => ({ ...c }));
     try { renderTopNestPeek(); } catch (e) {}
     broadcastState();
-    // Brief “how bidding works” tip, then open the auction
+    if (revealTopNest) return;
     try {
       showBiddingIntro(() => {
         try { hostPromptBid(); } catch (e) { console.error(e); }

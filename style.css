@@ -12727,3 +12727,14 @@ body.nest-on-felt .player-slot.is-turn .seat-avatar {
 @media (max-width: 360px) {
   .widow-spread .widow-card { width: 28px; height: 40px; }
 }
+
+.nest-face-up {
+  position: absolute;
+  left: 6px;
+  top: -6px;
+  width: 48px;
+  height: 68px;
+  z-index: 8;
+  background-image: none !important;
+  box-shadow: 0 4px 12px rgba(0,0,0,.45);
+}
