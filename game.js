@@ -7,7 +7,7 @@
 // It's exchanged during the join handshake so a stale host or joiner (e.g.
 // one still running old cached JS) gets caught and auto-updated instead of
 // silently failing or behaving unpredictably against a mismatched peer.
-const APP_VERSION = '415';
+const APP_VERSION = '416';
 
 function horThisIndex() {
   try {
@@ -2337,38 +2337,48 @@ function detectSpecialCaptures(trick, winnerPlay) {
 /** Short single-card deal snap */
 
 /** Nest reveal — paper whoosh, lift chime, slap when the face lands */
-function playNestFlipSound() {
+function playNestRevealSequence() {
   if (soundMuted || !soundCard) return;
   const ctx = ensureAudio();
   if (!ctx) return;
   const t = ctx.currentTime;
-  const noiseLen = Math.floor(ctx.sampleRate * 0.45);
+  // Whoosh as the card lifts
+  const noiseLen = Math.floor(ctx.sampleRate * 0.38);
   const buf = ctx.createBuffer(1, noiseLen, ctx.sampleRate);
   const data = buf.getChannelData(0);
   for (let i = 0; i < noiseLen; i++) {
-    data[i] = (Math.random() * 2 - 1) * Math.exp(-i / (noiseLen * 0.38));
+    data[i] = (Math.random() * 2 - 1) * Math.exp(-i / (noiseLen * 0.4));
   }
   const whoosh = ctx.createBufferSource();
   whoosh.buffer = buf;
   const bp = ctx.createBiquadFilter();
   bp.type = 'bandpass';
-  bp.Q.value = 0.7;
-  bp.frequency.setValueAtTime(500, t);
-  bp.frequency.exponentialRampToValueAtTime(2400, t + 0.28);
+  bp.Q.value = 0.65;
+  bp.frequency.setValueAtTime(420, t);
+  bp.frequency.exponentialRampToValueAtTime(1800, t + 0.32);
   const wg = ctx.createGain();
   wg.gain.setValueAtTime(0.0001, t);
-  wg.gain.exponentialRampToValueAtTime(0.08, t + 0.08);
-  wg.gain.exponentialRampToValueAtTime(0.001, t + 0.55);
+  wg.gain.exponentialRampToValueAtTime(0.07, t + 0.06);
+  wg.gain.exponentialRampToValueAtTime(0.001, t + 0.42);
   whoosh.connect(bp); bp.connect(wg); wg.connect(ctx.destination);
-  whoosh.start(t); whoosh.stop(t + 0.55);
-}
+  whoosh.start(t); whoosh.stop(t + 0.44);
 
-function playNestLandSound() {
-  if (soundMuted || !soundCard) return;
-  const ctx = ensureAudio();
-  if (!ctx) return;
-  const t = ctx.currentTime;
-  const slapSize = Math.floor(ctx.sampleRate * 0.06);
+  // Soft edge tick when the card is on its side (~half flip)
+  const edge = t + 1.32;
+  const tick = ctx.createOscillator();
+  const tg = ctx.createGain();
+  tick.type = 'sine';
+  tick.frequency.setValueAtTime(520, edge);
+  tick.frequency.exponentialRampToValueAtTime(240, edge + 0.05);
+  tg.gain.setValueAtTime(0.0001, edge);
+  tg.gain.exponentialRampToValueAtTime(0.05, edge + 0.012);
+  tg.gain.exponentialRampToValueAtTime(0.001, edge + 0.07);
+  tick.connect(tg); tg.connect(ctx.destination);
+  tick.start(edge); tick.stop(edge + 0.08);
+
+  // Slap when the face lands (matches 2.8s flip ease)
+  const land = t + 2.42;
+  const slapSize = Math.floor(ctx.sampleRate * 0.055);
   const slapBuf = ctx.createBuffer(1, slapSize, ctx.sampleRate);
   const sd = slapBuf.getChannelData(0);
   for (let i = 0; i < slapSize; i++) sd[i] = (Math.random() * 2 - 1) * Math.exp(-i / (slapSize * 0.22));
@@ -2376,23 +2386,26 @@ function playNestLandSound() {
   slap.buffer = slapBuf;
   const sbp = ctx.createBiquadFilter();
   sbp.type = 'bandpass';
-  sbp.frequency.value = 900;
-  sbp.Q.value = 0.9;
+  sbp.frequency.value = 880;
+  sbp.Q.value = 0.85;
   const sg = ctx.createGain();
-  sg.gain.setValueAtTime(0.32, t);
-  sg.gain.exponentialRampToValueAtTime(0.01, t + 0.11);
+  sg.gain.setValueAtTime(0.0001, land);
+  sg.gain.exponentialRampToValueAtTime(0.3, land + 0.008);
+  sg.gain.exponentialRampToValueAtTime(0.01, land + 0.1);
   slap.connect(sbp); sbp.connect(sg); sg.connect(ctx.destination);
-  slap.start(t); slap.stop(t + 0.12);
-  const osc = ctx.createOscillator();
+  slap.start(land); slap.stop(land + 0.11);
+  const thump = ctx.createOscillator();
   const og = ctx.createGain();
-  osc.type = 'sine';
-  osc.frequency.setValueAtTime(160, t);
-  osc.frequency.exponentialRampToValueAtTime(70, t + 0.08);
-  og.gain.setValueAtTime(0.16, t);
-  og.gain.exponentialRampToValueAtTime(0.01, t + 0.1);
-  osc.connect(og); og.connect(ctx.destination);
-  osc.start(t); osc.stop(t + 0.11);
+  thump.type = 'sine';
+  thump.frequency.setValueAtTime(150, land);
+  thump.frequency.exponentialRampToValueAtTime(64, land + 0.09);
+  og.gain.setValueAtTime(0.18, land);
+  og.gain.exponentialRampToValueAtTime(0.01, land + 0.1);
+  thump.connect(og); og.connect(ctx.destination);
+  thump.start(land); thump.stop(land + 0.11);
 }
+function playNestFlipSound() { playNestRevealSequence(); }
+function playNestLandSound() { /* land is part of playNestRevealSequence */ }
 
 function playDealCardSound() {
   if (soundMuted || !soundCard) return;
@@ -5678,9 +5691,8 @@ function scheduleTopNestFlip() {
       flip.classList.add('is-reveal');
       requestAnimationFrame(() => {
         flip.classList.add('is-flipped');
-        try { playSfx('nestFlip'); } catch (e) {}
+        try { playNestRevealSequence(); } catch (e) {}
         setTimeout(() => {
-          try { playSfx('nestLand'); } catch (e) {}
           if (game) game.nestFlipped = true;
           try { flip.classList.remove('is-reveal'); } catch (e) {}
         }, 2800);
