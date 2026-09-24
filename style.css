@@ -12555,8 +12555,8 @@ body #waiting .waiting-actions #startBtn.btn.primary.table-ready,
   z-index: 3;
   min-height: 72px;
   position: relative;
-  top: -50%;
-  transform: translateY(-18px);
+  top: -25%;
+  transform: none;
 }
 #nestArea.nest.hidden { display: none !important; }
 .table-nest-pile {
@@ -12589,19 +12589,22 @@ body #waiting .waiting-actions #startBtn.btn.primary.table-ready,
   width: 48px;
   height: 68px;
   transform-style: preserve-3d;
-  transition: transform 1.15s cubic-bezier(.22,.7,.2,1);
+  transition: transform 1.8s cubic-bezier(.22,.62,.18,1);
 }
 .table-nest-flip.is-flipped .table-nest-flip-inner {
   transform: rotateY(180deg);
 }
 .table-nest-flip.is-hop {
-  animation: nestHop 0.85s ease-out;
+  animation: nestHop 1.05s ease-out 1;
 }
 @keyframes nestHop {
   0%   { transform: translateY(0); }
-  22%  { transform: translateY(-18px); }
-  48%  { transform: translateY(-6px); }
-  70%  { transform: translateY(-12px); }
+  10%  { transform: translateY(-16px); }
+  20%  { transform: translateY(0); }
+  32%  { transform: translateY(-12px); }
+  44%  { transform: translateY(0); }
+  54%  { transform: translateY(-8px); }
+  66%  { transform: translateY(0); }
   100% { transform: translateY(0); }
 }
 .table-nest-flip-back,
