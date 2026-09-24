@@ -22,6 +22,7 @@ function playNestRevealSequence() {
   whenAudioReady(function (ctx) {
     if (_horPlayNestRevealSequenceOrig) {
       try { _horPlayNestRevealSequenceOrig(); } catch (e) {}
+      return;
     }
   });
 }
@@ -41,7 +42,10 @@ const _horNotifyYourTurnOrig = (typeof notifyYourTurn === 'function') ? notifyYo
 function notifyYourTurn() {
   turnFlashUntil = 0;
   if (_horNotifyYourTurnOrig) {
-    try { _horNotifyYourTurnOrig(); } catch (e) {}
+    const prevPulse = pulseTurnFlash;
+    try {
+      _horNotifyYourTurnOrig();
+    } catch (e) {}
     try {
       document.querySelectorAll('.turn-name-flash, .turn-flash-seat, .turn-msg-flash, .lt-turn-flash, .lt-turn-flash-label').forEach((el) => {
         el.classList.remove('turn-name-flash', 'turn-flash-seat', 'turn-msg-flash', 'lt-turn-flash', 'lt-turn-flash-label');
@@ -49,6 +53,7 @@ function notifyYourTurn() {
       const theater = document.getElementById('landscapeTheater');
       if (theater) theater.classList.remove('lt-your-turn');
     } catch (e) {}
+    return;
   }
 }
 

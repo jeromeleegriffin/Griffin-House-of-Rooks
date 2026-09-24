@@ -105,6 +105,8 @@ self.addEventListener('fetch', (e) => {
   const url = new URL(e.request.url);
   if (url.origin !== location.origin) return;
 
+  // Never let Safari boot an old cached game shell/code when online.
+  // Network-first for the app's HTML/JS/CSS; cache is only an offline fallback.
   const path = url.pathname;
   const isAppAsset = /\.(html|js|css)$/.test(path) || path.endsWith('/');
   const forceFresh = url.searchParams.has('fresh') || url.searchParams.has('v');
