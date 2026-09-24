@@ -7,7 +7,7 @@
 // It's exchanged during the join handshake so a stale host or joiner (e.g.
 // one still running old cached JS) gets caught and auto-updated instead of
 // silently failing or behaving unpredictably against a mismatched peer.
-const APP_VERSION = '435';
+const APP_VERSION = '436';
 
 function horThisIndex() {
   try {
@@ -2812,7 +2812,8 @@ function horHasActiveTable() {
   try { return sessionStorage.getItem('rookActiveTable') === '1'; } catch (e) { return false; }
 }
 function horClientIsPlaying() {
-  return !!(game && game.phase && !['lobby','waiting'].includes(game.phase));
+  if (document.body && document.body.classList.contains('in-game')) return true;
+  return !!(game && game.phase && !['lobby','waiting',''].includes(game.phase));
 }
 
 
@@ -2876,6 +2877,10 @@ function welcomeHowText() {
 }
 
 function showWelcomeScreen(code) {
+  if (horClientIsPlaying() || horHasActiveTable()) {
+    horDebugLog('skip showWelcomeScreen — table is live');
+    return;
+  }
   setLobbyPortraitOrientation();
   try { hideCelePage(); } catch (e) {}
   if (lobby) lobby.classList.add('hidden');
@@ -4527,6 +4532,10 @@ function fadeSeatMugs(hide) {
 }
 
 function showWaiting() {
+  if (horClientIsPlaying() || horHasActiveTable()) {
+    horDebugLog('skip showWaiting — table is live phase=' + (game && game.phase));
+    return;
+  }
   horDebugLog((isHost ? 'HOST' : 'CLIENT') + ': showWaiting() called, myIndex=' + myIndex + ', isSpectator=' + !!isSpectator);
   setLobbyPortraitOrientation();
   try { hideCelePage(); } catch (e) {}
@@ -5896,15 +5905,16 @@ function releaseGameOrientationLock() {
 }
 
 function showGame() {
-  releaseGameOrientationLock();
+  try { horMarkActiveTable(true); } catch (e) {}
+  try { document.body.classList.add('in-game'); document.body.classList.remove('at-table', 'at-welcome'); } catch (e) {}
   hideWelcomeScreen();
-  lobby.classList.add('hidden');
-  waiting.classList.add('hidden');
+  if (lobby) lobby.classList.add('hidden');
+  if (waiting) waiting.classList.add('hidden');
   if (game && game.phase && game.phase !== 'score') {
     try { hideCelePage(); } catch (e) {}
   }
-  gameScreen.classList.remove('hidden');
-  try { document.body.classList.add('in-game'); document.body.classList.remove('at-table'); } catch (e) {}
+  if (gameScreen) gameScreen.classList.remove('hidden');
+  releaseGameOrientationLock();
   setTimeout(syncLandscapeFullscreen, 80);
   try { syncPortraitLast3Button(); } catch (e) {}
   try { requestAnimationFrame(() => { try { positionPortraitLast3Btn(); } catch (e) {} }); } catch (e) {}
@@ -6079,6 +6089,7 @@ function hostStartGame() {
   lastCompletedTrickWinner = null;
   try { hideCelePage(); } catch (e) {}
 
+  try { horMarkActiveTable(true); } catch (e) {}
   game = {
     phase: 'deal',
     dealer: Math.floor(Math.random() * 4),
@@ -10038,6 +10049,12 @@ function requestWaitingRoom() {
 }
 
 function applyReturnToWaiting() {
+  try { horMarkActiveTable(false); } catch (e) {}
+  try { document.body.classList.remove('in-game'); } catch (e) {}
+  if (game) {
+    game.phase = 'waiting';
+    game.paused = false;
+  }
   try { hideCelePage(); } catch (e) {}
   const ov = $('winOverlay');
   if (ov) ov.classList.add('hidden');

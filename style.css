@@ -2236,28 +2236,36 @@ body.modal-open {
   justify-content: flex-start;
 }
 
-/* First hand: no turn/bid glow on seats */
+/* First hand: no turn/bid glow on seats (win over plaque/high-contrast rules) */
 body.hor-first-hand .player-slot.is-turn .name,
-body.hor-first-hand #slot-me.is-turn .name {
+body.hor-first-hand #slot-me.is-turn .name,
+body.hor-first-hand .player-slot.is-turn .name[data-plaque-team],
+body.hor-first-hand #slot-me.is-turn .name[data-plaque-team],
+body.high-contrast.hor-first-hand .player-slot.is-turn .name {
   background: transparent !important;
   box-shadow: none !important;
-  color: inherit !important;
-  font-weight: inherit;
-  padding: 0;
-  border-radius: 0;
+  outline: none !important;
+  filter: none !important;
 }
 body.hor-first-hand .player-slot.is-turn::after,
-body.hor-first-hand #slot-me.is-turn::after {
+body.hor-first-hand #slot-me.is-turn::after,
+body.hor-first-hand .seat-lead-tag,
+body.hor-first-hand .lt-bid-turn,
+body.hor-first-hand .lt-bid-high {
   display: none !important;
 }
 body.hor-first-hand .player-slot.is-turn .seat-avatar,
 body.hor-first-hand .player-slot.is-turn .seat-avatar-img,
-body.hor-first-hand .bid-badge.bid-high {
+body.hor-first-hand .bid-badge.bid-high,
+body.hor-first-hand .lt-bid-seat.to-act,
+body.hor-first-hand .lt-bid-seat.high {
   animation: none !important;
+  box-shadow: none !important;
 }
-body.hor-first-hand .player-slot.is-turn .cards-count {
-  color: inherit;
-  opacity: inherit;
+body.hor-first-hand .lt-bid-seat.to-act,
+body.hor-first-hand .lt-bid-seat.high {
+  outline: none !important;
+  background: transparent !important;
 }
 
 /* Highlight player whose turn it is — tight pill around name/count only */
@@ -12614,7 +12622,7 @@ body #waiting .waiting-actions #startBtn.btn.primary.table-ready,
   width: 48px;
   height: 68px;
   transform-style: preserve-3d;
-  transition: transform 2.8s cubic-bezier(.22,.62,.18,1);
+  transition: transform 1.35s cubic-bezier(.22,.62,.18,1);
 }
 .table-nest-flip-inner {
   transform: rotateY(0deg);
@@ -12685,8 +12693,19 @@ body #waiting .waiting-actions #startBtn.btn.primary.table-ready,
 .table-nest-flip.is-flipped .table-nest-flip-face,
 .table-nest-flip.is-face .table-nest-flip-face {
   opacity: 1;
-  transform: none;
   background-image: none !important;
+}
+#nestArea .nest-stay-face {
+  position: absolute !important;
+  left: 3px !important;
+  top: 0 !important;
+  width: 48px !important;
+  height: 68px !important;
+  z-index: 14 !important;
+  opacity: 1 !important;
+  transform: none !important;
+  -webkit-backface-visibility: visible !important;
+  backface-visibility: visible !important;
 }
 .table-nest-caption {
   position: absolute;
@@ -12767,8 +12786,8 @@ body.nest-on-felt .player-slot.is-turn .seat-avatar {
 
 .nest-face-up {
   position: absolute;
-  left: 6px;
-  top: -6px;
+  left: 0;
+  top: 0;
   width: 48px;
   height: 68px;
   z-index: 8;
@@ -12776,12 +12795,21 @@ body.nest-on-felt .player-slot.is-turn .seat-avatar {
   box-shadow: 0 4px 12px rgba(0,0,0,.45);
 }
 
+#nestArea .table-nest-flip-face.nest-face-up,
+#nestArea .table-nest-flip .nest-face-up {
+  left: 0 !important;
+  top: 0 !important;
+  width: 100% !important;
+  height: 100% !important;
+  z-index: 1;
+}
+
 #nestArea .nest-face-up {
   position: absolute;
-  left: 3px;
-  top: -8px;
-  width: 52px;
-  height: 72px;
+  left: 0;
+  top: 0;
+  width: 48px;
+  height: 68px;
   z-index: 12;
   background: #f4ead2 !important;
   background-image: none !important;
