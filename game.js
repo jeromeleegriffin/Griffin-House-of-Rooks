@@ -7,7 +7,7 @@
 // It's exchanged during the join handshake so a stale host or joiner (e.g.
 // one still running old cached JS) gets caught and auto-updated instead of
 // silently failing or behaving unpredictably against a mismatched peer.
-const APP_VERSION = '449';
+const APP_VERSION = '461';
 
 function horThisIndex() {
   try {
@@ -12886,6 +12886,17 @@ bindClick('leaveReplaceBtn', () => { try { clientLeaveReplace(); } catch (e) { c
   }, { passive: true });
   document.addEventListener('pointerup', cancel, { passive: true });
   document.addEventListener('pointercancel', cancel, { passive: true });
+  // Mobile browsers may treat a long-pressed bot avatar/name as an image/link
+  // and open their native context menu before our persona card can be used.
+  // Suppress that menu only for bot-tagged UI; leave normal page context menus alone.
+  document.addEventListener('contextmenu', (e) => {
+    const tagged = e.target && e.target.closest && e.target.closest('[data-botname]');
+    if (!tagged) return;
+    e.preventDefault();
+    e.stopPropagation();
+    const name = tagged.getAttribute('data-botname') || '';
+    if (name) showBotStyleTip(name, e);
+  }, true);
   document.addEventListener('pointermove', (e) => {
     if (!timer) return;
     if (Math.abs((e.movementX || 0)) + Math.abs((e.movementY || 0)) > 10) cancel();
