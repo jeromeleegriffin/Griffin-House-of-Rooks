@@ -7,7 +7,7 @@
 // It's exchanged during the join handshake so a stale host or joiner (e.g.
 // one still running old cached JS) gets caught and auto-updated instead of
 // silently failing or behaving unpredictably against a mismatched peer.
-const APP_VERSION = '480';
+const APP_VERSION = '481';
 
 function horThisIndex() {
   try {
@@ -140,18 +140,38 @@ function horCareerModeOn(){try{return !!(window.HORProgression&&HORProgression.l
 function horMyCareerProfile(){try{return horCareerModeOn()&&HORProgression.localCareer.publicProfile?HORProgression.localCareer.publicProfile():null;}catch(e){return null;}}
 function horCareerProfileForPlayer(p){
   if(!p)return null;
+
+  // Remote/shared profile wins when it is already attached to this replicated player.
   if(p.careerPublic&&p.careerPublic.enabled)return p.careerPublic;
-  if(p.id===myPeerId&&!p.isBot){
-    const mine=horMyCareerProfile();
-    if(mine&&mine.enabled){p.careerPublic=mine;return mine;}
+
+  // Local human: do not depend on whichever players/game.players snapshot happens to
+  // be current. Resolve directly from the Career service at render time.
+  if(!p.isBot){
+    const isLocal=(p.id&&myPeerId&&p.id===myPeerId)
+      || (Number.isInteger(myIndex) && game && Array.isArray(game.players) && game.players[myIndex]===p)
+      || (Number.isInteger(myIndex) && Array.isArray(players) && players[myIndex]===p);
+    if(isLocal){
+      const mine=horMyCareerProfile();
+      if(mine&&mine.enabled){
+        p.careerPublic=mine;
+        return mine;
+      }
+    }
+    return null;
   }
-  if(p.isBot&&horCareerModeOn()){
+
+  // Bots are owned by the local/host Career ledger. Resolve directly instead of
+  // requiring careerPublic to survive every network/state clone.
+  if(horCareerModeOn()){
     try{
       if(window.HORProgression&&HORProgression.localCareer&&HORProgression.localCareer.botPublicProfile){
         const bp=HORProgression.localCareer.botPublicProfile(p.name);
-        if(bp&&bp.enabled){p.careerPublic=bp;return bp;}
+        if(bp&&bp.enabled){
+          p.careerPublic=bp;
+          return bp;
+        }
       }
-    }catch(e){}
+    }catch(e){console.error('[Career bot profile]',e);}
   }
   return null;
 }
@@ -163,7 +183,16 @@ function horShowCareerForPlayer(p){
 }
 function horCareerBadgeHtml(p){
   const prof=horCareerProfileForPlayer(p);
-  if(!prof||!prof.enabled)return '';
+  if(!prof||!prof.enabled){
+    try{
+      if(horCareerModeOn())console.warn('[Career badge missing profile]',{
+        name:p&&p.name,id:p&&p.id,isBot:!!(p&&p.isBot),myPeerId,myIndex,
+        hasCareerPublic:!!(p&&p.careerPublic),
+        localCareerReady:!!(window.HORProgression&&HORProgression.localCareer)
+      });
+    }catch(e){}
+    return '';
+  }
   const level=Math.max(1,Number(prof.level)||1);
   const who=escapeHtmlSafe(p.id||('bot-'+String(p.name||'bot')));
   return ` <span class="hor-career-badge" role="button" tabindex="0" data-career-peer="${who}" title="View Career: Level ${level}" aria-label="Career level ${level}">★${level}</span>`;
@@ -10690,11 +10719,13 @@ function applyState(data) {
       if (stateMyIndex >= 0) myIndex = stateMyIndex;
     }
     data.players.forEach((sp, i) => {
-      if (typeof sp.bank !== 'number') return;
-      if (players[i] && players[i].id === sp.id) players[i].bank = sp.bank;
-      else {
-        const gp = players.find(p => p && p.id === sp.id);
-        if (gp) gp.bank = sp.bank;
+      let lp=null;
+      if (players[i] && players[i].id === sp.id) lp=players[i];
+      else lp=players.find(p => p && p.id === sp.id) || null;
+      if(lp){
+        if(typeof sp.bank==='number')lp.bank=sp.bank;
+        if(sp.careerPublic&&sp.careerPublic.enabled)lp.careerPublic=sp.careerPublic;
+        else if(!sp.isBot && sp.id!==myPeerId)lp.careerPublic=null;
       }
     });
     try { updateBankDisplays(); } catch (e) {}
