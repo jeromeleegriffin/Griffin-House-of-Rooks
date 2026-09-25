@@ -7,7 +7,7 @@
 // It's exchanged during the join handshake so a stale host or joiner (e.g.
 // one still running old cached JS) gets caught and auto-updated instead of
 // silently failing or behaving unpredictably against a mismatched peer.
-const APP_VERSION = '475';
+const APP_VERSION = '476';
 
 function horThisIndex() {
   try {
@@ -138,18 +138,22 @@ function saveLifetimeStats(obj) {
 }
 function horCareerModeOn(){try{return !!(window.HORProgression&&HORProgression.localCareer&&HORProgression.localCareer.mode&&HORProgression.localCareer.mode()==='local');}catch(e){return false;}}
 function horMyCareerProfile(){try{return horCareerModeOn()&&HORProgression.localCareer.publicProfile?HORProgression.localCareer.publicProfile():null;}catch(e){return null;}}
-function horCareerProfileForPlayer(p){if(!p)return null;if(p.isBot){try{return horCareerModeOn()&&window.HORProgression&&HORProgression.localCareer&&HORProgression.localCareer.botPublicProfile?HORProgression.localCareer.botPublicProfile(p.name):null;}catch(e){return null;}}if(p.id===myPeerId)return horMyCareerProfile();return p.careerPublic||null;}
-function horShowCareerForPlayer(p){const prof=horCareerProfileForPlayer(p);if(prof&&window.HORProgression&&HORProgression.localCareer&&HORProgression.localCareer.showCareerCard)HORProgression.localCareer.showCareerCard(prof);}
-function horCareerBadgeHtml(p){const prof=horCareerProfileForPlayer(p);if(!prof||!prof.enabled)return '';const level=Math.max(1,Number(prof.level)||1);const who=escapeHtmlSafe(p.id||('bot-'+String(p.name||'bot')));return ` <span class="hor-career-badge" role="button" tabindex="0" data-career-peer="${who}" title="View Career: Level ${level}" aria-label="Career level ${level}">★${level}</span>`;}
-
-function horCleanLocalCareerSeatArtifacts(){
-  try{
-    const seat=document.getElementById('slot-me'); if(!seat)return;
-    Array.from(seat.childNodes).forEach(function(n){
-      if(n.nodeType===3 && /^[\s.·•]+$/.test(n.textContent||'')) n.remove();
-      else if(n.nodeType===1 && !n.classList.contains('hor-seat-career') && /^[\s.·•]+$/.test(n.textContent||'') && !n.querySelector('button,input,img')) n.remove();
-    });
-  }catch(e){}
+function horCareerProfileForPlayer(p){
+  if(!p)return null;
+  if(p.careerPublic&&p.careerPublic.enabled)return p.careerPublic;
+  if(p.id===myPeerId&&!p.isBot){
+    const mine=horMyCareerProfile();
+    if(mine&&mine.enabled){p.careerPublic=mine;return mine;}
+  }
+  if(p.isBot&&horCareerModeOn()){
+    try{
+      if(window.HORProgression&&HORProgression.localCareer&&HORProgression.localCareer.botPublicProfile){
+        const bp=HORProgression.localCareer.botPublicProfile(p.name);
+        if(bp&&bp.enabled){p.careerPublic=bp;return bp;}
+      }
+    }catch(e){}
+  }
+  return null;
 }
 
 function horBindCareerBadges(root){try{(root||document).querySelectorAll('.hor-career-badge').forEach(b=>{if(b.__horCareerBound)return;b.__horCareerBound=true;const open=e=>{e.preventDefault();e.stopPropagation();const id=b.getAttribute('data-career-peer');const pool=(game&&game.players)||players||[];let pl=pool.find(x=>x&&x.id===id);if(!pl&&id&&id.startsWith('bot-'))pl=pool.find(x=>x&&x.isBot&&('bot-'+String(x.name||'bot'))===id);if(pl)horShowCareerForPlayer(pl);};b.addEventListener('click',open);b.addEventListener('keydown',e=>{if(e.key==='Enter'||e.key===' ' )open(e);});});}catch(e){}}
@@ -10839,6 +10843,26 @@ function playTrumpStampFx(el) {
 
 // ========== Rendering ==========
 function renderUI() {
+  try {
+    const pool=(game&&Array.isArray(game.players))?game.players:players;
+    if(Array.isArray(pool)){
+      const mine=horMyCareerProfile();
+      if(mine&&mine.enabled){
+        let me=pool.find(x=>x&&!x.isBot&&x.id===myPeerId);
+        if(!me&&Number.isInteger(myIndex))me=pool[myIndex];
+        if(me&&!me.isBot)me.careerPublic=mine;
+      }
+      if(horCareerModeOn()&&window.HORProgression&&HORProgression.localCareer&&HORProgression.localCareer.botPublicProfile){
+        pool.forEach(x=>{
+          if(x&&x.isBot){
+            const bp=HORProgression.localCareer.botPublicProfile(x.name);
+            if(bp&&bp.enabled)x.careerPublic=bp;
+          }
+        });
+      }
+    }
+  } catch(e) {}
+
   try { renderTopNestPeek(); } catch (e) {}
   try { renderWidowSpread(); } catch (e) {}
 
