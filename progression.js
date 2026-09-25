@@ -198,3 +198,31 @@ function showActivationPanel(){const pr=previewActivation();const el=document.cr
 P.localCareer={mode,setMode,applyMode,previewActivation,activateLocal,deactivateLocal,syncFromLifetime,recordRelationships,relationshipRead,showActivationPanel};
 applyMode();
 })();
+
+/* Build 461 targeted Android/Samsung persona-avatar long-press guard.
+ * Scope: bot/persona avatar images only. Cards and all other images are untouched. */
+(function(){
+  'use strict';
+  function tagged(el){ return el && el.closest ? el.closest('[data-botname]') : null; }
+  function avatarImage(el){
+    const host=tagged(el);
+    const img=el && el.closest ? el.closest('img') : null;
+    return host && img && host.contains(img) ? img : null;
+  }
+  function blockNativeImageAction(e){
+    if(!avatarImage(e.target)) return;
+    e.preventDefault();
+    e.stopPropagation();
+  }
+  document.addEventListener('contextmenu', blockNativeImageAction, {capture:true, passive:false});
+  document.addEventListener('dragstart', blockNativeImageAction, {capture:true, passive:false});
+  document.addEventListener('selectstart', blockNativeImageAction, {capture:true, passive:false});
+  document.addEventListener('touchstart', function(e){
+    const img=avatarImage(e.target);
+    if(!img) return;
+    img.draggable=false;
+    img.style.webkitTouchCallout='none';
+    img.style.webkitUserSelect='none';
+    img.style.userSelect='none';
+  }, {capture:true, passive:true});
+})();
