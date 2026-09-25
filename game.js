@@ -12981,6 +12981,29 @@ bindClick('btnGameOptions', () => {
   } catch (e) { console.error('Game options open failed:', e); }
 });
 
+// Build 461: add Game options to the first-page utility row while preserving
+// every existing Game options entrance elsewhere.
+(function addLobbyGameOptionsButton() {
+  const lobby = $('lobby');
+  if (!lobby || $('btnGameOptionsLobby')) return;
+  const row = lobby.querySelector('.rules-link');
+  if (!row) return;
+  const btn = document.createElement('button');
+  btn.id = 'btnGameOptionsLobby';
+  btn.type = 'button';
+  btn.className = 'btn link';
+  btn.textContent = '⚙️ Game options';
+  // Keep the first page compact: reuse its existing wrapping utility row.
+  const sound = $('toggleMuteLobby');
+  if (sound && sound.parentNode === row) row.insertBefore(btn, sound);
+  else row.appendChild(btn);
+  btn.addEventListener('click', (e) => {
+    e.preventDefault();
+    try { openHostOptionsModal(); }
+    catch (err) { console.error('Lobby game options open failed:', err); }
+  });
+})();
+
 bindClick('btnToggleTopOpts', () => {
   const bar = $('topBar');
   const btn = $('btnToggleTopOpts');
