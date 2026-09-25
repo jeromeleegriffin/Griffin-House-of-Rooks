@@ -11,8 +11,12 @@ const APP_VERSION = '449';
 
 function horThisIndex() {
   try {
-    const u = new URL('index.html', location.href);
-    u.search = '';
+    // Keep meaningful navigation state (especially ?room=XXXX) across a
+    // forced refresh. Only the cache-busting parameters are replaced.
+    const u = new URL(location.href);
+    u.pathname = u.pathname.replace(/[^/]*$/, 'index.html');
+    u.searchParams.delete('fresh');
+    u.searchParams.delete('v');
     u.hash = '';
     return u.href;
   } catch (e) {
@@ -3401,6 +3405,15 @@ window.horRemoveDebugUI = horRemoveDebugUI;
 
 function horForceUpdate() {
   window.__horUpdating = true;
+  // Preserve the exact viewport position so tapping Force Refresh does not
+  // make the page appear to jump before/after the cache refresh.
+  try {
+    sessionStorage.setItem('horForceRefreshView', JSON.stringify({
+      x: window.scrollX || 0,
+      y: window.scrollY || 0,
+      room: new URL(location.href).searchParams.get('room') || ''
+    }));
+  } catch (e) {}
   let dest = 'index.html?fresh=' + Date.now() + '&v=' + APP_VERSION;
   try {
     const url = new URL(horThisIndex());
@@ -3425,6 +3438,25 @@ function horForceUpdate() {
   });
 }
 window.horForceUpdate = horForceUpdate;
+
+// Restore the viewport after a manual Force Refresh. Use two animation frames
+// so mobile browsers finish their first layout before the position is applied.
+(function horRestoreForceRefreshView() {
+  let saved = null;
+  try {
+    saved = JSON.parse(sessionStorage.getItem('horForceRefreshView') || 'null');
+    sessionStorage.removeItem('horForceRefreshView');
+  } catch (e) {}
+  if (!saved) return;
+  const restore = () => {
+    try { window.scrollTo(saved.x || 0, saved.y || 0); } catch (e) {}
+  };
+  if (document.readyState === 'loading') {
+    window.addEventListener('DOMContentLoaded', () => requestAnimationFrame(() => requestAnimationFrame(restore)), { once: true });
+  } else {
+    requestAnimationFrame(() => requestAnimationFrame(restore));
+  }
+})();
 
 const PEER_BROKERS = [
   { host: '0.peerjs.com', port: 443, path: '/', secure: true },
