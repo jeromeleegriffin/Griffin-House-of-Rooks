@@ -138,12 +138,25 @@ function loadLifetimeStats() {
 function saveLifetimeStats(obj) {
   try { localStorage.setItem(lifetimeStatsKey(), JSON.stringify(obj)); } catch (e) {}
 }
+function horCareerModeOn(){try{return !!(window.HORProgression&&HORProgression.localCareer&&HORProgression.localCareer.mode&&HORProgression.localCareer.mode()==='local');}catch(e){return false;}}
+function horMyCareerProfile(){try{return horCareerModeOn()&&HORProgression.localCareer.publicProfile?HORProgression.localCareer.publicProfile():null;}catch(e){return null;}}
+function horCareerProfileForPlayer(p){if(!p)return null;if(!p.isBot&&p.id===myPeerId)return horMyCareerProfile();return p.careerPublic||null;}
+function horShowCareerForPlayer(p){const prof=horCareerProfileForPlayer(p);if(prof&&window.HORProgression&&HORProgression.localCareer&&HORProgression.localCareer.showCareerCard)HORProgression.localCareer.showCareerCard(prof);}
+function horCareerBadgeHtml(p){const prof=horCareerProfileForPlayer(p);return prof&&prof.enabled?` <button type="button" class="hor-career-badge" data-career-peer="${escapeHtmlSafe(p.id||'')}" title="View Career">★ ${Number(prof.level||1)}</button>`:'';}
+function horBindCareerBadges(root){try{(root||document).querySelectorAll('.hor-career-badge').forEach(b=>{if(b.__horCareerBound)return;b.__horCareerBound=true;b.addEventListener('click',e=>{e.preventDefault();e.stopPropagation();const id=b.getAttribute('data-career-peer');const p=(game&&game.players||players||[]).find(x=>x&&x.id===id);if(p)horShowCareerForPlayer(p);});});}catch(e){}}
+function horBroadcastCareerProfile(){const profile=horMyCareerProfile();if(isHost){const me=(players||[]).find(p=>p&&!p.isBot&&p.id===myPeerId);if(me)me.careerPublic=profile;broadcast({type:'careerProfile',id:myPeerId,profile});}else if(hostConnection&&hostConnection.open){hostConnection.send({type:'careerProfile',id:myPeerId,profile});}}
+function horCareerAnnouncement(ev){if(!ev||!window.HORProgression||!HORProgression.presentation)return;HORProgression.presentation.enqueue(Object.assign({remote:true},ev));}
+window.horCareerLocalAnnouncement=function(ev){try{if(!horCareerModeOn()||!ev)return;if(isHost)broadcast({type:'careerAnnouncement',from:myPeerId,event:ev});else if(hostConnection&&hostConnection.open)hostConnection.send({type:'careerAnnouncement',from:myPeerId,event:ev});}catch(e){}};
+window.horCareerModeChanged=function(){try{horBroadcastCareerProfile();renderUI();}catch(e){}};
 function mergeLifetimeStats(winnerLabel) {
   try {
     const store = loadLifetimeStats();
     for (let i = 0; i < 4; i++) {
       const p = players[i];
       if (!p || !p.name) continue;
+      // Career ownership: each device records only its own human. The host also owns official bot careers.
+      if (!p.isBot && p.id !== myPeerId) continue;
+      if (p.isBot && !isHost) continue;
       const cur = store[p.name] || freshPlayerStat();
       const add = ps(i);
       Object.keys(add).forEach((k) => {
@@ -163,8 +176,11 @@ function mergeLifetimeStats(winnerLabel) {
     // Preview mode is inert; local mode updates human + official bot careers and celebrations.
     try {
       if (window.HORProgression && HORProgression.localCareer) {
-        HORProgression.localCareer.syncFromLifetime(store, { celebrate: true });
+        const owned={};for(const [nm,rec] of Object.entries(store)){if(rec&&rec.isBot){if(isHost)owned[nm]=rec;}else if((players||[]).some(p=>p&&!p.isBot&&p.id===myPeerId&&p.name===nm))owned[nm]=rec;}
+        const syncResult=HORProgression.localCareer.syncFromLifetime(owned, { celebrate: true });
         HORProgression.localCareer.recordRelationships(players, winnerLabel);
+        try { horBroadcastCareerProfile(); } catch (e) {}
+
       }
     } catch (e) {}
     try { publishCareerStats(winnerLabel, store); } catch (e) {}
@@ -3559,7 +3575,7 @@ function createRoom() {
     if (game && game.phase && !['lobby','waiting',''].includes(game.phase)) {
       return;
     }
-    players = [{ id, name: myName, team: 0, isHost: true, isBot: false, seat: 0, bank: loadMyBank() }];
+    players = [{ id, name: myName, team: 0, isHost: true, isBot: false, seat: 0, bank: loadMyBank(), careerPublic: horMyCareerProfile() }];
     myIndex = 0;
     beerSeats = pickBeerSeats();
     showWaiting();
@@ -3722,7 +3738,7 @@ function joinRoom() {
       finished = true;
       joinInProgress = false;
       clearTimeout(joinTimer);
-      const joinMsg = { type: 'join', name: myName, id: myPeerId, spectator: !!isSpectator, bank: loadMyBank(), appVersion: APP_VERSION, reconnect: true };
+      const joinMsg = { type: 'join', name: myName, id: myPeerId, spectator: !!isSpectator, bank: loadMyBank(), appVersion: APP_VERSION, reconnect: true, careerProfile: horMyCareerProfile() };
       if (pendingPreviewJoin) joinMsg.preview = true;
       if (!isSpectator && typeof pendingWelcomeSeat === 'number' && pendingWelcomeSeat >= 0 && pendingWelcomeSeat <= 3) {
         joinMsg.preferredSeat = pendingWelcomeSeat;
@@ -4055,7 +4071,8 @@ function horBeginClientReconnect() {
             bank: loadMyBank(),
             reconnect: true,
             appVersion: APP_VERSION,
-            lastSeq: horLastAppliedSeq
+            lastSeq: horLastAppliedSeq,
+            careerProfile: horMyCareerProfile()
           });
           horFlushOutbox();
           horToast('Reconnected to the table ✓');
@@ -4139,6 +4156,7 @@ function handleMessage(data, conn) {
         if (already && !data.spectator && horExpOn('netSameIdResync')) {
           already.disconnected = false;
           already.name = data.name || already.name;
+          already.careerPublic = data.careerProfile || null;
           hostCancelDisconnectGrace(data.id);
           connMap[data.id] = conn;
           horPeerLastSeen[data.id] = Date.now();
@@ -4182,7 +4200,7 @@ function handleMessage(data, conn) {
               currentPlayer: game.currentPlayer,
               trick: game.trick,
               ledColor: game.ledColor,
-              players: players.map(p => ({ name: p.name, team: p.team, id: p.id, isBot: !!p.isBot, bank: p.bank || 0 })),
+              players: players.map(p => ({ name: p.name, team: p.team, id: p.id, isBot: !!p.isBot, bank: p.bank || 0, avatar: p.avatar || playerAvatars[p.id] || '', careerPublic: p.careerPublic || null })),
               dealer: game.dealer,
               nestCount: game.nest?.length || 0,
               handsCount: game.hands.map(h => h.length),
@@ -4231,7 +4249,7 @@ function handleMessage(data, conn) {
         if (players.find(p => p.id === data.id)) {
           return;
         }
-        players.push({ id: data.id, name: data.name, team: 0, isHost: false, isBot: false, seat: -1, bank: Math.max(0, Math.floor(Number(data.bank) || 0)) });
+        players.push({ id: data.id, name: data.name, team: 0, isHost: false, isBot: false, seat: -1, bank: Math.max(0, Math.floor(Number(data.bank) || 0)), careerPublic: data.careerProfile || null });
         const wantSeat = parseInt(data.preferredSeat, 10);
         let seatedOk = false;
         if (!isNaN(wantSeat) && wantSeat >= 0 && wantSeat <= 3) {
@@ -4255,6 +4273,15 @@ function handleMessage(data, conn) {
         try { conn.send({ type: 'players', players: publicPlayersSnapshot(), beerSeats }); } catch (e) {}
         break;
 
+
+      case 'careerProfile': {
+        const p=(players||[]).find(x=>x&&x.id===data.id);
+        if(p&&!p.isBot){p.careerPublic=data.profile&&data.profile.enabled?data.profile:null;broadcast({type:'careerProfile',id:p.id,profile:p.careerPublic},p.id);broadcast({type:'players',players:publicPlayersSnapshot(),beerSeats});}
+        break;
+      }
+      case 'careerAnnouncement':
+        if(data.event){broadcast({type:'careerAnnouncement',from:data.from,event:data.event},data.from);horCareerAnnouncement(data.event);}
+        break;
 
       case 'bid':
         if (game && game.phase === 'bidding') hostProcessBid(data);
@@ -4631,6 +4658,16 @@ function handleMessage(data, conn) {
         if (data.botDifficulty) botDifficulty = data.botDifficulty;
         try { recomputeHandAndNest(); } catch (e) {}
         try { syncOptionsUI(); } catch (e) {}
+        break;
+
+      case 'careerProfile': {
+        const p=(players||[]).find(x=>x&&x.id===data.id);if(p)p.careerPublic=data.profile&&data.profile.enabled?data.profile:null;
+        if(game&&Array.isArray(game.players)){const gp=game.players.find(x=>x&&x.id===data.id);if(gp)gp.careerPublic=data.profile&&data.profile.enabled?data.profile:null;}
+        try{renderUI();}catch(e){}
+        break;
+      }
+      case 'careerAnnouncement':
+        if(data.event)horCareerAnnouncement(data.event);
         break;
 
       case 'avatar':
@@ -5302,6 +5339,7 @@ function ensurePlayerSeats(list) {
 
 function publicPlayersSnapshot() {
   ensurePlayerSeats(players);
+  try { const me=(players||[]).find(p=>p&&!p.isBot&&p.id===myPeerId); if(me) me.careerPublic=horMyCareerProfile(); } catch(e) {}
   return (players || []).filter(Boolean).map((p) => ({
     id: p.id,
     name: p.name,
@@ -5317,7 +5355,8 @@ function publicPlayersSnapshot() {
     humanTitle: p.humanTitle || '',
     humanHabit: p.humanHabit || '',
     humanHow: p.humanHow || '',
-    humanHands: p.humanHands || 0
+    humanHands: p.humanHands || 0,
+    careerPublic: p.careerPublic || null
   }));
 }
 
@@ -10972,11 +11011,12 @@ function renderUI() {
           // Side-seat avatar is outside .name, so carry the same persona identity
           // onto the avatar container for long-press/persona handling.
           applyBotNameAttr(avatarEl, game.players[idx]);
-          nameEl.innerHTML = `<span class="player-name-text">${playerName}</span>`;
+          nameEl.innerHTML = `<span class="player-name-text">${playerName}</span>${horCareerBadgeHtml(game.players[idx])}`;
         } else {
-          nameEl.innerHTML = `<span class="seat-avatar">${avatarHTML(av)}</span> <span class="player-name-text">${playerName}</span>`;
+          nameEl.innerHTML = `<span class="seat-avatar">${avatarHTML(av)}</span> <span class="player-name-text">${playerName}</span>${horCareerBadgeHtml(game.players[idx])}`;
         }
         applyBotNameAttr(nameEl, game.players[idx]);
+        try { horBindCareerBadges(el); } catch (e) {}
       }
       const cc = el.querySelector('.cards-count');
       if (cc) cc.textContent = '';
@@ -11046,9 +11086,10 @@ function renderUI() {
       const meName = (meP && meP.name) || myName || 'Player';
       const meId = (meP && meP.id) || myPeerId;
       const av = playerAvatars[meId] || (meP && meP.avatar) || AVATARS[seatBase % AVATARS.length];
-      meNameEl.innerHTML = `<span class="seat-avatar">${avatarHTML(av)}</span> <span class="player-name-text">${escapeHtmlSafe(meName)}</span>`;
+      meNameEl.innerHTML = `<span class="seat-avatar">${avatarHTML(av)}</span> <span class="player-name-text">${escapeHtmlSafe(meName)}</span>${meP?horCareerBadgeHtml(meP):''}`;
       applyBotNameAttr(meNameEl, meP);
       try { updateBankDisplays(); } catch (e) {}
+      try { horBindCareerBadges(meSlot); } catch (e) {}
     }
     const quietMe = isFirstHandOfMatch();
     meSlot.classList.toggle('is-turn', !quietMe && seatBase === whoseTurn && !game.resolvingTrick);
@@ -12786,7 +12827,7 @@ function startSoloPractice() {
     myName = (($('hor-player-name') && $('hor-player-name').value) || '').trim() || myName || 'You';
     myPeerId = 'solo-' + Math.random().toString(36).slice(2, 9);
     roomCode = 'OFFLINE';
-    players = [{ id: myPeerId, name: myName, team: 0, isHost: true, isBot: false, seat: 0, bank: loadMyBank() }];
+    players = [{ id: myPeerId, name: myName, team: 0, isHost: true, isBot: false, seat: 0, bank: loadMyBank(), careerPublic: horMyCareerProfile() }];
 
     // 3 named persona bots (no network)
     while (players.length < 4) addBot();
@@ -14042,3 +14083,6 @@ function positionPortraitLast3Btn() {
     });
   }
 })();
+
+/* Build 467 Career badge */
+(function(){try{const st=document.createElement('style');st.textContent='.hor-career-badge{margin-left:5px;padding:1px 5px;border:1px solid #d6ad4b;border-radius:999px;background:#151b15;color:#f2cf68;font-size:10px;font-weight:900;line-height:1.35;vertical-align:middle;cursor:pointer}.hor-career-badge:active{transform:scale(.96)}';document.head.appendChild(st);}catch(e){}})();
