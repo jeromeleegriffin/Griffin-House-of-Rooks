@@ -7,7 +7,7 @@
 // It's exchanged during the join handshake so a stale host or joiner (e.g.
 // one still running old cached JS) gets caught and auto-updated instead of
 // silently failing or behaving unpredictably against a mismatched peer.
-const APP_VERSION = '448';
+const APP_VERSION = '449';
 
 function horThisIndex() {
   try {
@@ -155,6 +155,14 @@ function mergeLifetimeStats(winnerLabel) {
       store[p.name] = cur;
     }
     saveLifetimeStats(store);
+    // RookGame454: local progression mirrors the authoritative lifetime totals.
+    // Preview mode is inert; local mode updates human + official bot careers and celebrations.
+    try {
+      if (window.HORProgression && HORProgression.localCareer) {
+        HORProgression.localCareer.syncFromLifetime(store, { celebrate: true });
+        HORProgression.localCareer.recordRelationships(players, winnerLabel);
+      }
+    } catch (e) {}
     try { publishCareerStats(winnerLabel, store); } catch (e) {}
   } catch (e) {}
 }
@@ -2902,6 +2910,63 @@ function phoneLooksOffline() {
 function noServiceJoinMessage() {
   return 'This phone is offline (no cell data and no working Wi‑Fi). Turn on Wi‑Fi or data to join. The first handshake needs a little internet, even when both phones are in the same house.';
 }
+function stopNetworkRetries() {
+  window._horNoServiceStop = true;
+  try {
+    (window._horNetRetryTimers || []).forEach((t) => clearTimeout(t));
+  } catch (e) {}
+  window._horNetRetryTimers = [];
+  try { if (peer && peer.destroy) peer.destroy(); } catch (e) {}
+  peer = null;
+  hostConnection = null;
+  joinInProgress = false;
+}
+function hideNoServiceModal() {
+  const el = $('noServiceModal');
+  if (!el) return;
+  el.classList.add('hidden');
+  el.setAttribute('aria-hidden', 'true');
+}
+function offerOfflinePlay(detail) {
+  stopNetworkRetries();
+  const msg = noServiceJoinMessage();
+  try { setJoinStatus(msg); } catch (e) {}
+  const el = $('noServiceModal');
+  const text = $('noServiceText');
+  if (text) text.textContent = detail || msg;
+  if (el) {
+    el.classList.remove('hidden');
+    el.setAttribute('aria-hidden', 'false');
+  } else if (confirm(msg + '\n\nPlay offline against three bots?')) {
+    try { startSoloPractice(); } catch (e2) {}
+  }
+}
+function bindNoServiceModal() {
+  const go = $('noServiceOfflineBtn');
+  const stay = $('noServiceStayBtn');
+  if (go && !go.dataset.bound) {
+    go.dataset.bound = '1';
+    go.onclick = () => {
+      hideNoServiceModal();
+      try { startSoloPractice(); } catch (e) {}
+    };
+  }
+  if (stay && !stay.dataset.bound) {
+    stay.dataset.bound = '1';
+    stay.onclick = () => hideNoServiceModal();
+  }
+}
+function scheduleNetRetry(fn, ms) {
+  if (phoneLooksOffline() || window._horNoServiceStop) {
+    offerOfflinePlay();
+    return;
+  }
+  const id = setTimeout(() => {
+    if (phoneLooksOffline()) { offerOfflinePlay(); return; }
+    try { fn(); } catch (e) {}
+  }, ms);
+  window._horNetRetryTimers = (window._horNetRetryTimers || []).concat([id]);
+}
 function brokerRetryMessage() {
   if (phoneLooksOffline()) return noServiceJoinMessage();
   return 'Can’t reach the table directory right now. Checking another path… Use Wi‑Fi or cell data if this phone has neither.';
@@ -3416,6 +3481,11 @@ function horNextBroker() {
 }
 
 function createRoom() {
+  if (phoneLooksOffline()) {
+    offerOfflinePlay();
+    return;
+  }
+  window._horNoServiceStop = false;
   myName = ($('hor-player-name').value || '').trim() || 'Host';
   if (typeof Peer === 'undefined') {
     $('lobbyStatus').textContent = 'PeerJS failed to load. Check your internet connection and refresh.';
@@ -3486,6 +3556,11 @@ function createRoom() {
   // reconnect() method — without this, the room would silently stop
   // being joinable while the UI still showed the host screen normally.
   peer.on('disconnected', () => {
+    if (phoneLooksOffline() || window._horNoServiceStop || isSoloPractice || roomCode === 'OFFLINE') {
+      stopNetworkRetries();
+      if (!isSoloPractice && !(game && game.phase && !['lobby','waiting',''].includes(game.phase))) offerOfflinePlay();
+      return;
+    }
     console.warn('Host peer disconnected from signaling server, attempting reconnect…');
     horDebugLog('HOST: peer disconnected from signaling server, attempting reconnect…');
     try { peer.reconnect(); } catch (e) {}
@@ -3498,14 +3573,17 @@ function createRoom() {
       roomCode = shortCode();
       try { peer.destroy(); } catch (e) {}
       peer = null;
-      // Retry once with new code
-      setTimeout(createRoom, 200);
+      scheduleNetRetry(createRoom, 200);
     } else if (err.type === 'network' || err.type === 'server-error' || err.type === 'socket-error' || err.type === 'socket-closed') {
+      if (phoneLooksOffline() || window._horNoServiceStop) {
+        offerOfflinePlay();
+        return;
+      }
       const next = horNextBroker();
       $('lobbyStatus').textContent = brokerRetryMessage();
       try { peer.destroy(); } catch (e) {}
       peer = null;
-      setTimeout(createRoom, 350);
+      scheduleNetRetry(createRoom, 350);
     } else {
       $('lobbyStatus').textContent = 'Error: ' + (err.type || err.message || 'unknown');
     }
@@ -3518,9 +3596,10 @@ function joinRoom() {
   const code = ($('hor-room-code').value || '').trim().toUpperCase().replace(/\s+/g, '');
   if (!code) return alert('Enter a room code');
   if (phoneLooksOffline()) {
-    setJoinStatus(noServiceJoinMessage());
+    offerOfflinePlay();
     return;
   }
+  window._horNoServiceStop = false;
   if (typeof Peer === 'undefined') {
     setJoinStatus('PeerJS failed to load. Check your internet connection and refresh.');
     return;
@@ -3679,6 +3758,11 @@ function joinRoom() {
   // See the matching comment in createRoom() — the signaling connection can
   // drop silently in the background without the Peer object being destroyed.
   peer.on('disconnected', () => {
+    if (phoneLooksOffline() || window._horNoServiceStop || isSoloPractice) {
+      stopNetworkRetries();
+      offerOfflinePlay();
+      return;
+    }
     console.warn('Join peer disconnected from signaling server, attempting reconnect…');
     horDebugLog('JOIN: peer disconnected from signaling server, attempting reconnect…');
     try { peer.reconnect(); } catch (e) {}
@@ -3697,11 +3781,15 @@ function joinRoom() {
       }
       finishFailure('That room code is not currently available. Verify the host is still on the table and use the current code.');
     } else if (type === 'network' || type === 'server-error' || type === 'socket-error') {
+      if (phoneLooksOffline() || window._horNoServiceStop) {
+        offerOfflinePlay();
+        return;
+      }
       const next = horNextBroker();
       setJoinStatus(brokerRetryMessage());
       try { if (peer) peer.destroy(); } catch (e) {}
       peer = null;
-      setTimeout(() => { try { joinRoom(); } catch (e2) {} }, 400);
+      scheduleNetRetry(() => { try { joinRoom(); } catch (e2) {} }, 400);
     } else finishFailure('Multiplayer error: ' + (type || err.message || 'unknown error') + (err && err.message ? '' : ''));
   });
 }
@@ -3909,6 +3997,11 @@ function horBeginClientReconnect() {
     horReconnectTimer = setTimeout(() => {
       try {
         if (hostConnection && hostConnection.open) { horReconnectActive = false; return; }
+        if (phoneLooksOffline() || window._horNoServiceStop) {
+          horReconnectActive = false;
+          offerOfflinePlay();
+          return;
+        }
         if (!peer || !peer.open) {
           try { if (peer && peer.disconnected) peer.reconnect(); } catch (e) {}
           setTimeout(step, 1500);
@@ -3966,7 +4059,9 @@ function horStartHeartbeat() {
         } catch (e) {}
       }
       try {
-        if (peer && peer.disconnected) peer.reconnect();
+        if (phoneLooksOffline() || window._horNoServiceStop || isSoloPractice) {
+          /* do not keep pinging the broker with no service */
+        } else if (peer && peer.disconnected) peer.reconnect();
       } catch (e) {}
     } else if (horExpOn('netHeartbeat') && hostConnection && hostConnection.open) {
       hostConnection.send({ type: '__hor_ping', at: horPingSentAt });
@@ -12719,6 +12814,19 @@ function restartSoloPractice() {
 
 bindClick('soloPracticeBtn', startSoloPractice);
 bindClick('restartPracticeBtn', restartSoloPractice);
+try { bindNoServiceModal(); } catch (e) {}
+window.addEventListener('offline', () => {
+  try {
+    if (isSoloPractice || roomCode === 'OFFLINE') {
+      stopNetworkRetries();
+      return;
+    }
+    offerOfflinePlay();
+  } catch (e) {}
+});
+window.addEventListener('online', () => {
+  window._horNoServiceStop = false;
+});
 bindClick('leaveReplaceBtn', () => { try { clientLeaveReplace(); } catch (e) { console.error(e); } });
 (function wireBotStyleLongPress() {
   let timer = 0;

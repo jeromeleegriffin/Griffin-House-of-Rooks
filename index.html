@@ -36,7 +36,7 @@
   <link rel="manifest" href="manifest.json">
   <link rel="icon" href="icon-192.png">
   <link rel="apple-touch-icon" href="apple-touch-icon.png">
-  <link rel="stylesheet" href="style.css?v=448">
+  <link rel="stylesheet" href="style.css?v=449">
   <script src="vendor/peerjs.min.js"></script>
   <style>
     /* Emergency layout if style.css fails to load — joiners still see a usable page */
@@ -209,6 +209,17 @@
           <button id="nearbyPlayBtn" class="btn nearby-btn" type="button">Nearby (same Wi‑Fi)</button>
         </div>
         <div id="lobbyStatus" class="status"></div>
+        <div id="noServiceModal" class="no-service-modal hidden" aria-hidden="true">
+          <div class="no-service-card">
+            <h2>No service</h2>
+            <p id="noServiceText">This phone is offline (no cell data and no working Wi‑Fi).</p>
+            <p>Play offline against three bots instead?</p>
+            <div class="no-service-actions">
+              <button type="button" id="noServiceOfflineBtn" class="btn primary">Play offline</button>
+              <button type="button" id="noServiceStayBtn" class="btn">Not now</button>
+            </div>
+          </div>
+        </div>
         <p id="localCopyWarn" class="option-hint hidden" style="margin-top:0.6rem;">
           This copy is not on a website. Do not send the Share/QR link — the other phone cannot open it.
           Both people open House of Rooks on their own phone, then the guest taps Join with a code and types the 4-letter code.
@@ -1180,10 +1191,12 @@
       paintInstall();
     })();
   </script>
-  <script src="rules.js?v=448"></script>
-  <script src="bots.js?v=448"></script>
-  <script src="game.js?v=448"></script>
-  <script src="polish.js?v=448"></script>
+  <script src="rules.js?v=449"></script>
+  <script src="bots.js?v=449"></script>
+  <script src="game.js?v=449"></script>
+  <script src="polish.js?v=449"></script>
+  <!-- Dormant career/achievement framework. Master switch is OFF in progression.js. -->
+  <script src="progression.js?v=454"></script>
   <div id="horBootError"></div>
   <script>
     window.addEventListener('error', function (ev) {
@@ -1197,7 +1210,7 @@
   </script>
   <script>
     if ('serviceWorker' in navigator) {
-      navigator.serviceWorker.register('sw.js?v=448', { updateViaCache: 'none' })
+      navigator.serviceWorker.register('sw.js?v=449', { updateViaCache: 'none' })
         .then(function (reg) { try { reg.update(); } catch (e) {} })
         .catch(() => {});
       let horSwAutoReloaded = false;
