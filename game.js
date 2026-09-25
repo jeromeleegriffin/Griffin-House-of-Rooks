@@ -10969,6 +10969,9 @@ function renderUI() {
             el.insertBefore(avatarEl, nameEl);
           }
           avatarEl.innerHTML = avatarHTML(av);
+          // Side-seat avatar is outside .name, so carry the same persona identity
+          // onto the avatar container for long-press/persona handling.
+          applyBotNameAttr(avatarEl, game.players[idx]);
           nameEl.innerHTML = `<span class="player-name-text">${playerName}</span>`;
         } else {
           nameEl.innerHTML = `<span class="seat-avatar">${avatarHTML(av)}</span> <span class="player-name-text">${playerName}</span>`;
