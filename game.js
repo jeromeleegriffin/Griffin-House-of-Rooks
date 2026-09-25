@@ -7,7 +7,7 @@
 // It's exchanged during the join handshake so a stale host or joiner (e.g.
 // one still running old cached JS) gets caught and auto-updated instead of
 // silently failing or behaving unpredictably against a mismatched peer.
-const APP_VERSION = '472';
+const APP_VERSION = '474';
 
 function horThisIndex() {
   try {
@@ -97,8 +97,6 @@ let dontStealPartnerBid = true;
 let landscapeBidHints = false;
 let nestLastTrickAnim = true;
 let layDownWinningCards = true;
-/** Emphasize suit symbols for color-blind play */
-let colorBlindCards = localStorage.getItem('rookColorBlind') === '1';
 let minBid = 100;
 let handSize = 10;
 let nestSizeDefault = 6;
@@ -142,7 +140,7 @@ function horCareerModeOn(){try{return !!(window.HORProgression&&HORProgression.l
 function horMyCareerProfile(){try{return horCareerModeOn()&&HORProgression.localCareer.publicProfile?HORProgression.localCareer.publicProfile():null;}catch(e){return null;}}
 function horCareerProfileForPlayer(p){if(!p)return null;if(p.isBot){try{return horCareerModeOn()&&window.HORProgression&&HORProgression.localCareer&&HORProgression.localCareer.botPublicProfile?HORProgression.localCareer.botPublicProfile(p.name):null;}catch(e){return null;}}if(p.id===myPeerId)return horMyCareerProfile();return p.careerPublic||null;}
 function horShowCareerForPlayer(p){const prof=horCareerProfileForPlayer(p);if(prof&&window.HORProgression&&HORProgression.localCareer&&HORProgression.localCareer.showCareerCard)HORProgression.localCareer.showCareerCard(prof);}
-function horCareerBadgeHtml(p){const prof=horCareerProfileForPlayer(p);if(!prof||!prof.enabled)return '';const level=Math.max(1,Number(prof.level)||1);const who=escapeHtmlSafe(p.id||('bot-'+String(p.name||'bot')));return ` <button type="button" class="hor-career-badge" data-career-peer="${who}" title="View Career: Level ${level}">★ ${level}</button>`;}
+function horCareerBadgeHtml(p){const prof=horCareerProfileForPlayer(p);if(!prof||!prof.enabled)return '';const level=Math.max(1,Number(prof.level)||1);const who=escapeHtmlSafe(p.id||('bot-'+String(p.name||'bot')));return ` <span class="hor-career-badge" role="button" tabindex="0" data-career-peer="${who}" title="View Career: Level ${level}" aria-label="Career level ${level}">★${level}</span>`;}
 
 function horCleanLocalCareerSeatArtifacts(){
   try{
@@ -154,37 +152,11 @@ function horCleanLocalCareerSeatArtifacts(){
   }catch(e){}
 }
 
-// Rook471: authoritative Career badge overlay for every occupied seat.
-
-function horScheduleSeatCareerBadges(){
-  try{Promise.resolve().then(horRenderSeatCareerBadges);}catch(e){setTimeout(horRenderSeatCareerBadges,0);}
-}
-function horRenderSeatCareerBadges(){
-  try{
-    const all=(game&&Array.isArray(game.players)&&game.players.length)?game.players:(players||[]);
-    const mapping=[
-      ['slot-me', (typeof myIndex==='number'&&myIndex>=0)?myIndex:0],
-      ['slot-partner', (typeof seatMap!=='undefined'&&seatMap.partner!=null)?seatMap.partner:2],
-      ['slot-left', (typeof seatMap!=='undefined'&&seatMap.left!=null)?seatMap.left:1],
-      ['slot-right', (typeof seatMap!=='undefined'&&seatMap.right!=null)?seatMap.right:3]
-    ];
-    mapping.forEach(function(pair){
-      const el=document.getElementById(pair[0]); if(!el)return;
-      let holder=el.querySelector(':scope > .hor-seat-career');
-      if(!holder){holder=document.createElement('div');holder.className='hor-seat-career';el.appendChild(holder);}
-      const pl=all[pair[1]];
-      holder.innerHTML=pl?horCareerBadgeHtml(pl):'';
-      holder.style.display=holder.innerHTML?'':'none';
-      horBindCareerBadges(holder);
-    });
-    horCleanLocalCareerSeatArtifacts();
-  }catch(e){}
-}
-function horBindCareerBadges(root){try{(root||document).querySelectorAll('.hor-career-badge').forEach(b=>{if(b.__horCareerBound)return;b.__horCareerBound=true;b.addEventListener('click',e=>{e.preventDefault();e.stopPropagation();const id=b.getAttribute('data-career-peer');const pool=(game&&game.players)||players||[];let p=pool.find(x=>x&&x.id===id);if(!p&&id&&id.startsWith('bot-'))p=pool.find(x=>x&&x.isBot&&('bot-'+String(x.name||'bot'))===id);if(p)horShowCareerForPlayer(p);});});}catch(e){}}
+function horBindCareerBadges(root){try{(root||document).querySelectorAll('.hor-career-badge').forEach(b=>{if(b.__horCareerBound)return;b.__horCareerBound=true;const open=e=>{e.preventDefault();e.stopPropagation();const id=b.getAttribute('data-career-peer');const pool=(game&&game.players)||players||[];let pl=pool.find(x=>x&&x.id===id);if(!pl&&id&&id.startsWith('bot-'))pl=pool.find(x=>x&&x.isBot&&('bot-'+String(x.name||'bot'))===id);if(pl)horShowCareerForPlayer(pl);};b.addEventListener('click',open);b.addEventListener('keydown',e=>{if(e.key==='Enter'||e.key===' ' )open(e);});});}catch(e){}}
 function horBroadcastCareerProfile(){const profile=horMyCareerProfile();if(isHost){const me=(players||[]).find(p=>p&&!p.isBot&&p.id===myPeerId);if(me)me.careerPublic=profile;broadcast({type:'careerProfile',id:myPeerId,profile});}else if(hostConnection&&hostConnection.open){hostConnection.send({type:'careerProfile',id:myPeerId,profile});}}
 function horCareerAnnouncement(ev){if(!ev||!window.HORProgression||!HORProgression.presentation)return;HORProgression.presentation.enqueue(Object.assign({remote:true},ev));}
 window.horCareerLocalAnnouncement=function(ev){try{if(!horCareerModeOn()||!ev)return;if(isHost)broadcast({type:'careerAnnouncement',from:myPeerId,event:ev});else if(hostConnection&&hostConnection.open)hostConnection.send({type:'careerAnnouncement',from:myPeerId,event:ev});}catch(e){}};
-window.horCareerModeChanged=function(){try{horBroadcastCareerProfile();renderUI();}catch(e){}};
+window.horCareerModeChanged=function(){try{horRefreshBotCareerProfiles();horBroadcastCareerProfile();renderUI();}catch(e){}};
 function horRefreshBotCareerProfiles(){
   try{
     if(!isHost||!horCareerModeOn()||!window.HORProgression||!HORProgression.localCareer||!HORProgression.localCareer.botPublicProfile)return;
@@ -1596,9 +1568,6 @@ function syncOptionsUI() {
   document.body.classList.toggle('hor-tv-display', !!window.horTvDisplay);
   const kickMuteOpt = $('opt-host-kick-mute');
   if (kickMuteOpt) kickMuteOpt.checked = !!window.horHostKickMute;
-  const cbCards = $('opt-color-blind');
-  if (cbCards) cbCards.checked = !!colorBlindCards;
-  document.body.classList.toggle('color-blind-cards', !!colorBlindCards);
   const hsm = $('opt-hand-sort');
   if (hsm) hsm.value = normalizeHandSortMode(handSortMode);
   try { syncTargetScoreUI(); } catch (e) {
@@ -1657,7 +1626,7 @@ function broadcastPlaySettings() {
     type: 'settings',
     includeRed2, red2Points, includeRed1, includeOnes, onesHigh, includeRook, rookLowest,
     specialsAnytime, mustTrumpWhenVoid, turnTimeSec,
-    bidOnlyScoring, sandbagging, nestGoesTo, leadOrder, misdealOnNoCounters, screwTheDealer, comebackSpecialChance, openWidow, revealTopNest, forceNestReveal, shootMoonEnabled, botSpeed, colorBlindCards, handSortMode, timeoutPolicy,
+    bidOnlyScoring, sandbagging, nestGoesTo, leadOrder, misdealOnNoCounters, screwTheDealer, comebackSpecialChance, openWidow, revealTopNest, forceNestReveal, shootMoonEnabled, botSpeed, handSortMode, timeoutPolicy,
     partnerNeverKill, partnerFeedLast, dontStealPartnerBid, landscapeBidHints, nestLastTrickAnim, layDownWinningCards,
     minBid, targetScore, handSize, nestSizeDefault, ruleVariant, botDifficulty,
     luckySpecialsBoost, luckySpecialsEnabled, luckySpecialsMode, experimentalHandOpt,
@@ -4688,10 +4657,6 @@ function handleMessage(data, conn) {
         if (typeof data.landscapeBidHints === 'boolean') landscapeBidHints = data.landscapeBidHints;
         if (typeof data.nestLastTrickAnim === 'boolean') nestLastTrickAnim = data.nestLastTrickAnim;
         if (typeof data.layDownWinningCards === 'boolean') layDownWinningCards = data.layDownWinningCards;
-        if (typeof data.colorBlindCards === 'boolean') {
-          colorBlindCards = data.colorBlindCards;
-          document.body.classList.toggle('color-blind-cards', !!colorBlindCards);
-        }
         if (data.handSortMode) handSortMode = normalizeHandSortMode(data.handSortMode);
         if (data.timeoutPolicy) timeoutPolicy = data.timeoutPolicy;
         if (typeof data.turnTimeSec === 'number') turnTimeSec = data.turnTimeSec;
@@ -5039,18 +5004,6 @@ function showWaiting() {
         try { if (game && game.myHand) renderHand(game.phase === 'discard' && game.bidder === myIndex); } catch (e) {}
       };
     }
-    const cbc = $('opt-color-blind');
-    if (cbc) {
-      cbc.checked = !!colorBlindCards;
-      cbc.onchange = () => {
-        colorBlindCards = cbc.checked;
-        try { localStorage.setItem('rookColorBlind', colorBlindCards ? '1' : '0'); } catch (e) {}
-        document.body.classList.toggle('color-blind-cards', !!colorBlindCards);
-        try { if (game && game.myHand) renderHand(false); } catch (e) {}
-      };
-    }
-    document.body.classList.toggle('color-blind-cards', !!colorBlindCards);
-
     const mtv = $('opt-must-trump');
     if (mtv) {
       mtv.checked = !!mustTrumpWhenVoid;
@@ -5713,6 +5666,8 @@ function addBot(seat, personaPick) {
     avatar: persona.avatar || AVATARS[botCount() % AVATARS.length],
     seat: target,
     bank: 0,
+    careerPublic: (horCareerModeOn() && window.HORProgression && HORProgression.localCareer && HORProgression.localCareer.botPublicProfile)
+      ? HORProgression.localCareer.botPublicProfile(persona.name) : null,
   });
   const usedAv = new Set((players || []).filter(p => p && p.avatar && p.id !== id).map(p => p.avatar));
   if (usedAv.has(players[players.length - 1].avatar)) {
@@ -14134,7 +14089,7 @@ function positionPortraitLast3Btn() {
 })();
 
 /* Build 467 Career badge */
-(function(){try{const st=document.createElement('style');st.textContent='.hor-seat-career{position:relative;z-index:9;display:flex;justify-content:center;margin-top:2px;min-height:0}.hor-career-badge{margin-left:5px;padding:1px 5px;border:1px solid #d6ad4b;border-radius:999px;background:#151b15;color:#f2cf68;font-size:10px;font-weight:900;line-height:1.35;vertical-align:middle;cursor:pointer}.hor-career-badge:active{transform:scale(.96)}';document.head.appendChild(st);}catch(e){}})();
+
 
 // Rook468 — restore Career Test / Activation entrance.
 (function wireCareerTestEntrance(){
@@ -14157,33 +14112,5 @@ function positionPortraitLast3Btn() {
 })();
 
 
-// Keep Career badges synchronized with every table redraw.
-(function(){
-  try{
-    const original=renderUI;
-    if(typeof original==='function'&&!original.__horCareerWrapped){
-      const wrapped=function(){const r=original.apply(this,arguments);horScheduleSeatCareerBadges();return r;};
-      wrapped.__horCareerWrapped=true;
-      renderUI=wrapped;
-    }
-  }catch(e){}
-})();
 
 
-// Rook472: keep Career badges attached to the real seat DOM after every seat redraw.
-(function horCareerSeatObserver(){
-  function start(){
-    const ids=['slot-me','slot-partner','slot-left','slot-right'];
-    const seats=ids.map(id=>document.getElementById(id)).filter(Boolean);
-    if(!seats.length)return;
-    let busy=false;
-    const obs=new MutationObserver(function(){
-      if(busy)return; busy=true;
-      Promise.resolve().then(function(){try{horRenderSeatCareerBadges();}finally{busy=false;}});
-    });
-    seats.forEach(s=>obs.observe(s,{childList:true,subtree:true,characterData:true}));
-    horRenderSeatCareerBadges();
-  }
-  if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',start);
-  else start();
-})();

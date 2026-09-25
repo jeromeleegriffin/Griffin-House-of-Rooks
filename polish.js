@@ -1743,7 +1743,6 @@
     return html;
   };
 
-  // color-blind pips on bars via CSS class already; add data-pip
   function flashGfxBanner(id, text, cls) {
     const el = $(id);
     if (!el) return;

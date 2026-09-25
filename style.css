@@ -3274,20 +3274,6 @@ body.high-contrast .btn {
 }
 
 /* Landscape */
-/* Color-blind friendly cards (#16) */
-body.color-blind-cards .card-face .c-num {
-  font-size: 1.15em;
-  font-weight: 900;
-  text-shadow: 0 1px 2px rgba(0,0,0,0.35);
-}
-body.color-blind-cards .card-face .c-bar {
-  height: 7px;
-}
-body.color-blind-cards .card-face.green { box-shadow: inset 0 0 0 2px #a5d6a7; }
-body.color-blind-cards .card-face.red { box-shadow: inset 0 0 0 2px #ef9a9a; }
-body.color-blind-cards .card-face.yellow { box-shadow: inset 0 0 0 2px #ffe082; }
-body.color-blind-cards .card-face.black { box-shadow: inset 0 0 0 2px #b0bec5; }
-body.color-blind-cards .card-face .c-rank { letter-spacing: 0.04em; }
 
 /* Spectator badge */
 .spectator-badge {
@@ -8626,10 +8612,6 @@ body.is-spectator .action-panel { display:none !important; }
 .recap-grid { display:grid; grid-template-columns:1fr 1fr; gap:.45rem; }
 .recap-grid div { background:rgba(0,0,0,.28); border-radius:10px; padding:.45rem .55rem; }
 .recap-grid span { display:block; font-size:.68rem; opacity:.7; }
-body.color-blind-cards .card-face.green .c-bar { background-image:repeating-linear-gradient(-45deg,transparent,transparent 4px,rgba(255,255,255,.35) 4px,rgba(255,255,255,.35) 6px); }
-body.color-blind-cards .card-face.red .c-bar { background-image:radial-gradient(circle,rgba(255,255,255,.45) 1.2px,transparent 1.4px); background-size:7px 7px; }
-body.color-blind-cards .card-face.yellow .c-bar { background-image:repeating-linear-gradient(90deg,transparent,transparent 5px,rgba(0,0,0,.28) 5px,rgba(0,0,0,.28) 7px); }
-body.color-blind-cards .card-face.black .c-bar { background-image:repeating-linear-gradient(0deg,transparent,transparent 4px,rgba(255,255,255,.28) 4px,rgba(255,255,255,.28) 5px); }
 body.reduce-motion .capture-overlay,
 body.reduce-motion .cele-confetti,
 body.reduce-motion .confetti,
@@ -12873,3 +12855,33 @@ body.nest-on-felt .player-slot.is-turn .seat-avatar {
   margin-top: 0.85rem;
 }
 .no-service-actions .btn { flex: 1; }
+
+
+/* Rook473 Career levels live inside the existing player plaque. */
+.player-slot .name .hor-career-badge{
+  display:inline-flex !important;
+  align-items:center !important;
+  justify-content:center !important;
+  flex:0 0 auto !important;
+  width:auto !important;
+  min-width:1.55rem !important;
+  height:1.05rem !important;
+  min-height:1.05rem !important;
+  margin:0 0 0 .24rem !important;
+  padding:0 .28rem !important;
+  border:1px solid #e0b844 !important;
+  border-radius:999px !important;
+  background:#151b15 !important;
+  color:#ffd85c !important;
+  font:900 .62rem/1 system-ui,-apple-system,Segoe UI,sans-serif !important;
+  letter-spacing:0 !important;
+  text-indent:0 !important;
+  white-space:nowrap !important;
+  overflow:visible !important;
+  opacity:1 !important;
+  visibility:visible !important;
+  vertical-align:middle !important;
+  cursor:pointer !important;
+  box-sizing:border-box !important;
+}
+.player-slot .name .hor-career-badge:active{transform:scale(.96)}
