@@ -7,7 +7,7 @@
 // It's exchanged during the join handshake so a stale host or joiner (e.g.
 // one still running old cached JS) gets caught and auto-updated instead of
 // silently failing or behaving unpredictably against a mismatched peer.
-const APP_VERSION = '467';
+const APP_VERSION = '468';
 
 function horThisIndex() {
   try {
@@ -14086,3 +14086,23 @@ function positionPortraitLast3Btn() {
 
 /* Build 467 Career badge */
 (function(){try{const st=document.createElement('style');st.textContent='.hor-career-badge{margin-left:5px;padding:1px 5px;border:1px solid #d6ad4b;border-radius:999px;background:#151b15;color:#f2cf68;font-size:10px;font-weight:900;line-height:1.35;vertical-align:middle;cursor:pointer}.hor-career-badge:active{transform:scale(.96)}';document.head.appendChild(st);}catch(e){}})();
+
+// Rook468 — restore Career Test / Activation entrance.
+(function wireCareerTestEntrance(){
+  function bind(){
+    const b=document.getElementById('horCareerTestBtn');
+    if(!b || b.__horBound) return;
+    b.__horBound=true;
+    b.addEventListener('click',function(e){
+      e.preventDefault(); e.stopPropagation();
+      try{
+        if(window.HORProgression && HORProgression.localCareer &&
+           typeof HORProgression.localCareer.showActivationPanel==='function'){
+          HORProgression.localCareer.showActivationPanel();
+        }
+      }catch(err){console.error(err);}
+    });
+  }
+  if(document.readyState==='loading') document.addEventListener('DOMContentLoaded',bind);
+  else bind();
+})();
