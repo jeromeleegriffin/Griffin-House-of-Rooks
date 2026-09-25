@@ -12873,3 +12873,12 @@ body.nest-on-felt .player-slot.is-turn .seat-avatar {
   margin-top: 0.85rem;
 }
 .no-service-actions .btn { flex: 1; }
+
+
+/* Build 460: keep bot persona long-press inside the game instead of native mobile image menu. */
+[data-botname], [data-botname] img {
+  -webkit-touch-callout: none;
+  -webkit-user-select: none;
+  user-select: none;
+}
+[data-botname] img { -webkit-user-drag: none; }
