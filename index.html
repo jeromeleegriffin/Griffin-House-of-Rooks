@@ -13,7 +13,7 @@
   <title>House of Rooks</title>
   <script>
     (function () {
-      var BUILD = '461';
+      var BUILD = '380';
       try {
         var params = new URLSearchParams(location.search);
         var seen = localStorage.getItem('horBuild') || '';
@@ -743,6 +743,11 @@
               <p class="option-hint">Huge trick pile, personal hand hidden. For a spare phone or TV.</p>
               <label class="option-label"><input type="checkbox" id="opt-host-kick-mute"> Host kick / mute buttons</label>
               <p class="option-hint">Show Kick and Mute on other players’ seats. Off unless you turn it on.</p>
+              <div class="option-block" id="careerTestActivationBlock">
+                <span class="option-hint">Career &amp; Achievements testing</span>
+                <button type="button" class="btn" id="openCareerActivationBtn" onclick="if(window.HORProgression &amp;&amp; HORProgression.localCareer &amp;&amp; HORProgression.localCareer.showActivationPanel){HORProgression.localCareer.showActivationPanel();}else{alert('Career system is still loading. Please try again.');}">🏆 Career Test / Activation</button>
+                <p class="option-hint">Opens the existing Dry Run / Turn On Local Careers / Preview Mode panel. Cloud progression stays off.</p>
+              </div>
             </div>
           </div>
         </div>
