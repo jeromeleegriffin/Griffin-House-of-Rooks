@@ -3,6 +3,20 @@
 // Author: Jerome Griffin
 // Copyright (c) 2026 Jerome Griffin / Griffin House
 
+/* Build 461: suppress native mobile image long-press/download menu on game artwork.
+   Keep normal taps/clicks working; only context-menu and drag gestures are blocked. */
+(function horProtectGameImages() {
+  function isGameImageTarget(target) {
+    return !!(target && target.closest && target.closest('img'));
+  }
+  document.addEventListener('contextmenu', function (e) {
+    if (isGameImageTarget(e.target)) e.preventDefault();
+  }, { capture: true });
+  document.addEventListener('dragstart', function (e) {
+    if (isGameImageTarget(e.target)) e.preventDefault();
+  }, { capture: true });
+})();
+
 // Bump this alongside the game.js?v= / sw.js CACHE version on every deploy.
 // It's exchanged during the join handshake so a stale host or joiner (e.g.
 // one still running old cached JS) gets caught and auto-updated instead of
