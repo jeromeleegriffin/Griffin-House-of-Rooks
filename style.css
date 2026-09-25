@@ -10811,7 +10811,10 @@ body.trick-resolving.gfx-playFly .lt-play.latest .card-face {
   white-space:nowrap !important;
   word-break:normal !important;
   overflow-wrap:normal !important;
-  display:block !important;
+  display:inline-flex !important;
+  align-items:center !important;
+  justify-content:center !important;
+  gap:.22rem !important;
   line-height:1.15 !important;
 }
 .player-slot.left .player-name-text,

@@ -7,7 +7,7 @@
 // It's exchanged during the join handshake so a stale host or joiner (e.g.
 // one still running old cached JS) gets caught and auto-updated instead of
 // silently failing or behaving unpredictably against a mismatched peer.
-const APP_VERSION = '478';
+const APP_VERSION = '480';
 
 function horThisIndex() {
   try {
@@ -168,6 +168,27 @@ function horCareerBadgeHtml(p){
   const who=escapeHtmlSafe(p.id||('bot-'+String(p.name||'bot')));
   return ` <span class="hor-career-badge" role="button" tabindex="0" data-career-peer="${who}" title="View Career: Level ${level}" aria-label="Career level ${level}">★${level}</span>`;
 }
+
+
+/* Rook479: progression.js loads after game.js. Rehydrate Careers when progression is actually ready. */
+window.addEventListener('hor-career-ready', function(){
+  try{
+    const mine=horMyCareerProfile();
+    [players,(game&&game.players)].forEach(pool=>{
+      if(!Array.isArray(pool))return;
+      pool.forEach(pl=>{
+        if(!pl)return;
+        if(!pl.isBot&&pl.id===myPeerId&&mine&&mine.enabled)pl.careerPublic=mine;
+        if(pl.isBot&&horCareerModeOn()&&window.HORProgression&&HORProgression.localCareer&&HORProgression.localCareer.botPublicProfile){
+          const bp=HORProgression.localCareer.botPublicProfile(pl.name);
+          if(bp&&bp.enabled)pl.careerPublic=bp;
+        }
+      });
+    });
+    horRefreshBotCareerProfiles();
+    if(typeof renderUI==='function')renderUI();
+  }catch(e){console.error('[Career ready]',e);}
+});
 
 function horBindCareerBadges(root){try{(root||document).querySelectorAll('.hor-career-badge').forEach(b=>{if(b.__horCareerBound)return;b.__horCareerBound=true;const open=e=>{e.preventDefault();e.stopPropagation();const id=b.getAttribute('data-career-peer');const pool=(game&&game.players)||players||[];let pl=pool.find(x=>x&&x.id===id);if(!pl&&id&&id.startsWith('bot-'))pl=pool.find(x=>x&&x.isBot&&('bot-'+String(x.name||'bot'))===id);if(pl)horShowCareerForPlayer(pl);};b.addEventListener('click',open);b.addEventListener('keydown',e=>{if(e.key==='Enter'||e.key===' ' )open(e);});});}catch(e){}}
 function horBroadcastCareerProfile(){const profile=horMyCareerProfile();if(isHost){const me=(players||[]).find(p=>p&&!p.isBot&&p.id===myPeerId);if(me)me.careerPublic=profile;broadcast({type:'careerProfile',id:myPeerId,profile});}else if(hostConnection&&hostConnection.open){hostConnection.send({type:'careerProfile',id:myPeerId,profile});}}
@@ -10857,9 +10878,9 @@ function playTrumpStampFx(el) {
 // ========== Rendering ==========
 function renderUI() {
   try {
-    const pool=(game&&Array.isArray(game.players))?game.players:players;
-    if(Array.isArray(pool)){
-      const mine=horMyCareerProfile();
+    const mine=horMyCareerProfile();
+    [players,(game&&game.players)].forEach(pool=>{
+      if(!Array.isArray(pool))return;
       if(mine&&mine.enabled){
         let me=pool.find(x=>x&&!x.isBot&&x.id===myPeerId);
         if(!me&&Number.isInteger(myIndex))me=pool[myIndex];
@@ -10873,7 +10894,7 @@ function renderUI() {
           }
         });
       }
-    }
+    });
   } catch(e) {}
 
   try { renderTopNestPeek(); } catch (e) {}
@@ -11135,7 +11156,7 @@ function renderUI() {
       meNameEl.innerHTML = `<span class="seat-avatar">${avatarHTML(av)}</span> <span class="player-name-text">${escapeHtmlSafe(meName)}</span>${meP?horCareerBadgeHtml(meP):''}`;
       applyBotNameAttr(meNameEl, meP);
       try { updateBankDisplays(); } catch (e) {}
-      try { horBindCareerBadges(meSlot); horCleanLocalCareerSeatArtifacts(); } catch (e) {}
+      try { horBindCareerBadges(meSlot); } catch (e) { console.error('[Career badge bind]', e); }
     }
     const quietMe = isFirstHandOfMatch();
     meSlot.classList.toggle('is-turn', !quietMe && seatBase === whoseTurn && !game.resolvingTrick);
