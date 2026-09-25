@@ -2,21 +2,24 @@
  * Author: Jerome Griffin
  * Copyright (c) 2026 Jerome Griffin / Griffin House
  */
-const CACHE = 'house-of-rooks-v483';
+const CACHE = 'house-of-rooks-v487';
 const SHELL = [
   './',
   './index.html',
+  './vendor/peerjs.min.js',
   './shuffle-statistics.html',
   './rules.js',
-  './rules.js?v=483',
+  './rules.js?v=487',
   './bots.js',
-  './bots.js?v=483',
+  './bots.js?v=487',
   './game.js',
-  './game.js?v=483',
+  './game.js?v=487',
   './polish.js',
-  './polish.js?v=483',
+  './polish.js?v=487',
+  './progression.js',
+  './progression.js?v=487',
   './style.css',
-  './style.css?v=483',
+  './style.css?v=487',
   './hor-version.js',
   './splash-battle.png',
   './wait-nest-portrait.jpg',
@@ -24,13 +27,16 @@ const SHELL = [
   './wait-nest-landscape.jpg',
   './wait-trump-landscape.jpg',
   './apple-touch-icon.png',
+  './griffin-icon.png',
   './icon-192-maskable.png',
   './icon-512-maskable.png',
   './manifest.json',
-  './vendor/peerjs.min.js',
   './privacy.html',
   './Rook.webp',
   './Red2-card.webp',
+  './Red2.webp',
+  './Rook.png',
+  './Red2.png',
   './icon-192.png',
   './icon-512.png',
   './kitty-wait.jpg',
@@ -72,7 +78,6 @@ self.addEventListener('activate', (e) => {
 function cacheLookup(request) {
   const url = new URL(request.url);
   const leaf = url.pathname.split('/').pop();
-  if (leaf === 'lobby-hero-2.jpg') return Promise.resolve(undefined);
   return caches.open(CACHE).then((c) =>
     c.match(request).then((hit) => {
       if (hit) return hit;

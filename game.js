@@ -7,7 +7,7 @@
 // It's exchanged during the join handshake so a stale host or joiner (e.g.
 // one still running old cached JS) gets caught and auto-updated instead of
 // silently failing or behaving unpredictably against a mismatched peer.
-const APP_VERSION = '483';
+const APP_VERSION = '487';
 
 function horThisIndex() {
   try {
@@ -194,8 +194,11 @@ function horCareerBadgeHtml(p){
     // Career mode is ON, so keep the public level chip present while the
     // ledger/profile is still hydrating. A brand-new Career is Level 1.
     if(horCareerModeOn()){
-      const who=escapeHtmlSafe((p&&p.id)||('bot-'+String((p&&p.name)||'bot')));
-      return ` <span class="hor-career-badge hor-career-badge-pending" role="button" tabindex="0" data-career-peer="${who}" title="View Career: Level 1" aria-label="Career level 1">★1</span>`;
+      const isLocalHuman=!!(p&&!p.isBot&&p.id&&myPeerId&&p.id===myPeerId);
+      if(p&&p.isBot || isLocalHuman){
+        const who=escapeHtmlSafe((p&&p.id)||('bot-'+String((p&&p.name)||'bot')));
+        return ` <span class="hor-career-badge hor-career-badge-pending" role="button" tabindex="0" data-career-peer="${who}" title="Career loading" aria-label="Career loading">★…</span>`;
+      }
     }
     return '';
   }
@@ -227,7 +230,7 @@ window.addEventListener('hor-career-ready', function(){
 
 function horBindCareerBadges(root){try{(root||document).querySelectorAll('.hor-career-badge').forEach(b=>{if(b.__horCareerBound)return;b.__horCareerBound=true;const open=e=>{e.preventDefault();e.stopPropagation();const id=b.getAttribute('data-career-peer');const pool=(game&&game.players)||players||[];let pl=pool.find(x=>x&&x.id===id);if(!pl&&id&&id.startsWith('bot-'))pl=pool.find(x=>x&&x.isBot&&('bot-'+String(x.name||'bot'))===id);if(pl)horShowCareerForPlayer(pl);};b.addEventListener('click',open);b.addEventListener('keydown',e=>{if(e.key==='Enter'||e.key===' ' )open(e);});});}catch(e){}}
 function horBroadcastCareerProfile(){const profile=horMyCareerProfile();if(isHost){const me=(players||[]).find(p=>p&&!p.isBot&&p.id===myPeerId);if(me)me.careerPublic=profile;broadcast({type:'careerProfile',id:myPeerId,profile});}else if(hostConnection&&hostConnection.open){hostConnection.send({type:'careerProfile',id:myPeerId,profile});}}
-function horCareerAnnouncement(ev){if(!ev||!window.HORProgression||!HORProgression.presentation)return;HORProgression.presentation.enqueue(Object.assign({remote:true},ev));}
+function horCareerAnnouncement(ev){if(!ev||!window.HORProgression||!HORProgression.presentation||!window.horOtherCareerPopups)return;HORProgression.presentation.enqueue(Object.assign({remote:true},ev));}
 window.horCareerLocalAnnouncement=function(ev){try{if(!horCareerModeOn()||!ev)return;if(isHost)broadcast({type:'careerAnnouncement',from:myPeerId,event:ev});else if(hostConnection&&hostConnection.open)hostConnection.send({type:'careerAnnouncement',from:myPeerId,event:ev});}catch(e){}};
 window.horCareerModeChanged=function(){try{horRefreshBotCareerProfiles();horBroadcastCareerProfile();renderUI();}catch(e){}};
 function horRefreshBotCareerProfiles(){
@@ -510,6 +513,7 @@ try {
   window.horAvatarMotion = localStorage.getItem('horAvatarMotion') !== '0';
   window.horTvDisplay = localStorage.getItem('horTvDisplay') === '1';
   window.horHostKickMute = localStorage.getItem('horHostKickMute') === '1';
+  window.horOtherCareerPopups = localStorage.getItem('horOtherCareerPopups') === '1';
   document.body.classList.toggle('no-avatar-motion', window.horAvatarMotion === false);
   document.body.classList.toggle('hor-tv-display', !!window.horTvDisplay);
 } catch (e) {}
@@ -1641,6 +1645,8 @@ function syncOptionsUI() {
   document.body.classList.toggle('hor-tv-display', !!window.horTvDisplay);
   const kickMuteOpt = $('opt-host-kick-mute');
   if (kickMuteOpt) kickMuteOpt.checked = !!window.horHostKickMute;
+  const otherCareerOpt = $('opt-other-career-popups');
+  if (otherCareerOpt) otherCareerOpt.checked = !!window.horOtherCareerPopups;
   const hsm = $('opt-hand-sort');
   if (hsm) hsm.value = normalizeHandSortMode(handSortMode);
   try { syncTargetScoreUI(); } catch (e) {
@@ -3204,6 +3210,7 @@ function updateWelcomeSeats() {
     el.classList.toggle('occupied', !!p);
     el.classList.toggle('is-me', !!(p && p.id === myPeerId));
     el.classList.toggle('is-bot', !!(p && p.isBot));
+    if (p && p.isBot && p.name) el.setAttribute('data-botname', p.name); else el.removeAttribute('data-botname');
     if (p && p.id === myPeerId) mySeat = s;
     if (p) {
       const tag = p.isHost ? 'Host' : (p.isBot ? 'Bot' : (p.id === myPeerId ? 'You' : 'Sat'));
@@ -3620,7 +3627,7 @@ function horNextBroker() {
   return PEER_BROKERS[horPeerBrokerIndex];
 }
 
-function createRoom() {
+function createRoom(preserveCode) {
   if (phoneLooksOffline()) {
     offerOfflinePlay();
     return;
@@ -3631,7 +3638,7 @@ function createRoom() {
     $('lobbyStatus').textContent = 'PeerJS failed to load. Check your internet connection and refresh.';
     return;
   }
-  roomCode = shortCode();
+  if (!preserveCode || !roomCode) roomCode = shortCode();
   isHost = true;
   $('lobbyStatus').textContent = 'Creating room…';
 
@@ -3713,7 +3720,7 @@ function createRoom() {
       roomCode = shortCode();
       try { peer.destroy(); } catch (e) {}
       peer = null;
-      scheduleNetRetry(createRoom, 200);
+      scheduleNetRetry(() => createRoom(true), 200);
     } else if (err.type === 'network' || err.type === 'server-error' || err.type === 'socket-error' || err.type === 'socket-closed') {
       if (phoneLooksOffline() || window._horNoServiceStop) {
         offerOfflinePlay();
@@ -3723,7 +3730,7 @@ function createRoom() {
       $('lobbyStatus').textContent = brokerRetryMessage();
       try { peer.destroy(); } catch (e) {}
       peer = null;
-      scheduleNetRetry(createRoom, 350);
+      scheduleNetRetry(() => createRoom(true), 350);
     } else {
       $('lobbyStatus').textContent = 'Error: ' + (err.type || err.message || 'unknown');
     }
@@ -3929,7 +3936,8 @@ function joinRoom() {
       setJoinStatus(brokerRetryMessage());
       try { if (peer) peer.destroy(); } catch (e) {}
       peer = null;
-      scheduleNetRetry(() => { try { joinRoom(); } catch (e2) {} }, 400);
+      joinInProgress = false;
+      scheduleNetRetry(() => { try { const codeEl=$('hor-room-code'); if(codeEl) codeEl.value=roomCode; joinRoom(); } catch (e2) {} }, 400);
     } else finishFailure('Multiplayer error: ' + (type || err.message || 'unknown error') + (err && err.message ? '' : ''));
   });
 }
@@ -5068,6 +5076,10 @@ function showWaiting() {
       window.horHostKickMute = v;
       try { localStorage.setItem('horHostKickMute', v ? '1' : '0'); } catch (e) {}
       try { document.querySelectorAll('.hor-kick-mute').forEach(n => { if (!v) n.remove(); }); } catch (e) {}
+    });
+    bindCoach('opt-other-career-popups', () => !!window.horOtherCareerPopups, v => {
+      window.horOtherCareerPopups = !!v;
+      try { localStorage.setItem('horOtherCareerPopups', v ? '1' : '0'); } catch (e) {}
     });
     const hsm = $('opt-hand-sort');
     if (hsm) {
@@ -6229,6 +6241,7 @@ function updateWaitingUI() {
     el.classList.toggle('occupied', !!p);
     el.classList.toggle('is-me', !!(p && p.id === myPeerId));
     el.classList.toggle('is-bot', !!(p && p.isBot));
+    if (p && p.isBot && p.name) el.setAttribute('data-botname', p.name); else el.removeAttribute('data-botname');
     if (p) {
       const tag = p.isHost ? 'Host' : (p.isBot ? 'Bot' : 'Sat');
       const face = p.avatar ? '<img class="wait-seat-av" src="' + avatarSrc(p.avatar) + '" alt="">' : '';
@@ -13011,57 +13024,21 @@ window.addEventListener('online', () => {
 });
 bindClick('leaveReplaceBtn', () => { try { clientLeaveReplace(); } catch (e) { console.error(e); } });
 (function wireBotStyleLongPress() {
-  let timer = 0;
-  let armedName = '';
-  let shown = false;
-  const cancel = () => { if (timer) { clearTimeout(timer); timer = 0; } armedName = ''; };
-  const sourceName = (el) => {
-    if (!el) return '';
-    const tagged = el.closest && el.closest('[data-botname]');
-    return tagged ? (tagged.getAttribute('data-botname') || '') : '';
-  };
-  document.addEventListener('pointerdown', (e) => {
-    const name = sourceName(e.target);
-    shown = false;
-    if (!name) return;
-    cancel();
-    armedName = name;
-    const x = e.clientX || 24;
-    const y = e.clientY || 24;
-    timer = setTimeout(() => {
-      timer = 0;
-      shown = true;
-      showBotStyleTip(armedName, { clientX: x, clientY: y, preventDefault() {}, stopPropagation() {} });
-    }, 480);
-  }, { passive: true });
-  document.addEventListener('pointerup', cancel, { passive: true });
-  document.addEventListener('pointercancel', cancel, { passive: true });
-  // Mobile browsers may treat a long-pressed bot avatar/name as an image/link
-  // and open their native context menu before our persona card can be used.
-  // Suppress that menu only for bot-tagged UI; leave normal page context menus alone.
-  document.addEventListener('contextmenu', (e) => {
-    const tagged = e.target && e.target.closest && e.target.closest('[data-botname]');
-    if (!tagged) return;
-    e.preventDefault();
-    e.stopPropagation();
-    const name = tagged.getAttribute('data-botname') || '';
-    if (name) showBotStyleTip(name, e);
-  }, true);
-  document.addEventListener('pointermove', (e) => {
-    if (!timer) return;
-    if (Math.abs((e.movementX || 0)) + Math.abs((e.movementY || 0)) > 10) cancel();
-  }, { passive: true });
-  document.addEventListener('click', (e) => {
-    if (shown) {
-      e.preventDefault();
-      e.stopPropagation();
-      shown = false;
-      return;
-    }
-    const tip = $('botStyleTip');
-    if (tip && !tip.classList.contains('hidden') && !tip.contains(e.target)) hideBotStyleTip();
-  }, true);
-})();
+  let timer=0,armedName='',shown=false,startX=0,startY=0;
+  const cancel=()=>{if(timer){clearTimeout(timer);timer=0;}armedName='';};
+  const sourceName=(el)=>{const tagged=el&&el.closest&&el.closest('[data-botname]');return tagged?(tagged.getAttribute('data-botname')||''):'';};
+  const arm=(target,x,y)=>{const name=sourceName(target);shown=false;if(!name){cancel();return;}cancel();armedName=name;startX=Number(x)||0;startY=Number(y)||0;timer=setTimeout(()=>{timer=0;shown=true;showBotStyleTip(armedName,{clientX:startX||24,clientY:startY||24,preventDefault(){},stopPropagation(){}});},480);};
+  document.addEventListener('pointerdown',(e)=>arm(e.target,e.clientX,e.clientY),{passive:true});
+  document.addEventListener('pointerup',cancel,{passive:true});
+  document.addEventListener('pointercancel',cancel,{passive:true});
+  document.addEventListener('pointermove',(e)=>{if(timer&&(Math.abs((Number(e.clientX)||0)-startX)+Math.abs((Number(e.clientY)||0)-startY)>14))cancel();},{passive:true});
+  document.addEventListener('touchstart',(e)=>{const t=e.touches&&e.touches[0];if(t)arm(e.target,t.clientX,t.clientY);},{passive:true});
+  document.addEventListener('touchend',cancel,{passive:true});
+  document.addEventListener('touchcancel',cancel,{passive:true});
+  document.addEventListener('touchmove',(e)=>{if(!timer)return;const t=e.touches&&e.touches[0];if(t&&(Math.abs(t.clientX-startX)+Math.abs(t.clientY-startY)>14))cancel();},{passive:true});
+  document.addEventListener('contextmenu',(e)=>{const tagged=e.target&&e.target.closest&&e.target.closest('[data-botname]');if(!tagged)return;e.preventDefault();e.stopPropagation();const name=tagged.getAttribute('data-botname')||'';if(name)showBotStyleTip(name,e);},true);
+  document.addEventListener('click',(e)=>{if(shown){e.preventDefault();e.stopPropagation();shown=false;}},true);
+})();;
 bindClick('botPickerClose', closeBotPicker);
 const _botPickModal = $('botPickerModal');
 if (_botPickModal) _botPickModal.addEventListener('click', (e) => { if (e.target === _botPickModal) closeBotPicker(); });
