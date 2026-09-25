@@ -7,7 +7,7 @@
 // It's exchanged during the join handshake so a stale host or joiner (e.g.
 // one still running old cached JS) gets caught and auto-updated instead of
 // silently failing or behaving unpredictably against a mismatched peer.
-const APP_VERSION = '442';
+const APP_VERSION = '446';
 
 function horThisIndex() {
   try {
@@ -155,7 +155,73 @@ function mergeLifetimeStats(winnerLabel) {
       store[p.name] = cur;
     }
     saveLifetimeStats(store);
+    try { publishCareerStats(winnerLabel, store); } catch (e) {}
   } catch (e) {}
+}
+
+/** Shared house record. Empty = off. Fill this once with your workers.dev
+ *  URL so every copy of the game posts. Players never see or paste it. */
+const HOUSE_STATS_ENDPOINT = 'https://griffin-house-of-rooks.jeromeleegriffin.workers.dev';
+function statsEndpointKey() { return 'horStatsEndpoint'; }
+function loadStatsEndpoint() {
+  try {
+    const override = String(localStorage.getItem(statsEndpointKey()) || '').trim();
+    if (override) return override;
+  } catch (e) {}
+  return String(HOUSE_STATS_ENDPOINT || '').trim();
+}
+function saveStatsEndpoint(url) {
+  try { localStorage.setItem(statsEndpointKey(), String(url || '').trim()); } catch (e) {}
+}
+function publishCareerStats(winnerLabel, store) {
+  if (!isHost) return;
+  const url = loadStatsEndpoint();
+  if (!url || !/^https:\/\//i.test(url)) return;
+  const payload = {
+    app: 'hor',
+    v: (typeof APP_VERSION !== 'undefined') ? APP_VERSION : '',
+    at: new Date().toISOString(),
+    winner: winnerLabel || null,
+    scores: (game && game.scores) ? game.scores.slice() : null,
+    players: (players || []).map((p, i) => {
+      if (!p || !p.name) return null;
+      const fromStore = store && store[p.name];
+      const add = ps(i);
+      return {
+        name: p.name,
+        isBot: !!p.isBot,
+        avatar: p.avatar || null,
+        team: p.team,
+        stats: {
+          gamesPlayed: 1,
+          gamesWon: ((winnerLabel === 'Team A' && p.team === 0) || (winnerLabel === 'Team B' && p.team === 1)) ? 1 : 0,
+          hands: add.hands || 0,
+          bidsWon: add.bidsWon || 0,
+          highBid: add.highBid || 0,
+          bidSum: add.bidSum || 0,
+          bidsMade: add.bidsMade || 0,
+          bidsSet: add.bidsSet || 0,
+          points: add.points || 0,
+          tricksWon: add.tricksWon || 0,
+          trickPtsSum: add.trickPtsSum || 0,
+          rookCaptures: add.rookCaptures || 0,
+          red2Captures: add.red2Captures || 0,
+          bigTricks: add.bigTricks || 0,
+          nestWins: add.nestWins || 0,
+          nestPts: add.nestPts || 0,
+          moonAttempts: add.moonAttempts || 0,
+          moonMade: add.moonMade || 0,
+          bags: add.bags || 0,
+        },
+        career: fromStore || null,
+      };
+    }).filter(Boolean),
+  };
+  fetch(url, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify(payload),
+  }).catch(() => {});
 }
 
 const HUMAN_STYLE_MIN_HANDS = 8;
@@ -1417,6 +1483,8 @@ function syncOptionsUI() {
   if (rtn) rtn.checked = !!revealTopNest;
   const fnr = $('opt-force-nest-reveal');
   if (fnr) fnr.value = forceNestReveal || '';
+  const se = $('opt-stats-endpoint');
+  if (se) se.value = loadStatsEndpoint();
   const ow = $('opt-open-widow');
   if (ow) ow.checked = !!openWidow;
   const stm = $('opt-shoot-moon');
@@ -2518,7 +2586,6 @@ function runDealPresentation(fullHand, onDone) {
         game.myHand = hand.slice();
         try { sortMyHandInPlace(); } catch (e) {}
         try { renderHand(false); } catch (e) {}
-        try { scheduleTopNestFlip(); } catch (e) {}
         if (typeof onDone === 'function') onDone();
         return;
       }
@@ -4669,6 +4736,11 @@ function showWaiting() {
         try { broadcastPlaySettings(); } catch (e) {}
       };
     }
+    const se = $('opt-stats-endpoint');
+    if (se) {
+      se.value = loadStatsEndpoint();
+      se.onchange = se.onblur = () => { saveStatsEndpoint(se.value); };
+    }
     const ow = $('opt-open-widow');
     if (ow) {
       ow.checked = !!openWidow;
@@ -5859,7 +5931,7 @@ function scheduleTopNestFlip() {
     return;
   }
   const handKey = String(game.handNumber || 0) + ':' + String(game.dealer) + ':' + (game.topNestCard && game.topNestCard.id);
-  if (window._horNestFlipHand === handKey && game.nestFlipStage > 0) return;
+  if (window._horNestFlipHand === handKey) return;
   window._horNestFlipHand = handKey;
   const tok = (window._horNestFlipTok = (window._horNestFlipTok || 0) + 1);
   game.nestFlipStage = 0;
@@ -6506,6 +6578,8 @@ function hostDealNow() {
   if (game) { game.topNestCard = null; game.nestFlipStage = 0; game.nestFlipped = false; }
   window._horPinnedNestFace = null;
   window._horNestPileSig = '';
+  window._horNestFlipHand = '';
+  window._horNestFlipTok = (window._horNestFlipTok || 0) + 1;
   const deck = shuffle(makeDeck());
   const hs = handSize || 9;
   const needed = hs * 4;

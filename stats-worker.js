@@ -1,7 +1,17 @@
 /**
  * House of Rooks — Cloudflare Worker (free plan is enough).
- * Paste this into a Worker. Set GITHUB_TOKEN + GITHUB_REPO.
- * The game never holds your GitHub token.
+ *
+ * Setup:
+ * 1. Cloudflare Dashboard → Workers → Create → paste this file.
+ * 2. Settings → Variables:
+ *      GITHUB_TOKEN  = fine-grained PAT, Contents: Read and write, this repo only
+ *      GITHUB_REPO   = jeromeleegriffin/Griffin-House-of-Rooks
+ *      STATS_PATH    = stats/players.json   (optional)
+ * 3. Copy the worker URL (https://….workers.dev).
+ * 4. In the game Host options, paste that URL into "Stats worker URL".
+ *
+ * The worker merges career stats by player name into stats/players.json
+ * on GitHub. The game never holds your GitHub token.
  */
 const CORS = {
   'Access-Control-Allow-Origin': '*',
