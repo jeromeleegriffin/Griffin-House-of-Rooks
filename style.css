@@ -12882,13 +12882,3 @@ body.nest-on-felt .player-slot.is-turn .seat-avatar {
   user-select: none;
 }
 [data-botname] img { -webkit-user-drag: none; }
-
-
-/* Build 461: mobile game artwork is not a browser-download target.
-   This complements the JS contextmenu/drag guard without disabling normal taps. */
-img {
-  -webkit-touch-callout: none !important;
-  -webkit-user-select: none !important;
-  user-select: none !important;
-  -webkit-user-drag: none !important;
-}
