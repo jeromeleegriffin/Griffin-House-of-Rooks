@@ -163,7 +163,7 @@ function extremeAnalyze(hand) {
   return { analysis: a, trump, trumpLen: t.length, honors, ones, fourteens, ownPts, goodTrump, marks, ev };
 }
 
-function legacyBotBid() {
+function botBid() {
   if (typeof nestAuctionLocked === 'function' && nestAuctionLocked()) return;
   const hand = game.hands[game.currentPlayer];
   const ceiling = (typeof bidCeilingFor === 'function') ? bidCeilingFor(game.currentPlayer) : maxBid();
@@ -286,7 +286,7 @@ function extremeBid(hand, floor, ceiling, nextMin) {
   hostProcessBid({ player: seat, value: bid });
 }
 
-function legacyBotDiscard() {
+function botDiscard() {
   const hand = game.hands[game.bidder].slice();
   const needed = game.discardCount || 5;
   const trump = bestTrumpColor(hand);
@@ -367,7 +367,7 @@ function extremeDiscard(hand, needed, trump) {
   hostProcessDiscard({ player: game.bidder, cardIds: pick.slice(0, needed) });
 }
 
-function legacyBotChooseTrump() {
+function botChooseTrump() {
   const hand = game.hands[game.bidder];
   let color = bestTrumpColor(hand);
   if ((botFullPersona() || botLightPersona()) && typeof styleTrumpColor === 'function') {
@@ -396,7 +396,7 @@ function currentTrickWinner() {
   return winner;
 }
 
-function legacyBotPlay() {
+function botPlay() {
   const idx = game.currentPlayer;
   const hand = game.hands[idx];
   if (!hand || !hand.length) return;
@@ -416,197 +416,6 @@ function legacyBotPlay() {
   let choice = extremePickCard(idx, hand, legal);
   choice = applyHabitPlay(idx, hand, legal, choice);
   hostProcessPlay({ player: idx, cardId: (choice || legal[0] || hand[0]).id });
-}
-
-
-
-/* ==========================================================================\n * BUILD 461 — FROZEN SOL 7 CORE + EXISTING PERSONA LAYER\n *\n * Intelligence and personality are intentionally separate. Every normal bot\n * uses the validated Sol 7 decision core. Existing botStyle personas may move\n * a decision only inside a bounded, strategically defensible window. The\n * original pre-461 engine remains below as legacy helpers/fallback reference.\n * Sol7 source of truth: ai_lab/sol7_validated/Sol7_FROZEN.py + checksum.\n * ========================================================================== */
-function sol7TrumpScore(hand, color) {
-  const suited = (hand || []).filter(c => c && c.color === color && !isRed2(c));
-  const ranks = new Set(suited.map(c => c.rank));
-  const controls = (ranks.has(1) ? 5 : 0) + (ranks.has(14) ? 4 : 0) +
-    (ranks.has(13) ? 2.5 : 0) + (ranks.has(12) ? 1.5 : 0);
-  const counters = suited.reduce((n,c)=>n+cardPoints(c),0);
-  const n = suited.length;
-  const depth = n * 10 + Math.max(0, n - 4) * 4;
-  return depth + controls * 4 + counters * 0.55;
-}
-function sol7TrumpColor(hand) {
-  const colors = (typeof COLORS !== 'undefined') ? COLORS : ['green','red','yellow','black'];
-  return colors.slice().sort((a,b) => {
-    const d = sol7TrumpScore(hand,b) - sol7TrumpScore(hand,a);
-    if (Math.abs(d) > 1e-9) return d;
-    const lb = colorLen(hand,b), la = colorLen(hand,a);
-    if (lb !== la) return lb-la;
-    return colors.indexOf(a)-colors.indexOf(b);
-  })[0] || 'green';
-}
-function sol7Power(hand) {
-  const a = analyzeHand(hand);
-  const t = sol7TrumpColor(hand);
-  const lens = {}; COLORS.forEach(c => { lens[c] = (a.byColor[c] || []).length; });
-  const p = (hand || []).reduce((n,c)=>n+cardPoints(c),0);
-  const honors = (a.byColor[t] || []).filter(c => [1,14,13,12,10].includes(c.rank)).length;
-  const voids = COLORS.filter(c => lens[c] === 0).length;
-  const shorts = COLORS.filter(c => lens[c] <= 1).length;
-  return p*.62 + lens[t]*8 + honors*7 + voids*10 + shorts*3 + (a.rook?20:0) + (a.red2?10:0);
-}
-function sol7BidCeiling(hand, seat) {
-  const v = sol7Power(hand);
-  if (v < 62) return 0;
-  let cap = 70 + Math.floor((Math.max(0,v-62)*1.35)/5)*5;
-  const high = game.highestBid || 65;
-  if (high <= 90 && v >= 68) cap = Math.max(cap, high+5);
-  if (high <= 110 && v >= 76) cap = Math.max(cap, high+5);
-  const mine = (game.scores || [0,0])[botSeatTeam(seat)] || 0;
-  const theirs = (game.scores || [0,0])[1-botSeatTeam(seat)] || 0;
-  if (theirs-mine >= 100) cap += 5;
-  if (mine >= 425 && mine > theirs) cap -= 5;
-  const legalCap = (typeof bidCeilingFor === 'function') ? bidCeilingFor(seat) : maxBid();
-  return Math.max(0, Math.min(legalCap, 200, Math.floor(cap/5)*5));
-}
-function sol7PersonaBidCeiling(base, hand, seat) {
-  const style = seatStyle(seat);
-  const v = sol7Power(hand);
-  let cap = base;
-  // Personality may shade a close auction, never replace the intelligence core.
-  if (['aggressive','bidHappy','widowFiend','pointHungry','setDog','moonDreamer'].includes(style) && v >= 62) cap += 5;
-  if (['safe','passive','sandbag','trumpShy','antiMoon'].includes(style)) cap -= 5;
-  if (style === 'scoreHawk') {
-    const sc=game.scores||[0,0], me=sc[botSeatTeam(seat)]||0, them=sc[1-botSeatTeam(seat)]||0;
-    cap += (them-me>=80 ? 5 : -5);
-  }
-  if (style === 'quietDealer') cap += (seat === game.dealer ? -5 : (seat === (game.dealer+1)%4 ? 5 : 0));
-  // Old hard overrides (bidOnce/climbOnly/passFirst) are intentionally softened.
-  // They remain visible as close-decision preferences rather than forced mistakes.
-  if (style === 'bidOnce' && game.highestBid >= (minBid||70)) cap -= 5;
-  if (style === 'climbOnly' && game.highestBid < (minBid||70)) cap -= 5;
-  if (style === 'passFirst' && seat === (game.dealer+1)%4) cap -= 5;
-  const legalCap=(typeof bidCeilingFor==='function')?bidCeilingFor(seat):maxBid();
-  return Math.max(0,Math.min(legalCap,200,Math.floor(cap/5)*5));
-}
-function botBid() {
-  if (typeof nestAuctionLocked === 'function' && nestAuctionLocked()) return;
-  const seat=game.currentPlayer, hand=game.hands[seat];
-  const floor=(minBid||70), ask=(game.highestBid||floor-5)+5;
-  let cap=sol7PersonaBidCeiling(sol7BidCeiling(hand,seat),hand,seat);
-  // Preserve Sol7/production partnership discipline: don't steal partner except with a clearly superior ceiling.
-  if (game.bidder===partnerOf(seat) && game.highestBid>=floor && cap < game.highestBid+15) cap=0;
-  const bid = cap>=ask ? ask : 0;
-  hostProcessBid({player:seat,value:bid});
-}
-function sol7DiscardKeepScore(card, hand, trump) {
-  if (card.color==='rook') return 20000;
-  if (isRed2(card)) return 18000;
-  if (isTrumpCard(card,trump)) return 5000 + effectiveRank(card)*8 + cardPoints(card)*20;
-  const ln=colorLen(hand,card.color), r=card.rank, p=cardPoints(card);
-  let control = r===1?1800:r===14?1150:r===13?550:r===12?260:0;
-  let counter=p*28;
-  const tc=hand.filter(c=>isTrumpCard(c,trump)).length;
-  const strong=tc>=6 || hand.some(c=>c.color==='rook') || hand.some(c=>isRed2(c));
-  if (p && ln<=2 && r!==1 && r!==14) counter -= strong?260:120;
-  const vp=(p===0&&ln===1)?900:(p===0&&ln===2)?520:(p===0&&ln===3)?140:0;
-  return control+counter+effectiveRank(card)*2+ln*45-vp;
-}
-function sol7KeptHand(hand, needed, trump) {
-  return hand.slice().sort((a,b)=>sol7DiscardKeepScore(b,hand,trump)-sol7DiscardKeepScore(a,hand,trump)).slice(0,hand.length-needed);
-}
-function botDiscard() {
-  const hand=game.hands[game.bidder].slice(), needed=game.discardCount||6, trump=sol7TrumpColor(hand);
-  let kept=sol7KeptHand(hand,needed,trump);
-  const style=seatStyle(game.bidder);
-  // Hollow/void-oriented personas may finish a short side-suit void only when the
-  // swap is very close to Sol7's keep score. This preserves personality without
-  // throwing away controls/counters.
-  if (style==='voidMaker') {
-    const keptSet=new Set(kept.map(c=>c.id));
-    const buried=hand.filter(c=>!keptSet.has(c.id));
-    const side=COLORS.filter(c=>c!==trump).map(col=>kept.filter(c=>c.color===col&&!isPermanentTrump(c))).filter(g=>g.length===1);
-    if (side.length) {
-      const victim=side[0][0];
-      const candidates=buried.filter(c=>c.color!==victim.color&&!isPermanentTrump(c));
-      candidates.sort((a,b)=>sol7DiscardKeepScore(b,hand,trump)-sol7DiscardKeepScore(a,hand,trump));
-      const repl=candidates[0];
-      if (repl && sol7DiscardKeepScore(victim,hand,trump)-sol7DiscardKeepScore(repl,hand,trump)<=120) {
-        kept=kept.filter(c=>c.id!==victim.id).concat([repl]);
-      }
-    }
-  }
-  const keepIds=new Set(kept.map(c=>c.id));
-  const bury=hand.filter(c=>!keepIds.has(c.id)).slice(0,needed).map(c=>c.id);
-  hostProcessDiscard({player:game.bidder,cardIds:bury});
-}
-function botChooseTrump() {
-  const hand=game.hands[game.bidder], base=sol7TrumpColor(hand), style=seatStyle(game.bidder);
-  let color=base;
-  const ranked=COLORS.slice().sort((a,b)=>sol7TrumpScore(hand,b)-sol7TrumpScore(hand,a));
-  // Trick/color-stubborn personas may choose #2 only when it is genuinely close.
-  if ((style==='tricky'||style==='colorStubborn') && ranked[1] && sol7TrumpScore(hand,base)-sol7TrumpScore(hand,ranked[1])<=5) color=ranked[1];
-  hostProcessTrump({player:game.bidder,color});
-}
-function sol7PickCard(idx, hand, legal) {
-  const tr=game.trump, partner=partnerOf(idx), team=botSeatTeam(idx), trick=game.trick||[];
-  const played=[]; (game.tricksTaken||[]).forEach(a=>(a||[]).forEach(c=>played.push(c)));
-  trick.forEach(t=>played.push(t.card));
-  const visibleNest = idx===game.bidder ? (game.nestCards||[]) : [];
-  const used=new Set(); hand.concat(played,visibleNest).forEach(c=>{if(c&&c.id)used.add(c.id);});
-  const unseen=((typeof makeDeck==='function')?makeDeck():[]).filter(c=>c&&c.id&&!used.has(c.id));
-  const led=trick.length ? (game.ledColor || trick[0].card.color) : null;
-  const topRemaining=(c,l)=>!unseen.some(x=>compareCards(x,c,l||c.color,tr)>0);
-  const safeLow=(arr)=>lowestCard((arr||[]).filter(c=>!isPermanentTrump(c)).length?(arr||[]).filter(c=>!isPermanentTrump(c)):arr);
-  const cheapWin=(arr)=>cheapWinner((arr||[]).filter(c=>!isPermanentTrump(c)).length?(arr||[]).filter(c=>!isPermanentTrump(c)):arr,tr);
-  if (!trick.length) {
-    const ts=legal.filter(c=>isTrumpCard(c,tr)), plain=ts.filter(c=>!isPermanentTrump(c));
-    const outTr=unseen.filter(c=>isTrumpCard(c,tr)).length;
-    if (ts.length>=4 && outTr>=2 && plain.length) return lowestCard(plain);
-    const side=legal.filter(c=>!isTrumpCard(c,tr));
-    if (side.length) {
-      const groups={}; COLORS.filter(c=>c!==tr).forEach(c=>groups[c]=side.filter(x=>x.color===c));
-      const cols=Object.keys(groups).filter(c=>groups[c].length).sort((a,b)=>groups[b].length-groups[a].length || Math.max(...groups[b].map(effectiveRank))-Math.max(...groups[a].map(effectiveRank)));
-      if(cols.length){const g=groups[cols[0]], tops=g.filter(c=>topRemaining(c,cols[0])); if(tops.length)return tops.slice().sort((a,b)=>cardPoints(a)-cardPoints(b)||effectiveRank(a)-effectiveRank(b))[0]; const z=g.filter(c=>cardPoints(c)===0); return lowestCard(z.length?z:g);}
-    }
-    return safeLow(legal);
-  }
-  const w=currentTrickWinner(), val=trickPointsSoFar();
-  const beat=legal.filter(c=>{const copy=trick.concat([{player:idx,card:c}]); let win=copy[0]; for(let i=1;i<copy.length;i++)if(compareCards(copy[i].card,win.card,led,tr)>0)win=copy[i]; return win.player===idx;});
-  if (w && w.player===partner) {
-    if (trick.length===3) {const feeds=legal.filter(c=>cardPoints(c)>0&&!isPermanentTrump(c)&&compareCards(c,w.card,led,tr)<=0); if(feeds.length)return highestCounter(feeds);}
-    const z=legal.filter(c=>cardPoints(c)===0); return safeLow(z.length?z:legal);
-  }
-  if (beat.length) {
-    if (trick.length===3 || val>=10) return cheapWin(beat);
-    const cheap=beat.filter(c=>!isTrumpCard(c,tr)&&cardPoints(c)===0); if(cheap.length)return lowestCard(cheap);
-  }
-  const follows=hand.some(c=>followsLedSuit(c,led,tr));
-  if(!follows && w && botSeatTeam(w.player)!==team && val>=10){const tw=legal.filter(c=>isTrumpCard(c,tr)&&beat.includes(c)); if(tw.length)return cheapWin(tw);}
-  const z=legal.filter(c=>cardPoints(c)===0); return safeLow(z.length?z:legal);
-}
-function sol7PersonaSafe(idx, base, alt, legal) {
-  if (!alt || !base || alt.id===base.id) return base;
-  const tr=game.trump, trick=game.trick||[], w=currentTrickWinner(), partner=partnerOf(idx), pts=trickPointsSoFar();
-  if (isPermanentTrump(alt) && !isPermanentTrump(base) && pts<20) return base;
-  if (w && w.player===partner) {
-    const baseKills=compareCards(base,w.card,game.ledColor,tr)>0, altKills=compareCards(alt,w.card,game.ledColor,tr)>0;
-    if (altKills && !baseKills) return base;
-  }
-  // On a live trick, don't let persona turn a Sol7 winner into a loser or vice versa
-  // unless the pile is small; personality belongs in close decisions.
-  if (w) {
-    const bw=compareCards(base,w.card,game.ledColor,tr)>0, aw=compareCards(alt,w.card,game.ledColor,tr)>0;
-    if (bw!==aw && pts>=10) return base;
-  }
-  const cost=Math.abs(cardPoints(alt)-cardPoints(base));
-  if(cost>10) return base;
-  return alt;
-}
-function botPlay() {
-  const idx=game.currentPlayer, hand=game.hands[idx]; if(!hand||!hand.length)return;
-  let legal=hand.filter(c=>canPlay(c,hand,game.ledColor,game.trump)); if(!legal.length)legal=hand.slice();
-  if(isBuzzed(idx)&&Math.random()<0.42){hostProcessPlay({player:idx,cardId:legal[Math.floor(Math.random()*legal.length)].id});return;}
-  const base=sol7PickCard(idx,hand,legal)||legal[0];
-  const persona=applyHabitPlay(idx,hand,legal,base);
-  const choice=sol7PersonaSafe(idx,base,persona,legal);
-  hostProcessPlay({player:idx,cardId:(choice||base||legal[0]).id});
 }
 
 function clampHumanCard(idx, legal, card, bookPick) {
