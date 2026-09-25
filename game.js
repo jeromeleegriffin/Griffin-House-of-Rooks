@@ -7,7 +7,7 @@
 // It's exchanged during the join handshake so a stale host or joiner (e.g.
 // one still running old cached JS) gets caught and auto-updated instead of
 // silently failing or behaving unpredictably against a mismatched peer.
-const APP_VERSION = '481';
+const APP_VERSION = '483';
 
 function horThisIndex() {
   try {
@@ -191,6 +191,12 @@ function horCareerBadgeHtml(p){
         localCareerReady:!!(window.HORProgression&&HORProgression.localCareer)
       });
     }catch(e){}
+    // Career mode is ON, so keep the public level chip present while the
+    // ledger/profile is still hydrating. A brand-new Career is Level 1.
+    if(horCareerModeOn()){
+      const who=escapeHtmlSafe((p&&p.id)||('bot-'+String((p&&p.name)||'bot')));
+      return ` <span class="hor-career-badge hor-career-badge-pending" role="button" tabindex="0" data-career-peer="${who}" title="View Career: Level 1" aria-label="Career level 1">★1</span>`;
+    }
     return '';
   }
   const level=Math.max(1,Number(prof.level)||1);
@@ -3205,8 +3211,9 @@ function updateWelcomeSeats() {
       let extra = tag + ' · ' + (s % 2 === 0 ? teamA : teamB);
       if (p.isBot && !isSpectator && !(p.id === myPeerId)) extra = 'Bot · tap to replace (bot moves)';
       el.innerHTML = face
-        + '<span class="wait-seat-name">' + escapeHtmlSafe(p.name) + '</span>'
+        + '<span class="wait-seat-name"><span class="wait-seat-name-text">' + escapeHtmlSafe(p.name) + '</span>' + horCareerBadgeHtml(p) + '</span>'
         + '<span class="wait-seat-tag">' + extra + '</span>';
+      try { horBindCareerBadges(el); } catch (e) {}
     } else if (isSpectator) {
       el.innerHTML = '<span class="wait-seat-name">Open</span><span class="wait-seat-tag">Empty seat</span>';
     } else if (myPeerId && players.some(pl => pl && pl.id === myPeerId && pl.seat >= 0)) {
@@ -6229,7 +6236,7 @@ function updateWaitingUI() {
         ? 'Bot · tap to replace'
         : (tag + ' · ' + (s % 2 === 0 ? teamA : teamB));
       el.innerHTML = face
-        + '<span class="wait-seat-name"' + botNameAttr(p) + '>' + escapeHtmlSafe(p.name) + '</span>'
+        + '<span class="wait-seat-name"' + botNameAttr(p) + '><span class="wait-seat-name-text">' + escapeHtmlSafe(p.name) + '</span>' + horCareerBadgeHtml(p) + '</span>'
         + '<span class="wait-seat-bank' + (p.id === myPeerId ? ' is-mine' : '') + '" data-wait-bank="' + s + '">' + formatBank(p.bank || 0) + '</span>'
         + '<span class="wait-seat-tag">' + seatTag + '</span>';
     } else if (isHost) {
@@ -6239,6 +6246,7 @@ function updateWaitingUI() {
       el.innerHTML = '<span class="wait-seat-name">Sit</span>'
         + '<span class="wait-seat-tag">Tap to take this chair</span>';
     }
+    try { horBindCareerBadges(el); } catch (e) {}
     el.onclick = (e) => {
       if (e.target && e.target.closest && e.target.closest('[data-botname]') && e._botStyleHeld) return;
       onWaitSeatClick(s);

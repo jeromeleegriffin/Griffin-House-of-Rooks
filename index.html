@@ -36,7 +36,7 @@
   <link rel="manifest" href="manifest.json">
   <link rel="icon" href="icon-192.png">
   <link rel="apple-touch-icon" href="apple-touch-icon.png">
-  <link rel="stylesheet" href="style.css?v=481">
+  <link rel="stylesheet" href="style.css?v=483">
   <script src="vendor/peerjs.min.js"></script>
   <style>
     /* Emergency layout if style.css fails to load — joiners still see a usable page */
@@ -54,6 +54,43 @@
 .lobby-info-links a{color:#f7e8bd;text-decoration:underline;font-weight:700;padding:4px 2px}
 .lobby-info-links a:hover{color:#fff}
 </style>
+
+<style id="hor-career-chip-visibility-v483">
+/* Career chips must remain visible beside names on table plaques and pre-game chairs. */
+.hor-career-badge{
+  display:inline-flex !important;
+  align-items:center;
+  justify-content:center;
+  flex:0 0 auto;
+  white-space:nowrap;
+  visibility:visible !important;
+  opacity:1 !important;
+  overflow:visible !important;
+  position:relative;
+  z-index:6;
+}
+.name .hor-career-badge,
+.wait-seat-name .hor-career-badge{
+  margin-left:.28em;
+  vertical-align:middle;
+}
+.wait-seat-name{
+  display:flex !important;
+  align-items:center;
+  justify-content:center;
+  gap:.12em;
+  max-width:100%;
+  overflow:visible !important;
+}
+.wait-seat-name-text,
+.player-name-text{
+  min-width:0;
+  overflow:hidden;
+  text-overflow:ellipsis;
+  white-space:nowrap;
+}
+</style>
+
 </head>
 
 <body class="theme-classic cardback-griffin room-theme-midnight">
@@ -77,8 +114,8 @@
     <div class="lt-decor lt-corner lt-tl">🐦</div>
     <div class="lt-decor lt-corner lt-tr">🐦</div>
     <div id="ltKittyWait" class="lt-wait-banner hidden" aria-live="polite">
-      <img id="ltWaitArtNest" class="lt-wait-art" src="wait-nest-landscape.jpg?v=481" alt="">
-      <img id="ltWaitArtTrump" class="lt-wait-art" src="wait-trump-landscape.jpg?v=481" alt="">
+      <img id="ltWaitArtNest" class="lt-wait-art" src="wait-nest-landscape.jpg?v=483" alt="">
+      <img id="ltWaitArtTrump" class="lt-wait-art" src="wait-trump-landscape.jpg?v=483" alt="">
       <div class="lt-wait-veil"></div>
       <div class="lt-wait-copy">
         <div class="lt-wait-kicker" id="ltWaitKicker">The nest is open</div>
@@ -832,8 +869,8 @@
               <div id="widowSpread" class="widow-spread hidden" aria-label="Widow"></div>
               <div id="botThinking" class="bot-thinking hidden">Thinking…</div>
               <div id="ptWaitBanner" class="pt-wait-banner hidden" aria-live="polite">
-                <img id="ptWaitArtNest" class="pt-wait-art" src="wait-nest-portrait.jpg?v=481" alt="">
-                <img id="ptWaitArtTrump" class="pt-wait-art" src="wait-trump-portrait.jpg?v=481" alt="">
+                <img id="ptWaitArtNest" class="pt-wait-art" src="wait-nest-portrait.jpg?v=483" alt="">
+                <img id="ptWaitArtTrump" class="pt-wait-art" src="wait-trump-portrait.jpg?v=483" alt="">
                 <div class="pt-wait-veil"></div>
                 <div class="pt-wait-copy">
                   <div class="pt-wait-kicker" id="ptWaitKicker">House of Rooks</div>
@@ -1189,12 +1226,12 @@
       paintInstall();
     })();
   </script>
-  <script src="rules.js?v=481"></script>
-  <script src="bots.js?v=481"></script>
-  <script src="game.js?v=481"></script>
-  <script src="polish.js?v=481"></script>
+  <script src="rules.js?v=483"></script>
+  <script src="bots.js?v=483"></script>
+  <script src="game.js?v=483"></script>
+  <script src="polish.js?v=483"></script>
   <!-- Dormant career/achievement framework. Master switch is OFF in progression.js. -->
-  <script src="progression.js?v=481"></script>
+  <script src="progression.js?v=483"></script>
   <div id="horBootError"></div>
   <script>
     window.addEventListener('error', function (ev) {
@@ -1208,7 +1245,7 @@
   </script>
   <script>
     if ('serviceWorker' in navigator) {
-      navigator.serviceWorker.register('sw.js?v=481', { updateViaCache: 'none' })
+      navigator.serviceWorker.register('sw.js?v=483', { updateViaCache: 'none' })
         .then(function (reg) { try { reg.update(); } catch (e) {} })
         .catch(() => {});
       let horSwAutoReloaded = false;

@@ -66,7 +66,7 @@ const P=window.HORProgression;
 const LEDGER_PREFIX='horCareerLedgerV1:';
 const OUTBOX_KEY='horProgressOutboxV1';
 const INSTALL_KEY='horInstallIdV1';
-function safeParse(s,f){try{return JSON.parse(s);}catch(e){return f;}}
+function safeParse(s,f){try{if(s==null||s==='')return f;const v=JSON.parse(s);return v==null?f:v;}catch(e){return f;}}
 function installId(){let x=localStorage.getItem(INSTALL_KEY);if(x)return x;x='install-'+(crypto.randomUUID?crypto.randomUUID():Date.now()+'-'+Math.random().toString(36).slice(2));localStorage.setItem(INSTALL_KEY,x);return x;}
 function actorKey(type,id){return String(type||'human')+':'+String(id||'local');}
 function ledgerRead(type,id){const k=actorKey(type,id);return safeParse(localStorage.getItem(LEDGER_PREFIX+k),{schemaVersion:1,actorType:type||'human',actorId:id||'local',installId:installId(),stats:{},achievements:{},revision:0,updatedAt:null});}
@@ -97,7 +97,7 @@ const P=window.HORProgression;
 const PRESENT_KEY='horProgressPresentationV1';
 const MIGRATION_KEY='horProgressMigrationV1';
 const state={queue:[],active:0,maxVisible:5};
-function safeParse(s,f){try{return JSON.parse(s);}catch(e){return f;}}
+function safeParse(s,f){try{if(s==null||s==='')return f;const v=JSON.parse(s);return v==null?f:v;}catch(e){return f;}}
 function presentationPrefs(){return Object.assign({mode:'full',sound:true,nearProgress:true},safeParse(localStorage.getItem(PRESENT_KEY),{}));}
 function savePresentationPrefs(v){localStorage.setItem(PRESENT_KEY,JSON.stringify(Object.assign(presentationPrefs(),v||{})));}
 function legacyStore(){return safeParse(localStorage.getItem('rookLifetimeStats'),{})||{};}
@@ -152,7 +152,7 @@ const P=window.HORProgression;
 const BACKUP_VERSION=1;
 const FRIENDLY_KEY='horFriendlyRecoveryCodeV1';
 const LAST_BACKUP_KEY='horLastCareerBackupV1';
-function safeParse(s,f){try{return JSON.parse(s);}catch(e){return f;}}
+function safeParse(s,f){try{if(s==null||s==='')return f;const v=JSON.parse(s);return v==null?f:v;}catch(e){return f;}}
 function randomCode(){const a='ABCDEFGHJKLMNPQRSTUVWXYZ23456789',b=new Uint8Array(12);crypto.getRandomValues(b);let s='';for(const x of b)s+=a[x%a.length];return 'GRF-'+s.slice(0,4)+'-'+s.slice(4,8)+'-'+s.slice(8);}
 function friendlyCode(){let c=localStorage.getItem(FRIENDLY_KEY);if(c)return c;c=randomCode();localStorage.setItem(FRIENDLY_KEY,c);return c;}
 function collectKeys(){const exact=['rookLifetimeStats','horPlayerIdentityV1','horProgressOutboxV1','horInstallIdV1','horProgressPresentationV1','horProgressMigrationV1',FRIENDLY_KEY,LAST_BACKUP_KEY];const prefixes=['horCareerLedgerV1:','horProgressV1:'];const data={};for(let i=0;i<localStorage.length;i++){const k=localStorage.key(i);if(!k)continue;if(exact.includes(k)||prefixes.some(p=>k.startsWith(p)))data[k]=localStorage.getItem(k);}return data;}
@@ -182,7 +182,7 @@ const MODE_KEY='horProgressModeV1'; // preview | local
 const MIGRATION_KEY='horProgressMigrationV1';
 const PLAYER_NAME_KEY='horProgressHumanNameV1';
 const BOT_REL_PREFIX='horBotRelationshipV1:';
-function safeParse(s,f){try{return JSON.parse(s);}catch(e){return f;}}
+function safeParse(s,f){try{if(s==null||s==='')return f;const v=JSON.parse(s);return v==null?f:v;}catch(e){return f;}}
 function mode(){return localStorage.getItem(MODE_KEY)==='local'?'local':'preview';}
 function setMode(v){v=v==='local'?'local':'preview';try{localStorage.setItem(MODE_KEY,v);if(localStorage.getItem(MODE_KEY)!==v)localStorage.setItem(MODE_KEY,v);}catch(e){}applyMode();try{if(typeof window.horCareerModeChanged==='function')window.horCareerModeChanged(v);}catch(e){}return mode();}
 function applyMode(){const live=mode()==='local';P.CONFIG.enabled=live;P.CONFIG.uiEnabled=live;P.CONFIG.notificationsEnabled=live;P.CONFIG.identityEnabled=live;P.CONFIG.botProgressionEnabled=live;P.CONFIG.cloudEnabled=false;P.CONFIG.recoveryEnabled=false;P.CONFIG.endpoint='';if(live&&P.activate)P.activate();return live;}
@@ -201,7 +201,7 @@ function recordRelationships(players,winnerLabel){if(mode()!=='local'||!Array.is
 function botPublicProfile(name){
   if(mode()!=='local'||!P.offline)return null;
   try{
-    const id=botActorId(name),r=P.offline.ledgerRead('bot',id),
+    const id=P.offline.botActorId(name),r=P.offline.ledgerRead('bot',id),
       st=Object.assign({},r.stats||{}),
       lv=P.levelFor(Number(st.points)||0);
     return {
