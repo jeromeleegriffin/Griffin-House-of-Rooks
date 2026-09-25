@@ -7,7 +7,7 @@
 // It's exchanged during the join handshake so a stale host or joiner (e.g.
 // one still running old cached JS) gets caught and auto-updated instead of
 // silently failing or behaving unpredictably against a mismatched peer.
-const APP_VERSION = '470';
+const APP_VERSION = '471';
 
 function horThisIndex() {
   try {
@@ -150,6 +150,33 @@ function horCleanLocalCareerSeatArtifacts(){
     Array.from(seat.childNodes).forEach(function(n){
       if(n.nodeType===3 && /^[\s.·•]+$/.test(n.textContent||'')) n.remove();
     });
+  }catch(e){}
+}
+
+// Rook471: authoritative Career badge overlay for every occupied seat.
+
+function horScheduleSeatCareerBadges(){
+  try{Promise.resolve().then(horRenderSeatCareerBadges);}catch(e){setTimeout(horRenderSeatCareerBadges,0);}
+}
+function horRenderSeatCareerBadges(){
+  try{
+    const all=(game&&Array.isArray(game.players)&&game.players.length)?game.players:(players||[]);
+    const mapping=[
+      ['slot-me', (typeof mySeat==='number'&&mySeat>=0)?mySeat:0],
+      ['slot-partner', (typeof seatMap!=='undefined'&&seatMap.partner!=null)?seatMap.partner:2],
+      ['slot-left', (typeof seatMap!=='undefined'&&seatMap.left!=null)?seatMap.left:1],
+      ['slot-right', (typeof seatMap!=='undefined'&&seatMap.right!=null)?seatMap.right:3]
+    ];
+    mapping.forEach(function(pair){
+      const el=document.getElementById(pair[0]); if(!el)return;
+      let holder=el.querySelector(':scope > .hor-seat-career');
+      if(!holder){holder=document.createElement('div');holder.className='hor-seat-career';el.appendChild(holder);}
+      const pl=all[pair[1]];
+      holder.innerHTML=pl?horCareerBadgeHtml(pl):'';
+      holder.style.display=holder.innerHTML?'':'none';
+      horBindCareerBadges(holder);
+    });
+    horCleanLocalCareerSeatArtifacts();
   }catch(e){}
 }
 function horBindCareerBadges(root){try{(root||document).querySelectorAll('.hor-career-badge').forEach(b=>{if(b.__horCareerBound)return;b.__horCareerBound=true;b.addEventListener('click',e=>{e.preventDefault();e.stopPropagation();const id=b.getAttribute('data-career-peer');const pool=(game&&game.players)||players||[];let p=pool.find(x=>x&&x.id===id);if(!p&&id&&id.startsWith('bot-'))p=pool.find(x=>x&&x.isBot&&('bot-'+String(x.name||'bot'))===id);if(p)horShowCareerForPlayer(p);});});}catch(e){}}
@@ -14106,7 +14133,7 @@ function positionPortraitLast3Btn() {
 })();
 
 /* Build 467 Career badge */
-(function(){try{const st=document.createElement('style');st.textContent='.hor-career-badge{margin-left:5px;padding:1px 5px;border:1px solid #d6ad4b;border-radius:999px;background:#151b15;color:#f2cf68;font-size:10px;font-weight:900;line-height:1.35;vertical-align:middle;cursor:pointer}.hor-career-badge:active{transform:scale(.96)}';document.head.appendChild(st);}catch(e){}})();
+(function(){try{const st=document.createElement('style');st.textContent='.hor-seat-career{position:relative;z-index:9;display:flex;justify-content:center;margin-top:2px;min-height:0}.hor-career-badge{margin-left:5px;padding:1px 5px;border:1px solid #d6ad4b;border-radius:999px;background:#151b15;color:#f2cf68;font-size:10px;font-weight:900;line-height:1.35;vertical-align:middle;cursor:pointer}.hor-career-badge:active{transform:scale(.96)}';document.head.appendChild(st);}catch(e){}})();
 
 // Rook468 — restore Career Test / Activation entrance.
 (function wireCareerTestEntrance(){
@@ -14126,4 +14153,17 @@ function positionPortraitLast3Btn() {
   }
   if(document.readyState==='loading') document.addEventListener('DOMContentLoaded',bind);
   else bind();
+})();
+
+
+// Keep Career badges synchronized with every table redraw.
+(function(){
+  try{
+    const original=renderUI;
+    if(typeof original==='function'&&!original.__horCareerWrapped){
+      const wrapped=function(){const r=original.apply(this,arguments);horScheduleSeatCareerBadges();return r;};
+      wrapped.__horCareerWrapped=true;
+      renderUI=wrapped;
+    }
+  }catch(e){}
 })();
