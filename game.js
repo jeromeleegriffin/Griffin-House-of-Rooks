@@ -7,7 +7,7 @@
 // It's exchanged during the join handshake so a stale host or joiner (e.g.
 // one still running old cached JS) gets caught and auto-updated instead of
 // silently failing or behaving unpredictably against a mismatched peer.
-const APP_VERSION = '471';
+const APP_VERSION = '472';
 
 function horThisIndex() {
   try {
@@ -149,6 +149,7 @@ function horCleanLocalCareerSeatArtifacts(){
     const seat=document.getElementById('slot-me'); if(!seat)return;
     Array.from(seat.childNodes).forEach(function(n){
       if(n.nodeType===3 && /^[\s.·•]+$/.test(n.textContent||'')) n.remove();
+      else if(n.nodeType===1 && !n.classList.contains('hor-seat-career') && /^[\s.·•]+$/.test(n.textContent||'') && !n.querySelector('button,input,img')) n.remove();
     });
   }catch(e){}
 }
@@ -162,7 +163,7 @@ function horRenderSeatCareerBadges(){
   try{
     const all=(game&&Array.isArray(game.players)&&game.players.length)?game.players:(players||[]);
     const mapping=[
-      ['slot-me', (typeof mySeat==='number'&&mySeat>=0)?mySeat:0],
+      ['slot-me', (typeof myIndex==='number'&&myIndex>=0)?myIndex:0],
       ['slot-partner', (typeof seatMap!=='undefined'&&seatMap.partner!=null)?seatMap.partner:2],
       ['slot-left', (typeof seatMap!=='undefined'&&seatMap.left!=null)?seatMap.left:1],
       ['slot-right', (typeof seatMap!=='undefined'&&seatMap.right!=null)?seatMap.right:3]
@@ -14166,4 +14167,23 @@ function positionPortraitLast3Btn() {
       renderUI=wrapped;
     }
   }catch(e){}
+})();
+
+
+// Rook472: keep Career badges attached to the real seat DOM after every seat redraw.
+(function horCareerSeatObserver(){
+  function start(){
+    const ids=['slot-me','slot-partner','slot-left','slot-right'];
+    const seats=ids.map(id=>document.getElementById(id)).filter(Boolean);
+    if(!seats.length)return;
+    let busy=false;
+    const obs=new MutationObserver(function(){
+      if(busy)return; busy=true;
+      Promise.resolve().then(function(){try{horRenderSeatCareerBadges();}finally{busy=false;}});
+    });
+    seats.forEach(s=>obs.observe(s,{childList:true,subtree:true,characterData:true}));
+    horRenderSeatCareerBadges();
+  }
+  if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',start);
+  else start();
 })();
