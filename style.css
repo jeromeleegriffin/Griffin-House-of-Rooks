@@ -9540,7 +9540,7 @@ body.gfx-themeBacks .hand-card.back {
 .seat-bank.is-mine, .wait-seat-bank.is-mine, .lt-bank.is-mine, .lt-hand-bank.is-mine {
   cursor: pointer;
   color: #ffe082;
-  border-bottom: 1px dotted rgba(255,224,130,.7);
+  border-bottom: none;
 }
 .table-msg-popup {
   position: fixed;

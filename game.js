@@ -7,7 +7,7 @@
 // It's exchanged during the join handshake so a stale host or joiner (e.g.
 // one still running old cached JS) gets caught and auto-updated instead of
 // silently failing or behaving unpredictably against a mismatched peer.
-const APP_VERSION = '474';
+const APP_VERSION = '475';
 
 function horThisIndex() {
   try {
@@ -10488,7 +10488,7 @@ function broadcastState() {
     currentPlayer: game.currentPlayer,
     trick: game.trick,
     ledColor: game.ledColor,
-    players: players.map(p => ({ name: p.name, team: p.team, id: p.id, isBot: !!p.isBot, bank: p.bank || 0 })),
+    players: publicPlayersSnapshot(),
     dealer: game.dealer,
     nestCount: game.nest.length,
     handsCount: game.hands.map(h => h.length),
@@ -10513,6 +10513,11 @@ function broadcastState() {
     claimAnimating: !!game.claimAnimating,
     resolvingTrickPoints: game.resolvingTrickPoints || 0,
   };
+  try {
+    if (horCareerModeOn() && publicState.players && publicState.players.some(p => p && !p.careerPublic)) {
+      console.warn('[Career] public state contains player(s) without Career profile');
+    }
+  } catch (e) {}
   broadcast(publicState);
 
 
