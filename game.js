@@ -7,7 +7,7 @@
 // It's exchanged during the join handshake so a stale host or joiner (e.g.
 // one still running old cached JS) gets caught and auto-updated instead of
 // silently failing or behaving unpredictably against a mismatched peer.
-const APP_VERSION = '476';
+const APP_VERSION = '478';
 
 function horThisIndex() {
   try {
@@ -154,6 +154,19 @@ function horCareerProfileForPlayer(p){
     }catch(e){}
   }
   return null;
+}
+
+function horShowCareerForPlayer(p){
+  const prof=horCareerProfileForPlayer(p);
+  if(prof&&window.HORProgression&&HORProgression.localCareer&&HORProgression.localCareer.showCareerCard)
+    HORProgression.localCareer.showCareerCard(prof);
+}
+function horCareerBadgeHtml(p){
+  const prof=horCareerProfileForPlayer(p);
+  if(!prof||!prof.enabled)return '';
+  const level=Math.max(1,Number(prof.level)||1);
+  const who=escapeHtmlSafe(p.id||('bot-'+String(p.name||'bot')));
+  return ` <span class="hor-career-badge" role="button" tabindex="0" data-career-peer="${who}" title="View Career: Level ${level}" aria-label="Career level ${level}">★${level}</span>`;
 }
 
 function horBindCareerBadges(root){try{(root||document).querySelectorAll('.hor-career-badge').forEach(b=>{if(b.__horCareerBound)return;b.__horCareerBound=true;const open=e=>{e.preventDefault();e.stopPropagation();const id=b.getAttribute('data-career-peer');const pool=(game&&game.players)||players||[];let pl=pool.find(x=>x&&x.id===id);if(!pl&&id&&id.startsWith('bot-'))pl=pool.find(x=>x&&x.isBot&&('bot-'+String(x.name||'bot'))===id);if(pl)horShowCareerForPlayer(pl);};b.addEventListener('click',open);b.addEventListener('keydown',e=>{if(e.key==='Enter'||e.key===' ' )open(e);});});}catch(e){}}
