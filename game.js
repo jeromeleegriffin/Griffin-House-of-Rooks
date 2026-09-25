@@ -7,7 +7,7 @@
 // It's exchanged during the join handshake so a stale host or joiner (e.g.
 // one still running old cached JS) gets caught and auto-updated instead of
 // silently failing or behaving unpredictably against a mismatched peer.
-const APP_VERSION = '446';
+const APP_VERSION = '448';
 
 function horThisIndex() {
   try {
@@ -2948,7 +2948,7 @@ function welcomeHowText() {
 }
 
 function showWelcomeScreen(code) {
-  if (horClientIsPlaying() || horHasActiveTable()) {
+  if (window._horStayInGame || isSoloPractice || horClientIsPlaying() || horHasActiveTable()) {
     horDebugLog('skip showWelcomeScreen — table is live');
     return;
   }
@@ -3444,6 +3444,10 @@ function createRoom() {
     myPeerId = id;
     if (window._horHandoffSnapshot) {
       try { finishHostHandoff(id); } catch (e) { console.error(e); }
+      return;
+    }
+    if (isSoloPractice || window._horStayInGame || roomCode === 'OFFLINE') {
+      horDebugLog('HOST: peer open ignored — offline/live table');
       return;
     }
     if (typeof horClientIsPlaying === 'function' && horClientIsPlaying()) {
@@ -4379,7 +4383,13 @@ function handleMessage(data, conn) {
         game.phase = 'discard';
         if (typeof data.bidder === 'number') game.bidder = data.bidder;
         if (typeof data.discardCount === 'number') game.discardCount = data.discardCount;
-        if (Array.isArray(data.nestPreview)) game.nestPreview = data.nestPreview.map(c => ({ ...c }));
+        if (Array.isArray(data.nestPreview)) {
+          game.nestPreview = data.nestPreview.map((c) => {
+            try { return (typeof hydrateNestCard === 'function') ? hydrateNestCard(c) : { ...c }; }
+            catch (e) { return { ...c }; }
+          }).filter(Boolean);
+          game.kittyTaken = game.nestPreview.map((c) => ({ ...c }));
+        }
         if (data.topNestCard) game.topNestCard = { ...data.topNestCard };
         if (Array.isArray(data.hand) && data.hand.length) game.myHand = data.hand.map(c => ({ ...c }));
         if (game.bidder === myIndex || data.peerId === myPeerId) {
@@ -4604,6 +4614,10 @@ function fadeSeatMugs(hide) {
 }
 
 function showWaiting() {
+  if (window._horStayInGame || (isSoloPractice && game && game.phase && game.phase !== 'waiting')) {
+    horDebugLog('skip showWaiting — stay in game');
+    return;
+  }
   if (horClientIsPlaying() || horHasActiveTable()) {
     horDebugLog('skip showWaiting — table is live phase=' + (game && game.phase));
     return;
@@ -6269,6 +6283,7 @@ function hostStartGame() {
   try { hideCelePage(); } catch (e) {}
 
   try { horMarkActiveTable(true); } catch (e) {}
+  window._horStayInGame = true;
   game = {
     phase: 'deal',
     dealer: Math.floor(Math.random() * 4), // first hand of a match: random dealer / first-to-act
@@ -7321,7 +7336,11 @@ function finishBidding() {
   });
   // bidder takes nest — keep preview copy for UI
   const nestSize = game.nest.length;
-  game.nestPreview = game.nest.map(c => ({ ...c }));
+  game.nestPreview = (game.nest || []).map((c) => {
+    try { return (typeof hydrateNestCard === 'function') ? hydrateNestCard(c) : { ...c }; }
+    catch (e) { return { ...c }; }
+  }).filter(Boolean);
+  game.kittyTaken = game.nestPreview.map((c) => ({ ...c }));
   // House rule: Open Widow — show everyone what was in the nest the moment
   // it's picked up, instead of only the bidder ever seeing it before the
   // final hand-end reveal.
@@ -7421,8 +7440,8 @@ function hostSendDiscardStart(playerIdx, peerId, showKitty) {
     peerId: pid,
     discardCount: game.discardCount || hand.length && (hand.length - (handSize || 9)),
     hand,
-    nestPreview: (game.nestPreview || []).map(c => ({ ...c })),
-        topNestCard: game.topNestCard ? { ...game.topNestCard } : null,
+    nestPreview: (game.kittyTaken || game.nestPreview || []).map(c => ({ ...c })),
+    topNestCard: game.topNestCard ? { ...game.topNestCard } : null,
     showKitty: !!showKitty,
   });
 }
@@ -7493,10 +7512,32 @@ function showDiscardUI(showKitty) {
   ];
 
   const cardClass = (card) => {
+    if (typeof nestCardClass === 'function') return nestCardClass(card);
     if (isRed1(card)) return 'red1';
     if (isRed2(card)) return 'red2';
     if (card.color === 'rook' || card.id === 'rook') return 'rook';
     return card.color;
+  };
+  const kittyList = (() => {
+    const raw = (game.kittyTaken && game.kittyTaken.length)
+      ? game.kittyTaken
+      : (game.nestPreview || []);
+    return raw.map((c) => {
+      try { return (typeof hydrateNestCard === 'function') ? hydrateNestCard(c) : c; }
+      catch (e) { return c; }
+    }).filter(Boolean);
+  })();
+  const kittyCardHtml = (card, small) => {
+    const c = (typeof hydrateNestCard === 'function') ? (hydrateNestCard(card) || card) : card;
+    const cls = cardClass(c) || '';
+    let inner = '';
+    try { inner = (typeof cardInnerHTML === 'function') ? cardInnerHTML(c) : ''; } catch (e) {}
+    if (!inner || !String(inner).trim()) {
+      inner = '<div class="c-bar top"></div><div class="c-stack"><div class="c-num">'
+        + ((c && c.rank === 99) ? 'R' : ((c && c.rank) || '?'))
+        + '</div><div class="c-color">' + ((c && c.color) || '') + '</div></div><div class="c-bar bot"></div>';
+    }
+    return '<div class="card-face ' + cls + (small ? ' small' : '') + ' kitty-flash-card">' + inner + '</div>';
   };
 
   const groupFor = (card) => {
@@ -7523,11 +7564,8 @@ function showDiscardUI(showKitty) {
     // winning the nest — rotating the phone never blocks selection.
     const landscape = isLandscapeNow();
     let kittyBlock = '';
-    if (includeKittyFlash && game.nestPreview && game.nestPreview.length) {
-      const kittyCards = game.nestPreview.slice().sort(compareCardsDisplay).map(c => {
-        const cls = cardClass(c);
-        return `<div class="card-face ${cls} small kitty-flash-card">${cardInnerHTML(c)}</div>`;
-      }).join('');
+    if (includeKittyFlash && kittyList.length) {
+      const kittyCards = kittyList.slice().sort(compareCardsDisplay).map(c => kittyCardHtml(c, true)).join('');
       kittyBlock = `
         <div class="discard-kitty kitty-flashing${landscape ? ' landscape-kitty-banner' : ''}" id="kittyFlash">
           <div class="kitty-label">Kitty added to your hand</div>
@@ -7539,11 +7577,8 @@ function showDiscardUI(showKitty) {
     // First screen after winning the bid is deliberately KITTY-ONLY.
     // The bidder's existing hand stays completely hidden until the next
     // screen, where the discard picker is rendered.
-    if (includeKittyFlash && game.nestPreview && game.nestPreview.length) {
-      const kittyCards = game.nestPreview.slice().sort(compareCardsDisplay).map(c => {
-        const cls = cardClass(c);
-        return `<div class="card-face ${cls} kitty-flash-card">${cardInnerHTML(c)}</div>`;
-      }).join('');
+    if (includeKittyFlash && kittyList.length) {
+      const kittyCards = kittyList.slice().sort(compareCardsDisplay).map(c => kittyCardHtml(c, false)).join('');
       ov.innerHTML = `
         <div class="discard-sheet discard-sheet-kitty-only">
           <div class="discard-kitty kitty-flashing${landscape ? ' landscape-kitty-banner' : ''}" id="kittyFlash">
@@ -7663,7 +7698,7 @@ function showDiscardUI(showKitty) {
     }
   };
 
-  const wantKitty = !!(showKitty && game.nestPreview && game.nestPreview.length && !window._discardKittyShown);
+  const wantKitty = !!(showKitty && kittyList.length && !window._discardKittyShown);
   renderOverlay(wantKitty);
   if (wantKitty) {
     window._discardKittyShown = true;
@@ -10231,6 +10266,7 @@ function requestWaitingRoom() {
 }
 
 function applyReturnToWaiting() {
+  window._horStayInGame = false;
   try { horMarkActiveTable(false); } catch (e) {}
   try { document.body.classList.remove('in-game'); } catch (e) {}
   if (game) {
@@ -12609,8 +12645,10 @@ function startSoloPractice() {
     ensureAudio();
     isSpectator = false;
     isSoloPractice = true;
-    try { document.body.classList.add('offline-play'); } catch (e) {}
+    window._horStayInGame = true;
+    try { document.body.classList.add('offline-play', 'in-game'); } catch (e) {}
     isHost = true;
+    try { if (peer && peer.destroy) peer.destroy(); } catch (e) {}
     peer = null;
     hostConnection = null;
     try { if (typeof connMap === 'object') Object.keys(connMap).forEach(k => delete connMap[k]); } catch (e) {}
