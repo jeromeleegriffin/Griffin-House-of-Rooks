@@ -7,7 +7,7 @@
 // It's exchanged during the join handshake so a stale host or joiner (e.g.
 // one still running old cached JS) gets caught and auto-updated instead of
 // silently failing or behaving unpredictably against a mismatched peer.
-const APP_VERSION = '500';
+const APP_VERSION = '501';
 
 function horThisIndex() {
   try {
@@ -2063,6 +2063,28 @@ function playBidDownSound() {
   g.connect(ctx.destination);
   osc.start(t);
   osc.stop(t + 0.08);
+}
+
+/** Low lobby seat-selection cue (the original "doooop" feel).
+ * Kept separate from playSitSound(), which is the bot/player seating cue. */
+function playLobbySeatClickSound() {
+  if (soundMuted) return;
+  const ctx = ensureAudio();
+  if (!ctx) return;
+  try { if (ctx.state === 'suspended') ctx.resume(); } catch (e) {}
+  const t = ctx.currentTime + 0.005;
+  const osc = ctx.createOscillator();
+  const g = ctx.createGain();
+  osc.type = 'sine';
+  osc.frequency.setValueAtTime(205, t);
+  osc.frequency.exponentialRampToValueAtTime(128, t + 0.16);
+  g.gain.setValueAtTime(0.0001, t);
+  g.gain.exponentialRampToValueAtTime(0.13, t + 0.012);
+  g.gain.exponentialRampToValueAtTime(0.001, t + 0.20);
+  osc.connect(g);
+  g.connect(ctx.destination);
+  osc.start(t);
+  osc.stop(t + 0.21);
 }
 
 function playSitSound() {
@@ -12898,7 +12920,12 @@ bindClick('welcomeLobbyBtn', () => {
   for (let s = 0; s < 4; s++) {
     const el = $('welcomeSeat' + s);
     if (!el) continue;
-    el.onclick = ((seat) => () => welcomeJoin(false, seat))(s);
+    el.onclick = ((seat) => () => {
+      // Human selecting an empty lobby seat gets the low "doooop" cue.
+      // Bot seating continues to use playSitSound() separately.
+      try { playLobbySeatClickSound(); } catch (e) {}
+      welcomeJoin(false, seat);
+    })(s);
   }
   const nameIn = $('welcome-player-name');
   if (nameIn) {
