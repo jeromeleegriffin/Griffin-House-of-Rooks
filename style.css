@@ -12560,7 +12560,7 @@ body #waiting .waiting-actions #startBtn.btn.primary.table-ready,
   width: 48px;
   height: 68px;
   transform-style: preserve-3d;
-  transition: transform 1.35s cubic-bezier(.22,.62,.18,1);
+  transition: transform .86s cubic-bezier(.22,.62,.18,1);
 }
 .table-nest-flip-inner {
   transform: rotateY(0deg);
@@ -12579,7 +12579,7 @@ body #waiting .waiting-actions #startBtn.btn.primary.table-ready,
   transform: rotateY(180deg);
 }
 .table-nest-flip.is-reveal {
-  animation: nestRevealLift 2.8s cubic-bezier(.18,.82,.22,1) 1;
+  animation: nestRevealLift 1.8s cubic-bezier(.18,.82,.22,1) 1;
   filter: drop-shadow(0 8px 16px rgba(0,0,0,.55)) drop-shadow(0 0 14px rgba(240,213,106,.55));
   z-index: 9;
 }
@@ -12590,7 +12590,7 @@ body #waiting .waiting-actions #startBtn.btn.primary.table-ready,
   border-radius: 10px;
   pointer-events: none;
   box-shadow: 0 0 0 2px rgba(255,224,80,.0);
-  animation: nestGlowRing 2.8s ease-out 1;
+  animation: nestGlowRing 1.8s ease-out 1;
 }
 @keyframes nestRevealLift {
   0%   { transform: translateY(0) scale(1) rotate(-1deg); }
@@ -12860,15 +12860,10 @@ body.nest-on-felt .player-slot.is-turn .seat-avatar {
 }
 .hor-career-badge{touch-action:manipulation !important; user-select:none !important; -webkit-user-select:none !important;}
 
-/* Keep the compact waiting-room felt self-contained in narrow editor/browser views. */
-#waiting .waiting-felt{overflow:hidden !important;}
-#waiting .wait-seat{max-width:100% !important; max-height:100% !important; overflow:hidden !important;}
-#waiting .wait-seat-name{max-width:100% !important; min-width:0 !important;}
-#waiting .wait-seat-name-text{max-width:calc(100% - 2rem) !important; overflow:hidden !important; text-overflow:ellipsis !important;}
-#waiting .wait-seat-tag{max-width:100% !important; overflow:hidden !important; text-overflow:ellipsis !important; white-space:nowrap !important;}
-#waiting .team-name-row{position:relative !important; z-index:4 !important; background:#111a2d !important; padding:.2rem .25rem !important; border-radius:10px !important;}
-@media (max-width:430px){
-  #waiting .waiting-felt{grid-template-columns:minmax(5.8rem,1fr) minmax(5.5rem,.9fr) minmax(5.8rem,1fr) !important;}
-  #waiting .wait-seat{min-height:3.2rem !important; padding:.14rem .2rem !important;}
-  #waiting .wait-seat-av{width:26px !important;height:26px !important;}
-}
+/* Rook499: remove the Rook497 narrow waiting-room override that crushed
+   seat/name/center columns on phones. The established responsive lobby rules
+   above remain authoritative. */
+
+/* Build 498: compact selector for the local my-turn cue. */
+.turn-tone-option { display:flex; align-items:center; gap:.45rem; flex-wrap:wrap; }
+.turn-tone-option .select-input { min-width:9.5rem; max-width:13rem; }

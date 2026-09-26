@@ -13,7 +13,7 @@
   <title>House of Rooks</title>
   <script>
     (function () {
-      var BUILD = '497';
+      var BUILD = '499';
       try {
         var params = new URLSearchParams(location.search);
         var seen = localStorage.getItem('horBuild') || '';
@@ -36,7 +36,7 @@
   <link rel="manifest" href="manifest.json">
   <link rel="icon" href="icon-192.png">
   <link rel="apple-touch-icon" href="apple-touch-icon.png">
-  <link rel="stylesheet" href="style.css?v=497">
+  <link rel="stylesheet" href="style.css?v=499">
   <script src="vendor/peerjs.min.js" onerror="this.onerror=null;this.src='https://unpkg.com/peerjs@1.5.5/dist/peerjs.min.js';"></script>
   <style>
     /* Emergency layout if style.css fails to load — joiners still see a usable page */
@@ -114,8 +114,8 @@
     <div class="lt-decor lt-corner lt-tl">🐦</div>
     <div class="lt-decor lt-corner lt-tr">🐦</div>
     <div id="ltKittyWait" class="lt-wait-banner hidden" aria-live="polite">
-      <img id="ltWaitArtNest" class="lt-wait-art" src="wait-nest-landscape.jpg?v=497" alt="">
-      <img id="ltWaitArtTrump" class="lt-wait-art" src="wait-trump-landscape.jpg?v=497" alt="">
+      <img id="ltWaitArtNest" class="lt-wait-art" src="wait-nest-landscape.jpg?v=499" alt="">
+      <img id="ltWaitArtTrump" class="lt-wait-art" src="wait-trump-landscape.jpg?v=499" alt="">
       <div class="lt-wait-veil"></div>
       <div class="lt-wait-copy">
         <div class="lt-wait-kicker" id="ltWaitKicker">The nest is open</div>
@@ -736,6 +736,9 @@
               <span class="option-hint">Sounds:</span>
               <label class="option-label"><input type="checkbox" id="opt-sound-card" checked> Cards</label>
               <label class="option-label"><input type="checkbox" id="opt-sound-turn" checked> Turn</label>
+              <label class="option-label turn-tone-option">My turn tone
+                <select id="opt-turn-sound-choice" class="select-input" aria-label="Choose my turn sound"><option value="1">1. Soft wood</option><option value="2">2. Warm tap</option><option value="3">3. Soft chime</option><option value="4">4. Low knock</option><option value="5">5. Light bell</option><option value="6">6. Deep tap</option><option value="7">7. Tiny glass</option><option value="8">8. Muted wood</option><option value="9">9. Soft ping</option><option value="10">10. Felt tap</option><option value="11">11. Warm chime</option><option value="12">12. Low pulse</option><option value="13">13. Fine bell</option><option value="14">14. Gentle knock</option><option value="15">15. Quiet ping</option><option value="16">16. Card-table tap</option><option value="17">17. Soft glass</option><option value="18">18. Warm wood</option><option value="19">19. Light tone</option></select>
+              </label>
               <label class="option-label"><input type="checkbox" id="opt-sound-rook" checked> Rook caw</label>
               <label class="option-label"><input type="checkbox" id="opt-sound-tick" checked> Timer tick</label>
             </div>
@@ -867,8 +870,8 @@
               <div id="widowSpread" class="widow-spread hidden" aria-label="Widow"></div>
               <div id="botThinking" class="bot-thinking hidden">Thinking…</div>
               <div id="ptWaitBanner" class="pt-wait-banner hidden" aria-live="polite">
-                <img id="ptWaitArtNest" class="pt-wait-art" src="wait-nest-portrait.jpg?v=497" alt="">
-                <img id="ptWaitArtTrump" class="pt-wait-art" src="wait-trump-portrait.jpg?v=497" alt="">
+                <img id="ptWaitArtNest" class="pt-wait-art" src="wait-nest-portrait.jpg?v=499" alt="">
+                <img id="ptWaitArtTrump" class="pt-wait-art" src="wait-trump-portrait.jpg?v=499" alt="">
                 <div class="pt-wait-veil"></div>
                 <div class="pt-wait-copy">
                   <div class="pt-wait-kicker" id="ptWaitKicker">House of Rooks</div>
@@ -1203,12 +1206,12 @@
       paintInstall();
     })();
   </script>
-  <script src="rules.js?v=497"></script>
-  <script src="bots.js?v=497"></script>
-  <script src="game.js?v=497"></script>
-  <script src="polish.js?v=497"></script>
+  <script src="rules.js?v=499"></script>
+  <script src="bots.js?v=499"></script>
+  <script src="game.js?v=499"></script>
+  <script src="polish.js?v=499"></script>
   <!-- Dormant career/achievement framework. Master switch is OFF in progression.js. -->
-  <script src="progression.js?v=497"></script>
+  <script src="progression.js?v=499"></script>
   <div id="horBootError"></div>
   <script>
     window.addEventListener('error', function (ev) {
@@ -1222,7 +1225,7 @@
   </script>
   <script>
     if ('serviceWorker' in navigator) {
-      navigator.serviceWorker.register('sw.js?v=497', { updateViaCache: 'none' })
+      navigator.serviceWorker.register('sw.js?v=499', { updateViaCache: 'none' })
         .then(function (reg) { try { reg.update(); } catch (e) {} })
         .catch(() => {});
       let horSwAutoReloaded = false;

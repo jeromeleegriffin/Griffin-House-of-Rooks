@@ -7,7 +7,7 @@
 // It's exchanged during the join handshake so a stale host or joiner (e.g.
 // one still running old cached JS) gets caught and auto-updated instead of
 // silently failing or behaving unpredictably against a mismatched peer.
-const APP_VERSION = '497';
+const APP_VERSION = '499';
 
 function horThisIndex() {
   try {
@@ -106,6 +106,7 @@ let timeoutPolicy = 'auto';
 /** Seats under temp-bot-for-hand after timeout policy botHand */
 let timeoutBotUntilHandEnd = {}; // seatIdx -> true
 let soundCard = true, soundTurn = true, soundRook = true, soundTick = true;
+let turnSoundChoice = Math.max(1, Math.min(19, parseInt(localStorage.getItem('rookTurnSoundChoice') || '1', 10) || 1));
 let playLockUntil = 0;
 let knownVoids = [{}, {}, {}, {}]; // extreme bot: playerIdx -> {color: true}
 let matchStats = { hands: 0, highBid: 0, setsA: 0, setsB: 0, madeA: 0, madeB: 0, bidSum: 0, bidCount: 0 };
@@ -1816,28 +1817,33 @@ function playCardSound() {
   osc.stop(t + 0.08);
 }
 
-/** One restrained wooden/card-table tap when it is your turn. */
-function playTurnSound() {
-  if (soundMuted || !soundTurn) return;
+/** Subtle selectable cue when it becomes your turn. */
+function playTurnSound(forcePreview = false) {
+  if (soundMuted || (!soundTurn && !forcePreview)) return;
   const ctx = ensureAudio();
   if (!ctx) return;
-  try {
-    if (ctx.state === 'suspended') ctx.resume();
-  } catch (e) {}
-  const t = ctx.currentTime;
-
-  // A very short low wooden knock: deliberately one event, not a melody/beep.
+  try { if (ctx.state === 'suspended') ctx.resume(); } catch (e) {}
+  const t = ctx.currentTime + 0.01;
+  const presets = [
+    ['triangle',230,120,.080,.060], ['sine',420,300,.095,.045], ['sine',520,390,.100,.040],
+    ['triangle',310,190,.090,.050], ['sine',660,500,.085,.035], ['triangle',180,105,.105,.055],
+    ['sine',760,610,.075,.030], ['triangle',275,165,.115,.045], ['sine',350,265,.120,.040],
+    ['triangle',460,280,.085,.038], ['sine',590,455,.110,.034], ['triangle',205,145,.125,.050],
+    ['sine',700,545,.090,.028], ['triangle',390,235,.100,.040], ['sine',485,365,.115,.034],
+    ['triangle',250,155,.095,.048], ['sine',615,470,.105,.030], ['triangle',335,205,.120,.038],
+    ['sine',555,410,.090,.033]
+  ];
+  const p = presets[Math.max(0, Math.min(18, (turnSoundChoice || 1) - 1))];
   const osc = ctx.createOscillator();
   const gain = ctx.createGain();
-  osc.type = 'triangle';
-  osc.frequency.setValueAtTime(230, t);
-  osc.frequency.exponentialRampToValueAtTime(120, t + 0.055);
-  gain.gain.setValueAtTime(0.055, t);
-  gain.gain.exponentialRampToValueAtTime(0.0001, t + 0.075);
-  osc.connect(gain);
-  gain.connect(ctx.destination);
-  osc.start(t);
-  osc.stop(t + 0.08);
+  osc.type = p[0];
+  osc.frequency.setValueAtTime(p[1], t);
+  osc.frequency.exponentialRampToValueAtTime(p[2], t + p[3] * .72);
+  gain.gain.setValueAtTime(0.0001, t);
+  gain.gain.exponentialRampToValueAtTime(p[4], t + .012);
+  gain.gain.exponentialRampToValueAtTime(0.0001, t + p[3]);
+  osc.connect(gain); gain.connect(ctx.destination);
+  osc.start(t); osc.stop(t + p[3] + .015);
 }
 
 /** Shared raspy crow "caw" synth (noise + falling saw + formant) */
@@ -2514,7 +2520,7 @@ function playNestRevealSequence() {
   whoosh.start(t); whoosh.stop(t + 0.44);
 
   // Soft edge tick when the card is on its side (~half flip)
-  const edge = t + 1.32;
+  const edge = t + 0.84;
   const tick = ctx.createOscillator();
   const tg = ctx.createGain();
   tick.type = 'sine';
@@ -2526,8 +2532,8 @@ function playNestRevealSequence() {
   tick.connect(tg); tg.connect(ctx.destination);
   tick.start(edge); tick.stop(edge + 0.08);
 
-  // Slap when the face lands (matches 2.8s flip ease)
-  const land = t + 2.42;
+  // Slap when the face lands (matches shortened 1.8s reveal)
+  const land = t + 1.56;
   const slapSize = Math.floor(ctx.sampleRate * 0.055);
   const slapBuf = ctx.createBuffer(1, slapSize, ctx.sampleRate);
   const sd = slapBuf.getChannelData(0);
@@ -2793,7 +2799,7 @@ function turnOpportunityKey() {
   if (game.phase === 'play' && game.currentPlayer === myIndex)
     return 'play:' + myIndex + ':' + ((game.trick && game.trick.length) || 0);
   if (game.phase === 'bidding' && game.currentPlayer === myIndex)
-    return 'bid:' + myIndex + ':' + (game.highestBid || 0);
+    return 'bid:' + myIndex + ':' + (game.highestBid || 0) + ':' + ((game.bidStatus || []).join(','));
   if (game.phase === 'trump' && game.bidder === myIndex)
     return 'trump:' + myIndex;
   if (game.phase === 'discard' && game.bidder === myIndex)
@@ -2827,6 +2833,8 @@ function notifyYourTurn() {
     const ctx = ensureAudio();
     if (ctx && ctx.state === 'suspended') ctx.resume();
   } catch (e) {}
+  // Preserve the intentional rule: the first bidding turn of each hand is silent.
+  // Every later local turn should cue normally.
   let skipTurnSfx = false;
   try {
     if (game && game.phase === 'bidding' && !game._firstBidTurnSounded) {
@@ -5103,6 +5111,15 @@ function showWaiting() {
     }
     const sc = $('opt-sound-card'); if (sc) { sc.checked = soundCard; sc.onchange = () => { soundCard = sc.checked; }; }
     const st = $('opt-sound-turn'); if (st) { st.checked = soundTurn; st.onchange = () => { soundTurn = st.checked; }; }
+    const sts = $('opt-turn-sound-choice');
+    if (sts) {
+      sts.value = String(turnSoundChoice);
+      sts.onchange = () => {
+        turnSoundChoice = Math.max(1, Math.min(19, parseInt(sts.value, 10) || 1));
+        try { localStorage.setItem('rookTurnSoundChoice', String(turnSoundChoice)); } catch (e) {}
+        try { playTurnSound(true); } catch (e) {}
+      };
+    }
     const sr = $('opt-sound-rook'); if (sr) { sr.checked = soundRook; sr.onchange = () => { soundRook = sr.checked; }; }
     const sk = $('opt-sound-tick'); if (sk) { sk.checked = soundTick; sk.onchange = () => { soundTick = sk.checked; }; }
     const avatarGrid = $('avatarGrid');
@@ -6194,11 +6211,11 @@ function scheduleTopNestFlip() {
       if (tok !== window._horNestFlipTok) return;
       if (game) { game.nestFlipStage = 2; game.nestFlipped = true; }
       try { renderTopNestPeek(); } catch (e) {}
-    }, 2800);
+    }, 1800);
     setTimeout(() => {
       if (tok !== window._horNestFlipTok) return;
       try { openNestAuction(); } catch (e) {}
-    }, 2880);
+    }, 1880);
   }, 280);
 }
 
