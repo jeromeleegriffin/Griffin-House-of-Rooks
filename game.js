@@ -7,7 +7,7 @@
 // It's exchanged during the join handshake so a stale host or joiner (e.g.
 // one still running old cached JS) gets caught and auto-updated instead of
 // silently failing or behaving unpredictably against a mismatched peer.
-const APP_VERSION = '501';
+const APP_VERSION = '502';
 
 function horThisIndex() {
   try {
@@ -5903,6 +5903,9 @@ function onWaitSeatClick(seat) {
   const occ = playerAtSeat(seat);
   if (isHost) {
     if (!occ) {
+      // Empty waiting-room chair: play the original low seat-click "doooop"
+      // immediately. The separate bot-seated cue still plays only after a bot is chosen/seated.
+      try { playLobbySeatClickSound(); } catch (e) {}
       openBotPicker(seat);
       return;
     }
