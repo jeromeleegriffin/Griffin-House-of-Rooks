@@ -1,0 +1,18 @@
+ROOK495 — DIRECT GITHUB UPDATE FROM SERVED ROOK487
+
+Upload/replace these paths in the GitHub Pages site:
+
+index.html
+game.js
+hor-version.js
+sw.js
+style.css
+progression.js
+manifest.json
+vendor/peerjs.min.js
+ROOK495_RELEASE_NOTES.md
+
+This pack was rebuilt after a direct Rook487 -> Rook495 file comparison.
+The local PeerJS 1.5.5 file from Rook487 is deliberately preserved because Rook495 references vendor/peerjs.min.js and sw.js caches it.
+
+After upload, use your normal force-refresh/update procedure so the 495 service worker/cache takes control.

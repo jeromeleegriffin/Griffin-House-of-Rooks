@@ -93,36 +93,6 @@
   .bidding-intro { animation: none; }
 }
 
-/* Nearby play modal (Wi‑Fi hotspot — not Bluetooth) */
-.nearby-modal.modal {
-  z-index: 12000;
-}
-.nearby-modal .nearby-sheet-inner,
-.nearby-sheet-inner {
-  text-align: left;
-  max-width: 420px;
-  background: #1a2744;
-  border: 1px solid rgba(144, 202, 249, 0.45);
-}
-.nearby-sheet-inner h2 {
-  margin: 0 0 0.5rem;
-  font-size: 1.2rem;
-  color: #90caf9;
-}
-.nearby-steps {
-  margin: 0.35rem 0 0.5rem 1.1rem;
-  padding: 0;
-  font-size: 0.85rem;
-  line-height: 1.5;
-  color: #e3f2fd;
-}
-.nearby-steps li { margin-bottom: 0.4rem; }
-#nearbyPlayBtnWaiting {
-  background: linear-gradient(135deg, #1565c0, #0d47a1);
-  color: #fff;
-  border: none;
-}
-
 /* ===== Special capture celebration (Rook eats Red 2 / trump 1) ===== */
 .capture-overlay {
   position: fixed;
@@ -1825,9 +1795,6 @@ body.theme-night {
   color: #f0e0a8 !important;
   border: 1px solid rgba(212,175,55,.7) !important;
   box-shadow: 0 1px 0 rgba(255,255,255,.08) inset;
-}
-#waiting .share-row #nearbyPlayBtnWaiting {
-  background: linear-gradient(180deg, #1c2844 0%, #10182c 100%) !important;
 }
 #waiting .qr-box canvas {
   width: min(78vw, 78vh, 420px) !important;
@@ -7598,20 +7565,6 @@ body.remaining-open #ltEndGame {
 .claim-remaining-card.red2 .red2-img,
 .claim-remaining-card.red2-art .red2-img { object-fit: fill !important; }
 
-/* Fit Nearby Play instructions on phone screens without an internal scroll. */
-.nearby-sheet-inner {
-  max-height: none !important;
-  overflow: visible !important;
-  padding: .9rem 1rem !important;
-}
-.nearby-steps {
-  font-size: .76rem !important;
-  line-height: 1.28 !important;
-  margin: .25rem 0 .4rem 1rem !important;
-}
-.nearby-steps li { margin-bottom: .25rem !important; }
-.nearby-sheet-inner .option-hint { font-size: .72rem !important; line-height: 1.28 !important; }
-
 /* Ensure the nest row itself always has enough width for every card. */
 .gh-nest-row {
   box-sizing: border-box !important;
@@ -12888,3 +12841,34 @@ body.nest-on-felt .player-slot.is-turn .seat-avatar {
   box-sizing:border-box !important;
 }
 .player-slot .name .hor-career-badge:active{transform:scale(.96)}
+
+
+/* Rook488 local-test correction: Career stars own taps; persona tips cannot trap controls. */
+.bot-style-tip{
+  pointer-events:none !important;
+  max-width:min(260px,calc(100vw - 24px)) !important;
+  max-height:min(180px,42vh) !important;
+  overflow:auto !important;
+  padding:.65rem 2rem .65rem .7rem !important;
+}
+.bot-style-tip-close{
+  pointer-events:auto !important;
+  position:absolute; top:.22rem; right:.28rem;
+  width:1.6rem; height:1.6rem; border-radius:999px;
+  border:1px solid #c9a227; background:#101810; color:#f4ead0;
+  font:900 1rem/1 system-ui; cursor:pointer;
+}
+.hor-career-badge{touch-action:manipulation !important; user-select:none !important; -webkit-user-select:none !important;}
+
+/* Keep the compact waiting-room felt self-contained in narrow editor/browser views. */
+#waiting .waiting-felt{overflow:hidden !important;}
+#waiting .wait-seat{max-width:100% !important; max-height:100% !important; overflow:hidden !important;}
+#waiting .wait-seat-name{max-width:100% !important; min-width:0 !important;}
+#waiting .wait-seat-name-text{max-width:calc(100% - 2rem) !important; overflow:hidden !important; text-overflow:ellipsis !important;}
+#waiting .wait-seat-tag{max-width:100% !important; overflow:hidden !important; text-overflow:ellipsis !important; white-space:nowrap !important;}
+#waiting .team-name-row{position:relative !important; z-index:4 !important; background:#111a2d !important; padding:.2rem .25rem !important; border-radius:10px !important;}
+@media (max-width:430px){
+  #waiting .waiting-felt{grid-template-columns:minmax(5.8rem,1fr) minmax(5.5rem,.9fr) minmax(5.8rem,1fr) !important;}
+  #waiting .wait-seat{min-height:3.2rem !important; padding:.14rem .2rem !important;}
+  #waiting .wait-seat-av{width:26px !important;height:26px !important;}
+}

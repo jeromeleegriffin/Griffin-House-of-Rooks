@@ -13,7 +13,7 @@
   <title>House of Rooks</title>
   <script>
     (function () {
-      var BUILD = '487';
+      var BUILD = '495';
       try {
         var params = new URLSearchParams(location.search);
         var seen = localStorage.getItem('horBuild') || '';
@@ -36,7 +36,7 @@
   <link rel="manifest" href="manifest.json">
   <link rel="icon" href="icon-192.png">
   <link rel="apple-touch-icon" href="apple-touch-icon.png">
-  <link rel="stylesheet" href="style.css?v=487">
+  <link rel="stylesheet" href="style.css?v=495">
   <script src="vendor/peerjs.min.js" onerror="this.onerror=null;this.src='https://unpkg.com/peerjs@1.5.5/dist/peerjs.min.js';"></script>
   <style>
     /* Emergency layout if style.css fails to load — joiners still see a usable page */
@@ -114,8 +114,8 @@
     <div class="lt-decor lt-corner lt-tl">🐦</div>
     <div class="lt-decor lt-corner lt-tr">🐦</div>
     <div id="ltKittyWait" class="lt-wait-banner hidden" aria-live="polite">
-      <img id="ltWaitArtNest" class="lt-wait-art" src="wait-nest-landscape.jpg?v=487" alt="">
-      <img id="ltWaitArtTrump" class="lt-wait-art" src="wait-trump-landscape.jpg?v=487" alt="">
+      <img id="ltWaitArtNest" class="lt-wait-art" src="wait-nest-landscape.jpg?v=495" alt="">
+      <img id="ltWaitArtTrump" class="lt-wait-art" src="wait-trump-landscape.jpg?v=495" alt="">
       <div class="lt-wait-veil"></div>
       <div class="lt-wait-copy">
         <div class="lt-wait-kicker" id="ltWaitKicker">The nest is open</div>
@@ -243,7 +243,6 @@
         <div id="friendsPanel" class="friends-panel hidden">
           <button id="createBtn" class="btn hidden" type="button" aria-hidden="true">Create table</button>
           <button id="rejoinBtn" class="btn" type="button">Rejoin last code</button>
-          <button id="nearbyPlayBtn" class="btn nearby-btn" type="button">Nearby (same Wi‑Fi)</button>
         </div>
         <div id="lobbyStatus" class="status"></div>
         <div id="noServiceModal" class="no-service-modal hidden" aria-hidden="true">
@@ -267,6 +266,7 @@
         <button id="replayTutorialBtn" class="btn link" type="button">House tour</button>
         <button id="newPlayersLobbyBtn" class="btn link" type="button">New players</button>
         <button id="btnCardBackLobby" class="btn link" type="button">Card backs</button>
+        <button class="btn link" type="button" data-hor-my-career="1">My Career / Stats</button>
         <button id="toggleMuteLobby" class="btn link" type="button">🔊 Sound on</button>
         <button id="btnForceRefreshLobby" class="btn link" type="button" title="Clear this app's cached files and reload the latest version">Force refresh</button>
         <span id="appVersionTag" class="version-tag"></span>
@@ -335,11 +335,7 @@
         <button id="shareBtn" class="btn primary">Share</button>
         <button id="copyCodeBtn" class="btn hidden" type="button" aria-hidden="true" tabindex="-1">Copy code</button>
         <button id="showQrBtn" class="btn">QR</button>
-        <button id="nearbyPlayBtnWaiting" class="btn" type="button" title="Nearby play help">📡 Nearby</button>
       </div>
-      <p id="nearbyHintWaiting" class="option-hint waiting-nearby-hint">
-        Same site + table code. Keep this tab open.
-      </p>
       <div id="qrBox" class="qr-box hidden">
         <img id="qrImg" class="qr-img hidden" width="420" height="420" alt="Scan to open this table">
         <canvas id="qrCanvas" width="420" height="420"></canvas>
@@ -871,8 +867,8 @@
               <div id="widowSpread" class="widow-spread hidden" aria-label="Widow"></div>
               <div id="botThinking" class="bot-thinking hidden">Thinking…</div>
               <div id="ptWaitBanner" class="pt-wait-banner hidden" aria-live="polite">
-                <img id="ptWaitArtNest" class="pt-wait-art" src="wait-nest-portrait.jpg?v=487" alt="">
-                <img id="ptWaitArtTrump" class="pt-wait-art" src="wait-trump-portrait.jpg?v=487" alt="">
+                <img id="ptWaitArtNest" class="pt-wait-art" src="wait-nest-portrait.jpg?v=495" alt="">
+                <img id="ptWaitArtTrump" class="pt-wait-art" src="wait-trump-portrait.jpg?v=495" alt="">
                 <div class="pt-wait-veil"></div>
                 <div class="pt-wait-copy">
                   <div class="pt-wait-kicker" id="ptWaitKicker">House of Rooks</div>
@@ -1029,27 +1025,6 @@
         <div class="capture-sub" id="captureSub">Epic capture</div>
         <div class="capture-sparks" aria-hidden="true">
           <span></span><span></span><span></span><span></span><span></span><span></span>
-        </div>
-      </div>
-    </div>
-
-    <!-- Nearby play how-to (global modal — lobby + waiting) -->
-    <div id="nearbySheet" class="modal nearby-modal hidden" role="dialog" aria-label="Nearby play" aria-hidden="true">
-      <div class="modal-content nearby-sheet-inner">
-        <h2>📡 Nearby play</h2>
-        <p class="option-hint" style="margin:0 0 0.5rem;">
-          Nearby play uses the 4-letter table code. The guest must open House of Rooks on their own phone — do not send a file or a phone-only link. That is what shows a broken page.
-        </p>
-        <ol class="nearby-steps">
-          <li><strong>Everyone:</strong> Open this same website (or the same saved game). Same Wi‑Fi is only needed for a file/local copy — not for this hosted site.</li>
-          <li><strong>Host:</strong> Play with friends. Keep this tab open. Read the 4-letter code out loud.</li>
-          <li><strong>Guest:</strong> Open their own copy of House of Rooks (same website, or their own saved game). Tap Join with a code. Type the 4 letters. Tap Sit down, then a chair.</li>
-          <li><strong>Do not</strong> text a file:// link, a Files-app link, or a QR from a copy that is not on https. That page is broken on the other phone.</li>
-        </ol>
-        <p class="option-hint">Both phones still need a little internet for the first handshake. A hotspot with data turned off will not connect.</p>
-        <div class="btn-row" style="margin-top:0.75rem;flex-wrap:wrap;gap:0.4rem;">
-          <button type="button" id="nearbyCreateBtn" class="btn primary">Create room now</button>
-          <button type="button" id="nearbyCloseBtn" class="btn">Close</button>
         </div>
       </div>
     </div>
@@ -1228,12 +1203,12 @@
       paintInstall();
     })();
   </script>
-  <script src="rules.js?v=487"></script>
-  <script src="bots.js?v=487"></script>
-  <script src="game.js?v=487"></script>
-  <script src="polish.js?v=487"></script>
+  <script src="rules.js?v=495"></script>
+  <script src="bots.js?v=495"></script>
+  <script src="game.js?v=495"></script>
+  <script src="polish.js?v=495"></script>
   <!-- Dormant career/achievement framework. Master switch is OFF in progression.js. -->
-  <script src="progression.js?v=487"></script>
+  <script src="progression.js?v=495"></script>
   <div id="horBootError"></div>
   <script>
     window.addEventListener('error', function (ev) {
@@ -1247,7 +1222,7 @@
   </script>
   <script>
     if ('serviceWorker' in navigator) {
-      navigator.serviceWorker.register('sw.js?v=487', { updateViaCache: 'none' })
+      navigator.serviceWorker.register('sw.js?v=495', { updateViaCache: 'none' })
         .then(function (reg) { try { reg.update(); } catch (e) {} })
         .catch(() => {});
       let horSwAutoReloaded = false;

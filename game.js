@@ -7,7 +7,7 @@
 // It's exchanged during the join handshake so a stale host or joiner (e.g.
 // one still running old cached JS) gets caught and auto-updated instead of
 // silently failing or behaving unpredictably against a mismatched peer.
-const APP_VERSION = '487';
+const APP_VERSION = '495';
 
 function horThisIndex() {
   try {
@@ -197,14 +197,14 @@ function horCareerBadgeHtml(p){
       const isLocalHuman=!!(p&&!p.isBot&&p.id&&myPeerId&&p.id===myPeerId);
       if(p&&p.isBot || isLocalHuman){
         const who=escapeHtmlSafe((p&&p.id)||('bot-'+String((p&&p.name)||'bot')));
-        return ` <span class="hor-career-badge hor-career-badge-pending" role="button" tabindex="0" data-career-peer="${who}" title="Career loading" aria-label="Career loading">★…</span>`;
+        return ` <span class="hor-career-badge hor-career-badge-pending" role="button" tabindex="0" data-career-peer="${who}" data-career-name="${escapeHtmlSafe((p&&p.name)||'')}" title="Career loading" aria-label="Career loading">★…</span>`;
       }
     }
     return '';
   }
   const level=Math.max(1,Number(prof.level)||1);
   const who=escapeHtmlSafe(p.id||('bot-'+String(p.name||'bot')));
-  return ` <span class="hor-career-badge" role="button" tabindex="0" data-career-peer="${who}" title="View Career: Level ${level}" aria-label="Career level ${level}">★${level}</span>`;
+  return ` <span class="hor-career-badge" role="button" tabindex="0" data-career-peer="${who}" data-career-name="${escapeHtmlSafe(p.name||'')}" title="View Career: Level ${level}" aria-label="Career level ${level}">★${level}</span>`;
 }
 
 
@@ -228,7 +228,34 @@ window.addEventListener('hor-career-ready', function(){
   }catch(e){console.error('[Career ready]',e);}
 });
 
-function horBindCareerBadges(root){try{(root||document).querySelectorAll('.hor-career-badge').forEach(b=>{if(b.__horCareerBound)return;b.__horCareerBound=true;const open=e=>{e.preventDefault();e.stopPropagation();const id=b.getAttribute('data-career-peer');const pool=(game&&game.players)||players||[];let pl=pool.find(x=>x&&x.id===id);if(!pl&&id&&id.startsWith('bot-'))pl=pool.find(x=>x&&x.isBot&&('bot-'+String(x.name||'bot'))===id);if(pl)horShowCareerForPlayer(pl);};b.addEventListener('click',open);b.addEventListener('keydown',e=>{if(e.key==='Enter'||e.key===' ' )open(e);});});}catch(e){}}
+function horResolveCareerPlayer(id,name){
+  const pools=[];
+  if(game&&Array.isArray(game.players))pools.push(game.players);
+  if(Array.isArray(players))pools.push(players);
+  for(const pool of pools){
+    let pl=pool.find(x=>x&&id&&x.id===id);
+    if(pl)return pl;
+  }
+  for(const pool of pools){
+    let pl=pool.find(x=>x&&name&&String(x.name||'')===String(name));
+    if(pl)return pl;
+  }
+  if(id&&myPeerId&&id===myPeerId)return {id:myPeerId,name:myName||name||'You',isBot:false,careerPublic:horMyCareerProfile()};
+  return null;
+}
+function horBindCareerBadges(root){try{(root||document).querySelectorAll('.hor-career-badge').forEach(b=>{if(b.__horCareerBound)return;b.__horCareerBound=true;const open=e=>{e.preventDefault();e.stopPropagation();const id=b.getAttribute('data-career-peer')||'';const name=b.getAttribute('data-career-name')||'';const pl=horResolveCareerPlayer(id,name);if(pl){horShowCareerForPlayer(pl);return;}const mine=horMyCareerProfile();if(mine&&mine.enabled&&((id&&id===myPeerId)||(name&&name===myName)))HORProgression.localCareer.showCareerCard(mine);};b.addEventListener('pointerdown',e=>{e.stopPropagation();});b.addEventListener('touchstart',e=>{e.stopPropagation();},{passive:true});b.addEventListener('click',open);b.addEventListener('keydown',e=>{if(e.key==='Enter'||e.key===' ' )open(e);});});}catch(e){console.error('[Career badge bind]',e);}}
+function horShowMyCareer(){
+  try{
+    const prof=horMyCareerProfile();
+    if(prof&&prof.enabled&&window.HORProgression&&HORProgression.localCareer&&HORProgression.localCareer.showCareerCard){HORProgression.localCareer.showCareerCard(prof);return true;}
+    if(window.HORProgression&&HORProgression.localCareer&&HORProgression.localCareer.showActivationPanel){HORProgression.localCareer.showActivationPanel();return false;}
+  }catch(e){console.error('[My Career]',e);}
+  return false;
+}
+window.horShowMyCareer=horShowMyCareer;
+function horWireMyCareerButtons(){document.querySelectorAll('[data-hor-my-career]').forEach(btn=>{if(btn.__horCareerOwnBound)return;btn.__horCareerOwnBound=true;btn.addEventListener('click',e=>{e.preventDefault();horShowMyCareer();});});}
+document.addEventListener('DOMContentLoaded',horWireMyCareerButtons);
+window.addEventListener('hor-career-ready',horWireMyCareerButtons);
 function horBroadcastCareerProfile(){const profile=horMyCareerProfile();if(isHost){const me=(players||[]).find(p=>p&&!p.isBot&&p.id===myPeerId);if(me)me.careerPublic=profile;broadcast({type:'careerProfile',id:myPeerId,profile});}else if(hostConnection&&hostConnection.open){hostConnection.send({type:'careerProfile',id:myPeerId,profile});}}
 function horCareerAnnouncement(ev){if(!ev||!window.HORProgression||!HORProgression.presentation||!window.horOtherCareerPopups)return;HORProgression.presentation.enqueue(Object.assign({remote:true},ev));}
 window.horCareerLocalAnnouncement=function(ev){try{if(!horCareerModeOn()||!ev)return;if(isHost)broadcast({type:'careerAnnouncement',from:myPeerId,event:ev});else if(hostConnection&&hostConnection.open)hostConnection.send({type:'careerAnnouncement',from:myPeerId,event:ev});}catch(e){}};
@@ -280,74 +307,12 @@ function mergeLifetimeStats(winnerLabel) {
 
       }
     } catch (e) {}
-    try { publishCareerStats(winnerLabel, store); } catch (e) {}
   } catch (e) {}
 }
 
-/** Shared house record. Empty = off. Fill this once with your workers.dev
- *  URL so every copy of the game posts. Players never see or paste it. */
-const HOUSE_STATS_ENDPOINT = 'https://griffin-house-of-rooks.jeromeleegriffin.workers.dev';
-function statsEndpointKey() { return 'horStatsEndpoint'; }
-function loadStatsEndpoint() {
-  try {
-    const override = String(localStorage.getItem(statsEndpointKey()) || '').trim();
-    if (override) return override;
-  } catch (e) {}
-  return String(HOUSE_STATS_ENDPOINT || '').trim();
-}
-function saveStatsEndpoint(url) {
-  try { localStorage.setItem(statsEndpointKey(), String(url || '').trim()); } catch (e) {}
-}
-function publishCareerStats(winnerLabel, store) {
-  if (!isHost) return;
-  const url = loadStatsEndpoint();
-  if (!url || !/^https:\/\//i.test(url)) return;
-  const payload = {
-    app: 'hor',
-    v: (typeof APP_VERSION !== 'undefined') ? APP_VERSION : '',
-    at: new Date().toISOString(),
-    winner: winnerLabel || null,
-    scores: (game && game.scores) ? game.scores.slice() : null,
-    players: (players || []).map((p, i) => {
-      if (!p || !p.name) return null;
-      const fromStore = store && store[p.name];
-      const add = ps(i);
-      return {
-        name: p.name,
-        isBot: !!p.isBot,
-        avatar: p.avatar || null,
-        team: p.team,
-        stats: {
-          gamesPlayed: 1,
-          gamesWon: ((winnerLabel === 'Team A' && p.team === 0) || (winnerLabel === 'Team B' && p.team === 1)) ? 1 : 0,
-          hands: add.hands || 0,
-          bidsWon: add.bidsWon || 0,
-          highBid: add.highBid || 0,
-          bidSum: add.bidSum || 0,
-          bidsMade: add.bidsMade || 0,
-          bidsSet: add.bidsSet || 0,
-          points: add.points || 0,
-          tricksWon: add.tricksWon || 0,
-          trickPtsSum: add.trickPtsSum || 0,
-          rookCaptures: add.rookCaptures || 0,
-          red2Captures: add.red2Captures || 0,
-          bigTricks: add.bigTricks || 0,
-          nestWins: add.nestWins || 0,
-          nestPts: add.nestPts || 0,
-          moonAttempts: add.moonAttempts || 0,
-          moonMade: add.moonMade || 0,
-          bags: add.bags || 0,
-        },
-        career: fromStore || null,
-      };
-    }).filter(Boolean),
-  };
-  fetch(url, {
-    method: 'POST',
-    headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify(payload),
-  }).catch(() => {});
-}
+/* Rook491: local Career/Stats only. Remove obsolete remote-stat storage keys from older builds. */
+try { ['horStatsEndpoint','horPlayerIdentityV1','horProgressOutboxV1','horInstallIdV1'].forEach(k=>localStorage.removeItem(k)); } catch (e) {}
+
 
 const HUMAN_STYLE_MIN_HANDS = 8;
 function playMemoryKey() { return 'horPlayMemory'; }
@@ -1609,8 +1574,6 @@ function syncOptionsUI() {
   if (rtn) rtn.checked = !!revealTopNest;
   const fnr = $('opt-force-nest-reveal');
   if (fnr) fnr.value = forceNestReveal || '';
-  const se = $('opt-stats-endpoint');
-  if (se) se.value = loadStatsEndpoint();
   const ow = $('opt-open-widow');
   if (ow) ow.checked = !!openWidow;
   const stm = $('opt-shoot-moon');
@@ -3028,15 +2991,15 @@ function noServiceJoinMessage() {
   return 'This phone is offline (no cell data and no working Wi‑Fi). Turn on Wi‑Fi or data to join. The first handshake needs a little internet, even when both phones are in the same house.';
 }
 function stopNetworkRetries() {
+  // Cancel only retry timers. Do NOT destroy an existing Peer/DataConnection here.
+  // Mobile browsers can briefly report navigator.onLine=false while WebRTC is
+  // still usable or recovering; tearing the Peer down made that transient state
+  // destructive. Explicit leave/offline-practice paths own connection teardown.
   window._horNoServiceStop = true;
   try {
     (window._horNetRetryTimers || []).forEach((t) => clearTimeout(t));
   } catch (e) {}
   window._horNetRetryTimers = [];
-  try { if (peer && peer.destroy) peer.destroy(); } catch (e) {}
-  peer = null;
-  hostConnection = null;
-  joinInProgress = false;
 }
 function hideNoServiceModal() {
   const el = $('noServiceModal');
@@ -3578,6 +3541,19 @@ const PEER_BROKERS = [
   { host: 'peerjs.92k.de', port: 443, path: '/', secure: true }
 ];
 let horPeerBrokerIndex = 0;
+let horHostCreateInProgress = false;
+
+function horSetHostCreateBusy(busy, message) {
+  horHostCreateInProgress = !!busy;
+  const status = $('lobbyStatus');
+  if (status && message != null) status.textContent = message;
+  ['friendsToggleBtn', 'createBtn'].forEach(id => {
+    const el = $(id);
+    if (!el) return;
+    el.disabled = !!busy;
+    el.setAttribute('aria-busy', busy ? 'true' : 'false');
+  });
+}
 
 let horForceRelayIce = false;
 
@@ -3593,7 +3569,6 @@ function horIceConfig(forceRelay) {
       { urls: 'stun:stun1.l.google.com:19302' },
       { urls: 'stun:stun2.l.google.com:19302' },
       { urls: 'stun:stun3.l.google.com:19302' },
-      { urls: 'stun:stun.cloudflare.com:3478' },
       { urls: 'turn:0.peerjs.com:3478', username: 'peerjs', credential: 'peerjsp' },
       { urls: 'turn:0.peerjs.com:3478?transport=tcp', username: 'peerjs', credential: 'peerjsp' },
       { urls: 'turns:0.peerjs.com:443', username: 'peerjs', credential: 'peerjsp' },
@@ -3628,19 +3603,30 @@ function horNextBroker() {
 }
 
 function createRoom(preserveCode) {
+  // A normal button tap may arrive again while PeerJS is still registering the
+  // host id. Do not destroy that healthy in-flight attempt and start over.
+  // Internal broker/collision retries pass preserveCode=true and are allowed
+  // to continue the same creation attempt.
+  if (!preserveCode && horHostCreateInProgress) {
+    horSetHostCreateBusy(true, 'Still creating your room…');
+    return;
+  }
   if (phoneLooksOffline()) {
+    horSetHostCreateBusy(false);
+
     offerOfflinePlay();
     return;
   }
   window._horNoServiceStop = false;
   myName = ($('hor-player-name').value || '').trim() || 'Host';
   if (typeof Peer === 'undefined') {
+    horSetHostCreateBusy(false);
     $('lobbyStatus').textContent = 'PeerJS failed to load. Check your internet connection and refresh.';
     return;
   }
   if (!preserveCode || !roomCode) roomCode = shortCode();
   isHost = true;
-  $('lobbyStatus').textContent = 'Creating room…';
+  horSetHostCreateBusy(true, preserveCode ? brokerRetryMessage() : 'Creating room… one tap is enough.');
 
   try {
     if (peer) {
@@ -3652,6 +3638,7 @@ function createRoom(preserveCode) {
     peer = new Peer(peerRoomId(roomCode), opts);
   } catch (e) {
     console.error(e);
+    horSetHostCreateBusy(false);
     $('lobbyStatus').textContent = 'Could not create Peer: ' + e.message;
     return;
   }
@@ -3659,6 +3646,7 @@ function createRoom(preserveCode) {
   peer.on('open', id => {
     horDebugLog('HOST: peer open, id=' + id + ', room code=' + roomCode);
     myPeerId = id;
+    horSetHostCreateBusy(false);
     if (window._horHandoffSnapshot) {
       try { finishHostHandoff(id); } catch (e) { console.error(e); }
       return;
@@ -3732,6 +3720,7 @@ function createRoom(preserveCode) {
       peer = null;
       scheduleNetRetry(() => createRoom(true), 350);
     } else {
+      horSetHostCreateBusy(false);
       $('lobbyStatus').textContent = 'Error: ' + (err.type || err.message || 'unknown');
     }
   });
@@ -3786,7 +3775,7 @@ function joinRoom() {
     const targetId = peerRoomId(roomCode);
     horDebugLog('JOIN: attempt ' + joinTries + '/' + maxJoinTries + ', connecting to targetId=' + targetId);
     setJoinStatus(joinTries >= 3
-      ? 'Table found. This hotspot is blocking a direct path — trying a relay…'
+      ? 'Table found. The direct path did not open — trying a relay…'
       : 'Table found. Linking to the host…');
     let conn;
     try {
@@ -3816,7 +3805,7 @@ function joinRoom() {
           if (ice === 'failed' || cs === 'failed') {
             setJoinStatus('Table found, but this network blocked the direct path. Trying another way…');
           } else if (horForceRelayIce || joinTries >= 3) {
-            setJoinStatus('Table found. Using a relay so a hotspot can reach the host…');
+            setJoinStatus('Table found. Using a relay to reach the host…');
           } else {
             setJoinStatus('Table found. Linking to the host…');
           }
@@ -3837,7 +3826,7 @@ function joinRoom() {
       finished = true;
       joinInProgress = false;
       clearTimeout(joinTimer);
-      const joinMsg = { type: 'join', name: myName, id: myPeerId, spectator: !!isSpectator, bank: loadMyBank(), appVersion: APP_VERSION, reconnect: true, careerProfile: horMyCareerProfile() };
+      const joinMsg = { type: 'join', name: myName, id: myPeerId, spectator: !!isSpectator, bank: loadMyBank(), appVersion: APP_VERSION, reconnect: true };
       if (pendingPreviewJoin) joinMsg.preview = true;
       if (!isSpectator && typeof pendingWelcomeSeat === 'number' && pendingWelcomeSeat >= 0 && pendingWelcomeSeat <= 3) {
         joinMsg.preferredSeat = pendingWelcomeSeat;
@@ -3864,13 +3853,13 @@ function joinRoom() {
       try { conn.close(); } catch (e) {}
       if (joinTries >= maxJoinTries) {
         horDebugLog('JOIN: giving up after ' + joinTries + ' attempts');
-        finishFailure('The table was found, but this hotspot never finished the link. Phone hotspots often block phone-to-phone play. Put both phones on the same regular Wi‑Fi, or use cell data on both — not one phone as a hotspot. Keep the host screen open and try the code again.');
+        finishFailure('The table was found, but the connection never finished. Keep the host screen open, check that both phones have internet access, and try the code again.');
         return;
       }
       horDebugLog('JOIN: attempt ' + joinTries + ' timed out, retrying…');
       if (joinTries >= 2 && !horForceRelayIce) {
         horForceRelayIce = true;
-        setJoinStatus('Table found. Switching to a relay path for this hotspot…');
+        setJoinStatus('Table found. Switching to a relay path…');
         try { if (peer) peer.destroy(); } catch (e) {}
         peer = null;
         setTimeout(() => {
@@ -3889,7 +3878,7 @@ function joinRoom() {
         return;
       }
       setJoinStatus(joinTries >= 3
-        ? 'Still linking through a relay. Hotspots are slow to open this path…'
+        ? 'Still linking through a relay…'
         : 'Table found. Still linking to the host…');
       setTimeout(tryConnect, 600);
     }, tryTimeoutMs);
@@ -4171,8 +4160,7 @@ function horBeginClientReconnect() {
             bank: loadMyBank(),
             reconnect: true,
             appVersion: APP_VERSION,
-            lastSeq: horLastAppliedSeq,
-            careerProfile: horMyCareerProfile()
+            lastSeq: horLastAppliedSeq
           });
           horFlushOutbox();
           horToast('Reconnected to the table ✓');
@@ -4256,7 +4244,6 @@ function handleMessage(data, conn) {
         if (already && !data.spectator && horExpOn('netSameIdResync')) {
           already.disconnected = false;
           already.name = data.name || already.name;
-          already.careerPublic = data.careerProfile || null;
           hostCancelDisconnectGrace(data.id);
           connMap[data.id] = conn;
           horPeerLastSeen[data.id] = Date.now();
@@ -4349,7 +4336,7 @@ function handleMessage(data, conn) {
         if (players.find(p => p.id === data.id)) {
           return;
         }
-        players.push({ id: data.id, name: data.name, team: 0, isHost: false, isBot: false, seat: -1, bank: Math.max(0, Math.floor(Number(data.bank) || 0)), careerPublic: data.careerProfile || null });
+        players.push({ id: data.id, name: data.name, team: 0, isHost: false, isBot: false, seat: -1, bank: Math.max(0, Math.floor(Number(data.bank) || 0)), careerPublic: null });
         const wantSeat = parseInt(data.preferredSeat, 10);
         let seatedOk = false;
         if (!isNaN(wantSeat) && wantSeat >= 0 && wantSeat <= 3) {
@@ -4901,7 +4888,7 @@ function showWaiting() {
     const hostOpts = $('hostOptions');
     if (startBtn) {
       startBtn.classList.remove('hidden');
-      startBtn.disabled = players.length !== 4;
+      startBtn.disabled = seatedCount() !== 4;
     }
     const optBtn = $('openHostOptionsBtn');
     if (optBtn) optBtn.classList.remove('hidden');
@@ -5009,11 +4996,6 @@ function showWaiting() {
         forceNestReveal = fnr.value || '';
         try { broadcastPlaySettings(); } catch (e) {}
       };
-    }
-    const se = $('opt-stats-endpoint');
-    if (se) {
-      se.value = loadStatsEndpoint();
-      se.onchange = se.onblur = () => { saveStatsEndpoint(se.value); };
     }
     const ow = $('opt-open-widow');
     if (ow) {
@@ -5701,12 +5683,12 @@ function showBotStyleTip(name, ev) {
   if (!p) return;
   const extra = (!personaByName(name) && humanPersonaCard(name).hands < HUMAN_STYLE_MIN_HANDS)
     ? '<span>New player</span>' : '';
-  tip.innerHTML = botHowToHTML(p) + extra;
+  tip.innerHTML = '<button type="button" class="bot-style-tip-close" aria-label="Close player persona">×</button>' + botHowToHTML(p) + extra;
   tip.classList.remove('hidden');
   const x = ev && ev.clientX ? ev.clientX : 24;
   const y = ev && ev.clientY ? ev.clientY : 24;
   tip.style.left = Math.max(8, Math.min(window.innerWidth - 220, x - 20)) + 'px';
-  tip.style.top = Math.max(8, y + 12) + 'px';
+  tip.style.top = Math.max(8, Math.min(window.innerHeight - 150, y + 12)) + 'px';
 }
 function botNameAttr(p) {
   if (!p || !p.name) return '';
@@ -6272,12 +6254,12 @@ function updateWaitingUI() {
   const empty = Math.max(0, 4 - seatedCount());
   const status = $('waitingStatus');
   if (status) {
-    if (players.length >= 4) {
+    if (seatedCount() >= 4) {
       status.innerHTML = `✅ Table full (${humans} player${humans === 1 ? '' : 's'}${bots ? `, ${bots} bot${bots === 1 ? '' : 's'}` : ''}). Host can start.`;
     } else if (isHost) {
-      status.innerHTML = `<b>${players.length}/4</b> seated · ${empty} open`;
+      status.innerHTML = `<b>${seatedCount()}/4</b> seated · ${empty} open`;
     } else {
-      status.textContent = `Waiting for host… (${players.length}/4 seats filled)`;
+      status.textContent = `Waiting for host… (${seatedCount()}/4 seats filled)`;
     }
   }
   const startBtn = $('startBtn');
@@ -7320,6 +7302,7 @@ function syncLandscapeKittyWait() {
 }
 
 function showBidUI() {
+  try { hideBotStyleTip(); } catch (e) {}
   if (nestAuctionLocked()) return;
   const landscape = !!(window.matchMedia && window.matchMedia('(orientation: landscape)').matches);
   const nextMin = auctionNextMin();
@@ -13012,11 +12995,11 @@ bindClick('restartPracticeBtn', restartSoloPractice);
 try { bindNoServiceModal(); } catch (e) {}
 window.addEventListener('offline', () => {
   try {
-    if (isSoloPractice || roomCode === 'OFFLINE') {
-      stopNetworkRetries();
-      return;
-    }
-    offerOfflinePlay();
+    if (isSoloPractice || roomCode === 'OFFLINE') return;
+    // A browser "offline" event is advisory on mobile. Never tear down or
+    // replace a live/recovering multiplayer table because of it.
+    if (horClientIsPlaying() || (hostConnection && hostConnection.open)) return;
+    if (!isHost && (!game || !game.phase || ['lobby','waiting',''].includes(game.phase))) offerOfflinePlay();
   } catch (e) {}
 });
 window.addEventListener('online', () => {
@@ -13026,7 +13009,13 @@ bindClick('leaveReplaceBtn', () => { try { clientLeaveReplace(); } catch (e) { c
 (function wireBotStyleLongPress() {
   let timer=0,armedName='',shown=false,startX=0,startY=0;
   const cancel=()=>{if(timer){clearTimeout(timer);timer=0;}armedName='';};
-  const sourceName=(el)=>{const tagged=el&&el.closest&&el.closest('[data-botname]');return tagged?(tagged.getAttribute('data-botname')||''):'';};
+  const sourceName=(el)=>{
+    // Career stars own their gesture completely. Never let a tap/hold on ★ fall
+    // through to the persona long-press handler.
+    if(el&&el.closest&&el.closest('.hor-career-badge'))return '';
+    const tagged=el&&el.closest&&el.closest('[data-botname]');
+    return tagged?(tagged.getAttribute('data-botname')||''):'';
+  };
   const arm=(target,x,y)=>{const name=sourceName(target);shown=false;if(!name){cancel();return;}cancel();armedName=name;startX=Number(x)||0;startY=Number(y)||0;timer=setTimeout(()=>{timer=0;shown=true;showBotStyleTip(armedName,{clientX:startX||24,clientY:startY||24,preventDefault(){},stopPropagation(){}});},480);};
   document.addEventListener('pointerdown',(e)=>arm(e.target,e.clientX,e.clientY),{passive:true});
   document.addEventListener('pointerup',cancel,{passive:true});
@@ -13037,6 +13026,7 @@ bindClick('leaveReplaceBtn', () => { try { clientLeaveReplace(); } catch (e) { c
   document.addEventListener('touchcancel',cancel,{passive:true});
   document.addEventListener('touchmove',(e)=>{if(!timer)return;const t=e.touches&&e.touches[0];if(t&&(Math.abs(t.clientX-startX)+Math.abs(t.clientY-startY)>14))cancel();},{passive:true});
   document.addEventListener('contextmenu',(e)=>{const tagged=e.target&&e.target.closest&&e.target.closest('[data-botname]');if(!tagged)return;e.preventDefault();e.stopPropagation();const name=tagged.getAttribute('data-botname')||'';if(name)showBotStyleTip(name,e);},true);
+  document.addEventListener('pointerdown',(e)=>{if(e.target&&e.target.closest&&e.target.closest('.bot-style-tip-close')){e.preventDefault();hideBotStyleTip();return;}const tip=$('botStyleTip');if(tip&&!tip.classList.contains('hidden')&&!(e.target&&e.target.closest&&e.target.closest('#botStyleTip'))&&!sourceName(e.target))hideBotStyleTip();},true);
   document.addEventListener('click',(e)=>{if(shown){e.preventDefault();e.stopPropagation();shown=false;}},true);
 })();;
 bindClick('botPickerClose', closeBotPicker);
@@ -14117,54 +14107,6 @@ function positionPortraitLast3Btn() {
       setFocused(!!still);
     }, 50);
   }, true);
-})();
-
-/** Nearby play (Wi‑Fi hotspot) — browsers cannot do true Bluetooth multiplayer */
-(function wireNearbyPlay() {
-  function openNearbySheet() {
-    const s = $('nearbySheet');
-    if (!s) return;
-    s.classList.remove('hidden');
-    s.setAttribute('aria-hidden', 'false');
-    // Hide "Create room" when already in a room
-    const createBtn = $('nearbyCreateBtn');
-    const waiting = $('waiting');
-    const inWaiting = waiting && !waiting.classList.contains('hidden');
-    if (createBtn) createBtn.style.display = inWaiting ? 'none' : '';
-  }
-  function closeNearbySheet() {
-    const s = $('nearbySheet');
-    if (!s) return;
-    s.classList.add('hidden');
-    s.setAttribute('aria-hidden', 'true');
-  }
-  window.openNearbySheet = openNearbySheet;
-  window.closeNearbySheet = closeNearbySheet;
-
-  function bind(id, fn) {
-    const el = $(id);
-    if (!el) return;
-    el.addEventListener('click', (e) => {
-      e.preventDefault();
-      e.stopPropagation();
-      fn();
-    });
-  }
-  bind('nearbyPlayBtn', openNearbySheet);
-  bind('nearbyPlayBtnWaiting', openNearbySheet);
-  bind('nearbyCloseBtn', closeNearbySheet);
-  bind('nearbyCreateBtn', () => {
-    closeNearbySheet();
-    const realCreate = $('createBtn');
-    if (realCreate) realCreate.click();
-  });
-  // Tap backdrop to close
-  const sheet = $('nearbySheet');
-  if (sheet) {
-    sheet.addEventListener('click', (e) => {
-      if (e.target === sheet) closeNearbySheet();
-    });
-  }
 })();
 
 /* Build 467 Career badge */
