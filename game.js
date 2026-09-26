@@ -7,7 +7,7 @@
 // It's exchanged during the join handshake so a stale host or joiner (e.g.
 // one still running old cached JS) gets caught and auto-updated instead of
 // silently failing or behaving unpredictably against a mismatched peer.
-const APP_VERSION = '495';
+const APP_VERSION = '496';
 
 function horThisIndex() {
   try {
@@ -1816,7 +1816,7 @@ function playCardSound() {
   osc.stop(t + 0.08);
 }
 
-/** Three clear beeps when it is your turn (timed with name flashes) */
+/** One restrained wooden/card-table tap when it is your turn. */
 function playTurnSound() {
   if (soundMuted || !soundTurn) return;
   const ctx = ensureAudio();
@@ -1825,26 +1825,19 @@ function playTurnSound() {
     if (ctx.state === 'suspended') ctx.resume();
   } catch (e) {}
   const t = ctx.currentTime;
-  // 3 distinct beeps ~0.45s apart — matches flash pulses
-  const beeps = [
-    { freq: 880, at: 0 },
-    { freq: 880, at: 0.45 },
-    { freq: 1046.5, at: 0.9 },
-  ];
-  beeps.forEach(({ freq, at }) => {
-    const osc = ctx.createOscillator();
-    const gain = ctx.createGain();
-    osc.type = 'sine';
-    osc.frequency.value = freq;
-    const start = t + at;
-    gain.gain.setValueAtTime(0.0001, start);
-    gain.gain.linearRampToValueAtTime(0.22, start + 0.02);
-    gain.gain.exponentialRampToValueAtTime(0.0001, start + 0.22);
-    osc.connect(gain);
-    gain.connect(ctx.destination);
-    osc.start(start);
-    osc.stop(start + 0.25);
-  });
+
+  // A very short low wooden knock: deliberately one event, not a melody/beep.
+  const osc = ctx.createOscillator();
+  const gain = ctx.createGain();
+  osc.type = 'triangle';
+  osc.frequency.setValueAtTime(230, t);
+  osc.frequency.exponentialRampToValueAtTime(120, t + 0.055);
+  gain.gain.setValueAtTime(0.055, t);
+  gain.gain.exponentialRampToValueAtTime(0.0001, t + 0.075);
+  osc.connect(gain);
+  gain.connect(ctx.destination);
+  osc.start(t);
+  osc.stop(t + 0.08);
 }
 
 /** Shared raspy crow "caw" synth (noise + falling saw + formant) */
