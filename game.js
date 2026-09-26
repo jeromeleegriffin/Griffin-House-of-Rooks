@@ -7,7 +7,7 @@
 // It's exchanged during the join handshake so a stale host or joiner (e.g.
 // one still running old cached JS) gets caught and auto-updated instead of
 // silently failing or behaving unpredictably against a mismatched peer.
-const APP_VERSION = '496';
+const APP_VERSION = '497';
 
 function horThisIndex() {
   try {
@@ -6059,7 +6059,7 @@ function renderTopNestPeek() {
   if (face) pinNestRevealFace(face);
   const auctionLive = !!(game && (game.nestAuctionOpen || game.bidder >= 0 || (game.bid && game.bid > 0)));
   const showFace = !!(face && revealTopNest);
-  const faceUp = !!(showFace && (game.nestFlipped || stage >= 2 || auctionLive));
+  const faceUp = !!(showFace && (game.nestFlipped || stage >= 2));
   const flipping = !!(showFace && stage === 1 && !faceUp);
   el.classList.remove('hidden');
   try { document.body.classList.add('nest-on-felt'); } catch (e) {}
@@ -6194,11 +6194,11 @@ function scheduleTopNestFlip() {
       if (tok !== window._horNestFlipTok) return;
       if (game) { game.nestFlipStage = 2; game.nestFlipped = true; }
       try { renderTopNestPeek(); } catch (e) {}
-    }, 1600);
+    }, 2800);
     setTimeout(() => {
       if (tok !== window._horNestFlipTok) return;
       try { openNestAuction(); } catch (e) {}
-    }, 2000);
+    }, 2880);
   }, 280);
 }
 
