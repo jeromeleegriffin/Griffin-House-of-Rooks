@@ -7,7 +7,7 @@
 // It's exchanged during the join handshake so a stale host or joiner (e.g.
 // one still running old cached JS) gets caught and auto-updated instead of
 // silently failing or behaving unpredictably against a mismatched peer.
-const APP_VERSION = '502';
+const APP_VERSION = '503';
 
 function horThisIndex() {
   try {
@@ -105,7 +105,7 @@ let turnTimeSec = 0; // 0 = off (default), 15/30/45
 let timeoutPolicy = 'auto';
 /** Seats under temp-bot-for-hand after timeout policy botHand */
 let timeoutBotUntilHandEnd = {}; // seatIdx -> true
-let soundCard = true, soundTurn = true, soundRook = true, soundTick = true;
+let soundCard = true, soundTurn = localStorage.getItem('rookSoundTurn') !== '0', soundRook = true, soundTick = true;
 let turnSoundChoice = Math.max(1, Math.min(19, parseInt(localStorage.getItem('rookTurnSoundChoice') || '1', 10) || 1));
 let playLockUntil = 0;
 let knownVoids = [{}, {}, {}, {}]; // extreme bot: playerIdx -> {color: true}
@@ -1820,30 +1820,35 @@ function playCardSound() {
 /** Subtle selectable cue when it becomes your turn. */
 function playTurnSound(forcePreview = false) {
   if (soundMuted || (!soundTurn && !forcePreview)) return;
-  const ctx = ensureAudio();
-  if (!ctx) return;
-  try { if (ctx.state === 'suspended') ctx.resume(); } catch (e) {}
-  const t = ctx.currentTime + 0.01;
-  const presets = [
-    ['triangle',230,120,.080,.060], ['sine',420,300,.095,.045], ['sine',520,390,.100,.040],
-    ['triangle',310,190,.090,.050], ['sine',660,500,.085,.035], ['triangle',180,105,.105,.055],
-    ['sine',760,610,.075,.030], ['triangle',275,165,.115,.045], ['sine',350,265,.120,.040],
-    ['triangle',460,280,.085,.038], ['sine',590,455,.110,.034], ['triangle',205,145,.125,.050],
-    ['sine',700,545,.090,.028], ['triangle',390,235,.100,.040], ['sine',485,365,.115,.034],
-    ['triangle',250,155,.095,.048], ['sine',615,470,.105,.030], ['triangle',335,205,.120,.038],
-    ['sine',555,410,.090,.033]
-  ];
-  const p = presets[Math.max(0, Math.min(18, (turnSoundChoice || 1) - 1))];
-  const osc = ctx.createOscillator();
-  const gain = ctx.createGain();
-  osc.type = p[0];
-  osc.frequency.setValueAtTime(p[1], t);
-  osc.frequency.exponentialRampToValueAtTime(p[2], t + p[3] * .72);
-  gain.gain.setValueAtTime(0.0001, t);
-  gain.gain.exponentialRampToValueAtTime(p[4], t + .012);
-  gain.gain.exponentialRampToValueAtTime(0.0001, t + p[3]);
-  osc.connect(gain); gain.connect(ctx.destination);
-  osc.start(t); osc.stop(t + p[3] + .015);
+
+  // Mobile browsers can leave Web Audio suspended until a user gesture.
+  // Schedule the cue only after the context is actually running; this fixes
+  // silent My Turn cues and makes selector previews reliable.
+  whenAudioReady((ctx) => {
+    const t = ctx.currentTime + 0.01;
+    const presets = [
+      ['triangle',230,120,.080,.060], ['sine',420,300,.095,.045], ['sine',520,390,.100,.040],
+      ['triangle',310,190,.090,.050], ['sine',660,500,.085,.035], ['triangle',180,105,.105,.055],
+      ['sine',760,610,.075,.030], ['triangle',275,165,.115,.045], ['sine',350,265,.120,.040],
+      ['triangle',460,280,.085,.038], ['sine',590,455,.110,.034], ['triangle',205,145,.125,.050],
+      ['sine',700,545,.090,.028], ['triangle',390,235,.100,.040], ['sine',485,365,.115,.034],
+      ['triangle',250,155,.095,.048], ['sine',615,470,.105,.030], ['triangle',335,205,.120,.038],
+      ['sine',555,410,.090,.033]
+    ];
+    const p = presets[Math.max(0, Math.min(18, (turnSoundChoice || 1) - 1))];
+    const osc = ctx.createOscillator();
+    const gain = ctx.createGain();
+    osc.type = p[0];
+    osc.frequency.setValueAtTime(p[1], t);
+    osc.frequency.exponentialRampToValueAtTime(p[2], t + p[3] * .72);
+    gain.gain.setValueAtTime(0.0001, t);
+    gain.gain.exponentialRampToValueAtTime(p[4], t + .012);
+    gain.gain.exponentialRampToValueAtTime(0.0001, t + p[3]);
+    osc.connect(gain);
+    gain.connect(ctx.destination);
+    osc.start(t);
+    osc.stop(t + p[3] + .015);
+  });
 }
 
 /** Shared raspy crow "caw" synth (noise + falling saw + formant) */
@@ -5130,7 +5135,7 @@ function showWaiting() {
       };
     }
     const sc = $('opt-sound-card'); if (sc) { sc.checked = soundCard; sc.onchange = () => { soundCard = sc.checked; }; }
-    const st = $('opt-sound-turn'); if (st) { st.checked = soundTurn; st.onchange = () => { soundTurn = st.checked; }; }
+    const st = $('opt-sound-turn'); if (st) { st.checked = soundTurn; st.onchange = () => { soundTurn = st.checked; try { localStorage.setItem('rookSoundTurn', soundTurn ? '1' : '0'); } catch (e) {} if (soundTurn) { try { playTurnSound(true); } catch (e) {} } }; }
     const sts = $('opt-turn-sound-choice');
     if (sts) {
       sts.value = String(turnSoundChoice);
@@ -5903,8 +5908,8 @@ function onWaitSeatClick(seat) {
   const occ = playerAtSeat(seat);
   if (isHost) {
     if (!occ) {
-      // Empty waiting-room chair: play the original low seat-click "doooop"
-      // immediately. The separate bot-seated cue still plays only after a bot is chosen/seated.
+      // Rook502: host selecting an empty waiting-room seat gets the original
+      // low "doooop" cue before the bot picker opens.
       try { playLobbySeatClickSound(); } catch (e) {}
       openBotPicker(seat);
       return;
