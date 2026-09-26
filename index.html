@@ -13,7 +13,7 @@
   <title>House of Rooks</title>
   <script>
     (function () {
-      var BUILD = '499';
+      var BUILD = '500';
       try {
         var params = new URLSearchParams(location.search);
         var seen = localStorage.getItem('horBuild') || '';
@@ -36,7 +36,7 @@
   <link rel="manifest" href="manifest.json">
   <link rel="icon" href="icon-192.png">
   <link rel="apple-touch-icon" href="apple-touch-icon.png">
-  <link rel="stylesheet" href="style.css?v=499">
+  <link rel="stylesheet" href="style.css?v=500">
   <script src="vendor/peerjs.min.js" onerror="this.onerror=null;this.src='https://unpkg.com/peerjs@1.5.5/dist/peerjs.min.js';"></script>
   <style>
     /* Emergency layout if style.css fails to load — joiners still see a usable page */
@@ -114,8 +114,8 @@
     <div class="lt-decor lt-corner lt-tl">🐦</div>
     <div class="lt-decor lt-corner lt-tr">🐦</div>
     <div id="ltKittyWait" class="lt-wait-banner hidden" aria-live="polite">
-      <img id="ltWaitArtNest" class="lt-wait-art" src="wait-nest-landscape.jpg?v=499" alt="">
-      <img id="ltWaitArtTrump" class="lt-wait-art" src="wait-trump-landscape.jpg?v=499" alt="">
+      <img id="ltWaitArtNest" class="lt-wait-art" src="wait-nest-landscape.jpg?v=500" alt="">
+      <img id="ltWaitArtTrump" class="lt-wait-art" src="wait-trump-landscape.jpg?v=500" alt="">
       <div class="lt-wait-veil"></div>
       <div class="lt-wait-copy">
         <div class="lt-wait-kicker" id="ltWaitKicker">The nest is open</div>
@@ -870,8 +870,8 @@
               <div id="widowSpread" class="widow-spread hidden" aria-label="Widow"></div>
               <div id="botThinking" class="bot-thinking hidden">Thinking…</div>
               <div id="ptWaitBanner" class="pt-wait-banner hidden" aria-live="polite">
-                <img id="ptWaitArtNest" class="pt-wait-art" src="wait-nest-portrait.jpg?v=499" alt="">
-                <img id="ptWaitArtTrump" class="pt-wait-art" src="wait-trump-portrait.jpg?v=499" alt="">
+                <img id="ptWaitArtNest" class="pt-wait-art" src="wait-nest-portrait.jpg?v=500" alt="">
+                <img id="ptWaitArtTrump" class="pt-wait-art" src="wait-trump-portrait.jpg?v=500" alt="">
                 <div class="pt-wait-veil"></div>
                 <div class="pt-wait-copy">
                   <div class="pt-wait-kicker" id="ptWaitKicker">House of Rooks</div>
@@ -1206,12 +1206,12 @@
       paintInstall();
     })();
   </script>
-  <script src="rules.js?v=499"></script>
-  <script src="bots.js?v=499"></script>
-  <script src="game.js?v=499"></script>
-  <script src="polish.js?v=499"></script>
+  <script src="rules.js?v=500"></script>
+  <script src="bots.js?v=500"></script>
+  <script src="game.js?v=500"></script>
+  <script src="polish.js?v=500"></script>
   <!-- Dormant career/achievement framework. Master switch is OFF in progression.js. -->
-  <script src="progression.js?v=499"></script>
+  <script src="progression.js?v=500"></script>
   <div id="horBootError"></div>
   <script>
     window.addEventListener('error', function (ev) {
@@ -1225,7 +1225,7 @@
   </script>
   <script>
     if ('serviceWorker' in navigator) {
-      navigator.serviceWorker.register('sw.js?v=499', { updateViaCache: 'none' })
+      navigator.serviceWorker.register('sw.js?v=500', { updateViaCache: 'none' })
         .then(function (reg) { try { reg.update(); } catch (e) {} })
         .catch(() => {});
       let horSwAutoReloaded = false;

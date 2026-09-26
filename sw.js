@@ -2,7 +2,7 @@
  * Author: Jerome Griffin
  * Copyright (c) 2026 Jerome Griffin / Griffin House
  */
-const CACHE = 'house-of-rooks-v499';
+const CACHE = 'house-of-rooks-v500';
 const SHELL = [
   './',
   './index.html',

@@ -7,7 +7,7 @@
 // It's exchanged during the join handshake so a stale host or joiner (e.g.
 // one still running old cached JS) gets caught and auto-updated instead of
 // silently failing or behaving unpredictably against a mismatched peer.
-const APP_VERSION = '499';
+const APP_VERSION = '500';
 
 function horThisIndex() {
   try {
@@ -2799,7 +2799,7 @@ function turnOpportunityKey() {
   if (game.phase === 'play' && game.currentPlayer === myIndex)
     return 'play:' + myIndex + ':' + ((game.trick && game.trick.length) || 0);
   if (game.phase === 'bidding' && game.currentPlayer === myIndex)
-    return 'bid:' + myIndex + ':' + (game.highestBid || 0) + ':' + ((game.bidStatus || []).join(','));
+    return 'bid:' + myIndex + ':' + (game.highestBid || 0);
   if (game.phase === 'trump' && game.bidder === myIndex)
     return 'trump:' + myIndex;
   if (game.phase === 'discard' && game.bidder === myIndex)
@@ -2833,18 +2833,16 @@ function notifyYourTurn() {
     const ctx = ensureAudio();
     if (ctx && ctx.state === 'suspended') ctx.resume();
   } catch (e) {}
-  // Preserve the intentional rule: the first bidding turn of each hand is silent.
-  // Every later local turn should cue normally.
-  let skipTurnSfx = false;
+  // Sound every new local turn except the opening bidding turn when the
+  // Turn Over Top Nest Card reveal is enabled. That reveal owns the audio
+  // during the first-hand animation; with the option OFF, the turn cue plays.
   try {
-    if (game && game.phase === 'bidding' && !game._firstBidTurnSounded) {
-      game._firstBidTurnSounded = true;
-      skipTurnSfx = true;
-    }
+    const suppressForOpeningNestReveal = !!(
+      game && game.phase === 'bidding' && revealTopNest && isFirstHandOfMatch()
+    );
+    if (game && game.phase === 'bidding') game._firstBidTurnSounded = true;
+    if (!suppressForOpeningNestReveal) playTurnSound();
   } catch (e) {}
-  if (!skipTurnSfx) {
-    try { playTurnSound(); } catch (e) {}
-  }
   // Phone buzz (Android Chrome; many iPhones ignore Vibration API)
   try {
     if (typeof navigator !== 'undefined' && typeof navigator.vibrate === 'function') {
@@ -5757,6 +5755,9 @@ function addBot(seat, personaPick) {
   try { broadcast({ type: 'players', players: publicPlayersSnapshot(), beerSeats }); } catch (e) {}
   updateWaitingUI();
   updateBotButtons();
+  // Bot taking a lobby seat has its own seating cue. Keep this separate
+  // from the selectable My Turn notification sounds.
+  try { playSitSound(); } catch (e) {}
 }
 
 function closeBotPicker() {
