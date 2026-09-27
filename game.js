@@ -7,7 +7,7 @@
 // It's exchanged during the join handshake so a stale host or joiner (e.g.
 // one still running old cached JS) gets caught and auto-updated instead of
 // silently failing or behaving unpredictably against a mismatched peer.
-const APP_VERSION = '507';
+const APP_VERSION = '510';
 
 function horThisIndex() {
   try {
@@ -436,7 +436,9 @@ const AVATARS = [
   'jackal','wolf','raven','lynx','cobra','stag',
   'quill','bramble','moss','emberlyn','cinder','gable','thistle','marrow','pebble',
   'rookery','sable','finch','dagger','willow','hearth','grit','copper','moth','brandy',
-  'flint','ivy','shade','barrel','spark','nettle','cobalt','ash','harrier'
+  'flint','ivy','shade','barrel','spark','nettle','cobalt','ash','harrier',
+  'crow','blaze','nix','titan','pike','drift','dice','anchor','wager','hollow',
+  'ember','vex','frost','fang','halo'
 ];
 const AVATAR_LABELS = {
   rookling:'Rookling', fox:'Fox', badger:'Badger', owl:'Owl', cardshark:'Card Shark',
@@ -447,9 +449,30 @@ const AVATAR_LABELS = {
   sable:'Sable', finch:'Finch', dagger:'Dagger', willow:'Willow', hearth:'Hearth',
   grit:'Grit', copper:'Copper', moth:'Moth', brandy:'Brandy', flint:'Flint', ivy:'Ivy',
   shade:'Shade', barrel:'Barrel', spark:'Spark', nettle:'Nettle', cobalt:'Cobalt',
-  ash:'Ash', harrier:'Harrier'
+  ash:'Ash', harrier:'Harrier',
+  crow:'Crow', blaze:'Blaze', nix:'Nix', titan:'Titan', pike:'Pike', drift:'Drift',
+  dice:'Dice', anchor:'Anchor', wager:'Wager', hollow:'Hollow', ember:'Ember',
+  vex:'Vex', frost:'Frost', fang:'Fang', halo:'Halo'
 };
-function avatarSrc(id) { return 'avatar-' + (AVATARS.includes(id) ? id : AVATARS[0]) + '.svg'; }
+/* Production cinematic portraits shipped as avatar-<id>.png. Legacy player
+ * picker animals stay on SVG. Unknown ids fall back to rookling.svg. */
+const AVATAR_PNG_IDS = {
+  grit:1, nix:1, copper:1, crow:1, blaze:1, titan:1, pike:1, drift:1, dice:1,
+  anchor:1, wager:1, hollow:1, ember:1, vex:1, frost:1, fang:1, halo:1,
+  quill:1, bramble:1, moss:1, emberlyn:1, cinder:1, gable:1, thistle:1, marrow:1,
+  pebble:1, rookery:1, sable:1, finch:1, dagger:1, willow:1, hearth:1, moth:1,
+  brandy:1, flint:1, ivy:1, shade:1, barrel:1, spark:1, nettle:1, cobalt:1,
+  ash:1, harrier:1
+};
+function avatarKey(id) {
+  return String(id == null ? '' : id).toLowerCase().replace(/[^a-z0-9]/g, '');
+}
+function avatarSrc(id) {
+  const key = avatarKey(id);
+  if (key && AVATAR_PNG_IDS[key]) return 'avatar-' + key + '.webp';
+  if (AVATARS.includes(key)) return 'avatar-' + key + '.svg';
+  return 'avatar-' + AVATARS[0] + '.svg';
+}
 function avatarHTML(id) { return `<img class="seat-avatar-img" src="${avatarSrc(id)}" alt="${AVATAR_LABELS[id] || 'Avatar'}">`; }
 let playerAvatars = {}; // peerId -> emoji
 let reduceMotion = localStorage.getItem('rookReduceMotion') === '1';
@@ -5534,21 +5557,21 @@ function updateBotButtons() {
 }
 
 const BOT_PERSONAS = [
-  { name: 'Crow', style: 'safe', avatar: 'raven', blurb: 'Folds early. Rarely overbids.' },
-  { name: 'Blaze', style: 'aggressive', avatar: 'fox', blurb: 'Pushes bids and leads hot.' },
-  { name: 'Nix', style: 'tricky', avatar: 'jackal', blurb: 'Sneaky leads. Hides counters.' },
-  { name: 'Titan', style: 'trumpHeavy', avatar: 'badger', blurb: 'Pulls trump early and often.' },
-  { name: 'Pike', style: 'pointHungry', avatar: 'cardshark', blurb: 'Hunts every counter on the felt.' },
-  { name: 'Drift', style: 'passive', avatar: 'goldfinch', blurb: 'Ducks tricks. Lets others fight.' },
-  { name: 'Dice', style: 'randomish', avatar: 'greenie', blurb: 'Chaos seat. Unpredictable plays.' },
-  { name: 'Anchor', style: 'partnerFirst', avatar: 'rookling', blurb: 'Feeds partner. Protects the bid.' },
-  { name: 'Wager', style: 'bidHappy', avatar: 'bluejay', blurb: 'Loves the auction. Climbs bids.' },
-  { name: 'Hollow', style: 'voidMaker', avatar: 'grumpy', blurb: 'Strips a color to ruff later.' },
-  { name: 'Ember', style: 'balanced', avatar: 'owl', blurb: 'Steady book. No wild swings.' },
-  { name: 'Vex', style: 'ruffHappy', avatar: 'cobra', blurb: 'Ruffs the first chance it gets.' },
-  { name: 'Frost', style: 'scoreHawk', avatar: 'lynx', blurb: 'Only buys when the score says so.' },
-  { name: 'Fang', style: 'setDog', avatar: 'wolf', blurb: 'Lives to set the other team.' },
-  { name: 'Halo', style: 'partnerSignal', avatar: 'stag', blurb: 'Leads the color partner is void.' },
+  { name: 'Crow', style: 'safe', avatar: 'crow', blurb: 'Folds early. Rarely overbids.' },
+  { name: 'Blaze', style: 'aggressive', avatar: 'blaze', blurb: 'Pushes bids and leads hot.' },
+  { name: 'Nix', style: 'tricky', avatar: 'nix', blurb: 'Sneaky leads. Hides counters.' },
+  { name: 'Titan', style: 'trumpHeavy', avatar: 'titan', blurb: 'Pulls trump early and often.' },
+  { name: 'Pike', style: 'pointHungry', avatar: 'pike', blurb: 'Hunts every counter on the felt.' },
+  { name: 'Drift', style: 'passive', avatar: 'drift', blurb: 'Ducks tricks. Lets others fight.' },
+  { name: 'Dice', style: 'randomish', avatar: 'dice', blurb: 'Chaos seat. Unpredictable plays.' },
+  { name: 'Anchor', style: 'partnerFirst', avatar: 'anchor', blurb: 'Feeds partner. Protects the bid.' },
+  { name: 'Wager', style: 'bidHappy', avatar: 'wager', blurb: 'Loves the auction. Climbs bids.' },
+  { name: 'Hollow', style: 'voidMaker', avatar: 'hollow', blurb: 'Strips a color to ruff later.' },
+  { name: 'Ember', style: 'balanced', avatar: 'ember', blurb: 'Steady book. No wild swings.' },
+  { name: 'Vex', style: 'ruffHappy', avatar: 'vex', blurb: 'Ruffs the first chance it gets.' },
+  { name: 'Frost', style: 'scoreHawk', avatar: 'frost', blurb: 'Only buys when the score says so.' },
+  { name: 'Fang', style: 'setDog', avatar: 'fang', blurb: 'Lives to set the other team.' },
+  { name: 'Halo', style: 'partnerSignal', avatar: 'halo', blurb: 'Leads the color partner is void.' },
   { name: 'Quill', style: 'countSaver', avatar: 'quill', blurb: 'Hides counters until the trick is safe.' },
   { name: 'Bramble', style: 'leadLong', avatar: 'bramble', blurb: 'Leads the long color and stays there.' },
   { name: 'Moss', style: 'trumpShy', avatar: 'moss', blurb: 'Has trump. Refuses to lead it.' },

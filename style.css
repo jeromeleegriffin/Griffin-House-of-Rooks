@@ -12867,3 +12867,152 @@ body.nest-on-felt .player-slot.is-turn .seat-avatar {
 /* Build 498: compact selector for the local my-turn cue. */
 .turn-tone-option { display:flex; align-items:center; gap:.45rem; flex-wrap:wrap; }
 .turn-tone-option .select-input { min-width:9.5rem; max-width:13rem; }
+
+
+/* ===== Rook510 production portraits + seat chrome =====
+ * Cinematic bot portraits, no maroon top/bottom plaques,
+ * horizontal names, responsive avatar sizing that yields
+ * to cards / nest / bid / messages.
+ */
+body.gfx-seatPlaques .player-slot.top .name,
+body.gfx-seatPlaques .player-slot.bottom .name,
+body.gfx-seatPlaques #slot-me .name,
+body.gfx-seatPlaques #slot-partner .name,
+.player-slot.top .name,
+.player-slot.bottom .name,
+#slot-me .name,
+#slot-partner .name {
+  background: none !important;
+  background-image: none !important;
+  border: 0 !important;
+  border-radius: 0 !important;
+  box-shadow: none !important;
+  outline: 0 !important;
+}
+.player-slot.top,
+.player-slot.bottom,
+#slot-me.player-slot.bottom,
+#slot-partner.player-slot.top,
+.bottom-seat-row {
+  background: none !important;
+  background-image: none !important;
+  box-shadow: none !important;
+}
+
+.player-slot .name,
+.player-slot .name .player-name-text,
+.player-slot.top .name,
+.player-slot.bottom .name,
+#slot-me .name,
+#slot-partner .name,
+.wait-seat-name,
+.wait-seat-name-text,
+.lt-name,
+.lt-th-name,
+.portrait-th-name {
+  white-space: nowrap !important;
+  word-break: keep-all !important;
+  overflow-wrap: normal !important;
+  writing-mode: horizontal-tb !important;
+  text-orientation: mixed !important;
+  flex-wrap: nowrap !important;
+}
+
+.seat-avatar,
+.seat-avatar-side,
+.wait-seat-av,
+.lt-bid-av {
+  flex: 0 0 auto;
+  border-radius: 50%;
+  overflow: hidden;
+  pointer-events: none;
+}
+.seat-avatar-img,
+.wait-seat-av,
+.lt-bid-av {
+  object-fit: cover !important;
+  object-position: 50% 16% !important;
+}
+
+/* Default large portraits — clamp so they shrink before covering play. */
+.player-slot .seat-avatar,
+.player-slot .seat-avatar-side {
+  width: clamp(2.35rem, 8vmin, 3.9rem) !important;
+  height: clamp(2.35rem, 8vmin, 3.9rem) !important;
+  margin: 0 0.15rem 0.12rem 0;
+}
+.player-slot.top .seat-avatar,
+.player-slot.bottom .seat-avatar,
+#slot-me .seat-avatar,
+#slot-partner .seat-avatar {
+  width: clamp(2.55rem, 9vmin, 4.2rem) !important;
+  height: clamp(2.55rem, 9vmin, 4.2rem) !important;
+  display: inline-flex;
+}
+.wait-seat-av {
+  width: clamp(2.4rem, 8vmin, 3.8rem) !important;
+  height: clamp(2.4rem, 8vmin, 3.8rem) !important;
+}
+.lt-bid-av {
+  width: clamp(2rem, 5.5vmin, 2.8rem) !important;
+  height: clamp(2rem, 5.5vmin, 2.8rem) !important;
+  flex-basis: auto !important;
+}
+.avatar-choice img {
+  width: 52px;
+  height: 52px;
+  object-fit: cover;
+  object-position: 50% 16%;
+}
+
+/* Give top/bottom rows a little more room for the larger face. */
+.table {
+  grid-template-rows: minmax(3.2rem, 20%) minmax(0, 1fr) minmax(3.4rem, 22%);
+}
+
+/* Keep portraits from stacking over the felt play surface. */
+.player-slot.top,
+.player-slot.bottom {
+  z-index: 5;
+}
+.center-area,
+.trick,
+.trick-stack,
+#trickArea,
+.table-nest-flip,
+.widow-spread,
+.message,
+.action-panel,
+.hand-area,
+#myHand {
+  position: relative;
+  z-index: 8;
+}
+
+@media (orientation: landscape) {
+  .player-slot .seat-avatar,
+  .player-slot .seat-avatar-side,
+  .player-slot.top .seat-avatar,
+  .player-slot.bottom .seat-avatar,
+  #slot-me .seat-avatar,
+  #slot-partner .seat-avatar {
+    width: clamp(2.05rem, 6.4vmin, 3.25rem) !important;
+    height: clamp(2.05rem, 6.4vmin, 3.25rem) !important;
+  }
+}
+@media (max-height: 560px) and (orientation: portrait) {
+  .player-slot .seat-avatar,
+  .player-slot .seat-avatar-side,
+  .player-slot.top .seat-avatar,
+  .player-slot.bottom .seat-avatar {
+    width: clamp(1.8rem, 7vmin, 2.55rem) !important;
+    height: clamp(1.8rem, 7vmin, 2.55rem) !important;
+  }
+}
+@media (max-width: 360px) {
+  .player-slot .seat-avatar,
+  .player-slot .seat-avatar-side {
+    width: clamp(1.7rem, 12vw, 2.4rem) !important;
+    height: clamp(1.7rem, 12vw, 2.4rem) !important;
+  }
+}
