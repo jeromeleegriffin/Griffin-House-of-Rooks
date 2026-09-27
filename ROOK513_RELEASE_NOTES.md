@@ -1,19 +1,23 @@
-Rook513 — mobile approved-room visibility fix
+# Rook513 — cumulative production roll
 
-Confirmed root causes in current GitHub 512 source:
-1. style.css applies an opaque `body.room-theme-midnight .game-room` background with `!important`.
-   That selector outranks Rook512's generic transparency rule, hiding room-card-club.jpg on the phone.
-2. index.html still contains the legacy `.room-decor` DOM with `.sconce`, `.wall-frame`, and
-   `.chandelier`. Rook512 tried to hide different class names, so the old sconces remained visible.
+Built from the verified GitHub main/512 state.
 
-This patch:
-- clears only the in-game legacy game-room background
-- removes only the legacy generated room-decor layer
-- preserves room-card-club.jpg and the existing Rook512 room injector
-- does NOT resize/reposition the table
-- does NOT change rules, AI, scoring, multiplayer, cards, bidding, or game logic
+Included:
+- Preserve the successful approved `room-card-club.jpg` background fix.
+- Remove legacy generated room decor over the approved room.
+- Reframe the existing room in portrait so more of its baked-in upper lighting is visible without resizing the table.
+- Remove legacy top/bottom seat/plaque chrome.
+- Force avatar wrappers and images to true circles.
+- Enlarge portraits substantially.
+- Move left/right portraits outward so they visually straddle the gold rail.
+- Keep names and bank text independent of portrait dimensions.
+- Keep center trick, nest, messages, action panel and hand above decorative portrait layers.
+- Fix Play with Friends so it explicitly exits Join-with-code state and starts the real host/createRoom flow.
+- Join with a code remains the only button that opens the join form.
+- No table geometry, game rules, AI, scoring, dealing, sounds, or card mechanics intentionally changed.
 
-Integration:
-- load rook513.css after rook512.css
-- load rook513-room-fix.js after rook512-room.js
-- bump cache/version references to 513 when integrating
+Deployment:
+Upload/replace the files in this ZIP at repository root. `index.html` is included and loads `rook513.css` and `rook513.js` after the existing 512 layers, and bumps cache-busting to 513. `sw.js` and `hor-version.js` are bumped to 513.
+
+Important:
+`game.js` remains the current engine and is NOT replaced by this roll.

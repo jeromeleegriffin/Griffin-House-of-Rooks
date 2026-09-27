@@ -1,16 +1,14 @@
-/* House of Rooks service worker
- * Author: Jerome Griffin
- * Copyright (c) 2026 Jerome Griffin / Griffin House
- */
-const CACHE = 'house-of-rooks-v512';
+/* House of Rooks service worker — Rook513 cumulative UI roll */
+const CACHE = 'house-of-rooks-v513';
 const SHELL = [
   './','./index.html','./vendor/peerjs.min.js','./shuffle-statistics.html',
-  './rules.js','./rules.js?v=512','./bots.js','./bots.js?v=512',
-  './game.js','./game.js?v=512','./rook511-avatars.js','./rook511-avatars.js?v=512',
-  './rook511.css','./rook511.css?v=512','./rook512.css','./rook512.css?v=512',
-  './rook512-room.js','./rook512-room.js?v=512',
-  './polish.js','./polish.js?v=512','./progression.js','./progression.js?v=512',
-  './style.css','./style.css?v=512',
+  './rules.js','./rules.js?v=513','./bots.js','./bots.js?v=513',
+  './game.js','./game.js?v=513','./rook511-avatars.js','./rook511-avatars.js?v=513',
+  './rook511.css','./rook511.css?v=513','./rook512.css','./rook512.css?v=513',
+  './rook512-room.js','./rook512-room.js?v=513',
+  './rook513.css','./rook513.css?v=513','./rook513.js','./rook513.js?v=513',
+  './polish.js','./polish.js?v=513','./progression.js','./progression.js?v=513',
+  './style.css','./style.css?v=513',
   './hor-version.js','./room-card-club.jpg',
   './splash-battle.png','./wait-nest-portrait.jpg','./wait-trump-portrait.jpg',
   './wait-nest-landscape.jpg','./wait-trump-landscape.jpg','./apple-touch-icon.png','./griffin-icon.png',

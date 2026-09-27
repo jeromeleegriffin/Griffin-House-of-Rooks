@@ -1,23 +1,193 @@
-/* Rook513 — surgical mobile room fix.
-   Load AFTER rook512.css. Gameplay/table geometry untouched. */
+/* Rook513 — cumulative production UI roll
+   Based on live 512. Table dimensions/geometry are intentionally untouched. */
 
-/* 512's generic transparency lost to the much more specific legacy
-   body.room-theme-* .game-room rule on the real phone. */
-body.in-game #app,
-body.in-game #game.game-room,
-body.in-game.room-theme-midnight #game.game-room,
-body.in-game.room-theme-house #game.game-room {
+/* Approved room remains the authority. In portrait, zoom OUT slightly versus cover
+   so more of the baked-in upper wall lights can be seen around the unchanged table. */
+@media (orientation: portrait) {
+  #hor-room-bg {
+    background-size: auto 100% !important;
+    background-position: center top !important;
+  }
+}
+@media (orientation: landscape) {
+  #hor-room-bg {
+    background-size: cover !important;
+    background-position: center center !important;
+  }
+}
+
+/* Old generated room dressing must never sit on top of the approved room plate. */
+body.in-game #game.game-room {
   background: transparent !important;
   background-color: transparent !important;
   background-image: none !important;
 }
-
-/* The old sconces/wall art/chandelier are actual legacy DOM inside #game.
-   The approved room-card-club.jpg replaces this generated room dressing. */
-body.in-game #game > .room-decor,
 body.in-game #game .room-decor,
 body.in-game #game .sconce,
 body.in-game #game .wall-frame,
 body.in-game #game .chandelier {
   display: none !important;
+}
+
+/* Seat shells and legacy plaque chrome are not the portrait. Keep all information
+   as independent text/badges and remove the maroon/rectangular seat look. */
+.player-slot,
+.player-slot.top,
+.player-slot.bottom,
+#slot-me,
+#slot-partner,
+.bottom-seat-row,
+.player-slot .name,
+.player-slot.top .name,
+.player-slot.bottom .name,
+#slot-me .name,
+#slot-partner .name,
+body.gfx-seatPlaques .player-slot .name {
+  background: transparent !important;
+  background-image: none !important;
+  border: 0 !important;
+  outline: 0 !important;
+  box-shadow: none !important;
+}
+.player-slot .name {
+  padding: .02rem .10rem !important;
+  overflow: visible !important;
+  text-overflow: clip !important;
+  white-space: nowrap !important;
+  word-break: keep-all !important;
+  overflow-wrap: normal !important;
+  writing-mode: horizontal-tb !important;
+  flex-wrap: nowrap !important;
+}
+.player-slot .player-name-text {
+  display: inline-block !important;
+  white-space: nowrap !important;
+  overflow: visible !important;
+  text-overflow: clip !important;
+}
+
+/* A portrait is always a true circle, including the parent wrapper. */
+.seat-avatar,
+.seat-avatar-side {
+  display: inline-flex !important;
+  flex: 0 0 auto !important;
+  padding: 0 !important;
+  border: 0 !important;
+  border-radius: 50% !important;
+  overflow: hidden !important;
+  background: transparent !important;
+  box-shadow: 0 0 0 2px rgba(212,175,55,.72), 0 3px 10px rgba(0,0,0,.52) !important;
+  pointer-events: none !important;
+}
+.seat-avatar-img {
+  display: block !important;
+  width: 100% !important;
+  height: 100% !important;
+  max-width: none !important;
+  max-height: none !important;
+  border: 0 !important;
+  border-radius: 50% !important;
+  object-fit: cover !important;
+  object-position: 50% 16% !important;
+  overflow: hidden !important;
+  pointer-events: none !important;
+}
+.player-slot.is-turn .seat-avatar,
+.player-slot.is-turn .seat-avatar-side {
+  box-shadow: 0 0 0 3px #e6c35a, 0 0 14px rgba(230,195,90,.72), 0 3px 10px rgba(0,0,0,.55) !important;
+}
+
+/* Portrait phone: make the players visually substantial. Side players move
+   outward toward the viewport, crossing the gold rail without changing table size. */
+@media (orientation: portrait) {
+  .player-slot.left,
+  .player-slot.right,
+  .player-slot.top,
+  .player-slot.bottom,
+  #slot-me,
+  #slot-partner {
+    overflow: visible !important;
+    z-index: 6 !important;
+  }
+
+  .player-slot.left .seat-avatar-side,
+  .player-slot.right .seat-avatar-side {
+    width: clamp(4.15rem, 18vmin, 6.25rem) !important;
+    height: clamp(4.15rem, 18vmin, 6.25rem) !important;
+    margin: 0 !important;
+  }
+  .player-slot.left .seat-avatar-side {
+    transform: translateX(-34%) !important;
+  }
+  .player-slot.right .seat-avatar-side {
+    transform: translateX(34%) !important;
+  }
+
+  .player-slot.top .seat-avatar,
+  #slot-partner .seat-avatar {
+    width: clamp(4.35rem, 19vmin, 6.5rem) !important;
+    height: clamp(4.35rem, 19vmin, 6.5rem) !important;
+    margin: 0 0 .08rem !important;
+    transform: translateY(-.32rem) !important;
+  }
+  .player-slot.bottom .seat-avatar,
+  #slot-me .seat-avatar {
+    width: clamp(4.5rem, 19.5vmin, 6.7rem) !important;
+    height: clamp(4.5rem, 19.5vmin, 6.7rem) !important;
+    margin: .08rem 0 0 !important;
+    transform: translateY(.30rem) !important;
+  }
+
+  /* Name and money stay readable and do not inherit portrait dimensions. */
+  .player-slot .name,
+  .player-slot .seat-bank {
+    width: auto !important;
+    max-width: min(34vw, 9.5rem) !important;
+    min-width: 0 !important;
+    align-self: center !important;
+    position: relative !important;
+    z-index: 7 !important;
+  }
+  .player-slot.left .name,
+  .player-slot.left .seat-bank { transform: translateX(-8%) !important; }
+  .player-slot.right .name,
+  .player-slot.right .seat-bank { transform: translateX(8%) !important; }
+
+  /* Short-height portrait fallback: still cinematic, but protect hand/bid/trick UI. */
+  @media (max-height: 700px) {
+    .player-slot.left .seat-avatar-side,
+    .player-slot.right .seat-avatar-side {
+      width: clamp(3.65rem, 16vmin, 5.35rem) !important;
+      height: clamp(3.65rem, 16vmin, 5.35rem) !important;
+    }
+    .player-slot.top .seat-avatar,
+    #slot-partner .seat-avatar,
+    .player-slot.bottom .seat-avatar,
+    #slot-me .seat-avatar {
+      width: clamp(3.8rem, 16.5vmin, 5.55rem) !important;
+      height: clamp(3.8rem, 16.5vmin, 5.55rem) !important;
+    }
+  }
+}
+
+/* Landscape stays restrained so the hand and trick remain the protected zones. */
+@media (orientation: landscape) {
+  .player-slot.left .seat-avatar-side,
+  .player-slot.right .seat-avatar-side,
+  .player-slot.top .seat-avatar,
+  .player-slot.bottom .seat-avatar,
+  #slot-me .seat-avatar,
+  #slot-partner .seat-avatar {
+    width: clamp(2.8rem, 9vmin, 4.4rem) !important;
+    height: clamp(2.8rem, 9vmin, 4.4rem) !important;
+  }
+  .player-slot.left .seat-avatar-side { transform: translateX(-22%) !important; }
+  .player-slot.right .seat-avatar-side { transform: translateX(22%) !important; }
+}
+
+.center-area, .trick, .trick-stack, #trickArea, .table-nest-flip,
+.widow-spread, .message, .action-panel, .hand-area, #myHand,
+#turnBanner, #messageArea {
+  position: relative;
+  z-index: 8;
 }
