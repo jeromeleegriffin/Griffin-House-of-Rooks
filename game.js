@@ -7,7 +7,7 @@
 // It's exchanged during the join handshake so a stale host or joiner (e.g.
 // one still running old cached JS) gets caught and auto-updated instead of
 // silently failing or behaving unpredictably against a mismatched peer.
-const APP_VERSION = '504';
+const APP_VERSION = '507';
 
 function horThisIndex() {
   try {
@@ -2750,6 +2750,7 @@ function notifyCardPlayed(card) {
   const isRook = card && (card.color === 'rook' || card.id === 'rook');
   const isR2 = card && (typeof isRed2 === 'function' ? isRed2(card) : card.id === 'red-2');
   const name = isRook ? 'rook' : (isR2 ? 'red2' : 'card');
+  window._lastPlayedCardSfxAt = Date.now();
   playSfx(name, { broadcastNet: true });
   if (isRook) markRookJustPlayed();
 }
@@ -2844,6 +2845,7 @@ function maybeRemindTurn() {
   try { notifyYourTurn(); } catch (e) {}
 }
 const YOUR_TURN_NOTIFY_DELAY_MS = 180;
+const YOUR_TURN_AFTER_CARD_GAP_MS = 450;
 let yourTurnNotifyTimer = null;
 
 function notifyYourTurn() {
@@ -2860,8 +2862,11 @@ function notifyYourTurn() {
     window._lastTurnBeepAt = now;
   } catch (e) {}
 
-  // Rook504: keep the whole My Turn notification on one slightly delayed beat
-  // so it does not nearly double with the previous card lay-down sound.
+  // Rook505: guarantee separation from the actual previous card-play SFX.
+  // Other turn transitions retain the short baseline hesitation.
+  const sinceCardSfx = Date.now() - (window._lastPlayedCardSfxAt || 0);
+  const cardGapRemaining = Math.max(0, YOUR_TURN_AFTER_CARD_GAP_MS - sinceCardSfx);
+  const notifyDelay = Math.max(YOUR_TURN_NOTIFY_DELAY_MS, cardGapRemaining);
   if (yourTurnNotifyTimer) clearTimeout(yourTurnNotifyTimer);
   yourTurnNotifyTimer = setTimeout(() => {
     yourTurnNotifyTimer = null;
@@ -2896,7 +2901,7 @@ function notifyYourTurn() {
     } catch (e) {}
     try { pulseTurnFlash(); } catch (e) {}
     turnFlashUntil = 0;
-  }, YOUR_TURN_NOTIFY_DELAY_MS);
+  }, notifyDelay);
 }
 
 function totalCountersInDeck() {
@@ -4305,7 +4310,7 @@ function handleMessage(data, conn) {
             preview: true,
             beerSeats,
             hostVersion: APP_VERSION,
-            settings: { includeRed2, red2Points, targetScore, botDifficulty, layDownWinningCards, experimental: window.horExperimental || {} },
+            settings: { includeRed2, red2Points, targetScore, botDifficulty, layDownWinningCards, revealTopNest, experimental: window.horExperimental || {} },
           });
           try { conn.send({ type: 'players', players: publicPlayersSnapshot(), beerSeats }); } catch (e) {}
           break;
@@ -4318,7 +4323,7 @@ function handleMessage(data, conn) {
             yourId: data.id,
             spectator: true,
             hostVersion: APP_VERSION,
-            settings: { includeRed2, red2Points, targetScore, botDifficulty, layDownWinningCards, experimental: window.horExperimental || {} },
+            settings: { includeRed2, red2Points, targetScore, botDifficulty, layDownWinningCards, revealTopNest, experimental: window.horExperimental || {} },
           });
           if (game) {
             // send current public state if mid-game
@@ -4374,7 +4379,7 @@ function handleMessage(data, conn) {
             yourId: data.id,
             spectator: true,
             hostVersion: APP_VERSION,
-            settings: { includeRed2, red2Points, targetScore, botDifficulty, layDownWinningCards, experimental: window.horExperimental || {} }
+            settings: { includeRed2, red2Points, targetScore, botDifficulty, layDownWinningCards, revealTopNest, experimental: window.horExperimental || {} }
           });
           break;
         }
@@ -4400,7 +4405,7 @@ function handleMessage(data, conn) {
           yourId: data.id,
           beerSeats,
           hostVersion: APP_VERSION,
-          settings: { includeRed2, red2Points, targetScore, botDifficulty, experimental: window.horExperimental || {} },
+          settings: { includeRed2, red2Points, targetScore, botDifficulty, revealTopNest, experimental: window.horExperimental || {} },
         });
         try { conn.send({ type: 'players', players: publicPlayersSnapshot(), beerSeats }); } catch (e) {}
         break;
@@ -4595,6 +4600,7 @@ function handleMessage(data, conn) {
           if (data.settings.red2Points) red2Points = data.settings.red2Points;
           if (data.settings.targetScore) targetScore = data.settings.targetScore;
           if (typeof data.settings.layDownWinningCards === 'boolean') layDownWinningCards = data.settings.layDownWinningCards;
+          if (typeof data.settings.revealTopNest === 'boolean') revealTopNest = data.settings.revealTopNest;
           if (typeof data.settings.comebackSpecialChance === 'boolean') comebackSpecialChance = data.settings.comebackSpecialChance;
         }
         // Never navigate an already-playing client back to the welcome/lobby
@@ -8321,7 +8327,7 @@ function hostTransferHost() {
     players: players.map(p => ({ ...p })),
     settings: { includeRed2, red2Points, includeRed1, includeOnes, onesHigh, includeRook, rookLowest,
       specialsAnytime, mustTrumpWhenVoid, minBid, targetScore, handSize, nestSizeDefault, ruleVariant,
-      botDifficulty, turnTimeSec },
+      botDifficulty, turnTimeSec, revealTopNest },
     matchStats: { ...matchStats },
     playerStats: playerStats.map(s => ({ ...s })),
     handHistory: handHistory.slice(),
@@ -8636,7 +8642,7 @@ function hostResyncClient(conn, playerId) {
       beerSeats,
       hostVersion: APP_VERSION,
       reclaimed: true,
-      settings: { includeRed2, red2Points, targetScore, botDifficulty, layDownWinningCards }
+      settings: { includeRed2, red2Points, targetScore, botDifficulty, layDownWinningCards, revealTopNest }
     });
   } catch (e) {}
   if (!game) return;
@@ -10630,6 +10636,7 @@ function broadcastState() {
     bidStatus: game.bidStatus || [null, null, null, null],
     discardCount: game.discardCount || 0,
     nestAuctionOpen: !!game.nestAuctionOpen,
+    revealTopNest: !!revealTopNest,
     nestFlipped: !!game.nestFlipped,
     topNestCard: game.topNestCard ? { ...game.topNestCard } : null,
     nestFlipStage: game.nestFlipStage || 0,
@@ -10721,6 +10728,7 @@ function showBottomTrickWinnerNotice() {
 }
 
 function applyState(data) {
+  if (typeof data.revealTopNest === 'boolean') revealTopNest = data.revealTopNest;
   if (!game) game = {};
   if (!isHost && horExpOn('netSequencing') && data && Number.isFinite(Number(data.seq))) {
     const seq = Number(data.seq);
@@ -12980,6 +12988,15 @@ bindClick('startBtn', () => {
 /** Offline practice: local host + 3 bots, no PeerJS / room code required */
 function startSoloPractice() {
   try {
+    // Rook506: Offline owns the transition. Cancel any stale multiplayer retry
+    // activity before creating the local table so the first press is decisive.
+    window._horNoServiceStop = true;
+    try {
+      (window._horNetRetryTimers || []).forEach((t) => clearTimeout(t));
+    } catch (e) {}
+    window._horNetRetryTimers = [];
+    joinInProgress = false;
+
     ensureAudio();
     isSpectator = false;
     isSoloPractice = true;
@@ -13097,8 +13114,55 @@ bindClick('leaveReplaceBtn', () => { try { clientLeaveReplace(); } catch (e) { c
 bindClick('botPickerClose', closeBotPicker);
 const _botPickModal = $('botPickerModal');
 if (_botPickModal) _botPickModal.addEventListener('click', (e) => { if (e.target === _botPickModal) closeBotPicker(); });
+function teardownMultiplayerBeforeLobby() {
+  // Rook506: Leave must fully release the old room before the lobby reloads.
+  // This prevents a stale/reconnecting PeerJS session from racing the next
+  // Play Offline press.
+  window._horNoServiceStop = true;
+  window._horStayInGame = false;
+  try {
+    (window._horNetRetryTimers || []).forEach((t) => clearTimeout(t));
+  } catch (e) {}
+  window._horNetRetryTimers = [];
+
+  try {
+    if (hostConnection) {
+      try { hostConnection.close(); } catch (e) {}
+    }
+  } catch (e) {}
+  hostConnection = null;
+
+  try {
+    if (typeof connMap === 'object' && connMap) {
+      Object.keys(connMap).forEach((k) => {
+        try { if (connMap[k] && connMap[k].close) connMap[k].close(); } catch (e) {}
+        try { delete connMap[k]; } catch (e) {}
+      });
+    }
+  } catch (e) {}
+
+  try {
+    if (peer) {
+      try { if (peer.disconnect) peer.disconnect(); } catch (e) {}
+      try { if (peer.destroy) peer.destroy(); } catch (e) {}
+    }
+  } catch (e) {}
+  peer = null;
+
+  isHost = false;
+  isSpectator = false;
+  isSoloPractice = false;
+  joinInProgress = false;
+  myPeerId = null;
+  myIndex = -1;
+  roomCode = '';
+  players = [];
+  game = null;
+}
+
 bindClick('leaveBtn', () => {
   try { sessionStorage.removeItem('rookSession'); } catch (e) {}
+  try { teardownMultiplayerBeforeLobby(); } catch (e) { console.error(e); }
   location.reload();
 });
 bindClick('showRules', () => {
