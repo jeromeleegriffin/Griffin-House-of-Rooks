@@ -7,7 +7,7 @@
 // It's exchanged during the join handshake so a stale host or joiner (e.g.
 // one still running old cached JS) gets caught and auto-updated instead of
 // silently failing or behaving unpredictably against a mismatched peer.
-const APP_VERSION = '503';
+const APP_VERSION = '504';
 
 function horThisIndex() {
   try {
@@ -2843,41 +2843,60 @@ function maybeRemindTurn() {
   window._turnOppKey = key;
   try { notifyYourTurn(); } catch (e) {}
 }
+const YOUR_TURN_NOTIFY_DELAY_MS = 180;
+let yourTurnNotifyTimer = null;
+
 function notifyYourTurn() {
+  const opportunityKey = turnOpportunityKey();
   try {
     const key = game
       ? `${game.phase}:${game.currentPlayer}:${(game.trick && game.trick.length) || 0}`
       : String(Date.now());
     const now = Date.now();
     if (window._lastTurnBeepKey === key && now - (window._lastTurnBeepAt || 0) < 2500) {
-      pulseTurnFlash();
       return;
     }
     window._lastTurnBeepKey = key;
     window._lastTurnBeepAt = now;
   } catch (e) {}
-  try {
-    const ctx = ensureAudio();
-    if (ctx && ctx.state === 'suspended') ctx.resume();
-  } catch (e) {}
-  // Sound every new local turn except the opening bidding turn when the
-  // Turn Over Top Nest Card reveal is enabled. That reveal owns the audio
-  // during the first-hand animation; with the option OFF, the turn cue plays.
-  try {
-    const suppressForOpeningNestReveal = !!(
-      game && game.phase === 'bidding' && revealTopNest && isFirstHandOfMatch()
-    );
-    if (game && game.phase === 'bidding') game._firstBidTurnSounded = true;
-    if (!suppressForOpeningNestReveal) playTurnSound();
-  } catch (e) {}
-  // Phone buzz (Android Chrome; many iPhones ignore Vibration API)
-  try {
-    if (typeof navigator !== 'undefined' && typeof navigator.vibrate === 'function') {
-      navigator.vibrate(0);
-      navigator.vibrate([80, 50, 80, 50, 120]);
-    }
-  } catch (e) {}
-  turnFlashUntil = 0;
+
+  // Rook504: keep the whole My Turn notification on one slightly delayed beat
+  // so it does not nearly double with the previous card lay-down sound.
+  if (yourTurnNotifyTimer) clearTimeout(yourTurnNotifyTimer);
+  yourTurnNotifyTimer = setTimeout(() => {
+    yourTurnNotifyTimer = null;
+
+    // Do not fire a delayed cue if this turn opportunity disappeared/changed.
+    try {
+      if (!opportunityKey || turnOpportunityKey() !== opportunityKey) return;
+    } catch (e) {}
+
+    try {
+      const ctx = ensureAudio();
+      if (ctx && ctx.state === 'suspended') ctx.resume();
+    } catch (e) {}
+
+    // Sound every new local turn except the opening bidding turn when the
+    // Turn Over Top Nest Card reveal is enabled. That reveal owns the audio
+    // during the first-hand animation; with the option OFF, the turn cue plays.
+    try {
+      const suppressForOpeningNestReveal = !!(
+        game && game.phase === 'bidding' && revealTopNest && isFirstHandOfMatch()
+      );
+      if (game && game.phase === 'bidding') game._firstBidTurnSounded = true;
+      if (!suppressForOpeningNestReveal) playTurnSound();
+    } catch (e) {}
+
+    // Sound, vibration, and visual pulse intentionally fire together here.
+    try {
+      if (typeof navigator !== 'undefined' && typeof navigator.vibrate === 'function') {
+        navigator.vibrate(0);
+        navigator.vibrate([80, 50, 80, 50, 120]);
+      }
+    } catch (e) {}
+    try { pulseTurnFlash(); } catch (e) {}
+    turnFlashUntil = 0;
+  }, YOUR_TURN_NOTIFY_DELAY_MS);
 }
 
 function totalCountersInDeck() {
