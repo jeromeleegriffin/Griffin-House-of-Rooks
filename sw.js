@@ -2,24 +2,28 @@
  * Author: Jerome Griffin
  * Copyright (c) 2026 Jerome Griffin / Griffin House
  */
-const CACHE = 'house-of-rooks-v508';
+const CACHE = 'house-of-rooks-v510';
 const SHELL = [
   './',
   './index.html',
   './vendor/peerjs.min.js',
   './shuffle-statistics.html',
   './rules.js',
-  './rules.js?v=508',
+  './rules.js?v=510',
   './bots.js',
-  './bots.js?v=508',
+  './bots.js?v=510',
   './game.js',
-  './game.js?v=508',
+  './game.js?v=510',
+  './rook510-avatars.js',
+  './rook510-avatars.js?v=510',
+  './rook510.css',
+  './rook510.css?v=510',
   './polish.js',
-  './polish.js?v=508',
+  './polish.js?v=510',
   './progression.js',
-  './progression.js?v=508',
+  './progression.js?v=510',
   './style.css',
-  './style.css?v=508',
+  './style.css?v=510',
   './hor-version.js',
   './splash-battle.png',
   './wait-nest-portrait.jpg',
@@ -178,6 +182,8 @@ self.addEventListener('fetch', (e) => {
   const url = new URL(e.request.url);
   if (url.origin !== location.origin) return;
 
+  // Never let Safari boot an old cached game shell/code when online.
+  // Network-first for the app's HTML/JS/CSS; cache is only an offline fallback.
   const path = url.pathname;
   const isAppAsset = /\.(html|js|css)$/.test(path) || path.endsWith('/');
   const forceFresh = url.searchParams.has('fresh') || url.searchParams.has('v');
