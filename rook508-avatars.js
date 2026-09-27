@@ -1,5 +1,12 @@
 /* Rook508 portrait boot — safe if game.js is already 508-patched. */
 (function () {
+  if (!document.getElementById('rook508-css')) {
+    var link = document.createElement('link');
+    link.id = 'rook508-css';
+    link.rel = 'stylesheet';
+    link.href = 'rook508.css';
+    document.head.appendChild(link);
+  }
   const PNG = {
     grit:1, nix:1, copper:1, crow:1, blaze:1, titan:1, pike:1, drift:1, dice:1,
     anchor:1, wager:1, hollow:1, ember:1, vex:1, frost:1, fang:1, halo:1,
