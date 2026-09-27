@@ -1,0 +1,171 @@
+/* ===== Rook511 seat + portrait overhaul ===== */
+.player-slot,
+.player-slot.top,
+.player-slot.bottom,
+.player-slot.left,
+.player-slot.right,
+#slot-me,
+#slot-partner,
+#slot-left,
+#slot-right,
+.bottom-seat-row {
+  background: none !important;
+  background-image: none !important;
+  box-shadow: none !important;
+  border: 0 !important;
+  min-width: 0;
+  overflow: visible !important;
+}
+body.gfx-seatPlaques .player-slot .name,
+body.gfx-seatPlaques .player-slot.top .name,
+body.gfx-seatPlaques .player-slot.bottom .name,
+body.gfx-seatPlaques #slot-me .name,
+body.gfx-seatPlaques #slot-partner .name,
+body.gfx-seatPlaques .wait-seat-name,
+.player-slot .name,
+.player-slot.top .name,
+.player-slot.bottom .name,
+#slot-me .name,
+#slot-partner .name,
+.player-slot .name[data-plaque-team],
+.player-slot .name[data-plaque-team="0"],
+.player-slot .name[data-plaque-team="1"],
+.player-slot[data-plaque-team] .name,
+body.gfx-seatPlaques .player-slot .name[data-plaque-team="0"],
+body.gfx-seatPlaques .player-slot .name[data-plaque-team="1"] {
+  background: none !important;
+  background-image: none !important;
+  border: 0 !important;
+  border-radius: 0 !important;
+  box-shadow: none !important;
+  outline: 0 !important;
+  padding: 0.05rem 0.15rem !important;
+}
+.player-slot .name,
+.player-slot .name .player-name-text,
+.wait-seat-name,
+.wait-seat-name-text,
+.lt-name,
+.lt-th-name,
+.portrait-th-name {
+  white-space: nowrap !important;
+  word-break: keep-all !important;
+  overflow-wrap: normal !important;
+  writing-mode: horizontal-tb !important;
+  text-orientation: mixed !important;
+  text-overflow: clip !important;
+  overflow: visible !important;
+  max-width: none;
+}
+.seat-avatar,
+.seat-avatar-side,
+.wait-seat-av,
+.lt-bid-av {
+  flex: 0 0 auto;
+  pointer-events: none;
+  overflow: visible;
+}
+.seat-avatar-img,
+.wait-seat-av,
+.lt-bid-av {
+  display: block;
+  border-radius: 50%;
+  overflow: hidden;
+  object-fit: cover !important;
+  object-position: 50% 16% !important;
+  pointer-events: none;
+}
+.team-marker { pointer-events: none; }
+@media (orientation: portrait) {
+  .table {
+    grid-template-columns: minmax(4.6rem, 18%) minmax(0, 1fr) minmax(4.6rem, 18%);
+    grid-template-rows: minmax(5.2rem, 22%) minmax(0, 1fr) minmax(5.6rem, 24%);
+  }
+  .player-slot.top { align-self: start; justify-self: center; z-index: 5; padding-top: env(safe-area-inset-top, 0px); }
+  .player-slot.top .name { display: flex; flex-direction: column; align-items: center; gap: 0.16rem; }
+  .player-slot.top .seat-avatar,
+  .player-slot.top .seat-avatar-img {
+    width: clamp(3.6rem, 16vmin, 5.8rem) !important;
+    height: clamp(3.6rem, 16vmin, 5.8rem) !important;
+  }
+  .player-slot.top .seat-avatar { margin: 0 0 0.12rem 0; transform: translateY(-0.15rem); }
+  .player-slot.bottom,
+  #slot-me.player-slot.bottom { align-self: end; max-width: none !important; padding-bottom: env(safe-area-inset-bottom, 0px); }
+  .player-slot.bottom .name,
+  #slot-me .name { display: flex; flex-direction: column; align-items: center; gap: 0.14rem; }
+  .player-slot.bottom .seat-avatar,
+  .player-slot.bottom .seat-avatar-img,
+  #slot-me .seat-avatar,
+  #slot-me .seat-avatar-img {
+    width: clamp(3.7rem, 16.5vmin, 6rem) !important;
+    height: clamp(3.7rem, 16.5vmin, 6rem) !important;
+    order: 2;
+  }
+  .player-slot.bottom .player-name-text,
+  #slot-me .player-name-text { order: 1; }
+  .player-slot.bottom .seat-avatar { margin: 0.1rem 0 0 0; transform: translateY(0.2rem); }
+  .player-slot.left { justify-self: start; align-items: flex-start; padding-left: max(0.1rem, env(safe-area-inset-left, 0px)); }
+  .player-slot.right { justify-self: end; align-items: flex-end; padding-right: max(0.1rem, env(safe-area-inset-right, 0px)); }
+  .player-slot.left .seat-avatar-side,
+  .player-slot.right .seat-avatar-side,
+  .player-slot.left .seat-avatar-side .seat-avatar-img,
+  .player-slot.right .seat-avatar-side .seat-avatar-img {
+    width: clamp(3.2rem, 14vmin, 5.1rem) !important;
+    height: clamp(3.2rem, 14vmin, 5.1rem) !important;
+  }
+  .player-slot.left .name,
+  .player-slot.right .name { display: block; text-align: center; max-width: 100%; }
+}
+@media (orientation: landscape) {
+  .table {
+    grid-template-columns: minmax(4.2rem, 16%) minmax(0, 1fr) minmax(4.2rem, 16%);
+    grid-template-rows: minmax(3.4rem, 20%) minmax(0, 1fr) minmax(3.6rem, 22%);
+  }
+  .player-slot.top { align-self: start; }
+  .player-slot.bottom, #slot-me { align-self: end; }
+  .player-slot.top .name,
+  .player-slot.bottom .name,
+  #slot-me .name { display: flex; flex-direction: column; align-items: center; gap: 0.1rem; }
+  .player-slot.top .seat-avatar,
+  .player-slot.top .seat-avatar-img,
+  .player-slot.bottom .seat-avatar,
+  .player-slot.bottom .seat-avatar-img,
+  #slot-me .seat-avatar,
+  #slot-me .seat-avatar-img {
+    width: clamp(2.8rem, 9.5vmin, 4.4rem) !important;
+    height: clamp(2.8rem, 9.5vmin, 4.4rem) !important;
+  }
+  .player-slot.left { justify-self: start; align-items: flex-start; }
+  .player-slot.right { justify-self: end; align-items: flex-end; }
+  .player-slot.left .seat-avatar-side,
+  .player-slot.right .seat-avatar-side,
+  .player-slot.left .seat-avatar-side .seat-avatar-img,
+  .player-slot.right .seat-avatar-side .seat-avatar-img {
+    width: clamp(2.6rem, 8.8vmin, 4.1rem) !important;
+    height: clamp(2.6rem, 8.8vmin, 4.1rem) !important;
+  }
+}
+@media (max-height: 560px) and (orientation: portrait) {
+  .player-slot.top .seat-avatar,
+  .player-slot.top .seat-avatar-img,
+  .player-slot.bottom .seat-avatar,
+  .player-slot.bottom .seat-avatar-img,
+  #slot-me .seat-avatar,
+  #slot-me .seat-avatar-img {
+    width: clamp(2.6rem, 12vmin, 3.6rem) !important;
+    height: clamp(2.6rem, 12vmin, 3.6rem) !important;
+  }
+  .player-slot.left .seat-avatar-side,
+  .player-slot.right .seat-avatar-side,
+  .player-slot.left .seat-avatar-side .seat-avatar-img,
+  .player-slot.right .seat-avatar-side .seat-avatar-img {
+    width: clamp(2.3rem, 11vmin, 3.2rem) !important;
+    height: clamp(2.3rem, 11vmin, 3.2rem) !important;
+  }
+}
+.player-slot.top, .player-slot.bottom { z-index: 5; }
+.center-area, .trick, .trick-stack, #trickArea, .table-nest-flip,
+.widow-spread, .message, .action-panel, .hand-area, #myHand,
+#turnBanner, #messageArea { position: relative; z-index: 8; }
+.avatar-choice img { width: 56px; height: 56px; object-fit: cover; object-position: 50% 16%; border-radius: 50%; }
+.avatar-choice.legacy-hidden { display: none !important; }
