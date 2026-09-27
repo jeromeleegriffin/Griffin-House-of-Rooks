@@ -1,0 +1,23 @@
+/* Rook513 — surgical mobile room fix.
+   Load AFTER rook512.css. Gameplay/table geometry untouched. */
+
+/* 512's generic transparency lost to the much more specific legacy
+   body.room-theme-* .game-room rule on the real phone. */
+body.in-game #app,
+body.in-game #game.game-room,
+body.in-game.room-theme-midnight #game.game-room,
+body.in-game.room-theme-house #game.game-room {
+  background: transparent !important;
+  background-color: transparent !important;
+  background-image: none !important;
+}
+
+/* The old sconces/wall art/chandelier are actual legacy DOM inside #game.
+   The approved room-card-club.jpg replaces this generated room dressing. */
+body.in-game #game > .room-decor,
+body.in-game #game .room-decor,
+body.in-game #game .sconce,
+body.in-game #game .wall-frame,
+body.in-game #game .chandelier {
+  display: none !important;
+}
