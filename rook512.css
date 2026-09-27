@@ -20,7 +20,10 @@ html, body, #app, .app, .app-root, .stage, .play-root {
   position: relative;
   z-index: 1;
 }
+/* Do not stretch/shrink the established oval. */
 .table { transform: none; }
+
+/* Kill leftover candle / plaque / team-box chrome outside the oval */
 .table-candle, .rail-candle, .seat-candle, .side-glow-bar,
 .player-slot::before, .player-slot::after,
 .player-slot.left::before, .player-slot.right::before,
@@ -30,6 +33,7 @@ html, body, #app, .app, .app-root, .stage, .play-root {
   content: none !important;
   display: none !important;
 }
+
 .player-slot,
 .player-slot.top,
 .player-slot.bottom,
@@ -61,6 +65,7 @@ html, body, #app, .app, .app-root, .stage, .play-root {
   writing-mode: horizontal-tb !important;
   overflow: visible !important;
 }
+
 .seat-avatar,
 .seat-avatar-side,
 .seat-avatar-img {
@@ -79,6 +84,7 @@ html, body, #app, .app, .app-root, .stage, .play-root {
 .player-slot[data-turn="1"] .seat-avatar-img {
   box-shadow: 0 0 0 2px #e6c35a, 0 0 10px rgba(230,195,90,0.55);
 }
+
 @media (orientation: portrait) {
   .player-slot.left {
     justify-self: start;
@@ -92,6 +98,7 @@ html, body, #app, .app, .app-root, .stage, .play-root {
     padding-right: max(0.08rem, env(safe-area-inset-right, 0px));
     z-index: 6;
   }
+  /* Outward toward screen edge so the circle straddles the gold rail. */
   .player-slot.left .seat-avatar-side { transform: translateX(-22%); }
   .player-slot.right .seat-avatar-side { transform: translateX(22%); }
   .player-slot.left .seat-avatar-side,
@@ -121,6 +128,7 @@ html, body, #app, .app, .app-root, .stage, .play-root {
     height: clamp(3.6rem, 16vmin, 5.8rem) !important;
   }
 }
+
 @media (orientation: landscape) {
   .player-slot.left .seat-avatar-side { transform: translateX(-18%); }
   .player-slot.right .seat-avatar-side { transform: translateX(18%); }
@@ -140,6 +148,7 @@ html, body, #app, .app, .app-root, .stage, .play-root {
     height: clamp(2.6rem, 9vmin, 4.2rem) !important;
   }
 }
+
 .center-area, .trick, .trick-stack, #trickArea, .table-nest-flip,
 .widow-spread, .message, .action-panel, .hand-area, #myHand,
 #turnBanner, #messageArea { position: relative; z-index: 8; }
