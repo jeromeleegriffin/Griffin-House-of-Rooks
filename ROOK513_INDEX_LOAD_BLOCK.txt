@@ -1,3 +1,0 @@
-<!-- ROOK513 LOAD BLOCK: add these after rook512.css / after polish.js respectively -->
-<link rel="stylesheet" href="rook513.css?v=513">
-<script src="rook513.js?v=513"></script>

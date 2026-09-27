@@ -5,15 +5,15 @@ This build is the next sequential version: **508**.
 
 ## What changed
 
-- Installed the finished cinematic / semi-realistic individual bot portraits (`avatar-<bot>.webp`). One file per character.
-- `avatarSrc()` serves WebP portraits when a production file exists and still serves legacy SVG files for player-selectable animal avatars.
-- First-wave house bots that previously reused animal SVGs now point at their own named portraits. Bot names, styles, blurbs, and AI were not changed.
-- Human player avatar selection is unchanged; SVG fallbacks remain for ids without a cinematic portrait.
-- Removed the maroon / brown rectangular plaque panels behind the top and bottom player seats.
-- Names stay horizontal. Name / badge / money sit around the circular portrait without a box.
-- Seat portraits use clamp() responsive sizing so they shrink before covering play.
-- Service worker cache bumped to house-of-rooks-v508. New portraits are in the offline shell list.
-- Version references updated to 508.
+- Installed the finished cinematic / semi-realistic **individual bot portrait PNGs** (`avatar-<bot>.webp`). One file per character. Not a contact sheet, not SVG redraws, not emoji placeholders.
+- `avatarSrc()` now serves WebP portraits when a production file exists and still serves legacy SVG files for player-selectable animal avatars that do not have a cinematic portrait.
+- First-wave house bots that previously reused animal SVGs (Crow, Blaze, Nix, Titan, Pike, Drift, Dice, Anchor, Wager, Hollow, Ember, Vex, Frost, Fang, Halo) now point at their own named portraits. Bot names, styles, blurbs, and AI were not changed.
+- Jerome / human player avatar selection is unchanged: existing picks still resolve, and SVG fallbacks remain for ids without a PNG.
+- Removed the maroon / brown rectangular plaque panels behind the **top and bottom** player seats. Circular portrait, name, rank badge, and money stay. Top and bottom now read like the side seats.
+- Names stay horizontal (no stacked letters). Name / badge / money sit around the circular portrait without a box.
+- Seat portraits are larger and use `clamp()` responsive sizing so they shrink before covering cards, the trick, nest, trump, bidding, score, Last 3, Message Table, or menus. Portrait and landscape use different caps.
+- Service worker cache bumped to `house-of-rooks-v508`. All new WebP portraits and remaining SVG avatars are in the offline shell list.
+- Visible / handshake version references updated to 508 (`APP_VERSION`, `hor-version.js`, `index.html` BUILD and `?v=` cache bust, `sw.js`).
 
 ## What did not change
 
@@ -21,6 +21,6 @@ This build is the next sequential version: **508**.
 - Bot intelligence and personality styles
 - Multiplayer / Peer behavior
 - Scoring, achievements, statistics, career / progression
-- Sounds and card animations
+- Sounds (My Turn, bot seating, empty-seat) and card animations
 
 This is an art + presentation update.

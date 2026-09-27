@@ -1,71 +1,13 @@
-/* Rook513 — cumulative behavior fixes loaded after game.js/polish.js.
-   Fixes Play with Friends host flow and reinforces room cleanup. */
+/* Rook513 — cumulative behavior guard. */
 (function () {
-  function $(id) { return document.getElementById(id); }
-
-  function cleanRoom() {
-    var game = $('game');
-    if (!game) return;
-    game.style.setProperty('background', 'transparent', 'important');
-    game.style.setProperty('background-color', 'transparent', 'important');
-    game.style.setProperty('background-image', 'none', 'important');
-    game.querySelectorAll('.room-decor, .sconce, .wall-frame, .chandelier').forEach(function (el) {
-      el.style.setProperty('display', 'none', 'important');
-      el.setAttribute('aria-hidden', 'true');
-    });
-  }
-
-  function hostFriends(ev) {
-    if (ev) {
-      try { ev.preventDefault(); } catch (_) {}
-      try { ev.stopPropagation(); } catch (_) {}
-    }
-
-    /* Explicitly leave the join-code state. This prevents the old joining class /
-       focused room-code input from making the lobby jump into Join with a code. */
-    var lobby = $('lobby');
-    var joinForm = $('joinForm');
-    if (lobby) lobby.classList.remove('joining');
-    if (joinForm) joinForm.classList.add('hidden');
-    try {
-      var active = document.activeElement;
-      if (active && active.blur) active.blur();
-    } catch (_) {}
-
-    try { if (typeof ensureAudio === 'function') ensureAudio(); } catch (_) {}
-    try { if (typeof isSpectator !== 'undefined') isSpectator = false; } catch (_) {}
-
-    /* Use the real current host function directly. Do not route through the
-       hidden legacy create button or the Join-with-code controls. */
-    try {
-      if (typeof createRoom === 'function') {
-        createRoom();
-        if (typeof saveSession === 'function') saveSession();
-      } else {
-        var status = $('lobbyStatus');
-        if (status) status.textContent = 'Could not start the host table. Refresh and try again.';
-      }
-    } catch (err) {
-      console.error(err);
-      var s = $('lobbyStatus');
-      if (s) s.textContent = 'Error: ' + (err && err.message ? err.message : err);
-    }
-  }
-
-  function wire() {
-    cleanRoom();
-    var friends = $('friendsToggleBtn');
-    if (friends) {
-      /* onclick replaces the earlier polish.js assignment deterministically. */
-      friends.onclick = hostFriends;
-    }
-  }
-
-  if (document.readyState === 'loading') {
-    document.addEventListener('DOMContentLoaded', wire, { once: true });
-  } else {
-    wire();
-  }
-  setTimeout(wire, 0);
-  setTimeout(cleanRoom, 300);
+  function $(id){ return document.getElementById(id); }
+  var hostWaitingLock=false, observer=null;
+  function cleanRoom(){var g=$('game');if(!g)return;g.style.setProperty('background','transparent','important');g.style.setProperty('background-color','transparent','important');g.style.setProperty('background-image','none','important');g.querySelectorAll('.room-decor,.sconce,.wall-frame,.chandelier').forEach(function(el){el.style.setProperty('display','none','important');el.setAttribute('aria-hidden','true');});}
+  function clearJoin(){var l=$('lobby'),f=$('joinForm');if(l)l.classList.remove('joining');if(f)f.classList.add('hidden');try{var a=document.activeElement;if(a&&a.id==='hor-room-code'&&a.blur)a.blur();}catch(_) {}}
+  function liveHand(){try{return !!(game&&game.phase&&['dealing','bidding','discard','trump','play'].indexOf(game.phase)>=0);}catch(_){return false;}}
+  function enforce(){if(!hostWaitingLock||liveHand()){hostWaitingLock=false;if(observer){observer.disconnect();observer=null;}return;}clearJoin();var l=$('lobby'),w=$('waiting'),g=$('game');if(l)l.classList.add('hidden');if(w)w.classList.remove('hidden');if(g)g.classList.add('hidden');}
+  function lock(){hostWaitingLock=true;enforce();if(!observer&&window.MutationObserver){observer=new MutationObserver(enforce);observer.observe(document.getElementById('app')||document.body,{attributes:true,subtree:true,attributeFilter:['class']});}}
+  function host(ev){if(ev){try{ev.preventDefault();ev.stopPropagation();}catch(_){}}clearJoin();try{if(typeof ensureAudio==='function')ensureAudio();}catch(_){}try{isSpectator=false;}catch(_){}try{if(typeof createRoom!=='function')throw new Error('Host function unavailable');createRoom();var tries=0,t=setInterval(function(){tries++;var w=$('waiting');if(w&&!w.classList.contains('hidden')){clearInterval(t);lock();}else if(tries>=100)clearInterval(t);},100);}catch(err){console.error(err);var s=$('lobbyStatus');if(s)s.textContent='Error: '+(err.message||err);}}
+  function wire(){cleanRoom();var b=$('friendsToggleBtn');if(b)b.onclick=host;}
+  if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',wire,{once:true});else wire();setTimeout(wire,0);setTimeout(cleanRoom,300);
 })();
