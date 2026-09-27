@@ -1,0 +1,154 @@
+/* Rook514 — portrait avatar cleanup + purpose-built room + premium landscape.
+   Gameplay geometry, card sizing rules, scoring, AI and dealing are intentionally untouched. */
+
+/* ---------- PORTRAIT: room art composed for the actual exposed perimeter ---------- */
+@media (orientation: portrait) {
+  #hor-room-bg {
+    background-image: url('./room-card-club-514.jpg') !important;
+    background-size: cover !important;
+    background-position: center top !important;
+    background-repeat: no-repeat !important;
+  }
+
+  /* Remove the old maroon/square seat chrome completely, including pseudo layers. */
+  body.in-game .player-slot.top,
+  body.in-game .player-slot.bottom,
+  body.in-game #slot-me,
+  body.in-game #slot-partner,
+  body.in-game .player-slot.top .name,
+  body.in-game .player-slot.bottom .name,
+  body.in-game #slot-me .name,
+  body.in-game #slot-partner .name {
+    background: transparent !important;
+    background-image: none !important;
+    border: 0 !important;
+    outline: 0 !important;
+    box-shadow: none !important;
+  }
+  body.in-game .player-slot.top::before,
+  body.in-game .player-slot.top::after,
+  body.in-game .player-slot.bottom::before,
+  body.in-game .player-slot.bottom::after,
+  body.in-game #slot-me::before,
+  body.in-game #slot-me::after,
+  body.in-game #slot-partner::before,
+  body.in-game #slot-partner::after {
+    background: none !important;
+    border: 0 !important;
+    box-shadow: none !important;
+    opacity: 0 !important;
+  }
+
+  /* Portraits grow outward; the felt remains protected. */
+  .player-slot.left .seat-avatar-side,
+  .player-slot.right .seat-avatar-side {
+    width: clamp(4.35rem, 19vmin, 6.45rem) !important;
+    height: clamp(4.35rem, 19vmin, 6.45rem) !important;
+  }
+  .player-slot.left .seat-avatar-side { transform: translateX(-42%) !important; }
+  .player-slot.right .seat-avatar-side { transform: translateX(42%) !important; }
+
+  .player-slot.top .seat-avatar,
+  #slot-partner .seat-avatar,
+  .player-slot.bottom .seat-avatar,
+  #slot-me .seat-avatar {
+    width: clamp(4.65rem, 20vmin, 6.8rem) !important;
+    height: clamp(4.65rem, 20vmin, 6.8rem) !important;
+  }
+
+  .seat-avatar, .seat-avatar-side, .seat-avatar-img {
+    border-radius: 50% !important;
+    overflow: hidden !important;
+  }
+  .seat-avatar-img {
+    object-fit: cover !important;
+    object-position: 50% 18% !important;
+  }
+
+  /* Names/bank/status remain independent of portrait size. */
+  .player-slot .name,
+  .player-slot .seat-bank {
+    width: auto !important;
+    min-width: 0 !important;
+    white-space: nowrap !important;
+    word-break: keep-all !important;
+    writing-mode: horizontal-tb !important;
+    overflow: visible !important;
+    text-overflow: clip !important;
+  }
+}
+
+/* ---------- LANDSCAPE: premium information-first tabletop ---------- */
+@media (orientation: landscape) {
+  .landscape-theater {
+    /* Physical dark-walnut surround with an inset green playing surface. */
+    background:
+      linear-gradient(90deg, rgba(43,23,10,.98), rgba(92,51,21,.88) 1.1%, rgba(24,13,8,.96) 2.0%, transparent 2.7%, transparent 97.3%, rgba(24,13,8,.96) 98%, rgba(92,51,21,.88) 98.9%, rgba(43,23,10,.98)),
+      radial-gradient(ellipse at 50% 34%, #14532d 0%, #0b3b21 52%, #061d12 100%) !important;
+    box-shadow: inset 0 0 0 2px rgba(190,143,55,.34), inset 0 0 28px rgba(0,0,0,.72) !important;
+  }
+
+  .landscape-theater::before {
+    content:"";
+    position:absolute;
+    inset:max(.24rem, env(safe-area-inset-top,0px)) max(.35rem, env(safe-area-inset-right,0px))
+          max(.24rem, env(safe-area-inset-bottom,0px)) max(.35rem, env(safe-area-inset-left,0px));
+    border:1px solid rgba(212,175,55,.30);
+    border-radius:18px;
+    box-shadow: inset 0 0 34px rgba(0,0,0,.32), 0 0 0 1px rgba(0,0,0,.65);
+    pointer-events:none;
+    z-index:0;
+  }
+
+  /* Score rail reads as table hardware, not a web header. */
+  .lt-scorebar {
+    background: linear-gradient(180deg, rgba(42,27,15,.96), rgba(20,14,10,.94)) !important;
+    border: 1px solid rgba(219,177,69,.72) !important;
+    box-shadow: inset 0 1px 0 rgba(255,229,151,.12), 0 2px 8px rgba(0,0,0,.42) !important;
+    border-radius: 10px !important;
+  }
+
+  /* The current trick remains visually quiet and spacious. */
+  .lt-plays {
+    background: radial-gradient(ellipse at center, rgba(42,111,67,.16), rgba(0,0,0,0) 66%) !important;
+    border-radius: 22px;
+  }
+  .lt-play.winner {
+    background: radial-gradient(ellipse at center, rgba(226,190,83,.16), rgba(226,190,83,0) 70%);
+    border-radius: 22px;
+  }
+
+  /* Hand becomes a shallow physical rack without stealing card space. */
+  .lt-hand-wrap {
+    background: linear-gradient(180deg, rgba(64,38,18,.94), rgba(24,14,8,.97)) !important;
+    border: 1px solid rgba(205,158,61,.52) !important;
+    border-radius: 14px !important;
+    box-shadow: inset 0 2px 0 rgba(255,220,130,.10), inset 0 -4px 8px rgba(0,0,0,.42), 0 3px 9px rgba(0,0,0,.42) !important;
+    padding-left: .30rem !important;
+    padding-right: .30rem !important;
+  }
+
+  /* Last-3 history becomes three recessed felt trays instead of flat boxes. */
+  .lt-th-card {
+    background:
+      radial-gradient(ellipse at 50% 30%, rgba(24,88,50,.48), rgba(4,31,19,.82) 72%) !important;
+    border: 1px solid rgba(195,153,58,.38) !important;
+    box-shadow: inset 0 0 18px rgba(0,0,0,.38), 0 2px 7px rgba(0,0,0,.28) !important;
+    border-radius: 14px !important;
+  }
+
+  /* Tabs feel like brass-edged table controls while keeping their footprint. */
+  .lt-tab {
+    background: rgba(13,27,20,.88) !important;
+    border-color: rgba(201,162,39,.58) !important;
+    box-shadow: inset 0 1px 0 rgba(255,236,174,.08), 0 2px 5px rgba(0,0,0,.28) !important;
+  }
+  .lt-tab.active {
+    background: linear-gradient(180deg, rgba(118,87,27,.82), rgba(45,33,13,.92)) !important;
+  }
+
+  /* Keep cinematic wait/transition art as the atmospheric moment. */
+  .lt-wait-banner {
+    box-shadow: 0 10px 30px rgba(0,0,0,.48), inset 0 0 0 1px rgba(212,175,55,.32) !important;
+  }
+}
