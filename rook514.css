@@ -152,3 +152,156 @@
     box-shadow: 0 10px 30px rgba(0,0,0,.48), inset 0 0 0 1px rgba(212,175,55,.32) !important;
   }
 }
+
+/* Rook515 — absolute portrait live-seat box guard. */
+@media (orientation: portrait) {
+  #game .player-slot, #game .player-slot.top, #game .player-slot.bottom,
+  #game #slot-me, #game #slot-partner,
+  #game .player-slot .name, #game #slot-me .name, #game #slot-partner .name {
+    background: transparent !important;
+    background-color: transparent !important;
+    background-image: none !important;
+    border: 0 !important;
+    outline: 0 !important;
+    box-shadow: none !important;
+  }
+  #game .player-slot::before, #game .player-slot::after,
+  #game .player-slot .name::before, #game .player-slot .name::after {
+    background: transparent !important;
+    background-image: none !important;
+    border: 0 !important;
+    box-shadow: none !important;
+  }
+}
+
+/* =====================================================================
+   Rook516 — visual polish roll
+   Three-pass intent: richer physical table, clearer accessibility, less
+   browser-like chrome. Gameplay/card sizing/rules remain untouched.
+   ===================================================================== */
+
+/* All portraits are still unless that seat is actually thinking/acting. */
+body.in-game .seat-avatar-img,
+body.in-game .wait-seat-av { animation: none !important; }
+body.in-game .player-slot.is-turn .seat-avatar-img,
+body.in-game .player-slot.hor-thinking-pulse .seat-avatar-img {
+  animation: rook516ActivePortrait 1.85s ease-in-out infinite !important;
+  transform-origin: 50% 82%;
+}
+@keyframes rook516ActivePortrait {
+  0%,100% { transform: translateY(0) scale(1); }
+  50% { transform: translateY(-2px) scale(1.018); }
+}
+body.reduce-motion .player-slot.is-turn .seat-avatar-img,
+body.no-avatar-motion .player-slot.is-turn .seat-avatar-img,
+body.reduce-motion .player-slot.hor-thinking-pulse .seat-avatar-img,
+body.no-avatar-motion .player-slot.hor-thinking-pulse .seat-avatar-img { animation:none !important; }
+
+/* Portrait mode: push the successful portraits a little farther, outward. */
+@media (orientation: portrait) {
+  .player-slot.left .seat-avatar-side,
+  .player-slot.right .seat-avatar-side {
+    width: clamp(4.7rem, 20.5vmin, 6.9rem) !important;
+    height: clamp(4.7rem, 20.5vmin, 6.9rem) !important;
+  }
+  .player-slot.left .seat-avatar-side { transform: translateX(-45%) !important; }
+  .player-slot.right .seat-avatar-side { transform: translateX(45%) !important; }
+  .player-slot.top .seat-avatar,
+  #slot-partner .seat-avatar,
+  .player-slot.bottom .seat-avatar,
+  #slot-me .seat-avatar {
+    width: clamp(5rem, 21.5vmin, 7.25rem) !important;
+    height: clamp(5rem, 21.5vmin, 7.25rem) !important;
+  }
+}
+
+/* Physical hand rack: cards sit a few pixels behind a shallow walnut/brass lip. */
+.hand-area {
+  background:
+    linear-gradient(180deg, rgba(24,14,8,.98) 0 7px, rgba(82,48,22,.98) 8px 18px, rgba(35,20,11,.99) 19px 100%) !important;
+  border-top: 1px solid rgba(223,178,75,.62) !important;
+  box-shadow: inset 0 3px 0 rgba(255,224,145,.08), inset 0 -10px 18px rgba(0,0,0,.38), 0 -5px 18px rgba(0,0,0,.38) !important;
+}
+.hand-area::after,
+.lt-hand-wrap::after {
+  content:"";
+  position:absolute;
+  left:1.5%; right:1.5%; bottom:0;
+  height:7px;
+  border-top:1px solid rgba(223,178,75,.48);
+  background:linear-gradient(180deg, rgba(92,54,25,.96), rgba(30,17,9,.99));
+  box-shadow:0 -3px 7px rgba(0,0,0,.28), inset 0 1px 0 rgba(255,225,150,.10);
+  pointer-events:none;
+  z-index:6;
+}
+.hand > .card-face { translate:0 3px; }
+.hand > .card-face:nth-child(4n+1) { rotate:-.7deg; translate:0 4px; }
+.hand > .card-face:nth-child(4n+2) { rotate:.45deg; translate:0 2px; }
+.hand > .card-face:nth-child(4n+3) { rotate:-.25deg; translate:0 3px; }
+.hand > .card-face:nth-child(4n) { rotate:.75deg; translate:0 4px; }
+.hand > .card-face.selected,
+.hand > .card-face:active { rotate:0deg; translate:0 0; }
+
+/* The center needs the cards, not a redundant TRICK/status caption. */
+.trick-caption { display:none !important; }
+
+/* Landscape remains the big-card/readability view, but loses the loud flat green. */
+@media (orientation: landscape) {
+  .landscape-theater {
+    background:
+      linear-gradient(90deg, rgba(38,20,10,.99), rgba(88,49,22,.93) 1.2%, rgba(18,11,7,.98) 2.2%, transparent 3.2%, transparent 96.8%, rgba(18,11,7,.98) 97.8%, rgba(88,49,22,.93) 98.8%, rgba(38,20,10,.99)),
+      radial-gradient(ellipse at 50% 34%, #123d29 0%, #0b2e20 50%, #061a13 100%) !important;
+  }
+  .lt-hand-wrap { position:relative; overflow:visible; padding-bottom:.45rem !important; }
+  .lt-hand-wrap .card-face { translate:0 2px; }
+  .lt-hand-wrap .card-face:nth-child(4n+1) { rotate:-.55deg; translate:0 3px; }
+  .lt-hand-wrap .card-face:nth-child(4n+2) { rotate:.35deg; translate:0 1px; }
+  .lt-hand-wrap .card-face:nth-child(4n+3) { rotate:-.2deg; translate:0 2px; }
+  .lt-hand-wrap .card-face:nth-child(4n) { rotate:.6deg; translate:0 3px; }
+  .lt-play .card-face:nth-child(odd), .lt-th-card .card-face:nth-child(odd) { rotate:-.45deg; }
+  .lt-play .card-face:nth-child(even), .lt-th-card .card-face:nth-child(even) { rotate:.45deg; }
+}
+
+/* Game-native popup skin: restrained walnut/black with brass, not webpage white boxes. */
+.modal-content,
+.host-options-sheet,
+.portrait-last3-panel,
+.friends-panel,
+.no-service-modal,
+.bot-picker-sheet {
+  background:linear-gradient(165deg, rgba(35,24,16,.985), rgba(13,12,10,.99)) !important;
+  border:1px solid rgba(205,161,65,.58) !important;
+  border-radius:16px !important;
+  box-shadow:inset 0 1px 0 rgba(255,231,171,.08), 0 16px 42px rgba(0,0,0,.58) !important;
+}
+.modal-content button,
+.host-options-sheet button,
+.portrait-last3-panel button,
+.friends-panel button {
+  border-radius:10px !important;
+  border-color:rgba(199,157,65,.58) !important;
+  box-shadow:inset 0 1px 0 rgba(255,255,255,.05), 0 2px 5px rgba(0,0,0,.28) !important;
+}
+
+/* Special captures still feel earned, but stop taking over the entire table. */
+.capture-overlay { background:radial-gradient(ellipse at center, rgba(0,0,0,.26), transparent 62%) !important; }
+.capture-burst { width:min(55vw,210px) !important; height:min(55vw,210px) !important; opacity:.48; }
+.capture-card {
+  padding:.68rem .92rem .75rem !important;
+  max-width:min(82vw,260px) !important;
+  border-width:1px !important;
+  border-radius:14px !important;
+  box-shadow:0 10px 28px rgba(0,0,0,.5),0 0 24px rgba(215,171,61,.18) !important;
+}
+.capture-emoji { font-size:1.7rem !important; margin-bottom:.18rem !important; animation:none !important; }
+.capture-title { font-size:clamp(.9rem,3.7vw,1.08rem) !important; letter-spacing:.045em !important; }
+.capture-sub { font-size:.76rem !important; margin-top:.2rem !important; }
+.rook-cele-bird { width:42px; height:42px; object-fit:cover; object-position:64% 38%; border-radius:50%; filter:contrast(1.08) brightness(.86); }
+.rook-ui-bird { width:100%; height:100%; object-fit:cover; object-position:64% 38%; border-radius:inherit; filter:contrast(1.08) brightness(.82); }
+/* Rook516 critique pass: neutralize older container/idle animations so only the
+   active portrait image owns motion. Waiting-room portraits stay still too. */
+.player-slot .seat-avatar,
+.player-slot .seat-avatar-side,
+.wait-seat-av { animation:none !important; }
+body.in-game .player-slot.is-turn .seat-avatar,
+body.in-game .player-slot.hor-thinking-pulse .seat-avatar { animation:none !important; }

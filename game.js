@@ -7,7 +7,7 @@
 // It's exchanged during the join handshake so a stale host or joiner (e.g.
 // one still running old cached JS) gets caught and auto-updated instead of
 // silently failing or behaving unpredictably against a mismatched peer.
-const APP_VERSION = '514';
+const APP_VERSION = '516';
 
 function horThisIndex() {
   try {
@@ -438,10 +438,10 @@ const AVATARS = [
   'rookery','sable','finch','dagger','willow','hearth','grit','copper','moth','brandy',
   'flint','ivy','shade','barrel','spark','nettle','cobalt','ash','harrier',
   'crow','blaze','nix','titan','pike','drift','dice','anchor','wager','hollow',
-  'ember','vex','frost','fang','halo'
+  'ember','vex','frost','fang','halo','jerome'
 ];
 const AVATAR_LABELS = {
-  rookling:'Rookling', fox:'Fox', badger:'Badger', owl:'Owl', cardshark:'Card Shark',
+  jerome:'Jerome', rookling:'Rookling', fox:'Fox', badger:'Badger', owl:'Owl', cardshark:'Card Shark',
   greenie:'Greenie', bluejay:'Bluejay', grumpy:'Grumpy', goldfinch:'Goldfinch',
   jackal:'Jackal', wolf:'Wolf', raven:'Raven', lynx:'Lynx', cobra:'Cobra', stag:'Stag',
   quill:'Quill', bramble:'Bramble', moss:'Moss', emberlyn:'Emberlyn', cinder:'Cinder',
@@ -469,12 +469,33 @@ function avatarKey(id) {
 }
 function avatarSrc(id) {
   const key = avatarKey(id);
+  if (key === 'jerome') return 'avatar-jerome.png';
   if (key && AVATAR_PNG_IDS[key]) return 'avatar-' + key + '.webp';
   if (AVATARS.includes(key)) return 'avatar-' + key + '.svg';
   return 'avatar-' + AVATARS[0] + '.svg';
 }
 function avatarHTML(id) { return `<img class="seat-avatar-img" src="${avatarSrc(id)}" alt="${AVATAR_LABELS[id] || 'Avatar'}">`; }
-let playerAvatars = {}; // peerId -> emoji
+let playerAvatars = {}; // peerId -> avatar id
+const PLAYER_AVATAR_KEY = 'griffinHousePlayerAvatar';
+function loadPreferredAvatar() {
+  try {
+    const id = avatarKey(localStorage.getItem(PLAYER_AVATAR_KEY) || '');
+    return AVATARS.includes(id) ? id : '';
+  } catch (e) { return ''; }
+}
+function savePreferredAvatar(id) {
+  const key = avatarKey(id);
+  if (!AVATARS.includes(key)) return;
+  try { localStorage.setItem(PLAYER_AVATAR_KEY, key); } catch (e) {}
+}
+function applyPreferredAvatarToMe() {
+  const id = loadPreferredAvatar();
+  if (!id) return '';
+  if (myPeerId) playerAvatars[myPeerId] = id;
+  const me = (players || []).find(p => p && p.id === myPeerId);
+  if (me) me.avatar = id;
+  return id;
+}
 let reduceMotion = localStorage.getItem('rookReduceMotion') === '1';
 let highContrast = localStorage.getItem('rookHighContrast') === '1';
 
@@ -1455,6 +1476,22 @@ function paintNamePlaque(el, team) {
   el.setAttribute('data-plaque-team', String(team === 1 ? 1 : 0));
   el.classList.toggle('plaque-team-a', team !== 1);
   el.classList.toggle('plaque-team-b', team === 1);
+
+  // Rook515: team identity stays in game metadata, but the live table no longer
+  // paints the old rectangular team plaque behind a portrait/name.
+  const liveSeat = !!el.closest('.player-slot');
+  if (liveSeat) {
+    el.style.setProperty('background', 'transparent', 'important');
+    el.style.setProperty('background-color', 'transparent', 'important');
+    el.style.setProperty('background-image', 'none', 'important');
+    el.style.setProperty('border', '0', 'important');
+    el.style.setProperty('outline', '0', 'important');
+    el.style.setProperty('box-shadow', 'none', 'important');
+    el.style.setProperty('border-radius', '0', 'important');
+    el.style.setProperty('padding', '0.02rem 0.10rem', 'important');
+    el.style.removeProperty('color');
+    return;
+  }
   el.style.setProperty('background', style.bg, 'important');
   el.style.setProperty('color', style.fg, 'important');
   el.style.setProperty('border-radius', '8px', 'important');
@@ -2462,17 +2499,17 @@ function showCaptureCelebration(kind, winnerName, amount) {
   ov.classList.remove('hidden', 'capture-rook', 'capture-one');
   if (kind === 'rook-red2') {
     ov.classList.add('capture-rook');
-    if (emoji) emoji.textContent = '🐦💥';
+    if (emoji) emoji.innerHTML = '<img class="rook-cele-bird" src="cardback-raven.jpg" alt="Black Rook">';
     if (title) title.textContent = 'THE BIRD TAKES RED 2!';
     if (sub) sub.textContent = name + ' steals the 2nd-highest trump';
   } else if (kind === 'high-points') {
     ov.classList.add('capture-rook');
-    if (emoji) emoji.textContent = '💰🔥';
+    if (emoji) emoji.textContent = '💰';
     if (title) title.textContent = 'BIG TRICK!';
     if (sub) sub.textContent = name + ' takes ' + (Number(amount) || 0) + ' points!';
   } else {
     ov.classList.add('capture-one');
-    if (emoji) emoji.textContent = '👑✨';
+    if (emoji) emoji.textContent = '★';
     if (title) title.textContent = 'TRUMP 1 CAPTURED!';
     if (sub) sub.textContent = name + ' takes the high 1';
   }
@@ -3675,6 +3712,39 @@ function horNextBroker() {
   return PEER_BROKERS[horPeerBrokerIndex];
 }
 
+
+let horPeerLoadPromise = null;
+function horEnsurePeerJS() {
+  if (typeof Peer !== 'undefined') return Promise.resolve(true);
+  if (horPeerLoadPromise) return horPeerLoadPromise;
+  const sources = [
+    'https://cdn.jsdelivr.net/npm/peerjs@1.5.5/dist/peerjs.min.js',
+    'https://unpkg.com/peerjs@1.5.5/dist/peerjs.min.js'
+  ];
+  horPeerLoadPromise = new Promise((resolve, reject) => {
+    let i = 0;
+    const next = () => {
+      if (typeof Peer !== 'undefined') { resolve(true); return; }
+      if (i >= sources.length) {
+        horPeerLoadPromise = null;
+        reject(new Error('PeerJS could not be loaded from either multiplayer source.'));
+        return;
+      }
+      const s = document.createElement('script');
+      s.src = sources[i++] + '?hor=' + APP_VERSION;
+      s.async = true;
+      s.onload = () => {
+        if (typeof Peer !== 'undefined') resolve(true);
+        else { try { s.remove(); } catch (e) {} next(); }
+      };
+      s.onerror = () => { try { s.remove(); } catch (e) {} next(); };
+      document.head.appendChild(s);
+    };
+    next();
+  });
+  return horPeerLoadPromise;
+}
+
 function createRoom(preserveCode) {
   // A normal button tap may arrive again while PeerJS is still registering the
   // host id. Do not destroy that healthy in-flight attempt and start over.
@@ -3693,8 +3763,15 @@ function createRoom(preserveCode) {
   window._horNoServiceStop = false;
   myName = ($('hor-player-name').value || '').trim() || 'Host';
   if (typeof Peer === 'undefined') {
-    horSetHostCreateBusy(false);
-    $('lobbyStatus').textContent = 'PeerJS failed to load. Check your internet connection and refresh.';
+    horSetHostCreateBusy(true, 'Loading multiplayer connection…');
+    horEnsurePeerJS().then(() => {
+      horSetHostCreateBusy(false);
+      createRoom(true);
+    }).catch(err => {
+      horSetHostCreateBusy(false);
+      $('lobbyStatus').textContent = 'Multiplayer could not load. Check your internet connection and try again.';
+      console.error('PeerJS load failed:', err);
+    });
     return;
   }
   if (!preserveCode || !roomCode) roomCode = shortCode();
@@ -3735,7 +3812,8 @@ function createRoom(preserveCode) {
     if (game && game.phase && !['lobby','waiting',''].includes(game.phase)) {
       return;
     }
-    players = [{ id, name: myName, team: 0, isHost: true, isBot: false, seat: 0, bank: loadMyBank(), careerPublic: horMyCareerProfile() }];
+    players = [{ id, name: myName, team: 0, isHost: true, isBot: false, seat: 0, bank: loadMyBank(), avatar: loadPreferredAvatar() || AVATARS[0], careerPublic: horMyCareerProfile() }];
+    applyPreferredAvatarToMe();
     myIndex = 0;
     beerSeats = pickBeerSeats();
     showWaiting();
@@ -3810,7 +3888,11 @@ function joinRoom() {
   }
   window._horNoServiceStop = false;
   if (typeof Peer === 'undefined') {
-    setJoinStatus('PeerJS failed to load. Check your internet connection and refresh.');
+    setJoinStatus('Loading multiplayer connection…');
+    horEnsurePeerJS().then(() => joinRoom()).catch(err => {
+      setJoinStatus('Multiplayer could not load. Check your internet connection and try again.');
+      console.error('PeerJS load failed:', err);
+    });
     return;
   }
   roomCode = code;
@@ -3899,7 +3981,7 @@ function joinRoom() {
       finished = true;
       joinInProgress = false;
       clearTimeout(joinTimer);
-      const joinMsg = { type: 'join', name: myName, id: myPeerId, spectator: !!isSpectator, bank: loadMyBank(), appVersion: APP_VERSION, reconnect: true };
+      const joinMsg = { type: 'join', name: myName, id: myPeerId, spectator: !!isSpectator, bank: loadMyBank(), avatar: loadPreferredAvatar() || AVATARS[0], appVersion: APP_VERSION, reconnect: true };
       if (pendingPreviewJoin) joinMsg.preview = true;
       if (!isSpectator && typeof pendingWelcomeSeat === 'number' && pendingWelcomeSeat >= 0 && pendingWelcomeSeat <= 3) {
         joinMsg.preferredSeat = pendingWelcomeSeat;
@@ -4409,7 +4491,8 @@ function handleMessage(data, conn) {
         if (players.find(p => p.id === data.id)) {
           return;
         }
-        players.push({ id: data.id, name: data.name, team: 0, isHost: false, isBot: false, seat: -1, bank: Math.max(0, Math.floor(Number(data.bank) || 0)), careerPublic: null });
+        players.push({ id: data.id, name: data.name, team: 0, isHost: false, isBot: false, seat: -1, bank: Math.max(0, Math.floor(Number(data.bank) || 0)), avatar: AVATARS.includes(avatarKey(data.avatar)) ? avatarKey(data.avatar) : AVATARS[0], careerPublic: null });
+        if (data.id) playerAvatars[data.id] = AVATARS.includes(avatarKey(data.avatar)) ? avatarKey(data.avatar) : AVATARS[0];
         const wantSeat = parseInt(data.preferredSeat, 10);
         let seatedOk = false;
         if (!isNaN(wantSeat) && wantSeat >= 0 && wantSeat <= 3) {
@@ -5202,6 +5285,7 @@ function showWaiting() {
         btn.onclick = () => {
           const id = btn.getAttribute('data-avatar');
           if (!id) return;
+          savePreferredAvatar(id);
           if (myPeerId) playerAvatars[myPeerId] = id;
           const meP = players.find(p => p.id === myPeerId);
           if (meP) meP.avatar = id;
@@ -5210,7 +5294,7 @@ function showWaiting() {
           try { renderUI(); } catch (e) {}
         };
       });
-      const current = playerAvatars[myPeerId] || (players.find(p => p.id === myPeerId) || {}).avatar || AVATARS[0];
+      const current = loadPreferredAvatar() || playerAvatars[myPeerId] || (players.find(p => p.id === myPeerId) || {}).avatar || AVATARS[0];
       avatarGrid.querySelectorAll('.avatar-choice').forEach(b => b.classList.toggle('selected', b.getAttribute('data-avatar') === current));
     }
 
@@ -9969,7 +10053,7 @@ function esc(t) { return (typeof escapeHtmlSafe === 'function') ? escapeHtmlSafe
 
 function renderStatChips(s) {
   const chips = [];
-  if (s.rookCaptures) chips.push(`<span class="stat-chip chip-rook" title="Rook captures">🐦 ${s.rookCaptures}</span>`);
+  if (s.rookCaptures) chips.push(`<span class="stat-chip chip-rook" title="Rook captures">ROOK ${s.rookCaptures}</span>`);
   if (s.red2Captures) chips.push(`<span class="stat-chip chip-red2" title="Red 2 captures">🔴 ${s.red2Captures}</span>`);
   if (s.bigTricks) chips.push(`<span class="stat-chip chip-big" title="30+ point tricks">💥 ${s.bigTricks}</span>`);
   if (s.nestWins) chips.push(`<span class="stat-chip chip-nest" title="Nest captures">🪺 ${s.nestWins}</span>`);
@@ -11412,9 +11496,7 @@ function renderUI() {
         <div class="trick-card-name">${escapeHtmlSafe(who)}</div>
       </div>`;
     }).join('');
-    const caption = winnerName
-      ? `🏆 ${winnerName} wins`
-      : `${lastName} · ${trick.length}/4`;
+    const caption = ''; // Rook516: center-table TRICK/status wording intentionally removed
     const resolveKey = trickResolveKey(game.lastTrickWinner, trick);
     const alreadyTaken = !!(game.resolvingTrick && window._trickFlightKey && window._trickFlightKey === resolveKey);
     if (!window._trickCapturing && !alreadyTaken) {
@@ -13034,7 +13116,8 @@ function startSoloPractice() {
     myName = (($('hor-player-name') && $('hor-player-name').value) || '').trim() || myName || 'You';
     myPeerId = 'solo-' + Math.random().toString(36).slice(2, 9);
     roomCode = 'OFFLINE';
-    players = [{ id: myPeerId, name: myName, team: 0, isHost: true, isBot: false, seat: 0, bank: loadMyBank(), careerPublic: horMyCareerProfile() }];
+    players = [{ id: myPeerId, name: myName, team: 0, isHost: true, isBot: false, seat: 0, bank: loadMyBank(), avatar: loadPreferredAvatar() || AVATARS[0], careerPublic: horMyCareerProfile() }];
+    applyPreferredAvatarToMe();
 
     // 3 named persona bots (no network)
     while (players.length < 4) addBot();

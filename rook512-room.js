@@ -4,19 +4,19 @@
   function addCss() {
     if (document.getElementById('rook514-css')) return;
     var l=document.createElement('link');
-    l.id='rook514-css'; l.rel='stylesheet'; l.href='rook514.css?v=514';
+    l.id='rook514-css'; l.rel='stylesheet'; l.href='rook514.css?v=516';
     document.head.appendChild(l);
   }
   function add513Css() {
     if (document.getElementById('rook513-css')) return;
     var l=document.createElement('link');
-    l.id='rook513-css'; l.rel='stylesheet'; l.href='rook513.css?v=514';
+    l.id='rook513-css'; l.rel='stylesheet'; l.href='rook513.css?v=516';
     document.head.appendChild(l);
   }
   function add513Js() {
     if (document.getElementById('rook513-js')) return;
     var s=document.createElement('script');
-    s.id='rook513-js'; s.src='rook513.js?v=514';
+    s.id='rook513-js'; s.src='rook513.js?v=516';
     document.head.appendChild(s);
   }
   function ensureRoom() {
