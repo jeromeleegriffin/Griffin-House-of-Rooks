@@ -2,40 +2,20 @@
  * Author: Jerome Griffin
  * Copyright (c) 2026 Jerome Griffin / Griffin House
  */
-const CACHE = 'house-of-rooks-v511';
+const CACHE = 'house-of-rooks-v512';
 const SHELL = [
   './','./index.html','./vendor/peerjs.min.js','./shuffle-statistics.html',
-  './rules.js','./rules.js?v=511','./bots.js','./bots.js?v=511',
-  './game.js','./game.js?v=511','./rook511-avatars.js','./rook511-avatars.js?v=511',
-  './rook511.css','./rook511.css?v=511','./polish.js','./polish.js?v=511',
-  './progression.js','./progression.js?v=511','./style.css','./style.css?v=511',
-  './hor-version.js','./splash-battle.png','./wait-nest-portrait.jpg','./wait-trump-portrait.jpg',
+  './rules.js','./rules.js?v=512','./bots.js','./bots.js?v=512',
+  './game.js','./game.js?v=512','./rook511-avatars.js','./rook511-avatars.js?v=512',
+  './rook511.css','./rook511.css?v=512','./rook512.css','./rook512.css?v=512',
+  './rook512-room.js','./rook512-room.js?v=512',
+  './polish.js','./polish.js?v=512','./progression.js','./progression.js?v=512',
+  './style.css','./style.css?v=512',
+  './hor-version.js','./room-card-club.jpg',
+  './splash-battle.png','./wait-nest-portrait.jpg','./wait-trump-portrait.jpg',
   './wait-nest-landscape.jpg','./wait-trump-landscape.jpg','./apple-touch-icon.png','./griffin-icon.png',
   './icon-192-maskable.png','./icon-512-maskable.png','./manifest.json','./privacy.html',
-  './Rook.webp','./Red2-card.webp','./Red2.webp','./Rook.png','./Red2.png','./icon-192.png','./icon-512.png',
-  './kitty-wait.jpg','./lobby-hero.jpg','./lobby-hero-wide.jpg','./lobby-hero-port-362.jpg','./lobby-hero-landscape.jpg',
-  './lobby-banner-land-361.jpg','./lobby-hero-3.jpg','./lobby-hero-4.jpg','./lobby-hero-5.jpg','./lobby-hero-6.jpg',
-  './lobby-hero-7.jpg','./lobby-hero-8.jpg','./lobby-hero-9.jpg','./lobby-hero-10.jpg','./lobby-hero-11.jpg',
-  './cardback-classic.jpg','./cardback-raven.jpg','./cardback-griffin.jpg','./cardback-felt.jpg','./cardback-crimson.jpg',
-  './cardback-midnight.jpg','./cardback-faceoff.jpg','./cardback-clash.jpg','./cardback-aerial.jpg','./cardback-dive.jpg',
-  './avatar-anchor.webp','./avatar-ash.webp','./avatar-barrel.webp','./avatar-blaze.webp','./avatar-bramble.webp',
-  './avatar-brandy.webp','./avatar-cinder.webp','./avatar-cobalt.webp','./avatar-copper.webp','./avatar-crow.webp',
-  './avatar-dagger.webp','./avatar-dice.webp','./avatar-drift.webp','./avatar-ember.webp','./avatar-emberlyn.webp',
-  './avatar-fang.webp','./avatar-finch.webp','./avatar-flint.webp','./avatar-frost.webp','./avatar-gable.webp',
-  './avatar-grit.webp','./avatar-halo.webp','./avatar-harrier.webp','./avatar-hearth.webp','./avatar-hollow.webp',
-  './avatar-ivy.webp','./avatar-marrow.webp','./avatar-moss.webp','./avatar-moth.webp','./avatar-nettle.webp',
-  './avatar-nix.webp','./avatar-pebble.webp','./avatar-pike.webp','./avatar-quill.webp','./avatar-rookery.webp',
-  './avatar-sable.webp','./avatar-shade.webp','./avatar-spark.webp','./avatar-thistle.webp','./avatar-titan.webp',
-  './avatar-vex.webp','./avatar-wager.webp','./avatar-willow.webp','./avatar-jerome.png',
-  './avatar-ash.svg','./avatar-badger.svg','./avatar-barrel.svg','./avatar-bluejay.svg','./avatar-bramble.svg',
-  './avatar-brandy.svg','./avatar-cardshark.svg','./avatar-cinder.svg','./avatar-cobalt.svg','./avatar-cobra.svg',
-  './avatar-copper.svg','./avatar-dagger.svg','./avatar-emberlyn.svg','./avatar-finch.svg','./avatar-flint.svg',
-  './avatar-fox.svg','./avatar-gable.svg','./avatar-goldfinch.svg','./avatar-greenie.svg','./avatar-grit.svg',
-  './avatar-grumpy.svg','./avatar-harrier.svg','./avatar-hearth.svg','./avatar-ivy.svg','./avatar-jackal.svg',
-  './avatar-lynx.svg','./avatar-marrow.svg','./avatar-moss.svg','./avatar-moth.svg','./avatar-nettle.svg',
-  './avatar-owl.svg','./avatar-pebble.svg','./avatar-quill.svg','./avatar-raven.svg','./avatar-rookery.svg',
-  './avatar-rookling.svg','./avatar-sable.svg','./avatar-shade.svg','./avatar-spark.svg','./avatar-stag.svg',
-  './avatar-thistle.svg','./avatar-willow.svg','./avatar-wolf.svg','./cardback-aftermath.jpg'
+  './Rook.webp','./Red2-card.webp','./Red2.webp','./Rook.png','./Red2.png','./icon-192.png','./icon-512.png'
 ];
 self.addEventListener('install', (e) => {
   e.waitUntil(caches.open(CACHE).then((c) => c.addAll(SHELL).catch(() => {})).then(() => self.skipWaiting()));
