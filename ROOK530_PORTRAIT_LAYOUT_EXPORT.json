@@ -1,0 +1,28 @@
+{
+  "build": 530,
+  "orientation": "portrait",
+  "layout": {
+    "#slot-me .seat-avatar": {"x":29,"y":-17,"w":null,"h":null,"scale":1.4,"font":null,"z":null,"hidden":false,"locked":false},
+    "#slot-partner .seat-avatar": {"x":0,"y":0,"w":null,"h":null,"scale":1.2,"font":null,"z":null,"hidden":false,"locked":false},
+    "#slot-left .seat-avatar-side": {"x":14,"y":-11,"w":null,"h":null,"scale":1.2,"font":1,"z":null,"hidden":false,"locked":false},
+    "#slot-right .seat-avatar-side": {"x":-6,"y":-18,"w":null,"h":null,"scale":1.2,"font":null,"z":null,"hidden":false,"locked":false},
+    "#feltBidDock": {"x":134,"y":39,"w":null,"h":null,"scale":0.85,"font":null,"z":null,"hidden":false,"locked":false},
+    "#actionPanel": {"x":-13,"y":-30,"w":null,"h":null,"scale":0.87,"font":null,"z":null,"hidden":false,"locked":false},
+    "#slot-me .bid-badge": {"x":-21,"y":-238,"w":null,"h":null,"scale":1,"font":null,"z":null,"hidden":false,"locked":false},
+    "#slot-left .name": {"x":-12,"y":9,"w":null,"h":null,"scale":1,"font":null,"z":null,"hidden":false,"locked":false},
+    "#slot-partner .name": {"x":-57,"y":-2,"w":null,"h":null,"scale":1.2,"font":null,"z":null,"hidden":false,"locked":false},
+    "div:nth-of-type(4)>div.screen:nth-of-type(5)>div.table-wrap:nth-of-type(3)>div.table-felt>div.table:nth-of-type(5)>div.center-area:nth-of-type(3)": {"x":-24,"y":97,"w":null,"h":null,"scale":1,"font":null,"z":null,"hidden":false,"locked":false},
+    "#slot-right .name": {"x":81,"y":1,"w":null,"h":null,"scale":1,"font":null,"z":null,"hidden":false,"locked":false},
+    "#portraitLast3Btn": {"x":58,"y":49,"w":null,"h":null,"scale":1,"font":null,"z":null,"hidden":false,"locked":false},
+    "#slot-me .name": {"x":35,"y":-8,"w":null,"h":null,"scale":1.2,"font":null,"z":null,"hidden":false,"locked":false},
+    "#slot-right .bid-badge": {"x":119,"y":12,"w":null,"h":null,"scale":1,"font":null,"z":null,"hidden":false,"locked":false},
+    "#trickArea": {"x":14,"y":-109,"w":null,"h":null,"scale":1,"font":null,"z":null,"hidden":false,"locked":false},
+    "div:nth-of-type(4)>div.screen:nth-of-type(5)>div.table-wrap:nth-of-type(3)>div.table-felt>div.table:nth-of-type(5)": {"x":0,"y":0,"w":null,"h":null,"scale":1,"font":null,"z":null,"hidden":false,"locked":false},
+    "#tableMsgClose": {"x":0,"y":0,"w":null,"h":null,"scale":1,"font":null,"z":null,"hidden":false,"locked":false},
+    "#btnToggleTopOpts": {"x":-15,"y":95,"w":null,"h":null,"scale":1,"font":null,"z":null,"hidden":false,"locked":false},
+    "#leaveReplaceBtn": {"x":-15,"y":18,"w":null,"h":null,"scale":1,"font":null,"z":null,"hidden":false,"locked":false},
+    "#slot-right": {"x":-8,"y":-7,"w":null,"h":null,"scale":1,"font":null,"z":null,"hidden":false,"locked":false},
+    "#topToolbar": {"x":0,"y":0,"w":null,"h":null,"scale":1,"font":null,"z":null,"hidden":false,"locked":false},
+    "div.table-wrap:nth-of-type(3)>div.table-felt>div.table:nth-of-type(5)>div.center-area:nth-of-type(3)>div.trick:nth-of-type(1)>div.trick-stack:nth-of-type(1)": {"x":0,"y":0,"w":null,"h":null,"scale":1,"font":null,"z":null,"hidden":false,"locked":false}
+  }
+}
