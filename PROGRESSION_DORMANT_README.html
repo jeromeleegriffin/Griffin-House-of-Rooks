@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html lang="en-US">
+  <head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
+<!-- Begin Jekyll SEO tag v2.8.0 -->
+<title>Dormant Progression / Achievement System — RookGame450 | Griffin-House-of-Rooks</title>
+<meta name="generator" content="Jekyll v3.10.0" />
+<meta property="og:title" content="Dormant Progression / Achievement System — RookGame450" />
+<meta property="og:locale" content="en_US" />
+<meta name="description" content="A card game featuring birds and trumps." />
+<meta property="og:description" content="A card game featuring birds and trumps." />
+<link rel="canonical" href="https://jeromeleegriffin.github.io/Griffin-House-of-Rooks/PROGRESSION_DORMANT_README.html" />
+<meta property="og:url" content="https://jeromeleegriffin.github.io/Griffin-House-of-Rooks/PROGRESSION_DORMANT_README.html" />
+<meta property="og:site_name" content="Griffin-House-of-Rooks" />
+<meta property="og:type" content="website" />
+<meta name="twitter:card" content="summary" />
+<meta property="twitter:title" content="Dormant Progression / Achievement System — RookGame450" />
+<script type="application/ld+json">
+{"@context":"https://schema.org","@type":"WebPage","description":"A card game featuring birds and trumps.","headline":"Dormant Progression / Achievement System — RookGame450","url":"https://jeromeleegriffin.github.io/Griffin-House-of-Rooks/PROGRESSION_DORMANT_README.html"}</script>
+<!-- End Jekyll SEO tag -->
+
+    <link rel="stylesheet" href="/Griffin-House-of-Rooks/assets/css/style.css?v=2e212b45e2a5f8dd56b4c14502a4283ee80b9a81">
+    <!-- start custom head snippets, customize with your own _includes/head-custom.html file -->
+
+<!-- Setup Google Analytics -->
+
+
+
+<!-- You can set your favicon here -->
+<!-- link rel="shortcut icon" type="image/x-icon" href="/Griffin-House-of-Rooks/favicon.ico" -->
+
+<!-- end custom head snippets -->
+
+  </head>
+  <body>
+    <div class="container-lg px-3 my-5 markdown-body">
+      
+      <h1><a href="https://jeromeleegriffin.github.io/Griffin-House-of-Rooks/">Griffin-House-of-Rooks</a></h1>
+      
+
+      <h1 id="dormant-progression--achievement-system--rookgame450">Dormant Progression / Achievement System — RookGame450</h1>
+
+<h2 id="current-state-off-and-safe">Current state: OFF and safe</h2>
+<p>This package installs the framework but deliberately does <strong>not</strong> turn it on. <code class="language-plaintext highlighter-rouge">progression.js</code> is loaded, but its master <code class="language-plaintext highlighter-rouge">CONFIG.enabled</code> switch is <code class="language-plaintext highlighter-rouge">false</code>. With that setting it creates no player identity, no progression UI, no recovery code, no v2 cloud traffic, and changes no game rules. The existing <code class="language-plaintext highlighter-rouge">stats-worker.js</code> and current stat upload are untouched.</p>
+
+<h2 id="included-now">Included now</h2>
+<ul>
+  <li>50 career levels from Rookling to House Legend, using lifetime career points.</li>
+  <li>25 five-tier achievement families = 125 tier medals (Bronze/Silver/Gold/Platinum/Griffin).</li>
+  <li>20 one-off feats.</li>
+  <li>Extra-stat model for streaks, exact bids, close wins, routs, comebacks, clean sweeps, best hand/trick, Bird + Red 2, trump-color wins, made-bid streaks and partner wins.</li>
+  <li>Anonymous cryptographic player ID and per-device secret generator.</li>
+  <li>Optional no-email recovery-code generator (<code class="language-plaintext highlighter-rouge">GRIFFIN-XXXX-XXXX-XXXX</code>).</li>
+  <li>Future cloud API helpers for sync, recovery and restore.</li>
+  <li>Separate future Cloudflare D1 Worker and schema. It is not connected to the current worker.</li>
+  <li>Bot progression switch, default OFF.</li>
+</ul>
+
+<h2 id="important-before-activation">Important before activation</h2>
+<p>The extra counters are modeled but intentionally are <strong>not hooked into live gameplay yet</strong>. Hooking them while the master system is dormant would create unnecessary regression risk. When activation day comes, connect the trackers to the exact scoring/bidding/end-game events in the then-current game build, test them, deploy the v2 Worker/database, and only then enable the switches.</p>
+
+<h2 id="activation-sequence-later">Activation sequence later</h2>
+<ol>
+  <li>Preserve the then-current working game as a baseline.</li>
+  <li>Create a Cloudflare D1 database and run <code class="language-plaintext highlighter-rouge">progression-schema.sql</code>.</li>
+  <li>Deploy <code class="language-plaintext highlighter-rouge">progression-worker.js</code> separately and bind the D1 database as <code class="language-plaintext highlighter-rouge">DB</code>.</li>
+  <li>Put that Worker URL in <code class="language-plaintext highlighter-rouge">progression.js</code> <code class="language-plaintext highlighter-rouge">CONFIG.endpoint</code>.</li>
+  <li>Add/test live event hooks for the new counters.</li>
+  <li>Build/test Career &amp; Achievements UI.</li>
+  <li>Set <code class="language-plaintext highlighter-rouge">identityEnabled</code>, <code class="language-plaintext highlighter-rouge">cloudEnabled</code>, <code class="language-plaintext highlighter-rouge">recoveryEnabled</code>, <code class="language-plaintext highlighter-rouge">uiEnabled</code>, and <code class="language-plaintext highlighter-rouge">notificationsEnabled</code> as desired.</li>
+  <li>Set <code class="language-plaintext highlighter-rouge">enabled:true</code> LAST.</li>
+</ol>
+
+<h2 id="security-note">Security note</h2>
+<p>The browser never contains a GitHub or Cloudflare administrative token. Recovery codes are stored by hash in D1. The v2 template authenticates a device with a random player ID plus random device secret. Before a public leaderboard launch, add server-side event validation/rate limiting so a modified browser cannot simply claim impossible statistics.</p>
+
+<h2 id="offline-first-requirement-added">Offline-first requirement added</h2>
+<p>The dormant framework now includes a local career ledger and durable sync outbox for humans and named bots. The intended release behavior is: earn/save/sort everything locally with zero internet; when service returns, synchronize queued snapshots to Cloudflare without interrupting play or double-counting. See <code class="language-plaintext highlighter-rouge">OFFLINE_ONLINE_BOT_STATS_SETUP.md</code>. This remains dormant while <code class="language-plaintext highlighter-rouge">CONFIG.enabled</code> is false.</p>
+
+
+      
+    </div>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/anchor-js/4.1.0/anchor.min.js" integrity="sha256-lZaRhKri35AyJSypXXs4o6OPFTbTmUoltBbDCbdzegg=" crossorigin="anonymous"></script>
+    <script>anchors.add();</script>
+  </body>
+</html>

@@ -1,0 +1,136 @@
+<!DOCTYPE html>
+<html lang="en-US">
+  <head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
+<!-- Begin Jekyll SEO tag v2.8.0 -->
+<title>RookGame452 — Progression Preview &amp; Celebration Layer | Griffin-House-of-Rooks</title>
+<meta name="generator" content="Jekyll v3.10.0" />
+<meta property="og:title" content="RookGame452 — Progression Preview &amp; Celebration Layer" />
+<meta property="og:locale" content="en_US" />
+<meta name="description" content="A card game featuring birds and trumps." />
+<meta property="og:description" content="A card game featuring birds and trumps." />
+<link rel="canonical" href="https://jeromeleegriffin.github.io/Griffin-House-of-Rooks/PROGRESSION_PREVIEW_AND_CELEBRATIONS.html" />
+<meta property="og:url" content="https://jeromeleegriffin.github.io/Griffin-House-of-Rooks/PROGRESSION_PREVIEW_AND_CELEBRATIONS.html" />
+<meta property="og:site_name" content="Griffin-House-of-Rooks" />
+<meta property="og:type" content="website" />
+<meta name="twitter:card" content="summary" />
+<meta property="twitter:title" content="RookGame452 — Progression Preview &amp; Celebration Layer" />
+<script type="application/ld+json">
+{"@context":"https://schema.org","@type":"WebPage","description":"A card game featuring birds and trumps.","headline":"RookGame452 — Progression Preview &amp; Celebration Layer","url":"https://jeromeleegriffin.github.io/Griffin-House-of-Rooks/PROGRESSION_PREVIEW_AND_CELEBRATIONS.html"}</script>
+<!-- End Jekyll SEO tag -->
+
+    <link rel="stylesheet" href="/Griffin-House-of-Rooks/assets/css/style.css?v=2e212b45e2a5f8dd56b4c14502a4283ee80b9a81">
+    <!-- start custom head snippets, customize with your own _includes/head-custom.html file -->
+
+<!-- Setup Google Analytics -->
+
+
+
+<!-- You can set your favicon here -->
+<!-- link rel="shortcut icon" type="image/x-icon" href="/Griffin-House-of-Rooks/favicon.ico" -->
+
+<!-- end custom head snippets -->
+
+  </head>
+  <body>
+    <div class="container-lg px-3 my-5 markdown-body">
+      
+      <h1><a href="https://jeromeleegriffin.github.io/Griffin-House-of-Rooks/">Griffin-House-of-Rooks</a></h1>
+      
+
+      <h1 id="rookgame452--progression-preview--celebration-layer">RookGame452 — Progression Preview &amp; Celebration Layer</h1>
+
+<h2 id="current-safety-state">Current safety state</h2>
+<p>The progression accounting master switch remains OFF (<code class="language-plaintext highlighter-rouge">HORProgression.CONFIG.enabled === false</code>). Cloud sync, identity creation, recovery codes, bot ledger writes, achievement accounting, and migration remain dormant.</p>
+
+<p>RookGame452 adds a read-only dry-run and the presentation/animation layer so the system can be inspected before activation.</p>
+
+<h2 id="what-was-added">What was added</h2>
+<ul>
+  <li>Read-only scan of the existing <code class="language-plaintext highlighter-rouge">rookLifetimeStats</code> already stored on the device.</li>
+  <li>Exact lookup for lifetime careers named <code class="language-plaintext highlighter-rouge">Jerome</code> and <code class="language-plaintext highlighter-rouge">Host</code>.</li>
+  <li>Warning when both Jerome and Host exist as separate records so they are never silently merged.</li>
+  <li>Simulation of the level and all currently provable achievements each stored human/bot would receive.</li>
+  <li>Local table showing every stored career and whether it is human or bot.</li>
+  <li>Dry-run delta function to simulate a future hand without saving it.</li>
+  <li>Achievement celebration queue. Multiple unlocks are displayed one at a time.</li>
+  <li>Normal achievement animation.</li>
+  <li>Level-up animation.</li>
+  <li>Griffin-tier medal animation.</li>
+  <li>Rare-feat animation.</li>
+  <li>Gold/black Griffin House visual treatment, shine sweep, progress bar, and restrained confirmation tone.</li>
+  <li>Presentation preferences: Full / Minimal / Off and sound toggle are supported by the presentation engine.</li>
+  <li>The presentation engine is separate from accounting. A visual failure can never determine whether an achievement was earned.</li>
+  <li>Everything works without internet. Cloudflare is not required for local presentation.</li>
+</ul>
+
+<h2 id="how-to-open-the-dry-run-on-a-phone-right-now">How to open the dry-run on a phone right now</h2>
+<p>This is intentionally not added to the normal player UI yet. Open the browser’s developer console for the game (or use the same JavaScript-console method used during testing) and run:</p>
+
+<p><code class="language-plaintext highlighter-rouge">HORProgression.preview.show()</code></p>
+
+<p>This only reads local lifetime statistics. It does not save progression, migrate records, create an identity, or contact Cloudflare.</p>
+
+<p>If developer-console access on the phone is inconvenient, the next activation/testing build can expose this behind a hidden multi-tap diagnostic button.</p>
+
+<h2 id="celebration-only-previews">Celebration-only previews</h2>
+<p>With the game page open, these do not award anything:</p>
+
+<ul>
+  <li><code class="language-plaintext highlighter-rouge">HORProgression.preview.celebrate('normal')</code></li>
+  <li><code class="language-plaintext highlighter-rouge">HORProgression.preview.celebrate('level')</code></li>
+  <li><code class="language-plaintext highlighter-rouge">HORProgression.preview.celebrate('griffin')</code></li>
+  <li><code class="language-plaintext highlighter-rouge">HORProgression.preview.celebrate('feat')</code></li>
+</ul>
+
+<h2 id="read-only-simulation-apis">Read-only simulation APIs</h2>
+<ul>
+  <li><code class="language-plaintext highlighter-rouge">HORProgression.preview.simulateName('Jerome')</code></li>
+  <li><code class="language-plaintext highlighter-rouge">HORProgression.preview.simulateName('Host')</code></li>
+  <li><code class="language-plaintext highlighter-rouge">HORProgression.preview.simulateAll()</code></li>
+  <li><code class="language-plaintext highlighter-rouge">HORProgression.preview.findPersonal()</code></li>
+  <li><code class="language-plaintext highlighter-rouge">HORProgression.preview.dryRunDelta('Jerome',{points:112,tricksWon:6,rookCaptures:1,gamesWon:1})</code></li>
+</ul>
+
+<p>None of these functions write career data.</p>
+
+<h2 id="before-local-progression-is-activated">Before local progression is activated</h2>
+<ol>
+  <li>Run the preview on the actual phone that has the longest-playing career data.</li>
+  <li>Inspect whether <code class="language-plaintext highlighter-rouge">Jerome</code>, <code class="language-plaintext highlighter-rouge">Host</code>, or both exist.</li>
+  <li>If both exist, compare totals and decide explicitly whether they represent the same career. Never auto-merge by name guess.</li>
+  <li>Inspect bots and make sure their existing names/records look correct.</li>
+  <li>Preview all four celebration types and adjust size/timing if desired.</li>
+  <li>Back up/export the old <code class="language-plaintext highlighter-rouge">rookLifetimeStats</code> before the first real migration.</li>
+  <li>Add live hooks for the newer event-only statistics that the old lifetime record cannot prove retroactively (exact bids, close wins, sweeps, comebacks, same-hand Rook+Red2, etc.).</li>
+  <li>Add a one-time migration that imports only provable old counters and records a migration version so it cannot run twice.</li>
+  <li>Activate LOCAL progression only. Keep cloud OFF.</li>
+  <li>Airplane-mode test multiple hands, close/reopen, and verify human and bot progress persists.</li>
+  <li>Only after local behavior is trusted should Cloudflare synchronization be enabled.</li>
+</ol>
+
+<h2 id="ux-rules-when-active-later">UX rules when active later</h2>
+<ul>
+  <li>Achievement accounting happens first; presentation happens second.</li>
+  <li>Unlocks during active trick/card interaction are queued until a safe presentation moment.</li>
+  <li>Multiple unlocks never stack over each other.</li>
+  <li>Normal unlocks are brief; major milestones can be larger and longer.</li>
+  <li>Full / Minimal / Off controls only the celebration visuals, never the earning of achievements.</li>
+  <li>Sound can be disabled independently.</li>
+  <li>Near-completion notices should be sparse (for example 75%, 90%, and very near completion), not shown after every routine event.</li>
+  <li>Offline and online players get the same local achievement experience.</li>
+</ul>
+
+<h2 id="do-not-delete">DO NOT DELETE</h2>
+<p>Keep this file with the game. It documents the safety boundary between read-only preview, local progression activation, and later cloud activation.</p>
+
+
+      
+    </div>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/anchor-js/4.1.0/anchor.min.js" integrity="sha256-lZaRhKri35AyJSypXXs4o6OPFTbTmUoltBbDCbdzegg=" crossorigin="anonymous"></script>
+    <script>anchors.add();</script>
+  </body>
+</html>

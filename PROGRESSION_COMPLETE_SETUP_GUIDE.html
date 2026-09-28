@@ -1,0 +1,872 @@
+<!DOCTYPE html>
+<html lang="en-US">
+  <head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
+<!-- Begin Jekyll SEO tag v2.8.0 -->
+<title>GRIFFIN HOUSE OF ROOKS — COMPLETE DORMANT PROGRESSION SYSTEM GUIDE | Griffin-House-of-Rooks</title>
+<meta name="generator" content="Jekyll v3.10.0" />
+<meta property="og:title" content="GRIFFIN HOUSE OF ROOKS — COMPLETE DORMANT PROGRESSION SYSTEM GUIDE" />
+<meta property="og:locale" content="en_US" />
+<meta name="description" content="A card game featuring birds and trumps." />
+<meta property="og:description" content="A card game featuring birds and trumps." />
+<link rel="canonical" href="https://jeromeleegriffin.github.io/Griffin-House-of-Rooks/PROGRESSION_COMPLETE_SETUP_GUIDE.html" />
+<meta property="og:url" content="https://jeromeleegriffin.github.io/Griffin-House-of-Rooks/PROGRESSION_COMPLETE_SETUP_GUIDE.html" />
+<meta property="og:site_name" content="Griffin-House-of-Rooks" />
+<meta property="og:type" content="website" />
+<meta name="twitter:card" content="summary" />
+<meta property="twitter:title" content="GRIFFIN HOUSE OF ROOKS — COMPLETE DORMANT PROGRESSION SYSTEM GUIDE" />
+<script type="application/ld+json">
+{"@context":"https://schema.org","@type":"WebPage","description":"A card game featuring birds and trumps.","headline":"GRIFFIN HOUSE OF ROOKS — COMPLETE DORMANT PROGRESSION SYSTEM GUIDE","url":"https://jeromeleegriffin.github.io/Griffin-House-of-Rooks/PROGRESSION_COMPLETE_SETUP_GUIDE.html"}</script>
+<!-- End Jekyll SEO tag -->
+
+    <link rel="stylesheet" href="/Griffin-House-of-Rooks/assets/css/style.css?v=2e212b45e2a5f8dd56b4c14502a4283ee80b9a81">
+    <!-- start custom head snippets, customize with your own _includes/head-custom.html file -->
+
+<!-- Setup Google Analytics -->
+
+
+
+<!-- You can set your favicon here -->
+<!-- link rel="shortcut icon" type="image/x-icon" href="/Griffin-House-of-Rooks/favicon.ico" -->
+
+<!-- end custom head snippets -->
+
+  </head>
+  <body>
+    <div class="container-lg px-3 my-5 markdown-body">
+      
+      <h1><a href="https://jeromeleegriffin.github.io/Griffin-House-of-Rooks/">Griffin-House-of-Rooks</a></h1>
+      
+
+      <h1 id="griffin-house-of-rooks--complete-dormant-progression-system-guide">GRIFFIN HOUSE OF ROOKS — COMPLETE DORMANT PROGRESSION SYSTEM GUIDE</h1>
+
+<p><strong>Package:</strong> RookGame450<br />
+<strong>Purpose:</strong> Permanent handoff/setup manual for the dormant career levels, achievements, anonymous identity, recovery, and future Cloudflare progression system.</p>
+
+<hr />
+
+<h1 id="1-current-status--important">1. CURRENT STATUS — IMPORTANT</h1>
+
+<p>The entire new progression framework is installed but <strong>OFF</strong>.</p>
+
+<p>In <code class="language-plaintext highlighter-rouge">progression.js</code>, the master switch is:</p>
+
+<div class="language-js highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nx">enabled</span><span class="p">:</span> <span class="kc">false</span>
+</code></pre></div></div>
+
+<p>As long as that remains <code class="language-plaintext highlighter-rouge">false</code>, the framework is dormant. It does not create a player ID, does not show progression UI, does not create recovery codes, does not call the new progression Worker, and does not alter game rules.</p>
+
+<p>The existing/legacy statistics system and <code class="language-plaintext highlighter-rouge">stats-worker.js</code> are separate and were intentionally left alone.</p>
+
+<p><strong>Do not simply flip <code class="language-plaintext highlighter-rouge">enabled</code> to true and publish.</strong> The new live-game event hooks and visible Career/Achievements interface still need to be connected and tested first. Follow this guide in order.</p>
+
+<hr />
+
+<h1 id="2-files-that-belong-to-this-system">2. FILES THAT BELONG TO THIS SYSTEM</h1>
+
+<h2 id="progressionjs"><code class="language-plaintext highlighter-rouge">progression.js</code></h2>
+<p>Browser-side progression engine. Contains all 50 level thresholds, achievement definitions, anonymous identity generation, local extra-stat storage, recovery-code generation, cloud API helpers, and feature switches.</p>
+
+<h2 id="progression-workerjs"><code class="language-plaintext highlighter-rouge">progression-worker.js</code></h2>
+<p>Separate Cloudflare Worker template for the new progression service. It handles player/device authentication, cloud snapshots, recovery-code creation, recovery, and fetching the player’s stored record.</p>
+
+<h2 id="progression-schemasql"><code class="language-plaintext highlighter-rouge">progression-schema.sql</code></h2>
+<p>SQL used to create the Cloudflare D1 tables needed by <code class="language-plaintext highlighter-rouge">progression-worker.js</code>.</p>
+
+<h2 id="progression_dormant_readmemd"><code class="language-plaintext highlighter-rouge">PROGRESSION_DORMANT_README.md</code></h2>
+<p>Short summary of the dormant system.</p>
+
+<h2 id="progression_complete_setup_guidemd"><code class="language-plaintext highlighter-rouge">PROGRESSION_COMPLETE_SETUP_GUIDE.md</code></h2>
+<p>This file. Keep it in every future build until the progression system is fully activated and documented elsewhere.</p>
+
+<h2 id="stats-workerjs"><code class="language-plaintext highlighter-rouge">stats-worker.js</code></h2>
+<p>The game’s existing statistics Worker. It is NOT the new progression Worker and should not be replaced by <code class="language-plaintext highlighter-rouge">progression-worker.js</code>.</p>
+
+<hr />
+
+<h1 id="3-what-is-already-built">3. WHAT IS ALREADY BUILT</h1>
+
+<h2 id="a-50-career-levels">A. 50 career levels</h2>
+<p>Levels are based on the player’s lifetime <strong>career points</strong>, not a duplicate XP currency.</p>
+
+<p>The progression begins:</p>
+
+<ul>
+  <li>Level 1 — Rookling — 0 points</li>
+  <li>Level 2 — New Hand — 500</li>
+  <li>Level 3 — Trick Taker — 1,250</li>
+  <li>Level 4 — Nest Hunter — 2,500</li>
+  <li>Level 5 — Table Regular — 4,000</li>
+  <li>Level 10 — Rook Veteran — 20,000</li>
+  <li>Level 15 — Seasoned Player — 50,000</li>
+  <li>Level 20 — Rook Expert — 100,000</li>
+  <li>Level 25 — Master Bidder — 175,000</li>
+  <li>Level 30 — Table Master — 275,000</li>
+  <li>Level 35 — Nest Master — 400,000</li>
+  <li>Level 40 — Rook Master — 550,000</li>
+  <li>Level 45 — Griffin Elite — 750,000</li>
+  <li>Level 50 — House Legend — 1,000,000</li>
+</ul>
+
+<p>Every intermediate level also has its own threshold in <code class="language-plaintext highlighter-rouge">progression.js</code>.</p>
+
+<p>The helper <code class="language-plaintext highlighter-rouge">HORProgression.levelFor(points)</code> calculates the current level, title, current threshold, next threshold, and percentage progress toward the next level.</p>
+
+<h2 id="b-25-five-tier-achievement-families--125-medals">B. 25 five-tier achievement families = 125 medals</h2>
+<p>Each family has Bronze, Silver, Gold, Platinum, and Griffin tiers.</p>
+
+<p>Installed families:</p>
+
+<ol>
+  <li>Point Collector — lifetime points</li>
+  <li>Old Hand — hands played</li>
+  <li>Game Night — games played</li>
+  <li>Winner — games won</li>
+  <li>Trick Taker — tricks won</li>
+  <li>Rook Hunter — Rook captures</li>
+  <li>Red 2 Hunter — Red 2 captures</li>
+  <li>Heavy Hitter — 30+ point tricks</li>
+  <li>Nest Raider — nests won</li>
+  <li>Nest Fortune — nest points</li>
+  <li>Bid Winner — bids won</li>
+  <li>Contract Keeper — bids made</li>
+  <li>Moonshiner — successful Shoot the Moon</li>
+  <li>Moon Chaser — Shoot the Moon attempts</li>
+  <li>Bag Collector — bags</li>
+  <li>Hot Streak — longest game-winning streak</li>
+  <li>Exactly — exact bid makes</li>
+  <li>Photo Finish — close wins</li>
+  <li>Dominator — rout wins</li>
+  <li>Clean House — sweep hands</li>
+  <li>Bird &amp; Two — Rook + Red 2 in same hand</li>
+  <li>Comeback Kid — comeback wins</li>
+  <li>Trump Traveler — wins across all trump colors</li>
+  <li>Contract Streak — longest consecutive made-bid streak</li>
+  <li>Partner Power — same-partner wins</li>
+</ol>
+
+<p>The exact five thresholds for every family are defined in the <code class="language-plaintext highlighter-rouge">FAMILIES</code> array in <code class="language-plaintext highlighter-rouge">progression.js</code>.</p>
+
+<h2 id="c-20-special-one-time-feats">C. 20 special one-time feats</h2>
+<p>Installed feats include:</p>
+
+<ul>
+  <li>First Trick</li>
+  <li>First Victory</li>
+  <li>Got the Bird</li>
+  <li>Seeing Red</li>
+  <li>Nest Egg</li>
+  <li>I’ll Take It</li>
+  <li>Made It</li>
+  <li>Shooting Star</li>
+  <li>Bold Bid — bid 150+</li>
+  <li>Fearless — bid 180+</li>
+  <li>No Fear — bid 200+</li>
+  <li>Big Haul — 150+ points in one hand</li>
+  <li>Monster Hand — 200+ points in one hand</li>
+  <li>Monster Trick — 50+ point trick</li>
+  <li>Called It — make a contract exactly</li>
+  <li>Too Close — win by 5 or less</li>
+  <li>Rout — win by 200+</li>
+  <li>Clean Sweep — take every trick in a hand</li>
+  <li>Bird &amp; Two — capture Rook and Red 2 in same hand</li>
+  <li>Four Colors — win with every trump color</li>
+</ul>
+
+<h2 id="d-new-advanced-statistics-model">D. New advanced statistics model</h2>
+<p>The dormant framework already has storage fields for:</p>
+
+<ul>
+  <li>current winning streak</li>
+  <li>longest winning streak</li>
+  <li>current made-bid streak</li>
+  <li>longest made-bid streak</li>
+  <li>exact bid makes</li>
+  <li>close wins</li>
+  <li>rout wins</li>
+  <li>comeback wins</li>
+  <li>sweep hands</li>
+  <li>best points captured in one hand</li>
+  <li>best single-trick points</li>
+  <li>Rook + Red 2 captured in same hand</li>
+  <li>wins by trump color (black/red/green/yellow)</li>
+  <li>all-trump-color-win completions</li>
+  <li>same-partner wins</li>
+  <li>achievement unlock record</li>
+  <li>last update timestamp</li>
+</ul>
+
+<p>These fields exist, but the game-event hooks that increment them are intentionally NOT connected yet.</p>
+
+<h2 id="e-anonymous-no-signup-player-identity">E. Anonymous no-signup player identity</h2>
+<p>When enabled, the browser can generate:</p>
+
+<ul>
+  <li>a random cryptographic <code class="language-plaintext highlighter-rouge">playerId</code></li>
+  <li>a random 32-byte <code class="language-plaintext highlighter-rouge">deviceSecret</code></li>
+  <li>a creation timestamp</li>
+</ul>
+
+<p>They are stored locally under:</p>
+
+<p><code class="language-plaintext highlighter-rouge">horPlayerIdentityV1</code></p>
+
+<p>This lets a player be recognized automatically without creating a username/password account.</p>
+
+<h2 id="f-no-email-recovery-codes">F. No-email recovery codes</h2>
+<p>The browser can generate a code shaped like:</p>
+
+<p><code class="language-plaintext highlighter-rouge">GRIFFIN-XXXX-XXXX-XXXX</code></p>
+
+<p>The Worker stores only a SHA-256 hash of the recovery code. The player can later enter the code on another device to recover the same cloud player identity.</p>
+
+<p><strong>Important:</strong> recovery currently rotates the player’s device secret. In the present template, restoring on a new device therefore invalidates the old device secret. If you want simultaneous multi-device play, change the server model to a separate devices table before public launch.</p>
+
+<h2 id="g-cloud-api-routes-already-templated">G. Cloud API routes already templated</h2>
+<p>The future Worker provides:</p>
+
+<ul>
+  <li><code class="language-plaintext highlighter-rouge">POST /v2/sync</code> — save career/achievement snapshot</li>
+  <li><code class="language-plaintext highlighter-rouge">POST /v2/me</code> — retrieve the current cloud record</li>
+  <li><code class="language-plaintext highlighter-rouge">POST /v2/recovery/create</code> — register a recovery code</li>
+  <li><code class="language-plaintext highlighter-rouge">POST /v2/recovery/restore</code> — restore identity with a recovery code</li>
+</ul>
+
+<h2 id="h-bot-progression-switch">H. Bot progression switch</h2>
+<p><code class="language-plaintext highlighter-rouge">botProgressionEnabled</code> exists and defaults OFF. It is reserved for showing levels/badges for named bots later.</p>
+
+<hr />
+
+<h1 id="4-master-feature-switches">4. MASTER FEATURE SWITCHES</h1>
+
+<p>At the top of <code class="language-plaintext highlighter-rouge">progression.js</code> is <code class="language-plaintext highlighter-rouge">CONFIG</code>.</p>
+
+<div class="language-js highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kd">const</span> <span class="nx">CONFIG</span> <span class="o">=</span> <span class="p">{</span>
+  <span class="na">enabled</span><span class="p">:</span> <span class="kc">false</span><span class="p">,</span>
+  <span class="na">uiEnabled</span><span class="p">:</span> <span class="kc">false</span><span class="p">,</span>
+  <span class="na">notificationsEnabled</span><span class="p">:</span> <span class="kc">false</span><span class="p">,</span>
+  <span class="na">identityEnabled</span><span class="p">:</span> <span class="kc">false</span><span class="p">,</span>
+  <span class="na">cloudEnabled</span><span class="p">:</span> <span class="kc">false</span><span class="p">,</span>
+  <span class="na">recoveryEnabled</span><span class="p">:</span> <span class="kc">false</span><span class="p">,</span>
+  <span class="na">botProgressionEnabled</span><span class="p">:</span> <span class="kc">false</span><span class="p">,</span>
+  <span class="na">endpoint</span><span class="p">:</span> <span class="dl">''</span><span class="p">,</span>
+  <span class="na">schemaVersion</span><span class="p">:</span> <span class="mi">1</span>
+<span class="p">};</span>
+</code></pre></div></div>
+
+<p>Meaning:</p>
+
+<ul>
+  <li><code class="language-plaintext highlighter-rouge">enabled</code> — master kill switch. Nothing activates while false.</li>
+  <li><code class="language-plaintext highlighter-rouge">uiEnabled</code> — future Career/Achievements screen and lobby career card.</li>
+  <li><code class="language-plaintext highlighter-rouge">notificationsEnabled</code> — future achievement/level-up notifications.</li>
+  <li><code class="language-plaintext highlighter-rouge">identityEnabled</code> — anonymous player ID/device secret.</li>
+  <li><code class="language-plaintext highlighter-rouge">cloudEnabled</code> — permits calls to the new progression Worker.</li>
+  <li><code class="language-plaintext highlighter-rouge">recoveryEnabled</code> — recovery-code feature.</li>
+  <li><code class="language-plaintext highlighter-rouge">botProgressionEnabled</code> — bot level/badge display.</li>
+  <li><code class="language-plaintext highlighter-rouge">endpoint</code> — full URL of the deployed progression Worker.</li>
+</ul>
+
+<p><strong>Turn <code class="language-plaintext highlighter-rouge">enabled</code> on LAST.</strong></p>
+
+<hr />
+
+<h1 id="5-complete-activation-plan">5. COMPLETE ACTIVATION PLAN</h1>
+
+<p>Use these steps in this exact general order.</p>
+
+<h2 id="step-1--preserve-the-newest-working-game">STEP 1 — Preserve the newest working game</h2>
+<p>Do not activate against an old copy merely because this guide lives in RookGame450.</p>
+
+<p>When activation day arrives:</p>
+
+<ol>
+  <li>Start from the newest tested working Rook game.</li>
+  <li>Make a backup ZIP before changing progression code.</li>
+  <li>Confirm normal offline and online gameplay works.</li>
+  <li>Confirm bidding, discarding, trump selection, tricks, scoring, game ending, rematch/new game, and existing statistics work.</li>
+  <li>Keep the progression files from this package available for comparison.</li>
+</ol>
+
+<p>Do not replace a newer <code class="language-plaintext highlighter-rouge">index.html</code> wholesale with RookGame450’s <code class="language-plaintext highlighter-rouge">index.html</code> if the game has advanced since then. Port the progression files/hooks into the current build surgically.</p>
+
+<h2 id="step-2--verify-the-legacy-statistics-names">STEP 2 — Verify the legacy statistics names</h2>
+<p>Before wiring achievements, confirm the current game’s career-stat object still uses the expected fields:</p>
+
+<p><code class="language-plaintext highlighter-rouge">points</code>, <code class="language-plaintext highlighter-rouge">hands</code>, <code class="language-plaintext highlighter-rouge">gamesPlayed</code>, <code class="language-plaintext highlighter-rouge">gamesWon</code>, <code class="language-plaintext highlighter-rouge">tricksWon</code>, <code class="language-plaintext highlighter-rouge">rookCaptures</code>, <code class="language-plaintext highlighter-rouge">red2Captures</code>, <code class="language-plaintext highlighter-rouge">bigTricks</code>, <code class="language-plaintext highlighter-rouge">nestWins</code>, <code class="language-plaintext highlighter-rouge">nestPts</code>, <code class="language-plaintext highlighter-rouge">bidsWon</code>, <code class="language-plaintext highlighter-rouge">bidsMade</code>, <code class="language-plaintext highlighter-rouge">moonMade</code>, <code class="language-plaintext highlighter-rouge">moonAttempts</code>, <code class="language-plaintext highlighter-rouge">bags</code>, <code class="language-plaintext highlighter-rouge">highBid</code>.</p>
+
+<p>If a future build renamed any field, update the matching <code class="language-plaintext highlighter-rouge">stat:</code> entries in <code class="language-plaintext highlighter-rouge">FAMILIES</code>/<code class="language-plaintext highlighter-rouge">FEATS</code> rather than maintaining two conflicting counters.</p>
+
+<h2 id="step-3--hook-the-advanced-counters-into-actual-game-events">STEP 3 — Hook the advanced counters into actual game events</h2>
+<p>This is the most important unfinished browser-side step.</p>
+
+<p>Connect counters to authoritative moments that occur exactly once. Do NOT infer them from animations or button clicks.</p>
+
+<h3 id="at-each-completed-trick">At each completed trick</h3>
+<p>After the game has determined the trick winner and trick point value:</p>
+
+<ul>
+  <li>update <code class="language-plaintext highlighter-rouge">bestTrickPoints</code> if this trick is larger</li>
+  <li>existing stats should increment <code class="language-plaintext highlighter-rouge">tricksWon</code></li>
+  <li>existing stats should increment <code class="language-plaintext highlighter-rouge">bigTricks</code> when applicable</li>
+  <li>remember whether the player captured the Rook in this hand</li>
+  <li>remember whether the player captured Red 2 in this hand</li>
+  <li>count tricks won in the current hand for sweep detection</li>
+</ul>
+
+<h3 id="at-the-end-of-each-hand">At the end of each hand</h3>
+<p>After final hand points are known:</p>
+
+<ul>
+  <li>update <code class="language-plaintext highlighter-rouge">bestHandPoints</code></li>
+  <li>if the same player captured both special cards, increment <code class="language-plaintext highlighter-rouge">rookAndRed2SameHand</code></li>
+  <li>if the player won every trick, increment <code class="language-plaintext highlighter-rouge">sweepHands</code></li>
+  <li>clear temporary per-hand Rook/Red2/trick counters for the next hand</li>
+</ul>
+
+<h3 id="when-a-bidcontract-is-resolved">When a bid/contract is resolved</h3>
+<p>For the winning bidder:</p>
+
+<ul>
+  <li>if the contract was made, increment/maintain the made-bid streak</li>
+  <li>if set, reset the current made-bid streak</li>
+  <li>update <code class="language-plaintext highlighter-rouge">longestMadeBidStreak</code> when the current streak reaches a new record</li>
+  <li>if final contract result exactly equals the required bid, increment <code class="language-plaintext highlighter-rouge">exactBidMakes</code></li>
+</ul>
+
+<p>Use the game’s real contract/scoring rules for “exact”; do not guess from UI text.</p>
+
+<h3 id="when-a-complete-game-is-won">When a complete game is won</h3>
+<p>After the game winner and final team/player scores are final:</p>
+
+<ul>
+  <li>increment current winning streak for the winning human; reset it after a loss</li>
+  <li>update <code class="language-plaintext highlighter-rouge">longestWinStreak</code></li>
+  <li>calculate winning margin</li>
+  <li>increment <code class="language-plaintext highlighter-rouge">closeWins</code> for margin &lt;= 5</li>
+  <li>increment <code class="language-plaintext highlighter-rouge">routWins</code> for margin &gt;= 200</li>
+  <li>calculate <code class="language-plaintext highlighter-rouge">comebackWins</code> only after a precise comeback definition has been chosen and recorded</li>
+  <li>record the winning trump color</li>
+  <li>update <code class="language-plaintext highlighter-rouge">trumpWins.black/red/green/yellow</code></li>
+  <li>determine whether all four colors have been won with; increment/award the all-colors progression only according to the final chosen design</li>
+  <li>update same-partner statistics only when stable player/partner identity is available</li>
+</ul>
+
+<h3 id="definitions-that-must-be-settled-before-public-tracking">Definitions that MUST be settled before public tracking</h3>
+<p>Document these so statistics never silently change meaning later:</p>
+
+<ul>
+  <li>what exactly qualifies as a “comeback”</li>
+  <li>whether a 5-point tie boundary counts as Photo Finish (current intended rule: &lt;= 5)</li>
+  <li>whether a 200-point boundary counts as Rout (current intended rule: &gt;= 200)</li>
+  <li>whether sweep means all tricks by one player or all tricks by the player’s team</li>
+  <li>whether partner achievements are per named partner, one favorite partner, or aggregate repeats</li>
+  <li>how all-trump-color progress resets/repeats after earning a tier</li>
+</ul>
+
+<h2 id="step-4--evaluate-achievements-after-authoritative-updates">STEP 4 — Evaluate achievements after authoritative updates</h2>
+<p>After a completed stat update, create a combined stat snapshot containing legacy career stats plus the new extra stats.</p>
+
+<p>Call:</p>
+
+<div class="language-js highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nx">HORProgression</span><span class="p">.</span><span class="nx">evaluate</span><span class="p">(</span><span class="nx">combinedStats</span><span class="p">,</span> <span class="nx">extras</span><span class="p">.</span><span class="nx">achievements</span><span class="p">)</span>
+</code></pre></div></div>
+
+<p>For every returned unlock:</p>
+
+<ol>
+  <li>mark its ID in <code class="language-plaintext highlighter-rouge">extras.achievements</code></li>
+  <li>save the extras record</li>
+  <li>queue a notification only if notifications are enabled</li>
+  <li>include the achievement record in the next cloud sync</li>
+</ol>
+
+<p>Never award an achievement merely because an animation played; award from final game state.</p>
+
+<h2 id="step-5--buildtest-the-career--achievements-ui-while-still-offline">STEP 5 — Build/test the Career &amp; Achievements UI while still offline</h2>
+<p>Before cloud activation, build the UI against local stats.</p>
+
+<p>Recommended lobby career card:</p>
+
+<ul>
+  <li>player display name</li>
+  <li>Level number</li>
+  <li>Level title</li>
+  <li>lifetime career points</li>
+  <li>progress bar toward next level</li>
+  <li>number of medals/feats earned</li>
+  <li>button/open action for Career &amp; Achievements</li>
+</ul>
+
+<p>Recommended Career &amp; Achievements screen:</p>
+
+<ul>
+  <li>Career overview</li>
+  <li>current level/title</li>
+  <li>points and next-level requirement</li>
+  <li>progress bar</li>
+  <li>achievement category filters</li>
+  <li>each five-tier family shown as ONE card with its five medals</li>
+  <li>current progress, e.g. <code class="language-plaintext highlighter-rouge">238 / 250</code></li>
+  <li>locked tiers visible but clearly locked</li>
+  <li>earned date can be added later if stored</li>
+  <li>separate Special Feats section</li>
+</ul>
+
+<p>Achievement notifications should be compact and non-blocking during play. Major milestones may get a larger celebration later.</p>
+
+<p>Test the UI at tiny values, near thresholds, exactly at thresholds, beyond thresholds, Level 50, and with old players who already have large lifetime totals.</p>
+
+<h2 id="step-6--decide-how-existing-players-are-grandfathered">STEP 6 — Decide how existing players are grandfathered</h2>
+<p>Recommended behavior: <strong>retroactively award everything provable from existing lifetime statistics</strong>.</p>
+
+<p>For example, an existing player with 300 Rook captures should immediately qualify for the Rook Hunter tiers whose thresholds they already passed.</p>
+
+<p>Do NOT fabricate historical achievements that cannot be proven from stored data. New statistics such as exact bids or winning streaks should begin at zero unless trustworthy historical data exists.</p>
+
+<p>On first activation:</p>
+
+<ol>
+  <li>read current legacy career stats</li>
+  <li>merge new extra-stat defaults</li>
+  <li>run achievement evaluation</li>
+  <li>mark all provable historical tiers/feats as earned</li>
+  <li>avoid spamming 30 separate popups; show one “Career achievements imported” summary instead</li>
+</ol>
+
+<h2 id="step-7--create-the-cloudflare-d1-database">STEP 7 — Create the Cloudflare D1 database</h2>
+<p>In the Cloudflare dashboard, create a new D1 database dedicated to progression. A clear name would be:</p>
+
+<p><code class="language-plaintext highlighter-rouge">griffin-rooks-progression</code></p>
+
+<p>Do not reuse or destroy the database used by the legacy stats system unless you intentionally redesign both systems together.</p>
+
+<h2 id="step-8--run-the-database-schema">STEP 8 — Run the database schema</h2>
+<p>Open the D1 database console and execute the contents of:</p>
+
+<p><code class="language-plaintext highlighter-rouge">progression-schema.sql</code></p>
+
+<p>It creates:</p>
+
+<h3 id="players"><code class="language-plaintext highlighter-rouge">players</code></h3>
+<ul>
+  <li><code class="language-plaintext highlighter-rouge">player_id</code> — anonymous stable player ID</li>
+  <li><code class="language-plaintext highlighter-rouge">secret_hash</code> — SHA-256 hash of device secret</li>
+  <li><code class="language-plaintext highlighter-rouge">created_at</code></li>
+  <li><code class="language-plaintext highlighter-rouge">updated_at</code></li>
+  <li><code class="language-plaintext highlighter-rouge">career_json</code></li>
+  <li><code class="language-plaintext highlighter-rouge">achievements_json</code></li>
+</ul>
+
+<h3 id="recovery"><code class="language-plaintext highlighter-rouge">recovery</code></h3>
+<ul>
+  <li><code class="language-plaintext highlighter-rouge">recovery_hash</code> — SHA-256 hash of recovery code</li>
+  <li><code class="language-plaintext highlighter-rouge">player_id</code></li>
+  <li><code class="language-plaintext highlighter-rouge">created_at</code></li>
+</ul>
+
+<p>It also creates an index for recovery lookup by player.</p>
+
+<p>Verify both tables exist before proceeding.</p>
+
+<h2 id="step-9--create-a-new-cloudflare-worker">STEP 9 — Create a NEW Cloudflare Worker</h2>
+<p>Create a separate Worker for progression rather than replacing the current legacy stats Worker.</p>
+
+<p>Paste the complete contents of:</p>
+
+<p><code class="language-plaintext highlighter-rouge">progression-worker.js</code></p>
+
+<p>into the new Worker.</p>
+
+<p>A clear Worker name would be:</p>
+
+<p><code class="language-plaintext highlighter-rouge">griffin-rooks-progression</code></p>
+
+<h2 id="step-10--bind-d1-to-the-worker">STEP 10 — Bind D1 to the Worker</h2>
+<p>In the progression Worker’s bindings/settings:</p>
+
+<ol>
+  <li>Add a D1 database binding.</li>
+  <li>Set the binding variable name EXACTLY to:</li>
+</ol>
+
+<p><code class="language-plaintext highlighter-rouge">DB</code></p>
+
+<ol>
+  <li>Select the progression D1 database created earlier.</li>
+  <li>Save/deploy.</li>
+</ol>
+
+<p>The Worker code expects <code class="language-plaintext highlighter-rouge">env.DB</code>; another binding name will fail unless the code is changed too.</p>
+
+<h2 id="step-11--record-the-worker-url">STEP 11 — Record the Worker URL</h2>
+<p>After deployment, copy the public HTTPS Worker URL.</p>
+
+<p>Example shape only:</p>
+
+<p><code class="language-plaintext highlighter-rouge">https://griffin-rooks-progression.&lt;your-subdomain&gt;.workers.dev</code></p>
+
+<p>Do not copy the example literally. Use the actual URL Cloudflare gives you.</p>
+
+<h2 id="step-12--put-the-worker-url-into-progressionjs">STEP 12 — Put the Worker URL into <code class="language-plaintext highlighter-rouge">progression.js</code></h2>
+<p>Change:</p>
+
+<div class="language-js highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nx">endpoint</span><span class="p">:</span> <span class="dl">''</span>
+</code></pre></div></div>
+
+<p>to the real deployed Worker URL.</p>
+
+<p>Do not add a trailing route such as <code class="language-plaintext highlighter-rouge">/v2/sync</code>; the browser code appends the API paths itself.</p>
+
+<h2 id="step-13--test-anonymous-identity-locally-before-enabling-cloud">STEP 13 — Test anonymous identity LOCALLY before enabling cloud</h2>
+<p>With a test build, set:</p>
+
+<div class="language-js highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nx">enabled</span><span class="p">:</span> <span class="kc">true</span><span class="p">,</span>
+<span class="nx">identityEnabled</span><span class="p">:</span> <span class="kc">true</span><span class="p">,</span>
+<span class="nx">cloudEnabled</span><span class="p">:</span> <span class="kc">false</span><span class="p">,</span>
+<span class="nx">recoveryEnabled</span><span class="p">:</span> <span class="kc">false</span><span class="p">,</span>
+<span class="nx">uiEnabled</span><span class="p">:</span> <span class="kc">false</span><span class="p">,</span>
+<span class="nx">notificationsEnabled</span><span class="p">:</span> <span class="kc">false</span>
+</code></pre></div></div>
+
+<p>Load the game once. Verify <code class="language-plaintext highlighter-rouge">horPlayerIdentityV1</code> is created in localStorage and contains a random <code class="language-plaintext highlighter-rouge">playerId</code> and <code class="language-plaintext highlighter-rouge">deviceSecret</code>.</p>
+
+<p>Reload the page. Verify the SAME identity remains.</p>
+
+<p>Close/reopen browser. Verify it remains.</p>
+
+<p>Do not publish yet.</p>
+
+<h2 id="step-14--test-cloud-creation-and-sync">STEP 14 — Test cloud creation and sync</h2>
+<p>Now set <code class="language-plaintext highlighter-rouge">cloudEnabled: true</code> in the test build.</p>
+
+<p>Test <code class="language-plaintext highlighter-rouge">/v2/me</code> or <code class="language-plaintext highlighter-rouge">/v2/sync</code> through the browser helper. On first authenticated request, the Worker creates the player row automatically.</p>
+
+<p>Verify in D1:</p>
+
+<ul>
+  <li>one player row appears</li>
+  <li><code class="language-plaintext highlighter-rouge">player_id</code> matches the browser identity</li>
+  <li>only the HASH of the device secret is stored server-side</li>
+  <li>timestamps update</li>
+  <li>career JSON stores the intended snapshot</li>
+  <li>achievement JSON stores the intended snapshot</li>
+</ul>
+
+<p>Reload and sync again. Confirm it updates the same player instead of creating duplicates.</p>
+
+<h2 id="step-15--add-normal-sync-points">STEP 15 — Add normal sync points</h2>
+<p>Do not sync every animation/frame/button press.</p>
+
+<p>Recommended cloud sync moments:</p>
+
+<ul>
+  <li>after a completed hand when career stats changed</li>
+  <li>after a completed game</li>
+  <li>immediately after important achievement/level changes if needed</li>
+  <li>when returning to lobby</li>
+  <li>optional best-effort page hide/unload sync, but never rely on unload alone</li>
+</ul>
+
+<p>Keep local stats first so a temporary network failure does not block gameplay.</p>
+
+<p>If cloud sync fails, queue/retry later rather than interrupting a Rook hand.</p>
+
+<h2 id="step-16--test-recovery-code-creation">STEP 16 — Test recovery code creation</h2>
+<p>Enable:</p>
+
+<div class="language-js highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nx">recoveryEnabled</span><span class="p">:</span> <span class="kc">true</span>
+</code></pre></div></div>
+
+<p>Provide a “Protect/Recover My Progress” area in Career settings.</p>
+
+<p>When the player requests protection, call:</p>
+
+<div class="language-js highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">await</span> <span class="nx">HORProgression</span><span class="p">.</span><span class="nx">createRecoveryCode</span><span class="p">()</span>
+</code></pre></div></div>
+
+<p>Display the returned <code class="language-plaintext highlighter-rouge">GRIFFIN-XXXX-XXXX-XXXX</code> code clearly and tell the player to save it privately.</p>
+
+<p>Do not expose another player’s code and do not use the code as a public player ID.</p>
+
+<h2 id="step-17--test-recovery-on-a-separate-test-browserdevice">STEP 17 — Test recovery on a separate test browser/device</h2>
+<p>On a second browser/profile/device with no existing identity:</p>
+
+<ol>
+  <li>choose “Restore Progress”</li>
+  <li>enter the recovery code</li>
+  <li>call <code class="language-plaintext highlighter-rouge">HORProgression.restoreWithCode(code)</code></li>
+  <li>verify the Worker returns the original <code class="language-plaintext highlighter-rouge">playerId</code></li>
+  <li>verify a new device secret is installed locally</li>
+  <li>call <code class="language-plaintext highlighter-rouge">/v2/me</code></li>
+  <li>restore/merge the player’s cloud career and achievements according to the migration rules</li>
+  <li>confirm the correct level/achievements display</li>
+</ol>
+
+<h3 id="current-single-device-warning">Current single-device warning</h3>
+<p>The current recovery Worker changes the secret stored on the player row. Therefore a successful recovery makes the previous device’s secret invalid.</p>
+
+<p>Before advertising seamless multi-device support, choose one of these designs:</p>
+
+<ul>
+  <li><strong>Simple:</strong> recovery transfers the account to the new device and old device must recover again later.</li>
+  <li><strong>Better multi-device design:</strong> add a <code class="language-plaintext highlighter-rouge">devices</code> table with multiple hashed device secrets per player.</li>
+</ul>
+
+<p>Do not silently promise simultaneous multi-device play with the current template.</p>
+
+<h2 id="step-18--add-server-side-anti-cheat-before-public-leaderboardsrewards">STEP 18 — Add server-side anti-cheat before public leaderboards/rewards</h2>
+<p>The current <code class="language-plaintext highlighter-rouge">/v2/sync</code> endpoint stores a client-supplied snapshot. This is sufficient for development/testing and personal cloud persistence, but a modified browser could submit fake totals.</p>
+
+<p>Before using these numbers for competitive public leaderboards, prizes, paid unlocks, or authoritative rankings, strengthen the server design.</p>
+
+<p>At minimum add:</p>
+
+<ul>
+  <li>request rate limiting</li>
+  <li>sanity limits on increases per hand/game</li>
+  <li>schema/type validation</li>
+  <li>reject negative/impossible totals</li>
+  <li>monotonic lifetime counters where appropriate</li>
+  <li>server-side timestamps</li>
+  <li>duplicate-event protection/idempotency</li>
+  <li>preferably signed/validated match or hand events rather than trusting arbitrary full snapshots</li>
+</ul>
+
+<p>Never put Cloudflare administrative API tokens or database credentials in <code class="language-plaintext highlighter-rouge">index.html</code> or <code class="language-plaintext highlighter-rouge">progression.js</code>.</p>
+
+<h2 id="step-19--build-recoveryprivacy-controls">STEP 19 — Build recovery/privacy controls</h2>
+<p>Before public activation, add understandable controls:</p>
+
+<ul>
+  <li>view/copy recovery code or generate one</li>
+  <li>restore from recovery code</li>
+  <li>explanation that no email/password is required</li>
+  <li>explanation that clearing browser data without a recovery method can lose local identity</li>
+  <li>privacy information describing what is stored</li>
+</ul>
+
+<p>If analytics/stat collection practices change, update <code class="language-plaintext highlighter-rouge">privacy.html</code> accordingly.</p>
+
+<h2 id="step-20--decide-bot-progression-behavior">STEP 20 — Decide bot progression behavior</h2>
+<p>Leave <code class="language-plaintext highlighter-rouge">botProgressionEnabled:false</code> until human progression is stable.</p>
+
+<p>If enabled later, named bots can display calculated levels/badges using their persistent career statistics. Do not create cloud device credentials/recovery codes for bots unless there is a specific server-side reason.</p>
+
+<h2 id="step-21--full-regression-test-before-the-master-launch">STEP 21 — Full regression test BEFORE the master launch</h2>
+<p>Test at least:</p>
+
+<ul>
+  <li>Android Chrome</li>
+  <li>iPhone Safari</li>
+  <li>desktop browser</li>
+  <li>offline/local play</li>
+  <li>online/multiplayer play if applicable</li>
+  <li>new player with zero history</li>
+  <li>established player with large legacy stats</li>
+  <li>refresh during lobby</li>
+  <li>refresh during/after a game</li>
+  <li>network unavailable</li>
+  <li>Worker temporarily unavailable</li>
+  <li>duplicate sync attempt</li>
+  <li>recovery code correct</li>
+  <li>recovery code incorrect</li>
+  <li>cleared localStorage scenario</li>
+  <li>achievement exactly at threshold</li>
+  <li>multiple achievements unlocked in one hand</li>
+  <li>Level 49 -&gt; Level 50</li>
+  <li>no achievement popup blocking discard/bid/trump/play controls</li>
+  <li>existing statistics page still correct</li>
+  <li>legacy Worker still functioning</li>
+</ul>
+
+<p>Progression must fail gracefully: if Cloudflare is unreachable, the card game should still play.</p>
+
+<h2 id="step-22--turn-visible-features-on-gradually">STEP 22 — Turn visible features on gradually</h2>
+<p>Recommended test order:</p>
+
+<h3 id="stage-a--local-progression-only">Stage A — local progression only</h3>
+<div class="language-js highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nx">enabled</span><span class="p">:</span> <span class="kc">true</span>
+<span class="nx">identityEnabled</span><span class="p">:</span> <span class="kc">true</span>
+<span class="nx">uiEnabled</span><span class="p">:</span> <span class="kc">true</span>
+<span class="nx">notificationsEnabled</span><span class="p">:</span> <span class="kc">true</span>
+<span class="nx">cloudEnabled</span><span class="p">:</span> <span class="kc">false</span>
+<span class="nx">recoveryEnabled</span><span class="p">:</span> <span class="kc">false</span>
+</code></pre></div></div>
+
+<h3 id="stage-b--cloud-test">Stage B — cloud test</h3>
+<p>Turn <code class="language-plaintext highlighter-rouge">cloudEnabled:true</code> only after D1/Worker tests pass.</p>
+
+<h3 id="stage-c--recovery-test">Stage C — recovery test</h3>
+<p>Turn <code class="language-plaintext highlighter-rouge">recoveryEnabled:true</code> after cloud sync is stable.</p>
+
+<h3 id="stage-d--bots">Stage D — bots</h3>
+<p>Turn <code class="language-plaintext highlighter-rouge">botProgressionEnabled:true</code> only if desired after human progression is proven.</p>
+
+<p>For the public production build, <code class="language-plaintext highlighter-rouge">enabled:true</code> should be the LAST deliberate activation change after all dependencies are ready.</p>
+
+<hr />
+
+<h1 id="6-datamigration-rules-to-keep">6. DATA/MIGRATION RULES TO KEEP</h1>
+
+<ol>
+  <li><strong>Career points are the level currency.</strong> Do not introduce a second XP total unless the design is intentionally changed later.</li>
+  <li>Existing lifetime statistics should be reused, not duplicated.</li>
+  <li>Old players receive retroactive achievements only when existing data proves them.</li>
+  <li>New advanced counters start from zero if history cannot prove them.</li>
+  <li>Keep local progress usable when cloud is down.</li>
+  <li>Cloud should merge carefully; never casually overwrite a larger trusted lifetime total with an empty/new-device total.</li>
+  <li>Every future schema/data-format change should increment <code class="language-plaintext highlighter-rouge">schemaVersion</code> and include migration logic.</li>
+  <li>Never delete legacy stats during progression migration until backups and validation confirm the new system is correct.</li>
+</ol>
+
+<hr />
+
+<h1 id="7-recommended-cloud-merge-policy">7. RECOMMENDED CLOUD MERGE POLICY</h1>
+
+<p>Before public activation, implement a defined merge policy.</p>
+
+<p>For monotonic lifetime counters such as points, hands, games, wins, tricks, captures, etc., the safer recovery merge is generally the larger trusted value rather than blindly replacing cloud with a fresh device’s zero.</p>
+
+<p>For records such as <code class="language-plaintext highlighter-rouge">bestHandPoints</code>, <code class="language-plaintext highlighter-rouge">bestTrickPoints</code>, <code class="language-plaintext highlighter-rouge">longestWinStreak</code>, and <code class="language-plaintext highlighter-rouge">longestMadeBidStreak</code>, use the maximum trusted value.</p>
+
+<p>For achievement IDs, use the union of earned achievements.</p>
+
+<p>For current streaks, use the authoritative most-recent game state rather than maximum.</p>
+
+<p>For timestamps, preserve creation time and update <code class="language-plaintext highlighter-rouge">updated_at</code> server-side.</p>
+
+<p>This merge logic is NOT yet fully implemented in the dormant template; it must be added/tested during activation.</p>
+
+<hr />
+
+<h1 id="8-recommended-player-experience">8. RECOMMENDED PLAYER EXPERIENCE</h1>
+
+<p>The intended public experience is deliberately low-friction:</p>
+
+<ol>
+  <li>Player enters/uses their normal display name.</li>
+  <li>Game silently creates an anonymous player identity.</li>
+  <li>They play normally without signup/login.</li>
+  <li>Career points automatically determine their level.</li>
+  <li>Achievements unlock from actual play.</li>
+  <li>The lobby shows a compact Career card.</li>
+  <li>Career/Achievements page shows detailed progress.</li>
+  <li>Player may optionally generate/save a recovery code.</li>
+  <li>On a new device they can choose “Restore Progress” and enter that code.</li>
+  <li>Email/password account creation is not required by this design.</li>
+</ol>
+
+<hr />
+
+<h1 id="9-what-not-to-do">9. WHAT NOT TO DO</h1>
+
+<ul>
+  <li>Do not replace <code class="language-plaintext highlighter-rouge">stats-worker.js</code> with <code class="language-plaintext highlighter-rouge">progression-worker.js</code>.</li>
+  <li>Do not turn <code class="language-plaintext highlighter-rouge">enabled:true</code> before event hooks/UI/cloud are tested.</li>
+  <li>Do not trust browser-submitted totals for competitive rewards without server validation.</li>
+  <li>Do not put administrative Cloudflare credentials in browser JavaScript.</li>
+  <li>Do not award achievements from animation/UI events.</li>
+  <li>Do not wipe existing player statistics during migration.</li>
+  <li>Do not assume recovery currently supports two simultaneously authorized devices.</li>
+  <li>Do not overwrite a newer working <code class="language-plaintext highlighter-rouge">index.html</code> with this older build just to obtain progression.</li>
+  <li>Do not spam returning veteran players with dozens of individual retroactive unlock popups.</li>
+</ul>
+
+<hr />
+
+<h1 id="10-final-go-live-checklist">10. FINAL GO-LIVE CHECKLIST</h1>
+
+<p>Before changing the production master switch to ON, all of these should be YES:</p>
+
+<ul class="task-list">
+  <li class="task-list-item"><input type="checkbox" class="task-list-item-checkbox" disabled="disabled" />Current game baseline backed up</li>
+  <li class="task-list-item"><input type="checkbox" class="task-list-item-checkbox" disabled="disabled" />Legacy stats verified</li>
+  <li class="task-list-item"><input type="checkbox" class="task-list-item-checkbox" disabled="disabled" />Advanced event hooks connected</li>
+  <li class="task-list-item"><input type="checkbox" class="task-list-item-checkbox" disabled="disabled" />Achievement calculations tested</li>
+  <li class="task-list-item"><input type="checkbox" class="task-list-item-checkbox" disabled="disabled" />Career/Achievements UI tested</li>
+  <li class="task-list-item"><input type="checkbox" class="task-list-item-checkbox" disabled="disabled" />Existing-player grandfathering tested</li>
+  <li class="task-list-item"><input type="checkbox" class="task-list-item-checkbox" disabled="disabled" />D1 database created</li>
+  <li class="task-list-item"><input type="checkbox" class="task-list-item-checkbox" disabled="disabled" /><code class="language-plaintext highlighter-rouge">progression-schema.sql</code> executed</li>
+  <li class="task-list-item"><input type="checkbox" class="task-list-item-checkbox" disabled="disabled" />Separate progression Worker deployed</li>
+  <li class="task-list-item"><input type="checkbox" class="task-list-item-checkbox" disabled="disabled" />D1 binding named <code class="language-plaintext highlighter-rouge">DB</code></li>
+  <li class="task-list-item"><input type="checkbox" class="task-list-item-checkbox" disabled="disabled" />Real Worker URL placed in <code class="language-plaintext highlighter-rouge">CONFIG.endpoint</code></li>
+  <li class="task-list-item"><input type="checkbox" class="task-list-item-checkbox" disabled="disabled" />Anonymous identity persistence tested</li>
+  <li class="task-list-item"><input type="checkbox" class="task-list-item-checkbox" disabled="disabled" />Cloud sync tested</li>
+  <li class="task-list-item"><input type="checkbox" class="task-list-item-checkbox" disabled="disabled" />Network-failure behavior tested</li>
+  <li class="task-list-item"><input type="checkbox" class="task-list-item-checkbox" disabled="disabled" />Recovery creation tested</li>
+  <li class="task-list-item"><input type="checkbox" class="task-list-item-checkbox" disabled="disabled" />Recovery restore tested</li>
+  <li class="task-list-item"><input type="checkbox" class="task-list-item-checkbox" disabled="disabled" />Multi-device behavior clearly decided/documented</li>
+  <li class="task-list-item"><input type="checkbox" class="task-list-item-checkbox" disabled="disabled" />Cloud merge rules implemented/tested</li>
+  <li class="task-list-item"><input type="checkbox" class="task-list-item-checkbox" disabled="disabled" />Anti-cheat validation adequate for intended use</li>
+  <li class="task-list-item"><input type="checkbox" class="task-list-item-checkbox" disabled="disabled" />Privacy page updated if needed</li>
+  <li class="task-list-item"><input type="checkbox" class="task-list-item-checkbox" disabled="disabled" />Android Chrome tested</li>
+  <li class="task-list-item"><input type="checkbox" class="task-list-item-checkbox" disabled="disabled" />iPhone Safari tested</li>
+  <li class="task-list-item"><input type="checkbox" class="task-list-item-checkbox" disabled="disabled" />Desktop tested</li>
+  <li class="task-list-item"><input type="checkbox" class="task-list-item-checkbox" disabled="disabled" />Existing stats Worker still works</li>
+  <li class="task-list-item"><input type="checkbox" class="task-list-item-checkbox" disabled="disabled" />Normal Rook gameplay regression-tested</li>
+  <li class="task-list-item"><input type="checkbox" class="task-list-item-checkbox" disabled="disabled" />Production backup created immediately before launch</li>
+  <li class="task-list-item"><input type="checkbox" class="task-list-item-checkbox" disabled="disabled" />Feature switches enabled in controlled order</li>
+  <li class="task-list-item"><input type="checkbox" class="task-list-item-checkbox" disabled="disabled" /><code class="language-plaintext highlighter-rouge">enabled:true</code> changed LAST</li>
+</ul>
+
+<hr />
+
+<h1 id="11-quick-handoff-prompt-for-a-future-chat">11. QUICK HANDOFF PROMPT FOR A FUTURE CHAT</h1>
+
+<p>If this work is resumed in another ChatGPT conversation, provide the newest game ZIP and say:</p>
+
+<blockquote>
+  <p>This Griffin House of Rooks build contains the dormant progression system documented in <code class="language-plaintext highlighter-rouge">PROGRESSION_COMPLETE_SETUP_GUIDE.md</code>. Read that file and inspect the exact current source before changing anything. Start from this current working build, preserve the existing legacy stats system, make surgical changes only, and continue the activation checklist from the first unfinished step. Do not simply flip the master switch on. Package the next build with <code class="language-plaintext highlighter-rouge">index.html</code> first in the ZIP and keep the complete setup guide updated with every progression change.</p>
+</blockquote>
+
+<hr />
+
+<h1 id="12-current-dormant-state-summary">12. CURRENT DORMANT STATE SUMMARY</h1>
+
+<p>At the time this guide was written:</p>
+
+<ul>
+  <li>50-level table: BUILT</li>
+  <li>25 five-tier families / 125 medals: BUILT</li>
+  <li>20 special feats: BUILT</li>
+  <li>advanced-stat data model: BUILT</li>
+  <li>anonymous player ID/device secret generator: BUILT, OFF</li>
+  <li>local extra-stat storage: BUILT, OFF</li>
+  <li>recovery-code generator: BUILT, OFF</li>
+  <li>cloud API browser helpers: BUILT, OFF</li>
+  <li>D1 schema: BUILT, NOT DEPLOYED BY THIS PACKAGE</li>
+  <li>progression Worker template: BUILT, NOT DEPLOYED BY THIS PACKAGE</li>
+  <li>live advanced-stat game hooks: NOT YET CONNECTED</li>
+  <li>Career/Achievements visible UI: NOT YET CONNECTED</li>
+  <li>cloud endpoint: BLANK</li>
+  <li>cloud sync: OFF</li>
+  <li>recovery: OFF</li>
+  <li>notifications: OFF</li>
+  <li>bot progression: OFF</li>
+  <li>master progression system: OFF</li>
+</ul>
+
+<p>This distinction matters: the framework is installed and documented, but activation still requires the integration/testing steps above.</p>
+
+<hr />
+<h1 id="offline-first--bot-stats-addendum-required">OFFLINE-FIRST + BOT STATS ADDENDUM (REQUIRED)</h1>
+<p>The progression design is now explicitly local-first. Humans and named bots must earn the same applicable career stats, levels and achievements with no internet connection. Every authoritative update is saved locally first and queued for later Cloudflare synchronization. Cloudflare must never be required to continue gameplay or progression. Local sorting/leaderboards must work without internet. See <code class="language-plaintext highlighter-rouge">OFFLINE_ONLINE_BOT_STATS_SETUP.md</code> for the exact data model, bot rules, reconnect behavior, deduplication warning, recovery merge rules, activation order and mandatory airplane-mode test.</p>
+
+<hr />
+<h2 id="rookgame452-addition--read-only-preview-and-celebrations">RookGame452 addition — read-only preview and celebrations</h2>
+<p>RookGame452 adds <code class="language-plaintext highlighter-rouge">PROGRESSION_PREVIEW_AND_CELEBRATIONS.md</code> and a read-only phone dry-run in <code class="language-plaintext highlighter-rouge">progression.js</code>. Before migration or activation, use that guide to inspect the actual device’s <code class="language-plaintext highlighter-rouge">Jerome</code>/<code class="language-plaintext highlighter-rouge">Host</code> lifetime records and preview achievement/level animations. This does not alter the dormant master-switch state.</p>
+
+<h2 id="rookgame453-career-protection-addendum">ROOKGAME453 CAREER PROTECTION ADDENDUM</h2>
+<p>RookGame453 adds offline Career Backup/Restore and a friendly Recovery Code foundation. The authoritative local activation and protection checklist is <code class="language-plaintext highlighter-rouge">CAREER_PROTECTION_AND_ACTIVATION.md</code>. Follow it before enabling local progression. Cloudflare is not required for local progression; keep <code class="language-plaintext highlighter-rouge">cloudEnabled:false</code> until the Worker/database is separately tested.</p>
+
+
+      
+    </div>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/anchor-js/4.1.0/anchor.min.js" integrity="sha256-lZaRhKri35AyJSypXXs4o6OPFTbTmUoltBbDCbdzegg=" crossorigin="anonymous"></script>
+    <script>anchors.add();</script>
+  </body>
+</html>

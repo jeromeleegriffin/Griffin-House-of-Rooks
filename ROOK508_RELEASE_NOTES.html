@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html lang="en-US">
+  <head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
+<!-- Begin Jekyll SEO tag v2.8.0 -->
+<title>Rook 508 — Production bot portraits | Griffin-House-of-Rooks</title>
+<meta name="generator" content="Jekyll v3.10.0" />
+<meta property="og:title" content="Rook 508 — Production bot portraits" />
+<meta property="og:locale" content="en_US" />
+<meta name="description" content="A card game featuring birds and trumps." />
+<meta property="og:description" content="A card game featuring birds and trumps." />
+<link rel="canonical" href="https://jeromeleegriffin.github.io/Griffin-House-of-Rooks/ROOK508_RELEASE_NOTES.html" />
+<meta property="og:url" content="https://jeromeleegriffin.github.io/Griffin-House-of-Rooks/ROOK508_RELEASE_NOTES.html" />
+<meta property="og:site_name" content="Griffin-House-of-Rooks" />
+<meta property="og:type" content="website" />
+<meta name="twitter:card" content="summary" />
+<meta property="twitter:title" content="Rook 508 — Production bot portraits" />
+<script type="application/ld+json">
+{"@context":"https://schema.org","@type":"WebPage","description":"A card game featuring birds and trumps.","headline":"Rook 508 — Production bot portraits","url":"https://jeromeleegriffin.github.io/Griffin-House-of-Rooks/ROOK508_RELEASE_NOTES.html"}</script>
+<!-- End Jekyll SEO tag -->
+
+    <link rel="stylesheet" href="/Griffin-House-of-Rooks/assets/css/style.css?v=2e212b45e2a5f8dd56b4c14502a4283ee80b9a81">
+    <!-- start custom head snippets, customize with your own _includes/head-custom.html file -->
+
+<!-- Setup Google Analytics -->
+
+
+
+<!-- You can set your favicon here -->
+<!-- link rel="shortcut icon" type="image/x-icon" href="/Griffin-House-of-Rooks/favicon.ico" -->
+
+<!-- end custom head snippets -->
+
+  </head>
+  <body>
+    <div class="container-lg px-3 my-5 markdown-body">
+      
+      <h1><a href="https://jeromeleegriffin.github.io/Griffin-House-of-Rooks/">Griffin-House-of-Rooks</a></h1>
+      
+
+      <h1 id="rook-508--production-bot-portraits">Rook 508 — Production bot portraits</h1>
+
+<p>Source starting point: main @ APP_VERSION 507 (<code class="language-plaintext highlighter-rouge">dd54a1e</code>).
+This build is the next sequential version: <strong>508</strong>.</p>
+
+<h2 id="what-changed">What changed</h2>
+
+<ul>
+  <li>Installed the finished cinematic / semi-realistic <strong>individual bot portrait PNGs</strong> (<code class="language-plaintext highlighter-rouge">avatar-&lt;bot&gt;.webp</code>). One file per character. Not a contact sheet, not SVG redraws, not emoji placeholders.</li>
+  <li><code class="language-plaintext highlighter-rouge">avatarSrc()</code> now serves WebP portraits when a production file exists and still serves legacy SVG files for player-selectable animal avatars that do not have a cinematic portrait.</li>
+  <li>First-wave house bots that previously reused animal SVGs (Crow, Blaze, Nix, Titan, Pike, Drift, Dice, Anchor, Wager, Hollow, Ember, Vex, Frost, Fang, Halo) now point at their own named portraits. Bot names, styles, blurbs, and AI were not changed.</li>
+  <li>Jerome / human player avatar selection is unchanged: existing picks still resolve, and SVG fallbacks remain for ids without a PNG.</li>
+  <li>Removed the maroon / brown rectangular plaque panels behind the <strong>top and bottom</strong> player seats. Circular portrait, name, rank badge, and money stay. Top and bottom now read like the side seats.</li>
+  <li>Names stay horizontal (no stacked letters). Name / badge / money sit around the circular portrait without a box.</li>
+  <li>Seat portraits are larger and use <code class="language-plaintext highlighter-rouge">clamp()</code> responsive sizing so they shrink before covering cards, the trick, nest, trump, bidding, score, Last 3, Message Table, or menus. Portrait and landscape use different caps.</li>
+  <li>Service worker cache bumped to <code class="language-plaintext highlighter-rouge">house-of-rooks-v508</code>. All new WebP portraits and remaining SVG avatars are in the offline shell list.</li>
+  <li>Visible / handshake version references updated to 508 (<code class="language-plaintext highlighter-rouge">APP_VERSION</code>, <code class="language-plaintext highlighter-rouge">hor-version.js</code>, <code class="language-plaintext highlighter-rouge">index.html</code> BUILD and <code class="language-plaintext highlighter-rouge">?v=</code> cache bust, <code class="language-plaintext highlighter-rouge">sw.js</code>).</li>
+</ul>
+
+<h2 id="what-did-not-change">What did not change</h2>
+
+<ul>
+  <li>Rook rules, dealing, bidding, nest / top-nest reveal, trump selection</li>
+  <li>Bot intelligence and personality styles</li>
+  <li>Multiplayer / Peer behavior</li>
+  <li>Scoring, achievements, statistics, career / progression</li>
+  <li>Sounds (My Turn, bot seating, empty-seat) and card animations</li>
+</ul>
+
+<p>This is an art + presentation update.</p>
+
+
+      
+    </div>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/anchor-js/4.1.0/anchor.min.js" integrity="sha256-lZaRhKri35AyJSypXXs4o6OPFTbTmUoltBbDCbdzegg=" crossorigin="anonymous"></script>
+    <script>anchors.add();</script>
+  </body>
+</html>

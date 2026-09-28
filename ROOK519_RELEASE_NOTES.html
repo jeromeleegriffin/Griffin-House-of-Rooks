@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html lang="en-US">
+  <head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
+<!-- Begin Jekyll SEO tag v2.8.0 -->
+<title>Rook519 — Play With Friends Forensic Repair | Griffin-House-of-Rooks</title>
+<meta name="generator" content="Jekyll v3.10.0" />
+<meta property="og:title" content="Rook519 — Play With Friends Forensic Repair" />
+<meta property="og:locale" content="en_US" />
+<meta name="description" content="A card game featuring birds and trumps." />
+<meta property="og:description" content="A card game featuring birds and trumps." />
+<link rel="canonical" href="https://jeromeleegriffin.github.io/Griffin-House-of-Rooks/ROOK519_RELEASE_NOTES.html" />
+<meta property="og:url" content="https://jeromeleegriffin.github.io/Griffin-House-of-Rooks/ROOK519_RELEASE_NOTES.html" />
+<meta property="og:site_name" content="Griffin-House-of-Rooks" />
+<meta property="og:type" content="website" />
+<meta name="twitter:card" content="summary" />
+<meta property="twitter:title" content="Rook519 — Play With Friends Forensic Repair" />
+<script type="application/ld+json">
+{"@context":"https://schema.org","@type":"WebPage","description":"A card game featuring birds and trumps.","headline":"Rook519 — Play With Friends Forensic Repair","url":"https://jeromeleegriffin.github.io/Griffin-House-of-Rooks/ROOK519_RELEASE_NOTES.html"}</script>
+<!-- End Jekyll SEO tag -->
+
+    <link rel="stylesheet" href="/Griffin-House-of-Rooks/assets/css/style.css?v=2e212b45e2a5f8dd56b4c14502a4283ee80b9a81">
+    <!-- start custom head snippets, customize with your own _includes/head-custom.html file -->
+
+<!-- Setup Google Analytics -->
+
+
+
+<!-- You can set your favicon here -->
+<!-- link rel="shortcut icon" type="image/x-icon" href="/Griffin-House-of-Rooks/favicon.ico" -->
+
+<!-- end custom head snippets -->
+
+  </head>
+  <body>
+    <div class="container-lg px-3 my-5 markdown-body">
+      
+      <h1><a href="https://jeromeleegriffin.github.io/Griffin-House-of-Rooks/">Griffin-House-of-Rooks</a></h1>
+      
+
+      <h1 id="rook519--play-with-friends-forensic-repair">Rook519 — Play With Friends Forensic Repair</h1>
+
+<p>Dedicated networking-only repair.</p>
+
+<h2 id="basis">Basis</h2>
+<ul>
+  <li>Current production base: Rook518.</li>
+  <li>Known-good reference supplied by Jerome: RookGame386.zip.</li>
+  <li>Compared the host creation, guest join, PeerJS signaling, DataConnection retry, transport wrapper, reconnect, and lobby ownership paths.</li>
+</ul>
+
+<h2 id="root-regression-found">Root regression found</h2>
+<p>The Rook517-era create/join lifecycle had diverged from the known-good path. It added a host-creation busy/watchdog state, dynamic PeerJS loader recursion, offline-stop state, and—most importantly—changed the guest retry path so it no longer rebuilt the Peer with relay ICE after repeated DataConnection failures. The core transport wrapper itself remained substantially aligned with 386.</p>
+
+<h2 id="repair">Repair</h2>
+<ul>
+  <li>Restored the known-good 386 createRoom/joinRoom lifecycle as the authoritative networking path.</li>
+  <li>Restored the proven retry/relay behavior, including Peer recreation at the relay transition.</li>
+  <li>Preserved current Rook518 avatar identity payloads and public career metadata.</li>
+  <li>Preserved all current game-state message handlers, rules, visuals, Trump medallion, table, cards, achievements, and progression code.</li>
+  <li>Kept the Rook517 compatibility guard that prevents the obsolete Rook513 MutationObserver from stealing lobby/game navigation ownership.</li>
+  <li>Bumped multiplayer protocol/app version and cache shell to 519 so stale clients are rejected/refreshed instead of silently mixing network generations.</li>
+</ul>
+
+<h2 id="validation">Validation</h2>
+<ul>
+  <li>Static JavaScript syntax validation passed.</li>
+  <li>Package integrity verified.</li>
+  <li>Final proof still requires a real two-device host/join test; static analysis cannot certify WebRTC connectivity.</li>
+</ul>
+
+
+      
+    </div>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/anchor-js/4.1.0/anchor.min.js" integrity="sha256-lZaRhKri35AyJSypXXs4o6OPFTbTmUoltBbDCbdzegg=" crossorigin="anonymous"></script>
+    <script>anchors.add();</script>
+  </body>
+</html>

@@ -1,0 +1,416 @@
+<!DOCTYPE html>
+<html lang="en-US">
+  <head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
+<!-- Begin Jekyll SEO tag v2.8.0 -->
+<title>Griffin House Project History | Griffin-House-of-Rooks</title>
+<meta name="generator" content="Jekyll v3.10.0" />
+<meta property="og:title" content="Griffin House Project History" />
+<meta property="og:locale" content="en_US" />
+<meta name="description" content="A card game featuring birds and trumps." />
+<meta property="og:description" content="A card game featuring birds and trumps." />
+<link rel="canonical" href="https://jeromeleegriffin.github.io/Griffin-House-of-Rooks/GRIFFIN_HOUSE_PROJECT_HISTORY.html" />
+<meta property="og:url" content="https://jeromeleegriffin.github.io/Griffin-House-of-Rooks/GRIFFIN_HOUSE_PROJECT_HISTORY.html" />
+<meta property="og:site_name" content="Griffin-House-of-Rooks" />
+<meta property="og:type" content="website" />
+<meta name="twitter:card" content="summary" />
+<meta property="twitter:title" content="Griffin House Project History" />
+<script type="application/ld+json">
+{"@context":"https://schema.org","@type":"WebPage","description":"A card game featuring birds and trumps.","headline":"Griffin House Project History","url":"https://jeromeleegriffin.github.io/Griffin-House-of-Rooks/GRIFFIN_HOUSE_PROJECT_HISTORY.html"}</script>
+<!-- End Jekyll SEO tag -->
+
+    <link rel="stylesheet" href="/Griffin-House-of-Rooks/assets/css/style.css?v=2e212b45e2a5f8dd56b4c14502a4283ee80b9a81">
+    <!-- start custom head snippets, customize with your own _includes/head-custom.html file -->
+
+<!-- Setup Google Analytics -->
+
+
+
+<!-- You can set your favicon here -->
+<!-- link rel="shortcut icon" type="image/x-icon" href="/Griffin-House-of-Rooks/favicon.ico" -->
+
+<!-- end custom head snippets -->
+
+  </head>
+  <body>
+    <div class="container-lg px-3 my-5 markdown-body">
+      
+      <h1><a href="https://jeromeleegriffin.github.io/Griffin-House-of-Rooks/">Griffin-House-of-Rooks</a></h1>
+      
+
+      <h1 id="griffin-house-project-history">Griffin House Project History</h1>
+
+<h2 id="jerome-griffin--chatgpt">Jerome Griffin + ChatGPT</h2>
+
+<p><strong>Started:</strong> September 27, 2026<br />
+<strong>Purpose:</strong> A durable history of the Griffin House projects and the
+working collaboration behind them. This is not a replacement for
+technical release notes. It records the important <em>why</em>: major
+decisions, breakthroughs, failures, workflow changes, and turning
+points.</p>
+
+<hr />
+
+<h2 id="how-this-record-works">How this record works</h2>
+
+<p>This history is intentionally selective. Routine confirmations and minor
+edits are omitted. Entries should be added when something meaningfully
+changes the project, the development process, or our understanding of
+what works.</p>
+
+<p>Technical facts should remain factual. Where an old event cannot be
+reconstructed with confidence, this record should say so rather than
+inventing details.</p>
+
+<hr />
+
+<h1 id="1-griffin-house-holdem-begins">1. Griffin House Hold’em begins</h1>
+
+<p>In September 2026, Jerome began developing a commercial Texas Hold’em
+game in Unity. The project evolved into <strong>Griffin House Hold’em</strong>, with
+an original Griffin identity and a strong requirement that its assets,
+branding, interface, characters, sounds, and other creative work remain
+original rather than copying another poker product.</p>
+
+<p>The project quickly grew beyond a simple card game. Its poker engine
+came to include the dealing lifecycle, betting, blinds and dealer
+rotation, showdown handling, main and side pots, split pots, chip
+conservation, bust/rebuy behavior, cash-out, table sessions, bots,
+achievements, audio, avatars, and increasingly ambitious presentation
+work.</p>
+
+<p>As the project became larger, preserving working behavior became as
+important as adding features.</p>
+
+<hr />
+
+<h1 id="2-the-cost-of-rapid-iteration">2. The cost of rapid iteration</h1>
+
+<p>Hold’em went through repeated cycles in which improvements in one area
+could expose or reintroduce problems elsewhere. Among the recurring
+issues were dealing/presentation timing, bankroll and table lockouts,
+Return to Hand corruption, audio synchronization, UI overlap, and
+table/card presentation problems.</p>
+
+<p>This changed the development philosophy.</p>
+
+<p>The project moved toward:</p>
+
+<ul>
+  <li>confirmed working checkpoints;</li>
+  <li>surgical changes instead of broad replacement;</li>
+  <li>protecting known-good source;</li>
+  <li>mechanics before cosmetics when the two conflicted;</li>
+  <li>explicit records of known regressions;</li>
+  <li>testing actual behavior rather than assuming a successful script or
+compile meant the game looked and behaved correctly.</li>
+</ul>
+
+<p>One especially important rule emerged: a small problem should never be
+“fixed” by casually replacing the entire Unity <code class="language-plaintext highlighter-rouge">Assets</code> tree or
+overwriting protected working files.</p>
+
+<hr />
+
+<h1 id="3-holdem-enters-the-tedious-cleanup-phase">3. Hold’em enters the tedious cleanup phase</h1>
+
+<p>By late September, Hold’em had reached a phase that was much less
+exciting than creating new systems. Jerome was spending substantial time
+on repetitive cleanup, regression testing, Unity checks, small fixes,
+file replacement, and retesting.</p>
+
+<p>This became the <strong>primary reason Hold’em development paused</strong>.</p>
+
+<p>Jerome had not lost interest in the poker game. The problem was that
+development had reached a labor-intensive cleanup stage where too much
+of the work required repetitive manual attention.</p>
+
+<hr />
+
+<h1 id="4-the-codexworker-idea-changes-the-plan">4. The Codex/worker idea changes the plan</h1>
+
+<p>During that cleanup, Jerome became excited about using <strong>Codex/workers
+on the Windows PC</strong> to help perform repetitive development work.</p>
+
+<p>The attraction was specific: instead of Jerome manually carrying out
+every tedious cleanup operation, Jerome and ChatGPT could direct the
+project while workers handled more of the repetitive implementation and
+checking.</p>
+
+<p>By September 21, Codex CLI and Node.js were installed and the local
+Codex installation itself was substantially working. Authentication
+became the blocker.</p>
+
+<p>Both normal OAuth and device-code login reached phone verification.
+Jerome’s existing phone number was rejected as already in use. Jerome
+did not want API billing, another account, another phone number, or
+someone else’s number merely to get around the problem.</p>
+
+<p>Support was contacted, and Jerome eventually chose to preserve the setup
+and wait rather than continue fighting authentication.</p>
+
+<p>That interruption mattered enormously: the worker workflow had been
+expected to make the tedious Hold’em cleanup manageable. When phone
+verification blocked it, Hold’em lost momentum.</p>
+
+<p>Jerome’s later summary of the event was more accurate than a
+reconstruction based only on surrounding project events:</p>
+
+<blockquote>
+  <p>The absolute number one reason poker stopped was that we were in the
+middle of a very, very tedious cleanup, Jerome got excited about Codex
+and having workers work with ChatGPT on it, and then the
+phone-verification problem stopped that plan.</p>
+</blockquote>
+
+<p>This distinction is important to preserve. <strong>Rook did not originally
+cause Hold’em to stop. Rook grew into the available space after the
+intended automation path for Hold’em was blocked.</strong></p>
+
+<hr />
+
+<h1 id="5-griffin-house-of-rooks-takes-off">5. Griffin House of Rooks takes off</h1>
+
+<p>Jerome already had a functioning Rook card game built in HTML/JavaScript
+and began exploring what it could become with the richer presentation
+being envisioned for poker.</p>
+
+<p>A Unity project was established as <strong>Griffin-House-of-Rooks</strong>, with
+careful separation from the Hold’em Unity project so the two projects
+could not contaminate one another.</p>
+
+<p>Early Unity work established core Rook match/round behavior and tests,
+while Blender work explored the physical table, rails, card placement,
+and presentation.</p>
+
+<p>The Rooks work reinforced another important engineering lesson:</p>
+
+<p><strong>Script success is not visual success.</strong></p>
+
+<p>A script could execute perfectly while the resulting table still looked
+wrong. User-confirmed visual states therefore became protected
+checkpoints rather than something to modify casually for cosmetic
+experimentation.</p>
+
+<hr />
+
+<h1 id="6-the-actual-rook-game-becomes-the-center-of-attention">6. The actual Rook game becomes the center of attention</h1>
+
+<p>The existing HTML/JavaScript game remained valuable because it was
+already playable and could evolve rapidly.</p>
+
+<p>Jerome later clarified an important terminology rule:</p>
+
+<p><strong>“Real game” means the actual Griffin House of Rooks HTML/web game.</strong></p>
+
+<p>It does not mean the Unity project, Blender experiments, a prototype, or
+the Visual Lab.</p>
+
+<p>Development increasingly concentrated on improving that real game:
+presentation, avatars, sounds, multiplayer behavior, landscape and
+portrait layouts, room atmosphere, progression planning, and
+release/deployment workflow.</p>
+
+<p>The project was eventually divided conceptually into separate lanes:</p>
+
+<ol>
+  <li><strong>Live Game Work</strong> — the production Griffin House of Rooks web
+game.</li>
+  <li><strong>Visual Lab</strong> — a safe experimental environment for visual/table
+concepts.</li>
+  <li><strong>Griffin Rook Installer</strong> — the separate Android
+installer/updater project.</li>
+</ol>
+
+<p>This separation allowed ambitious experiments without casually
+destabilizing the playable game.</p>
+
+<hr />
+
+<h1 id="7-workflow-lessons-become-explicit-rules">7. Workflow lessons become explicit rules</h1>
+
+<p>Repeated version drift, partial patches, uncertain baselines, and
+regressions eventually forced a better process.</p>
+
+<p>Jerome established several rules that now define the collaboration:</p>
+
+<h3 id="build--critique--rebuild">Build → Critique → Rebuild</h3>
+
+<p>For substantial work:</p>
+
+<ol>
+  <li>Produce the first solution internally.</li>
+  <li>Critique it hard for mistakes and weaknesses.</li>
+  <li>Rebuild/polish it.</li>
+  <li>Deliver the third-pass result.</li>
+</ol>
+
+<p>Jerome should not have to repeatedly ask ChatGPT to “think about it
+again.”</p>
+
+<h3 id="bank-changes-until-roll">Bank changes until ROLL</h3>
+
+<p>For Griffin House of Rooks:</p>
+
+<ul>
+  <li><strong>OK / go / continue</strong> means continue the discussion or work and
+bank the decisions.</li>
+  <li>It does <strong>not</strong> authorize another package.</li>
+  <li><strong>ROLL</strong> means stop planning and actually build the cumulative
+update.</li>
+</ul>
+
+<p>This rule was created partly to stop the proliferation of unnecessary
+incremental ZIPs.</p>
+
+<h3 id="one-authoritative-baseline">One authoritative baseline</h3>
+
+<p>The project increasingly moved away from ambiguous collections of
+patches.</p>
+
+<p>A full known-good build should become the authoritative baseline.
+Changes can still be surgical internally, but a major roll should
+produce a complete verified build so there is no uncertainty about which
+old files are supposed to coexist with which new files.</p>
+
+<hr />
+
+<h1 id="8-rook514-and-the-return-to-full-authoritative-builds">8. Rook514 and the return to full authoritative builds</h1>
+
+<p>On September 27, the Rook514 work exposed exactly why the
+authoritative-build rule mattered.</p>
+
+<p>A small 514 overlay had successfully introduced new visual files,
+including the room treatment, portrait changes, landscape styling, and
+Jerome avatar, while portions of the application still identified and
+cached themselves as version 513.</p>
+
+<p>The result was not necessarily broken, but it was conceptually untidy:
+part 514 and part 513.</p>
+
+<p>Jerome supplied the complete <code class="language-plaintext highlighter-rouge">Rook513_FINAL(1).zip</code>, giving the project
+a trustworthy full pre-514 baseline.</p>
+
+<p>The workflow was then changed deliberately:</p>
+
+<p><strong>full working ZIP → bank changes → ROLL → surgical modification inside
+that exact source → three-pass review → complete next-version ZIP → that
+ZIP becomes CURRENT.</strong></p>
+
+<p>Rook514 was subsequently rolled as a full authoritative package with
+synchronized application/version/cache references and integrated 514
+assets.</p>
+
+<p>During this same period, Jerome accidentally extracted a large
+collection of Rook files directly onto the Windows Desktop. The files
+were safely quarantined rather than deleted. It was a minor accident,
+but an excellent practical demonstration of why clean authoritative
+packages and predictable file workflows matter.</p>
+
+<hr />
+
+<h1 id="9-jerome-becomes-an-in-game-avatar">9. Jerome becomes an in-game avatar</h1>
+
+<p>During the Rook514 work, Jerome supplied his own portrait for the
+selectable <strong>Jerome</strong> avatar.</p>
+
+<p>The first asset included a gold circular frame baked into the image.
+Because the game already provides its own circular crop/treatment, this
+unnecessarily produced a circle inside a circle and reduced the useful
+portrait area.</p>
+
+<p>A frameless version was created and substituted as <code class="language-plaintext highlighter-rouge">avatar-jerome.png</code>.</p>
+
+<p>This became one of the more personal milestones in the project: Jerome
+was no longer merely building Griffin House—he had literally taken a
+seat at the table.</p>
+
+<hr />
+
+<h1 id="10-why-this-history-file-exists">10. Why this history file exists</h1>
+
+<p>On September 27, Jerome began explicitly testing how much ChatGPT
+retained about the collaboration.</p>
+
+<p>ChatGPT could reconstruct a surprisingly large amount: the projects,
+technical problems, workflow evolution, Codex setup, Rook’s rise, and
+many design decisions. But when asked why Hold’em had stopped, ChatGPT
+initially identified several contributing factors without giving
+sufficient weight to the actual number-one cause.</p>
+
+<p>Jerome corrected the record: the tedious poker cleanup and the blocked
+Codex/worker plan were the central reason.</p>
+
+<p>That moment demonstrated both the usefulness and limitation of AI
+memory.</p>
+
+<p>Useful context can persist, but it is not a perfect autobiographical
+transcript. Important causal details can be underweighted or eventually
+lost.</p>
+
+<p>Jerome therefore decided to begin this file.</p>
+
+<p>Its purpose is simple:</p>
+
+<p><strong>Important parts of the Griffin House story should belong to Jerome in
+a durable file, rather than depending entirely on what a future AI
+session happens to remember.</strong></p>
+
+<hr />
+
+<h1 id="11-current-philosophy">11. Current philosophy</h1>
+
+<p>The Griffin House projects have gradually developed a shared philosophy:</p>
+
+<ul>
+  <li>Preserve working systems before chasing novelty.</li>
+  <li>Distinguish an actual tested result from a claim that code “should”
+work.</li>
+  <li>Keep experiments away from production when possible.</li>
+  <li>Maintain authoritative checkpoints.</li>
+  <li>Record why important decisions were made, not merely what files
+changed.</li>
+  <li>Let automation remove repetitive labor without surrendering human
+direction.</li>
+  <li>Treat AI as a collaborator/tool whose output must still be tested
+and challenged.</li>
+  <li>Never allow version confusion to become an invisible dependency.</li>
+  <li>Preserve the history well enough that another session—or another
+future system—can understand how the project arrived at its
+current state.</li>
+</ul>
+
+<hr />
+
+<h1 id="future-entries">Future entries</h1>
+
+<p>Future entries should be added only for meaningful milestones: major
+releases, important design decisions, project pauses/resumptions,
+significant failures and recoveries, workflow changes, major technical
+breakthroughs, and moments that materially shape the Griffin House
+projects.</p>
+
+<p>The record should remain readable enough that Jerome can open it years
+later and understand not only <strong>what was built</strong>, but <strong>how and why it
+became what it is</strong>.</p>
+
+<h2 id="rook515-milestone--september-27-2026">Rook515 milestone — September 27, 2026</h2>
+<p>Rook514 was the first web presentation that made Jerome seriously question whether the Unity conversion was worth finishing: the cinematic avatars and Griffin House room background finally delivered much of the intended atmosphere without continuing the extremely tedious Blender/card-holder work.</p>
+
+<p>Jerome immediately identified two remaining defects: rectangular team/seat boxes behind portraits and the Play With Friends PeerJS connection/load issue. Rook515 was explicitly authorized with <strong>ROLL</strong> to attack those two problems while protecting the successful Rook514 room/table/card composition.</p>
+
+<p>Inspection found the boxes were reintroduced by <code class="language-plaintext highlighter-rouge">paintNamePlaque()</code>, which wrote inline <code class="language-plaintext highlighter-rouge">!important</code> team backgrounds stronger than the cleanup CSS. Multiplayer inspection found <code class="language-plaintext highlighter-rouge">index.html</code> requested a nonexistent local <code class="language-plaintext highlighter-rouge">vendor/peerjs.min.js</code> before CDN fallback. Rook515 removes live-table plaque paint, preserves team metadata, removes that guaranteed missing-file request, and adds redundant PeerJS loading for host/join.</p>
+
+<h2 id="rook516-candidate--september-27-2026">Rook516 candidate — September 27, 2026</h2>
+<p>Jerome explicitly authorized ROLL after banking a cumulative visual-polish pass: persistent human avatar choice, larger portraits, active-player-only portrait motion, physical-looking hand rack with tiny card variation, removal of the center TRICK label, richer landscape felt while preserving large-card accessibility, smaller game-native achievements/popups, and removal of blue-bird Rook emoji. Rook516 also carries forward the Rook515 seat-box and PeerJS fixes. The Rook514 room background was inspected directly and retained. Rook516 is a candidate until Jerome installs/tests it.</p>
+
+
+      
+    </div>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/anchor-js/4.1.0/anchor.min.js" integrity="sha256-lZaRhKri35AyJSypXXs4o6OPFTbTmUoltBbDCbdzegg=" crossorigin="anonymous"></script>
+    <script>anchors.add();</script>
+  </body>
+</html>

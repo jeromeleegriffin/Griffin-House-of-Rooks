@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html lang="en-US">
+  <head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
+<!-- Begin Jekyll SEO tag v2.8.0 -->
+<title>Rook520 — Play With Friends signaling + clean Leave repair | Griffin-House-of-Rooks</title>
+<meta name="generator" content="Jekyll v3.10.0" />
+<meta property="og:title" content="Rook520 — Play With Friends signaling + clean Leave repair" />
+<meta property="og:locale" content="en_US" />
+<meta name="description" content="A card game featuring birds and trumps." />
+<meta property="og:description" content="A card game featuring birds and trumps." />
+<link rel="canonical" href="https://jeromeleegriffin.github.io/Griffin-House-of-Rooks/ROOK520_RELEASE_NOTES.html" />
+<meta property="og:url" content="https://jeromeleegriffin.github.io/Griffin-House-of-Rooks/ROOK520_RELEASE_NOTES.html" />
+<meta property="og:site_name" content="Griffin-House-of-Rooks" />
+<meta property="og:type" content="website" />
+<meta name="twitter:card" content="summary" />
+<meta property="twitter:title" content="Rook520 — Play With Friends signaling + clean Leave repair" />
+<script type="application/ld+json">
+{"@context":"https://schema.org","@type":"WebPage","description":"A card game featuring birds and trumps.","headline":"Rook520 — Play With Friends signaling + clean Leave repair","url":"https://jeromeleegriffin.github.io/Griffin-House-of-Rooks/ROOK520_RELEASE_NOTES.html"}</script>
+<!-- End Jekyll SEO tag -->
+
+    <link rel="stylesheet" href="/Griffin-House-of-Rooks/assets/css/style.css?v=2e212b45e2a5f8dd56b4c14502a4283ee80b9a81">
+    <!-- start custom head snippets, customize with your own _includes/head-custom.html file -->
+
+<!-- Setup Google Analytics -->
+
+
+
+<!-- You can set your favicon here -->
+<!-- link rel="shortcut icon" type="image/x-icon" href="/Griffin-House-of-Rooks/favicon.ico" -->
+
+<!-- end custom head snippets -->
+
+  </head>
+  <body>
+    <div class="container-lg px-3 my-5 markdown-body">
+      
+      <h1><a href="https://jeromeleegriffin.github.io/Griffin-House-of-Rooks/">Griffin-House-of-Rooks</a></h1>
+      
+
+      <h1 id="rook520--play-with-friends-signaling--clean-leave-repair">Rook520 — Play With Friends signaling + clean Leave repair</h1>
+
+<p>Built from Rook519. Dedicated multiplayer-only follow-up based on the real two-device failure recording.</p>
+
+<h2 id="host-discovery-repair">Host discovery repair</h2>
+<ul>
+  <li>Restored the explicit <code class="language-plaintext highlighter-rouge">0.peerjs.com:443</code> signaling endpoint used by the known-good Rook386 path.</li>
+  <li>Restored the known-good local <code class="language-plaintext highlighter-rouge">vendor/peerjs.min.js</code> runtime from Rook386, with CDN fallback only if the local asset fails.</li>
+  <li>Preserved current Rook519 game messages, avatar/career sync, UI, Rook518 Trump work, and current game logic.</li>
+  <li>Kept current conservative STUN configuration; no unverified third-party TURN credentials were reintroduced.</li>
+</ul>
+
+<h2 id="intentional-leave-repair">Intentional Leave repair</h2>
+<ul>
+  <li>Intentional Leave now marks teardown before PeerJS connections are closed.</li>
+  <li>Saved room session is cleared both before and after teardown.</li>
+  <li>Rejoin/Reconnect controls are hidden immediately on intentional Leave.</li>
+  <li>Fresh lobby only shows Rejoin when a valid saved multiplayer room actually exists.</li>
+  <li>Offline sessions never qualify for Rejoin.</li>
+</ul>
+
+<h2 id="validation">Validation</h2>
+<ul>
+  <li>JavaScript syntax checks passed.</li>
+  <li>Version/cache references advanced to 520.</li>
+  <li>Rook518 Trump assets remain present.</li>
+  <li>Final verdict still requires a real two-device host/join test.</li>
+</ul>
+
+
+      
+    </div>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/anchor-js/4.1.0/anchor.min.js" integrity="sha256-lZaRhKri35AyJSypXXs4o6OPFTbTmUoltBbDCbdzegg=" crossorigin="anonymous"></script>
+    <script>anchors.add();</script>
+  </body>
+</html>

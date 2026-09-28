@@ -1,0 +1,207 @@
+<!DOCTYPE html>
+<html lang="en-US">
+  <head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
+<!-- Begin Jekyll SEO tag v2.8.0 -->
+<title>GRIFFIN HOUSE OF ROOKS — CAREER PROTECTION + LOCAL ACTIVATION | Griffin-House-of-Rooks</title>
+<meta name="generator" content="Jekyll v3.10.0" />
+<meta property="og:title" content="GRIFFIN HOUSE OF ROOKS — CAREER PROTECTION + LOCAL ACTIVATION" />
+<meta property="og:locale" content="en_US" />
+<meta name="description" content="A card game featuring birds and trumps." />
+<meta property="og:description" content="A card game featuring birds and trumps." />
+<link rel="canonical" href="https://jeromeleegriffin.github.io/Griffin-House-of-Rooks/CAREER_PROTECTION_AND_ACTIVATION.html" />
+<meta property="og:url" content="https://jeromeleegriffin.github.io/Griffin-House-of-Rooks/CAREER_PROTECTION_AND_ACTIVATION.html" />
+<meta property="og:site_name" content="Griffin-House-of-Rooks" />
+<meta property="og:type" content="website" />
+<meta name="twitter:card" content="summary" />
+<meta property="twitter:title" content="GRIFFIN HOUSE OF ROOKS — CAREER PROTECTION + LOCAL ACTIVATION" />
+<script type="application/ld+json">
+{"@context":"https://schema.org","@type":"WebPage","description":"A card game featuring birds and trumps.","headline":"GRIFFIN HOUSE OF ROOKS — CAREER PROTECTION + LOCAL ACTIVATION","url":"https://jeromeleegriffin.github.io/Griffin-House-of-Rooks/CAREER_PROTECTION_AND_ACTIVATION.html"}</script>
+<!-- End Jekyll SEO tag -->
+
+    <link rel="stylesheet" href="/Griffin-House-of-Rooks/assets/css/style.css?v=2e212b45e2a5f8dd56b4c14502a4283ee80b9a81">
+    <!-- start custom head snippets, customize with your own _includes/head-custom.html file -->
+
+<!-- Setup Google Analytics -->
+
+
+
+<!-- You can set your favicon here -->
+<!-- link rel="shortcut icon" type="image/x-icon" href="/Griffin-House-of-Rooks/favicon.ico" -->
+
+<!-- end custom head snippets -->
+
+  </head>
+  <body>
+    <div class="container-lg px-3 my-5 markdown-body">
+      
+      <h1><a href="https://jeromeleegriffin.github.io/Griffin-House-of-Rooks/">Griffin-House-of-Rooks</a></h1>
+      
+
+      <h1 id="griffin-house-of-rooks--career-protection--local-activation">GRIFFIN HOUSE OF ROOKS — CAREER PROTECTION + LOCAL ACTIVATION</h1>
+<h2 id="rookgame453">RookGame453</h2>
+
+<p>This file is the permanent checklist for protecting careers and turning on LOCAL progression before Cloudflare is ready.</p>
+
+<h2 id="current-shipping-state">CURRENT SHIPPING STATE</h2>
+<p>RookGame453 ships SAFE/DORMANT. In <code class="language-plaintext highlighter-rouge">progression.js</code>, <code class="language-plaintext highlighter-rouge">CONFIG.enabled</code> is <code class="language-plaintext highlighter-rouge">false</code> and cloud is <code class="language-plaintext highlighter-rouge">false</code>.
+The existing Rook game continues to use its current lifetime statistics. The new progression ledgers do not take over merely by installing this ZIP.</p>
+
+<h2 id="what-career-protection-now-contains">WHAT CAREER PROTECTION NOW CONTAINS</h2>
+<ol>
+  <li>Existing <code class="language-plaintext highlighter-rouge">rookLifetimeStats</code> lifetime data.</li>
+  <li>Human and bot progression ledgers (<code class="language-plaintext highlighter-rouge">horCareerLedgerV1:*</code>).</li>
+  <li>Achievement unlock records.</li>
+  <li>Level-driving career points.</li>
+  <li>Presentation/celebration preferences.</li>
+  <li>Anonymous player identity/device secret when identity is enabled.</li>
+  <li>Pending offline Cloudflare sync outbox.</li>
+  <li>Migration marker so old lifetime totals are not imported twice.</li>
+  <li>A friendly Recovery Code such as <code class="language-plaintext highlighter-rouge">GRF-ABCD-EFGH-JKLM</code>.</li>
+  <li>Last-backup timestamp.</li>
+</ol>
+
+<p><code class="language-plaintext highlighter-rouge">HORProgression.protection.downloadBackup()</code> creates a JSON recovery file containing the protected local career data.
+<code class="language-plaintext highlighter-rouge">HORProgression.protection.restoreBackupFile(file)</code> restores a selected backup file.
+<code class="language-plaintext highlighter-rouge">HORProgression.protection.showRecoveryKit()</code> displays the player’s friendly recovery code and explains its limits.</p>
+
+<p>IMPORTANT: Until Cloudflare is enabled, the friendly Recovery Code by itself CANNOT reconstruct erased browser/app storage. The backup file is the offline recovery copy. Once cloud recovery is implemented, the code can identify the cloud career while stronger credentials protect ownership.</p>
+
+<h2 id="test-everything-before-it-counts">TEST EVERYTHING BEFORE IT COUNTS</h2>
+<p>Do this while <code class="language-plaintext highlighter-rouge">CONFIG.enabled:false</code>:</p>
+<ol>
+  <li>Install/run RookGame453.</li>
+  <li>Play the normal game and verify nothing changed.</li>
+  <li>Open the Progression Dry Run (<code class="language-plaintext highlighter-rouge">HORProgression.preview.show()</code> from the diagnostic path/console until a visible diagnostic button is added).</li>
+  <li>Confirm Jerome and/or Host records and bot records are detected correctly.</li>
+  <li>Preview Normal Achievement, Level Up, Griffin Tier, and Rare Feat celebrations.</li>
+  <li>Review the projected level and retroactive achievement counts.</li>
+  <li>If both Jerome and Host exist, DO NOT merge them automatically. Decide which is the real career or whether a deliberate merge is wanted.</li>
+  <li>Test a backup: run <code class="language-plaintext highlighter-rouge">HORProgression.protection.downloadBackup()</code> and verify a <code class="language-plaintext highlighter-rouge">Griffin-Rook-Career-Backup-....json</code> file is saved.</li>
+  <li>Keep that file somewhere outside the browser/app (Files, Drive, another device, PC, etc.).</li>
+  <li>Do not erase real app/site data merely to test restore. Restore testing should be done in a disposable browser/profile/device or with a copied test installation.</li>
+</ol>
+
+<h2 id="what-must-be-done-before-local-progression-goes-live">WHAT MUST BE DONE BEFORE LOCAL PROGRESSION GOES LIVE</h2>
+<p>The framework is installed, but activation is NOT just flipping one switch. Before local go-live, the current game must be wired to feed every real game event into the progression ledger. Required hooks include:</p>
+<ul>
+  <li>points captured per player</li>
+  <li>hands played</li>
+  <li>games played / games won</li>
+  <li>tricks won</li>
+  <li>Rook captures</li>
+  <li>Red 2 captures</li>
+  <li>30+ point tricks</li>
+  <li>nest wins / nest points</li>
+  <li>bids won / high bid / bids made / bids set</li>
+  <li>Shoot the Moon attempts / makes</li>
+  <li>exact bids</li>
+  <li>win streaks and made-bid streaks</li>
+  <li>close wins, routs, comeback wins</li>
+  <li>sweep hands</li>
+  <li>best hand points / best trick points</li>
+  <li>Rook + Red 2 same hand</li>
+  <li>trump-color wins</li>
+  <li>same-partner wins where applicable</li>
+</ul>
+
+<p>These hooks must update BOTH humans and named bots locally.</p>
+
+<h2 id="one-time-migration">ONE-TIME MIGRATION</h2>
+<p>Before live local progression starts, import existing <code class="language-plaintext highlighter-rouge">rookLifetimeStats</code> ONCE into the new ledgers.</p>
+<ul>
+  <li>Preserve all provable old totals.</li>
+  <li>Calculate the correct level from existing career points.</li>
+  <li>Retroactively unlock achievements supported by old counters.</li>
+  <li>Do not invent historical special feats that the old game never tracked.</li>
+  <li>Store <code class="language-plaintext highlighter-rouge">horProgressMigrationV1</code> after a successful import.</li>
+  <li>Never import the same totals a second time.</li>
+</ul>
+
+<h2 id="local-only-go-live-settings-no-cloudflare-yet">LOCAL-ONLY GO-LIVE SETTINGS (NO CLOUDFLARE YET)</h2>
+<p>After the event hooks and migration have been tested, use this configuration:</p>
+
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>enabled: true
+uiEnabled: true
+notificationsEnabled: true
+identityEnabled: true
+cloudEnabled: false
+recoveryEnabled: false
+botProgressionEnabled: true
+endpoint: ''
+</code></pre></div></div>
+
+<p>Meaning:</p>
+<ul>
+  <li>LOCAL career progression = ON</li>
+  <li>LOCAL achievements = ON</li>
+  <li>LOCAL levels = ON</li>
+  <li>humans = ON</li>
+  <li>bots = ON</li>
+  <li>celebration animations = ON</li>
+  <li>anonymous permanent local identity = ON</li>
+  <li>backup/restore = ON</li>
+  <li>Cloudflare = OFF</li>
+  <li>cloud recovery = OFF</li>
+  <li>global leaderboard = OFF</li>
+</ul>
+
+<h2 id="required-local-go-live-test">REQUIRED LOCAL GO-LIVE TEST</h2>
+<ol>
+  <li>Make a Career Backup FIRST.</li>
+  <li>Turn on the tested local configuration above.</li>
+  <li>Launch game with internet OFF / airplane mode.</li>
+  <li>Verify the old career migrates exactly once.</li>
+  <li>Record Jerome/Host starting totals and each bot’s totals.</li>
+  <li>Play a complete hand.</li>
+  <li>Verify each participant receives only the stats actually earned.</li>
+  <li>Verify level progress changes from career points.</li>
+  <li>Trigger/earn an achievement and verify it is recorded before the animation.</li>
+  <li>Close the game completely.</li>
+  <li>Reopen while still offline.</li>
+  <li>Verify human and bot totals, levels, and achievements remain.</li>
+  <li>Play more hands offline.</li>
+  <li>Verify local sorting/leaderboard works without internet.</li>
+  <li>Create a new Career Backup.</li>
+  <li>Only after all of this passes should this become the normal local build.</li>
+</ol>
+
+<h2 id="when-cloudflare-is-ready-later">WHEN CLOUDFLARE IS READY LATER</h2>
+<p>Do NOT change the local accounting model. Cloudflare is an additional protection/sync layer.</p>
+<ol>
+  <li>Deploy/test the v2 Worker and database schema.</li>
+  <li>Set <code class="language-plaintext highlighter-rouge">endpoint</code> to the tested Worker URL.</li>
+  <li>Enable authenticated anonymous identity on the Worker.</li>
+  <li>Test one disposable account first.</li>
+  <li>Turn <code class="language-plaintext highlighter-rouge">cloudEnabled:true</code>.</li>
+  <li>Keep local-first writes: game writes locally immediately, then queues cloud sync.</li>
+  <li>Confirm offline outbox catches up after reconnection without double counting.</li>
+  <li>Implement/test server recovery records.</li>
+  <li>Only then turn <code class="language-plaintext highlighter-rouge">recoveryEnabled:true</code>.</li>
+  <li>Test a new device restore using the Recovery Code plus the secure recovery mechanism.</li>
+  <li>Add GLOBAL leaderboard only after sync integrity is proven.</li>
+</ol>
+
+<h2 id="data-loss-rule">DATA-LOSS RULE</h2>
+<p>Never tell a player that a Recovery Code alone protects an offline-only career. Before cloud backup exists, protection requires the exported Career Backup file. The UI must state this clearly.</p>
+
+<h2 id="future-handoff">FUTURE HANDOFF</h2>
+<p>Start from RookGame453 or its newest descendant. Read:</p>
+<ul>
+  <li><code class="language-plaintext highlighter-rouge">PROGRESSION_COMPLETE_SETUP_GUIDE.md</code></li>
+  <li><code class="language-plaintext highlighter-rouge">OFFLINE_ONLINE_BOT_STATS_SETUP.md</code></li>
+  <li><code class="language-plaintext highlighter-rouge">PROGRESSION_PREVIEW_AND_CELEBRATIONS.md</code></li>
+  <li><code class="language-plaintext highlighter-rouge">CAREER_PROTECTION_AND_ACTIVATION.md</code>
+Do not bypass dry-run/migration tests. Preserve existing <code class="language-plaintext highlighter-rouge">rookLifetimeStats</code>. Humans and named bots must work fully offline. Cloudflare must remain additive, not required for play.</li>
+</ul>
+
+
+      
+    </div>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/anchor-js/4.1.0/anchor.min.js" integrity="sha256-lZaRhKri35AyJSypXXs4o6OPFTbTmUoltBbDCbdzegg=" crossorigin="anonymous"></script>
+    <script>anchors.add();</script>
+  </body>
+</html>
