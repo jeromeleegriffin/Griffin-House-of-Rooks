@@ -2,28 +2,28 @@
  * Author: Jerome Griffin
  * Copyright (c) 2026 Jerome Griffin / Griffin House
  */
-const CACHE = 'house-of-rooks-v528';
+const CACHE = 'house-of-rooks-v529';
 const SHELL = [
   './vendor/peerjs.min.js',
   './',
   './index.html',
   './shuffle-statistics.html',
   './rules.js',
-  './rules.js?v=528',
+  './rules.js?v=529',
   './bots.js',
-  './bots.js?v=528',
+  './bots.js?v=529',
   './game.js',
-  './game.js?v=528',
+  './game.js?v=529',
   './rook510-avatars.js',
-  './rook510-avatars.js?v=528',
+  './rook510-avatars.js?v=529',
   './rook510.css',
-  './rook510.css?v=528',
+  './rook510.css?v=529',
   './polish.js',
-  './polish.js?v=528',
+  './polish.js?v=529',
   './progression.js',
-  './progression.js?v=528',
+  './progression.js?v=529',
   './style.css',
-  './style.css?v=528',
+  './style.css?v=529',
   './hor-version.js',
   './splash-battle.png',
   './wait-nest-portrait.jpg',
@@ -155,9 +155,9 @@ const SHELL = [
   './avatar-willow.svg',
   './avatar-wolf.svg',
   './cardback-aftermath.jpg',
-  './rook512-room.js','./rook512-room.js?v=528',
-  './rook513.css','./rook513.css?v=528','./rook513.js','./rook513.js?v=528',
-  './rook514.css','./rook514.css?v=528','./rook518-trump.css','./rook518-trump.css?v=528','./room-card-club-514.jpg','./avatar-jerome.png',
+  './rook512-room.js','./rook512-room.js?v=529',
+  './rook513.css','./rook513.css?v=529','./rook513.js','./rook513.js?v=529',
+  './rook514.css','./rook514.css?v=529','./rook518-trump.css','./rook518-trump.css?v=529','./room-card-club-514.jpg','./avatar-jerome.png',
 ];
 self.addEventListener('install', (e) => {
   e.waitUntil(caches.open(CACHE).then((c) => c.addAll(SHELL).catch(() => {})).then(() => self.skipWaiting()));

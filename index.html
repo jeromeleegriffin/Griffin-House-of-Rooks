@@ -15,18 +15,18 @@
     (function () {
       // Rook522: remember the build only. Service-worker activation owns updates.
       // Never redirect/reload here: competing page + SW reload paths caused loops.
-      var BUILD = '528';
+      var BUILD = '529';
       try { localStorage.setItem('horBuild', BUILD); } catch (e) {}
     })();
   </script>
   <link rel="manifest" href="manifest.json">
   <link rel="icon" href="icon-192.png">
   <link rel="apple-touch-icon" href="apple-touch-icon.png">
-  <link rel="stylesheet" href="style.css?v=528">
-  <link rel="stylesheet" href="rook510.css?v=528">
-  <link rel="stylesheet" href="rook513.css?v=528">
-  <link rel="stylesheet" href="rook518-trump.css?v=528">
-  <script src="vendor/peerjs.min.js?v=528" onerror="this.onerror=null;this.src='https://cdn.jsdelivr.net/npm/peerjs@1.5.5/dist/peerjs.min.js';"></script>
+  <link rel="stylesheet" href="style.css?v=529">
+  <link rel="stylesheet" href="rook510.css?v=529">
+  <link rel="stylesheet" href="rook513.css?v=529">
+  <link rel="stylesheet" href="rook518-trump.css?v=529">
+  <script src="vendor/peerjs.min.js?v=529" onerror="this.onerror=null;this.src='https://cdn.jsdelivr.net/npm/peerjs@1.5.5/dist/peerjs.min.js';"></script>
   <style>
     /* Emergency layout if style.css fails to load — joiners still see a usable page */
     body{margin:0;background:#1a120b;color:#f3e6c8;font-family:sans-serif}
@@ -103,8 +103,8 @@
     <div class="lt-decor lt-corner lt-tl"><img class="rook-ui-bird" src="cardback-raven.jpg" alt=""></div>
     <div class="lt-decor lt-corner lt-tr"><img class="rook-ui-bird" src="cardback-raven.jpg" alt=""></div>
     <div id="ltKittyWait" class="lt-wait-banner hidden" aria-live="polite">
-      <img id="ltWaitArtNest" class="lt-wait-art" src="wait-nest-landscape.jpg?v=528" alt="">
-      <img id="ltWaitArtTrump" class="lt-wait-art" src="wait-trump-landscape.jpg?v=528" alt="">
+      <img id="ltWaitArtNest" class="lt-wait-art" src="wait-nest-landscape.jpg?v=529" alt="">
+      <img id="ltWaitArtTrump" class="lt-wait-art" src="wait-trump-landscape.jpg?v=529" alt="">
       <div class="lt-wait-veil"></div>
       <div class="lt-wait-copy">
         <div class="lt-wait-kicker" id="ltWaitKicker">The nest is open</div>
@@ -133,7 +133,6 @@
           <span><span id="ltTeamNameB">Raven</span> <b id="ltScoreB">0</b></span>
           <span>To <b id="ltTarget">500</b></span>
           <span id="ltSandbagScore" class="lt-sandbag-score hidden">Sandbags A <b id="ltSandA">0</b> · B <b id="ltSandB">0</b></span>
-          <button type="button" class="table-msg-btn table-msg-btn-top hidden" data-open-table-msg="1" title="Send a table message" aria-hidden="true" tabindex="-1">Message Table $100</button>
         </div>
         <span class="lt-sub" id="ltSub">Tap a gold card to play · or use portrait</span>
       </div>
@@ -805,7 +804,6 @@
             <span><span id="scoreTeamNameB">Raven</span>: <b id="scoreB">0</b></span>
             <span class="target-label">to <b id="targetDisplay">500</b></span>
             <span id="sandbagScore" class="sandbag-score hidden">Sandbags: A <b id="sandbagA">0</b> · B <b id="sandbagB">0</b></span>
-            <button type="button" id="btnTableMsg" class="table-msg-btn table-msg-btn-top hidden" data-open-table-msg="1" title="Send a table message" aria-hidden="true" tabindex="-1">Message Table $100</button>
           </div>
           <div class="phase-row" id="phaseRow">
             <div class="phase" id="phaseLabel">Bidding</div>
@@ -875,8 +873,8 @@
               <div id="widowSpread" class="widow-spread hidden" aria-label="Widow"></div>
               <div id="botThinking" class="bot-thinking hidden">Thinking…</div>
               <div id="ptWaitBanner" class="pt-wait-banner hidden" aria-live="polite">
-                <img id="ptWaitArtNest" class="pt-wait-art" src="wait-nest-portrait.jpg?v=528" alt="">
-                <img id="ptWaitArtTrump" class="pt-wait-art" src="wait-trump-portrait.jpg?v=528" alt="">
+                <img id="ptWaitArtNest" class="pt-wait-art" src="wait-nest-portrait.jpg?v=529" alt="">
+                <img id="ptWaitArtTrump" class="pt-wait-art" src="wait-trump-portrait.jpg?v=529" alt="">
                 <div class="pt-wait-veil"></div>
                 <div class="pt-wait-copy">
                   <div class="pt-wait-kicker" id="ptWaitKicker">House of Rooks</div>
@@ -1104,18 +1102,6 @@
   <div id="botStyleTip" class="bot-style-tip hidden" role="status"></div>
   <div id="illegalWhy" class="illegal-why hidden"></div>
   <div id="tableMsgPopup" class="table-msg-popup hidden" aria-live="assertive"></div>
-  <div id="tableMsgModal" class="modal hidden" role="dialog" aria-label="Send table message">
-    <div class="modal-content">
-      <h2>Message the table</h2>
-      <p class="option-hint" id="tableMsgCostLine">Costs $100 · Bank $0</p>
-      <input type="text" id="tableMsgInput" maxlength="80" placeholder="Type a short message" autocomplete="off">
-      <div class="btn-row" style="margin-top:.6rem;">
-        <button type="button" id="tableMsgSend" class="btn primary">Send</button>
-        <button type="button" id="tableMsgHold" class="btn">Hold</button>
-        <button type="button" id="tableMsgCancel" class="btn">Cancel</button>
-      </div>
-    </div>
-  </div>
   <script>
     (function () {
       var deferredPrompt = null;
@@ -1210,15 +1196,15 @@
       paintInstall();
     })();
   </script>
-  <script src="rules.js?v=528"></script>
-  <script src="bots.js?v=528"></script>
-  <script src="game.js?v=528"></script>
-  <script src="rook510-avatars.js?v=528"></script>
-  <script src="rook512-room.js?v=528"></script>
-  <script src="rook513.js?v=528"></script>
-  <script src="polish.js?v=528"></script>
+  <script src="rules.js?v=529"></script>
+  <script src="bots.js?v=529"></script>
+  <script src="game.js?v=529"></script>
+  <script src="rook510-avatars.js?v=529"></script>
+  <script src="rook512-room.js?v=529"></script>
+  <script src="rook513.js?v=529"></script>
+  <script src="polish.js?v=529"></script>
   <!-- Dormant career/achievement framework. Master switch is OFF in progression.js. -->
-  <script src="progression.js?v=528"></script>
+  <script src="progression.js?v=529"></script>
   <div id="horBootError"></div>
   <script>
     window.addEventListener('error', function (ev) {
@@ -1232,7 +1218,7 @@
   </script>
   <script>
     if ('serviceWorker' in navigator) {
-      navigator.serviceWorker.register('sw.js?v=528', { updateViaCache: 'none' })
+      navigator.serviceWorker.register('sw.js?v=529', { updateViaCache: 'none' })
         .then(function (reg) { try { reg.update(); } catch (e) {} })
         .catch(() => {});
       // Rook522: do not reload on controllerchange. The new worker takes control

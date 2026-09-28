@@ -7,7 +7,7 @@
 // It's exchanged during the join handshake so a stale host or joiner (e.g.
 // one still running old cached JS) gets caught and auto-updated instead of
 // silently failing or behaving unpredictably against a mismatched peer.
-const APP_VERSION = '528';
+const APP_VERSION = '529';
 
 function horThisIndex() {
   try {
@@ -6695,7 +6695,9 @@ function horDeveloperToolsEnabled() {
     const q = new URLSearchParams(location.search);
     const enteredName = String(myName || (($('hor-player-name') && $('hor-player-name').value) || '')).trim().toUpperCase();
     // SOL is Jerome's intentionally quiet, offline developer identity. It is convenience, not security.
-    const solOffline = enteredName === 'SOL' && !roomCode;
+    // Offline practice intentionally uses roomCode='OFFLINE', so roomCode emptiness is NOT a valid offline test.
+    // Rook529: SOL must unlock reliably in the actual local/offline table.
+    const solOffline = enteredName === 'SOL' && (isSoloPractice === true || roomCode === 'OFFLINE' || document.body.classList.contains('offline-play'));
     return solOffline || q.get('dev') === '1' || localStorage.getItem('horDeveloperTools') === '1';
   } catch (e) { return false; }
 }
@@ -11044,15 +11046,13 @@ function trumpMarkerMarkup(color) {
   const name = String((COLOR_NAMES && COLOR_NAMES[safe]) || safe).toUpperCase();
   return '<span class="trump-impact-copy" aria-hidden="true">' +
       '<span class="trump-impact-color">' + name + '</span>' +
-      '<span class="trump-impact-is">IS TRUMP</span>' +
     '</span>' +
     '<span class="trump-medallion" aria-hidden="true">' +
       '<span class="trump-medallion-edge">' +
         '<span class="trump-medallion-face">' +
-          '<span class="trump-enamel"><span class="trump-griffin-mark">GH</span></span>' +
+          '<span class="trump-enamel"><span class="trump-stamp-word">' + name + '</span></span>' +
         '</span>' +
       '</span>' +
-      '<span class="trump-medallion-name">' + name + '<small>TRUMP</small></span>' +
     '</span>' +
     '<span class="sr-only">' + name + ' is trump</span>';
 }
@@ -11186,16 +11186,10 @@ function renderUI() {
   // into the next hand's shuffle / bidding UI.
   const showTrumpStamp = !!(game.trump && (game.phase === 'play' || game.phase === 'trump'));
   if (showTrumpStamp) {
-    if ($('trumpDisplay')) {
-      $('trumpDisplay').textContent = `Trump: ${COLOR_NAMES[game.trump] || game.trump}`;
-      $('trumpDisplay').style.color = game.trump === 'yellow' ? '#f9a825' : (game.trump === 'green' ? '#81c784' : game.trump);
-    }
+    // Rook529: the physical stamp is the sole persistent trump-state display.
+    if ($('trumpDisplay')) $('trumpDisplay').textContent = '';
     const tb = $('trumpBadge');
-    if (tb) {
-      tb.textContent = `Trump: ${COLOR_NAMES[game.trump]}`;
-      tb.className = 'felt-badge trump-' + game.trump;
-      tb.classList.remove('hidden');
-    }
+    if (tb) tb.classList.add('hidden');
     ['trumpBanner', 'ltTrumpStamp'].forEach((id) => paintTrumpMarker($(id), game.trump));
     try { maybeReactTrumpPlay(); } catch (e) {}
   } else {
@@ -13624,39 +13618,9 @@ function closeCardBackModal() {
 })();
 
 (function wireTableBank() {
-  try {
-    document.querySelectorAll('.table-msg-btn, [data-open-table-msg]').forEach((btn) => {
-      if (btn && btn.tagName === 'BUTTON') btn.textContent = 'Message Table $100';
-    });
-  } catch (e) {}
-  document.addEventListener('click', (e) => {
-    const hit = e.target.closest('.seat-bank.is-mine, .wait-seat-bank.is-mine, .lt-bank.is-mine, .table-msg-btn, [data-open-table-msg]');
-    if (!hit) return;
-    e.preventDefault();
-    e.stopPropagation();
-    openTableMsgBuy();
-  });
-  const send = $('tableMsgSend');
-  const hold = $('tableMsgHold');
-  const cancel = $('tableMsgCancel');
-  const modal = $('tableMsgModal');
-  const inp = $('tableMsgInput');
-  if (send) send.onclick = () => submitTableMsgBuy();
-  if (hold) hold.onclick = () => holdTableMsgBuy();
-  if (cancel) cancel.onclick = () => closeTableMsgBuy();
-  if (modal) modal.addEventListener('click', (e) => { if (e.target === modal) closeTableMsgBuy(); });
-  if (inp) {
-    inp.addEventListener('input', () => saveTableMsgDraft(inp.value));
-    inp.addEventListener('keydown', (e) => { if (e.key === 'Enter') submitTableMsgBuy(); });
-    inp.addEventListener('focus', () => setTimeout(pinTableMsgModal, 80));
-  }
-  try {
-    if (window.visualViewport) {
-      window.visualViewport.addEventListener('resize', pinTableMsgModal);
-      window.visualViewport.addEventListener('scroll', pinTableMsgModal);
-    }
-  } catch (e) {}
-})();
+  // Rook529: Message Table purchase/composer UI was retired from player-facing play.
+  // Incoming legacy table-message rendering remains compatible, but no local control opens the composer.
+})();;
 
 (function initPrefs() {
   const t = parseInt(localStorage.getItem('rookTheme') || '0', 10);
@@ -14428,11 +14392,18 @@ function positionPortraitLast3Btn() {
   function restore(h){if(!h)return;const a=readAll();a[h.o]=a[h.o]||{};a[h.o][h.key]=h.r;writeAll(a);applyAll();if(h.o===orientation()&&h.key===targetKey)paint();}
   function undo(){if(!history.length)return;future.push({o:orientation(),key:targetKey,r:recFor()});restore(history.pop());}
   function redo(){if(!future.length)return;history.push({o:orientation(),key:targetKey,r:recFor()});restore(future.pop());}
-  function setTarget(el){if(!el||el.closest('#solStudioPanel'))return;target=el;targetKey=keyFor(el);document.querySelectorAll('.sol-studio-target').forEach(x=>x.classList.remove('sol-studio-target'));target.classList.add('sol-studio-target');picking=false;document.documentElement.classList.remove('sol-studio-picking');paint();}
+  function normalizeTarget(el){
+    if(!el)return el;
+    const av=el.closest&&el.closest('.seat-avatar,.seat-avatar-side'); if(av)return av;
+    const nm=el.closest&&el.closest('.player-slot .name'); if(nm)return nm;
+    return el;
+  }
+  function setTarget(el){el=normalizeTarget(el);if(!el||el.closest('#solStudioPanel'))return;target=el;targetKey=keyFor(el);document.querySelectorAll('.sol-studio-target').forEach(x=>x.classList.remove('sol-studio-target'));target.classList.add('sol-studio-target');picking=false;document.documentElement.classList.remove('sol-studio-picking');paint();}
   function field(id){return q('#'+id);}
   function ensurePanel(){let p=q('#solStudioPanel');if(p)return p;p=document.createElement('div');p.id='solStudioPanel';p.className='sol-studio-panel hidden';p.innerHTML=`
    <div class="sol-studio-head"><b>SOL VISUAL STUDIO</b><span id="solVsOrient"></span><button id="solVsDone">DONE</button></div>
    <div class="sol-studio-row"><button id="solVsPick">PICK ELEMENT</button><span id="solVsTarget">Nothing selected</span></div>
+   <div class="sol-studio-row sol-studio-avatar-quick"><button data-sol-pick="#slot-me .seat-avatar">BOTTOM AVATAR</button><button data-sol-pick="#slot-partner .seat-avatar">TOP AVATAR</button><button data-sol-pick=".player-slot.left .seat-avatar-side">LEFT AVATAR</button><button data-sol-pick=".player-slot.right .seat-avatar-side">RIGHT AVATAR</button></div>
    <div class="sol-studio-grid">
     <label>X<input id="solVsX" type="number" step="1"></label><label>Y<input id="solVsY" type="number" step="1"></label>
     <label>W<input id="solVsW" type="number" step="1" placeholder="auto"></label><label>H<input id="solVsH" type="number" step="1" placeholder="auto"></label>
@@ -14445,6 +14416,7 @@ function positionPortraitLast3Btn() {
    <textarea id="solVsExportBox" class="hidden" readonly></textarea>
    <div class="sol-studio-help">Drag selected element • arrows 1px • Shift+arrows 10px • typed values apply immediately</div>`;document.body.appendChild(p);
    q('#solVsDone').onclick=()=>setEditing(false);q('#solVsPick').onclick=()=>{picking=true;document.documentElement.classList.add('sol-studio-picking');};
+   p.querySelectorAll('[data-sol-pick]').forEach(b=>b.onclick=()=>{const el=q(b.getAttribute('data-sol-pick'));if(el)setTarget(el);});
    ['X','Y','W','H','Scale','Font','Z'].forEach(n=>field('solVs'+n).addEventListener('change',applyFields));q('#solVsGrid').onchange=e=>grid=safeNum(e.target.value,1);
    q('#solVsAspect').onclick=()=>{aspect=!aspect;paint();};q('#solVsHide').onclick=()=>mut(r=>r.hidden=!r.hidden);q('#solVsLock').onclick=()=>mut(r=>r.locked=!r.locked);q('#solVsReset').onclick=resetItem;
    q('#solVsUndo').onclick=undo;q('#solVsRedo').onclick=redo;q('#solVsGuides').onclick=()=>document.documentElement.classList.toggle('sol-studio-guides');q('#solVsBoxes').onclick=()=>document.documentElement.classList.toggle('sol-studio-boxes');
@@ -14455,11 +14427,11 @@ function positionPortraitLast3Btn() {
   function applyFields(){if(!targetKey)return;pushHistory();const r=recFor();r.x=snap(safeNum(field('solVsX').value));r.y=snap(safeNum(field('solVsY').value));r.w=field('solVsW').value===''?null:Math.max(1,safeNum(field('solVsW').value));r.h=field('solVsH').value===''?null:Math.max(1,safeNum(field('solVsH').value));r.scale=Math.max(.1,Math.min(5,safeNum(field('solVsScale').value,1)));r.font=field('solVsFont').value===''?null:Math.max(1,safeNum(field('solVsFont').value));r.z=field('solVsZ').value===''?null:safeNum(field('solVsZ').value);saveRec(r);applyRec(target,targetKey);paint();}
   function resetItem(){if(!targetKey)return;pushHistory();const a=readAll(),o=orientation();if(a[o])delete a[o][targetKey];writeAll(a);if(target){target.classList.remove('sol-studio-managed','sol-studio-hidden','sol-studio-locked');['--sol-vs-x','--sol-vs-y','--sol-vs-scale'].forEach(x=>target.style.removeProperty(x));['width','height','font-size','z-index'].forEach(x=>target.style.removeProperty(x));}paint();}
   function resetOrientation(){if(!confirm('Reset every SOL override for '+orientation()+'?'))return;const a=readAll();delete a[orientation()];writeAll(a);location.reload();}
-  function exportLayout(){const box=q('#solVsExportBox');box.value=JSON.stringify({build:528,orientation:orientation(),layout:readAll()[orientation()]||{}},null,2);box.classList.remove('hidden');box.select();try{navigator.clipboard&&navigator.clipboard.writeText(box.value);}catch(_){} }
+  function exportLayout(){const box=q('#solVsExportBox');box.value=JSON.stringify({build:529,orientation:orientation(),layout:readAll()[orientation()]||{}},null,2);box.classList.remove('hidden');box.select();try{navigator.clipboard&&navigator.clipboard.writeText(box.value);}catch(_){} }
   function paint(){const p=ensurePanel(),r=recFor();q('#solVsOrient').textContent=orientation().toUpperCase();q('#solVsTarget').textContent=targetKey||'Nothing selected';if(!targetKey)return;field('solVsX').value=Math.round(r.x);field('solVsY').value=Math.round(r.y);field('solVsW').value=r.w==null?'':Math.round(r.w);field('solVsH').value=r.h==null?'':Math.round(r.h);field('solVsScale').value=safeNum(r.scale,1).toFixed(2);field('solVsFont').value=r.font==null?'':Math.round(r.font);field('solVsZ').value=r.z==null?'':Math.round(r.z);q('#solVsAspect').textContent=aspect?'🔗 ASPECT ON':'⛓ ASPECT OFF';q('#solVsHide').classList.toggle('active',!!r.hidden);q('#solVsLock').classList.toggle('active',!!r.locked);}
   function setEditing(on){if(!horDeveloperToolsEnabled())on=false;editing=!!on;document.documentElement.classList.toggle('sol-studio-editing',editing);ensurePanel().classList.toggle('hidden',!editing);if(!editing){picking=false;document.documentElement.classList.remove('sol-studio-picking');document.querySelectorAll('.sol-studio-target').forEach(x=>x.classList.remove('sol-studio-target'));}}
   function toggle(){setEditing(!editing);}
-  function ensureButton(){const menu=q('.game-more-menu');if(!menu||q('#btnSolStudio'))return;const old=q('#btnSolLayout');if(old)old.remove();const b=document.createElement('button');b.type='button';b.id='btnSolStudio';b.className='icon-btn developer-only hidden';b.title='SOL Visual Layout Studio';b.innerHTML='✥ <span>Visual studio</span>';b.onclick=e=>{e.preventDefault();toggle();const d=b.closest('details');if(d)d.open=false;};menu.appendChild(b);}
+  function ensureButton(){const toolbar=q('#topToolbar')||q('.toolbar');if(!toolbar||q('#btnSolStudio'))return;const old=q('#btnSolLayout');if(old)old.remove();const b=document.createElement('button');b.type='button';b.id='btnSolStudio';b.className='icon-btn developer-only hidden sol-studio-launch';b.title='SOL Visual Layout Studio';b.innerHTML='✥ <span>SOL Studio</span>';b.onclick=e=>{e.preventDefault();toggle();};const more=toolbar.querySelector('.game-more');toolbar.insertBefore(b,more||null);}
   document.addEventListener('pointerdown',e=>{if(!editing||e.target.closest('#solStudioPanel'))return;if(picking){e.preventDefault();e.stopPropagation();setTarget(e.target);return;}if(!target||!target.contains(e.target))return;const r=recFor();if(r.locked)return;e.preventDefault();e.stopPropagation();pushHistory();drag={id:e.pointerId,sx:e.clientX,sy:e.clientY,x:r.x,y:r.y};try{target.setPointerCapture(e.pointerId)}catch(_){}target.classList.add('sol-studio-dragging');},true);
   document.addEventListener('pointermove',e=>{if(!drag||e.pointerId!==drag.id)return;e.preventDefault();const r=recFor();r.x=snap(drag.x+e.clientX-drag.sx);r.y=snap(drag.y+e.clientY-drag.sy);saveRec(r);applyRec(target,targetKey);paint();},true);
   document.addEventListener('pointerup',e=>{if(!drag||e.pointerId!==drag.id)return;target&&target.classList.remove('sol-studio-dragging');drag=null;},true);
