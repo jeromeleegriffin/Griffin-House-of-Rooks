@@ -305,3 +305,31 @@ body.no-avatar-motion .player-slot.hor-thinking-pulse .seat-avatar-img { animati
 .wait-seat-av { animation:none !important; }
 body.in-game .player-slot.is-turn .seat-avatar,
 body.in-game .player-slot.hor-thinking-pulse .seat-avatar { animation:none !important; }
+
+/* Rook517 cleanup — retire the old table-money presentation without deleting
+   its legacy accounting code yet.  This keeps the change surgical while
+   recovering seat/header space. */
+body.in-game .seat-bank,
+body.in-game .lt-bank,
+body.in-game .lt-hand-bank,
+body.in-game .table-msg-btn,
+body.in-game [data-open-table-msg="1"] { display:none !important; }
+
+/* The beer/private-message purchases are part of the retired money UI. */
+#opt-buy-beer, #opt-whisper { display:none !important; }
+label.option-label:has(#opt-buy-beer),
+label.option-label:has(#opt-whisper) { display:none !important; }
+label.option-label:has(#opt-buy-beer) + .option-hint,
+label.option-label:has(#opt-whisper) + .option-hint { display:none !important; }
+
+/* Bidding should read as a physical table console, not loose browser controls. */
+body.in-game .felt-bid-dock:not(.hidden) {
+  background:linear-gradient(180deg,rgba(29,19,12,.97),rgba(10,8,6,.98)) !important;
+  border:1px solid rgba(201,162,39,.72) !important;
+  border-radius:18px !important;
+  padding:.62rem .72rem .68rem !important;
+  box-shadow:inset 0 1px 0 rgba(255,255,255,.06),0 8px 20px rgba(0,0,0,.48) !important;
+}
+body.in-game .felt-bid-dock .felt-bid-name { display:none !important; }
+body.in-game .felt-bid-dock .bid-value { font-weight:900 !important; letter-spacing:.035em; }
+body.in-game .felt-bid-dock button { min-height:42px; border-radius:10px !important; }

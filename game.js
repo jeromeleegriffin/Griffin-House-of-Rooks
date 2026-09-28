@@ -7,7 +7,7 @@
 // It's exchanged during the join handshake so a stale host or joiner (e.g.
 // one still running old cached JS) gets caught and auto-updated instead of
 // silently failing or behaving unpredictably against a mismatched peer.
-const APP_VERSION = '516';
+const APP_VERSION = '517';
 
 function horThisIndex() {
   try {
@@ -3647,11 +3647,14 @@ window.horForceUpdate = horForceUpdate;
 })();
 
 const PEER_BROKERS = [
-  { host: '0.peerjs.com', port: 443, path: '/', secure: true },
-  { host: 'peerjs.92k.de', port: 443, path: '/', secure: true }
+  // Official PeerJS Cloud.  Leaving host/path unspecified is the supported
+  // cloud configuration and avoids treating the public cloud like a
+  // self-hosted PeerServer.
+  { cloud: true, label: 'PeerJS Cloud' }
 ];
 let horPeerBrokerIndex = 0;
 let horHostCreateInProgress = false;
+let horHostCreateWatchdog = null;
 
 function horSetHostCreateBusy(busy, message) {
   horHostCreateInProgress = !!busy;
@@ -3665,51 +3668,36 @@ function horSetHostCreateBusy(busy, message) {
   });
 }
 
+function horClearHostCreateWatchdog() {
+  if (horHostCreateWatchdog) clearTimeout(horHostCreateWatchdog);
+  horHostCreateWatchdog = null;
+}
+
 let horForceRelayIce = false;
 
-function horIceConfig(forceRelay) {
-  const relay = !!(forceRelay || horForceRelayIce);
+function horIceConfig() {
+  // Keep the connection configuration conservative.  The old build forced
+  // retries through third-party TURN credentials that are not controlled by
+  // Griffin House; when those relays reject a request the join can never
+  // recover.  PeerJS Cloud signaling + standard STUN is the stable baseline.
   return {
-    iceCandidatePoolSize: relay ? 2 : 8,
-    iceTransportPolicy: relay ? 'relay' : 'all',
+    iceCandidatePoolSize: 4,
     bundlePolicy: 'max-bundle',
     rtcpMuxPolicy: 'require',
     iceServers: [
       { urls: 'stun:stun.l.google.com:19302' },
       { urls: 'stun:stun1.l.google.com:19302' },
-      { urls: 'stun:stun2.l.google.com:19302' },
-      { urls: 'stun:stun3.l.google.com:19302' },
-      { urls: 'turn:0.peerjs.com:3478', username: 'peerjs', credential: 'peerjsp' },
-      { urls: 'turn:0.peerjs.com:3478?transport=tcp', username: 'peerjs', credential: 'peerjsp' },
-      { urls: 'turns:0.peerjs.com:443', username: 'peerjs', credential: 'peerjsp' },
-      { urls: 'turn:openrelay.metered.ca:80', username: 'openrelayproject', credential: 'openrelayproject' },
-      { urls: 'turn:openrelay.metered.ca:80?transport=tcp', username: 'openrelayproject', credential: 'openrelayproject' },
-      { urls: 'turn:openrelay.metered.ca:443', username: 'openrelayproject', credential: 'openrelayproject' },
-      { urls: 'turn:openrelay.metered.ca:443?transport=tcp', username: 'openrelayproject', credential: 'openrelayproject' },
-      { urls: 'turns:openrelay.metered.ca:443', username: 'openrelayproject', credential: 'openrelayproject' },
-      { urls: 'stun:stun4.l.google.com:19302' },
-      { urls: 'stun:stun.stunprotocol.org:3478' },
-      { urls: 'turn:openrelay.metered.ca:443?transport=tcp', username: 'openrelayproject', credential: 'openrelayproject' }
+      { urls: 'stun:stun2.l.google.com:19302' }
     ]
   };
 }
 
-function peerOptions(broker, forceRelay) {
-  const b = broker || PEER_BROKERS[horPeerBrokerIndex % PEER_BROKERS.length] || PEER_BROKERS[0];
-  return {
-    host: b.host,
-    port: b.port,
-    path: b.path || '/',
-    secure: b.secure !== false,
-    debug: 0,
-    pingInterval: 4000,
-    config: horIceConfig(forceRelay)
-  };
+function peerOptions() {
+  return { debug: 1, pingInterval: 5000, config: horIceConfig() };
 }
 
 function horNextBroker() {
-  horPeerBrokerIndex = (horPeerBrokerIndex + 1) % PEER_BROKERS.length;
-  return PEER_BROKERS[horPeerBrokerIndex];
+  return PEER_BROKERS[0];
 }
 
 
@@ -3786,6 +3774,14 @@ function createRoom(preserveCode) {
     const opts = peerOptions();
     horDebugLog('HOST: creating peer on broker ' + opts.host + ' code=' + roomCode);
     peer = new Peer(peerRoomId(roomCode), opts);
+    horClearHostCreateWatchdog();
+    horHostCreateWatchdog = setTimeout(() => {
+      if (!horHostCreateInProgress) return;
+      horDebugLog('HOST: signaling open timed out; returning control to lobby');
+      try { if (peer) peer.destroy(); } catch (e) {}
+      peer = null;
+      horSetHostCreateBusy(false, 'Could not open the multiplayer room. Tap Play with friends to try again.');
+    }, 12000);
   } catch (e) {
     console.error(e);
     horSetHostCreateBusy(false);
@@ -3794,6 +3790,7 @@ function createRoom(preserveCode) {
   }
 
   peer.on('open', id => {
+    horClearHostCreateWatchdog();
     horDebugLog('HOST: peer open, id=' + id + ', room code=' + roomCode);
     myPeerId = id;
     horSetHostCreateBusy(false);
@@ -3853,6 +3850,7 @@ function createRoom(preserveCode) {
   });
 
   peer.on('error', err => {
+    horClearHostCreateWatchdog();
     console.error('Peer error:', err);
     horDebugLog('HOST: peer error type=' + (err && err.type) + ' msg=' + (err && err.message));
     if (err.type === 'unavailable-id') {
@@ -3930,7 +3928,7 @@ function joinRoom() {
     const targetId = peerRoomId(roomCode);
     horDebugLog('JOIN: attempt ' + joinTries + '/' + maxJoinTries + ', connecting to targetId=' + targetId);
     setJoinStatus(joinTries >= 3
-      ? 'Table found. The direct path did not open — trying a relay…'
+      ? 'Table found. Retrying the connection…'
       : 'Table found. Linking to the host…');
     let conn;
     try {
@@ -3960,7 +3958,7 @@ function joinRoom() {
           if (ice === 'failed' || cs === 'failed') {
             setJoinStatus('Table found, but this network blocked the direct path. Trying another way…');
           } else if (horForceRelayIce || joinTries >= 3) {
-            setJoinStatus('Table found. Using a relay to reach the host…');
+            setJoinStatus('Table found. Retrying the connection…');
           } else {
             setJoinStatus('Table found. Linking to the host…');
           }
@@ -4012,28 +4010,11 @@ function joinRoom() {
         return;
       }
       horDebugLog('JOIN: attempt ' + joinTries + ' timed out, retrying…');
-      if (joinTries >= 2 && !horForceRelayIce) {
-        horForceRelayIce = true;
-        setJoinStatus('Table found. Switching to a relay path…');
-        try { if (peer) peer.destroy(); } catch (e) {}
-        peer = null;
-        setTimeout(() => {
-          if (finished) return;
-          try {
-            peer = new Peer(undefined, peerOptions(null, true));
-            peer.on('open', (id) => {
-              myPeerId = id;
-              setTimeout(() => { try { tryConnect(); } catch (e2) {} }, 400);
-            });
-            peer.on('error', () => { try { tryConnect(); } catch (e3) {} });
-          } catch (e4) {
-            setTimeout(tryConnect, 500);
-          }
-        }, 300);
-        return;
-      }
+      // Retry the DataConnection without destroying the healthy signaling
+      // Peer.  Recreating the Peer mid-join used to orphan callbacks and was
+      // a major source of the apparent frozen-table state.
       setJoinStatus(joinTries >= 3
-        ? 'Still linking through a relay…'
+        ? 'Still linking to the host…'
         : 'Table found. Still linking to the host…');
       setTimeout(tryConnect, 600);
     }, tryTimeoutMs);
