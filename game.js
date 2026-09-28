@@ -7,7 +7,7 @@
 // It's exchanged during the join handshake so a stale host or joiner (e.g.
 // one still running old cached JS) gets caught and auto-updated instead of
 // silently failing or behaving unpredictably against a mismatched peer.
-const APP_VERSION = '537';
+const APP_VERSION = '538';
 
 function horThisIndex() {
   try {
@@ -14418,7 +14418,7 @@ function positionPortraitLast3Btn() {
  * Pick virtually any live table/UI element, move it, size it, lock it, save it, and export later.
  */
 (function horInstallVisualStudio(){
-  const KEY='horSolVisualStudioV6', PANEL_KEY='horSolStudioPanelV6';
+  const KEY='horSolVisualStudioV7', PANEL_KEY='horSolStudioPanelV7';
   const DEFAULT_PORTRAIT={"#slot-me .seat-avatar":{"x":27,"y":-15,"w":null,"h":null,"scale":1.4,"font":null,"z":null,"hidden":false,"locked":false},"#slot-partner .seat-avatar":{"x":0,"y":0,"w":null,"h":null,"scale":1.2,"font":null,"z":null,"hidden":false,"locked":true},"#slot-left .seat-avatar-side":{"x":14,"y":-11,"w":null,"h":null,"scale":1.2,"font":1,"z":null,"hidden":false,"locked":true},"#slot-right .seat-avatar-side":{"x":-24,"y":-21,"w":null,"h":null,"scale":1.2,"font":null,"z":null,"hidden":false,"locked":false},"#feltBidDock":{"x":29,"y":47,"w":null,"h":null,"scale":0.85,"font":null,"z":null,"hidden":false,"locked":false},"#actionPanel":{"x":-13,"y":-30,"w":null,"h":null,"scale":0.87,"font":null,"z":null,"hidden":false,"locked":true},"#slot-me .bid-badge":{"x":-17,"y":145,"w":null,"h":null,"scale":1,"font":null,"z":null,"hidden":false,"locked":false},"#slot-left .name":{"x":8,"y":2,"w":null,"h":null,"scale":1,"font":null,"z":null,"hidden":false,"locked":true},"#slot-partner .name":{"x":-82,"y":-5,"w":null,"h":null,"scale":1.2,"font":null,"z":null,"hidden":false,"locked":true},"#slot-right .name":{"x":19,"y":-6,"w":null,"h":null,"scale":1,"font":null,"z":null,"hidden":false,"locked":false},"#portraitLast3Btn":{"x":58,"y":49,"w":null,"h":null,"scale":1,"font":null,"z":null,"hidden":false,"locked":true},"#slot-me .name":{"x":12,"y":-23,"w":null,"h":null,"scale":1.2,"font":null,"z":null,"hidden":false,"locked":false},"#slot-right .bid-badge":{"x":119,"y":12,"w":null,"h":null,"scale":1,"font":null,"z":null,"hidden":false,"locked":true},"#trickArea":{"x":14,"y":-109,"w":null,"h":null,"scale":1,"font":null,"z":null,"hidden":false,"locked":true},"#slot-right":{"x":-8,"y":-7,"w":null,"h":null,"scale":1,"font":null,"z":null,"hidden":false,"locked":true},"#btnToggleTopOpts":{"x":-15,"y":95,"w":null,"h":null,"scale":1,"font":null,"z":null,"hidden":false,"locked":true},"#leaveReplaceBtn":{"x":-15,"y":18,"w":null,"h":null,"scale":1,"font":null,"z":null,"hidden":false,"locked":true},"#myHand":{"x":1,"y":0,"w":null,"h":null,"scale":1,"font":null,"z":null,"hidden":false,"locked":true},"#botThinking":{"x":24,"y":-50,"w":null,"h":null,"scale":1.04,"font":null,"z":null,"hidden":false,"locked":true},"#slot-left .bid-badge":{"x":-15,"y":26,"w":null,"h":null,"scale":1,"font":null,"z":null,"hidden":false,"locked":true},"#slot-left":{"x":-9,"y":-19,"w":null,"h":null,"scale":1,"font":null,"z":null,"hidden":false,"locked":true},"#slot-partner .bid-badge":{"x":25,"y":-108,"w":null,"h":null,"scale":1,"font":null,"z":null,"hidden":false,"locked":true}};
   let editing=false,picking=false,target=null,targetKey='',drag=null,panelDrag=null,history=[],future=[],grid=1,aspect=true,quickGroup=[],quickGroupUndo=[];
   const orientation=()=>innerWidth>innerHeight?'landscape':'portrait';
