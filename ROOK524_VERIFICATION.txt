@@ -1,0 +1,20 @@
+ROOK524 VERIFICATION
+
+Source: Rook523_UI_REFINEMENT_ROLL.zip
+Build: 524
+
+PASS: game.js syntax
+PASS: progression.js syntax
+PASS: sw.js syntax
+PASS: hor-version.js syntax
+PASS: duplicate HTML IDs = 0
+PASS: index build marker = 524
+PASS: service worker cache = house-of-rooks-v524
+PASS: trumpBanner is table-felt relative, not bottom-player relative
+PASS: Message Table top controls hidden from normal UI
+PASS: persona pre-read placeholder = House Player; no "not enough hands" disclosure
+PASS: More menu has explicit two-column popover geometry
+PASS: message lane removed from vertical flex stack to address recorded human-turn table pull
+
+NOT CLAIMED: full interactive browser/gameplay/multiplayer validation. User testing is still required.
+Rook522 remains the last user-confirmed stable baseline until a newer candidate is personally confirmed.

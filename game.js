@@ -7,7 +7,7 @@
 // It's exchanged during the join handshake so a stale host or joiner (e.g.
 // one still running old cached JS) gets caught and auto-updated instead of
 // silently failing or behaving unpredictably against a mismatched peer.
-const APP_VERSION = '523';
+const APP_VERSION = '524';
 
 function horThisIndex() {
   try {
@@ -179,8 +179,26 @@ function horCareerProfileForPlayer(p){
 
 function horShowCareerForPlayer(p){
   const prof=horCareerProfileForPlayer(p);
-  if(prof&&window.HORProgression&&HORProgression.localCareer&&HORProgression.localCareer.showCareerCard)
-    HORProgression.localCareer.showCareerCard(prof);
+  if(prof&&window.HORProgression&&HORProgression.localCareer&&HORProgression.localCareer.showCareerCard){
+    const view=Object.assign({},prof);
+    try{
+      if(p&&p.isBot){
+        const bp=personaByName(p.name);
+        view.personaTitle=bp ? ((typeof STYLE_TITLES!=='undefined'&&STYLE_TITLES[bp.style])||bp.style||'House Player') : 'House Player';
+        view.personaHabit=bp ? ((typeof STYLE_HABIT!=='undefined'&&STYLE_HABIT[bp.style])||bp.blurb||'') : '';
+      }else if(p){
+        const hp=humanPersonaCard(p.name);
+        view.personaTitle=hp.title||'House Player';
+        view.personaHabit=hp.habit||'';
+        view.personaHow=hp.blurb||'';
+      }
+    }catch(e){}
+    HORProgression.localCareer.showCareerCard(view);
+    return true;
+  }
+  // A visible star must never be a dead control. Fall back to the persona card.
+  try{ if(p&&p.name){ showBotStyleTip(p.name); return true; } }catch(e){}
+  return false;
 }
 function horCareerBadgeHtml(p){
   const prof=horCareerProfileForPlayer(p);
@@ -315,7 +333,7 @@ function mergeLifetimeStats(winnerLabel) {
 try { ['horStatsEndpoint','horPlayerIdentityV1','horProgressOutboxV1','horInstallIdV1'].forEach(k=>localStorage.removeItem(k)); } catch (e) {}
 
 
-const HUMAN_STYLE_MIN_HANDS = 8;
+const HUMAN_STYLE_MIN_HANDS = 12;
 function playMemoryKey() { return 'horPlayMemory'; }
 function loadPlayMemoryStore() {
   try { return JSON.parse(localStorage.getItem(playMemoryKey()) || '{}') || {}; } catch (e) { return {}; }
@@ -351,7 +369,7 @@ function putPlayMemory(name, mem) {
 function inferHumanStyle(mem) {
   const hands = mem.hands || 0;
   if (hands < HUMAN_STYLE_MIN_HANDS) {
-    return { style: 'newPlayer', title: 'New player', habit: 'New player', how: 'Not enough hands yet to read a habit.' };
+    return { style: 'housePlayer', title: 'House Player', habit: 'House Player', how: 'Griffin House player.' };
   }
   const bidRate = (mem.bids || 0) / hands;
   const passRate = (mem.passes || 0) / hands;
@@ -367,7 +385,7 @@ function inferHumanStyle(mem) {
   else if (passRate >= 0.55 && bidRate <= 0.35) style = 'safe';
   else if (bidRate >= 0.7) style = 'bidHappy';
   else if ((mem.made || 0) > (mem.sets || 0) * 1.4) style = 'partnerFirst';
-  const title = (style === 'newPlayer') ? 'New player' : ((typeof STYLE_TITLES !== 'undefined' && STYLE_TITLES[style]) || style);
+  const title = (style === 'housePlayer') ? 'House Player' : ((typeof STYLE_TITLES !== 'undefined' && STYLE_TITLES[style]) || style);
   const habit = (typeof STYLE_HABIT !== 'undefined' && STYLE_HABIT[style]) || title;
   const how = (typeof STYLE_HOWTO !== 'undefined' && STYLE_HOWTO[style]) || ('Read from ' + hands + ' hands on this device.');
   return { style, title, habit, how };
@@ -5792,8 +5810,7 @@ function showBotStyleTip(name, ev) {
     p = { name: hp.name, style: hp.style, blurb: hp.how };
   }
   if (!p) return;
-  const extra = (!personaByName(name) && humanPersonaCard(name).hands < HUMAN_STYLE_MIN_HANDS)
-    ? '<span>New player</span>' : '';
+  const extra = '';
   tip.innerHTML = '<button type="button" class="bot-style-tip-close" aria-label="Close player persona">×</button>' + botHowToHTML(p) + extra;
   tip.classList.remove('hidden');
   const x = ev && ev.clientX ? ev.clientX : 24;
@@ -11278,9 +11295,9 @@ function renderUI() {
           // Side-seat avatar is outside .name, so carry the same persona identity
           // onto the avatar container for long-press/persona handling.
           applyBotNameAttr(avatarEl, game.players[idx]);
-          nameEl.innerHTML = `<span class="player-name-text">${playerName}</span>${horCareerBadgeHtml(game.players[idx])}`;
+          nameEl.innerHTML = `<span class="seat-identity-copy"><span class="player-name-text">${playerName}</span>${horCareerBadgeHtml(game.players[idx])}</span>`;
         } else {
-          nameEl.innerHTML = `<span class="seat-avatar">${avatarHTML(av)}</span> <span class="player-name-text">${playerName}</span>${horCareerBadgeHtml(game.players[idx])}`;
+          nameEl.innerHTML = `<span class="seat-avatar">${avatarHTML(av)}</span><span class="seat-identity-copy"><span class="player-name-text">${playerName}</span>${horCareerBadgeHtml(game.players[idx])}</span>`;
         }
         applyBotNameAttr(nameEl, game.players[idx]);
         try { horBindCareerBadges(el); } catch (e) {}
