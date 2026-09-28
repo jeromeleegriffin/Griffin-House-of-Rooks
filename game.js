@@ -3033,6 +3033,7 @@ function auctionNextMin() {
 
 
 function saveSession() {
+  if (window._horIntentionalLeave) return;
   try {
     sessionStorage.setItem('rookSession', JSON.stringify({
       roomCode, myName, isHost, isSpectator, myPeerId
@@ -3647,10 +3648,10 @@ window.horForceUpdate = horForceUpdate;
 })();
 
 const PEER_BROKERS = [
-  // Official PeerJS Cloud.  Leaving host/path unspecified is the supported
-  // cloud configuration and avoids treating the public cloud like a
-  // self-hosted PeerServer.
-  { cloud: true, label: 'PeerJS Cloud' }
+  // Rook520: restore the exact signaling endpoint used by the known-good
+  // Rook386 multiplayer path.  The default PeerJS constructor path introduced
+  // later could open a guest peer while the named host id was not discoverable.
+  { host: '0.peerjs.com', port: 443, path: '/', secure: true, label: 'PeerJS Cloud' }
 ];
 let horPeerBrokerIndex = 0;
 let horHostCreateInProgress = false;
@@ -3692,8 +3693,17 @@ function horIceConfig() {
   };
 }
 
-function peerOptions() {
-  return { debug: 1, pingInterval: 5000, config: horIceConfig() };
+function peerOptions(broker, forceRelay) {
+  const b = broker || PEER_BROKERS[0];
+  return {
+    host: b.host,
+    port: b.port,
+    path: b.path || '/',
+    secure: b.secure !== false,
+    debug: 1,
+    pingInterval: 4000,
+    config: horIceConfig(forceRelay)
+  };
 }
 
 function horNextBroker() {
@@ -3734,6 +3744,7 @@ function horEnsurePeerJS() {
 }
 
 function createRoom() {
+  window._horIntentionalLeave = false;
   myName = ($('hor-player-name').value || '').trim() || 'Host';
   if (typeof Peer === 'undefined') {
     $('lobbyStatus').textContent = 'PeerJS failed to load. Check your internet connection and refresh.';
@@ -3794,12 +3805,14 @@ function createRoom() {
   // reconnect() method — without this, the room would silently stop
   // being joinable while the UI still showed the host screen normally.
   peer.on('disconnected', () => {
+    if (window._horIntentionalLeave) return;
     console.warn('Host peer disconnected from signaling server, attempting reconnect…');
     horDebugLog('HOST: peer disconnected from signaling server, attempting reconnect…');
     try { peer.reconnect(); } catch (e) {}
   });
 
   peer.on('error', err => {
+    if (window._horIntentionalLeave) return;
     console.error('Peer error:', err);
     horDebugLog('HOST: peer error type=' + (err && err.type) + ' msg=' + (err && err.message));
     if (err.type === 'unavailable-id') {
@@ -3822,6 +3835,7 @@ function createRoom() {
 
 
 function joinRoom() {
+  window._horIntentionalLeave = false;
   myName = ($('hor-player-name').value || '').trim() || 'Player';
   const code = ($('hor-room-code').value || '').trim().toUpperCase().replace(/\s+/g, '');
   if (!code) return alert('Enter a room code');
@@ -3987,12 +4001,14 @@ function joinRoom() {
   // See the matching comment in createRoom() — the signaling connection can
   // drop silently in the background without the Peer object being destroyed.
   peer.on('disconnected', () => {
+    if (window._horIntentionalLeave) return;
     console.warn('Join peer disconnected from signaling server, attempting reconnect…');
     horDebugLog('JOIN: peer disconnected from signaling server, attempting reconnect…');
     try { peer.reconnect(); } catch (e) {}
   });
 
   peer.on('error', err => {
+    if (window._horIntentionalLeave) return;
     console.error('Join Peer error:', err);
     horDebugLog('JOIN: peer error type=' + (err && err.type) + ' msg=' + (err && err.message));
     if (finished) return;
@@ -13181,6 +13197,9 @@ bindClick('botPickerClose', closeBotPicker);
 const _botPickModal = $('botPickerModal');
 if (_botPickModal) _botPickModal.addEventListener('click', (e) => { if (e.target === _botPickModal) closeBotPicker(); });
 function teardownMultiplayerBeforeLobby() {
+  // Rook520: an intentional Leave is final.  Mark it before closing PeerJS so
+  // disconnect/error callbacks cannot recreate a session while teardown runs.
+  window._horIntentionalLeave = true;
   // Rook506: Leave must fully release the old room before the lobby reloads.
   // This prevents a stale/reconnecting PeerJS session from racing the next
   // Play Offline press.
@@ -13229,6 +13248,16 @@ function teardownMultiplayerBeforeLobby() {
 bindClick('leaveBtn', () => {
   try { sessionStorage.removeItem('rookSession'); } catch (e) {}
   try { teardownMultiplayerBeforeLobby(); } catch (e) { console.error(e); }
+  // Teardown can synchronously fire PeerJS callbacks. Clear the saved room a
+  // second time after all connections are closed so deliberate Leave can never
+  // surface a stale Rejoin control on the fresh lobby.
+  try { sessionStorage.removeItem('rookSession'); } catch (e) {}
+  try {
+    const rb = $('rejoinBtn');
+    const rc = $('reconnectBox');
+    if (rb) rb.classList.add('hidden');
+    if (rc) rc.classList.add('hidden');
+  } catch (e) {}
   location.reload();
 });
 bindClick('showRules', () => {
@@ -13467,7 +13496,10 @@ bindClick('celeWaiting', () => { try { requestWaitingRoom(); } catch (e) { conso
 
 (function initReconnect() {
   const sess = loadSession();
-  if (sess && sess.roomCode && horExpOn('lobbyReconnect')) {
+  const rejoin = $('rejoinBtn');
+  const hasRejoin = !!(sess && sess.roomCode && sess.roomCode !== 'OFFLINE');
+  if (rejoin) rejoin.classList.toggle('hidden', !hasRejoin);
+  if (hasRejoin && horExpOn('lobbyReconnect')) {
     const box = $('reconnectBox');
     if (box) {
       box.classList.remove('hidden');
