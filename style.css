@@ -13199,3 +13199,15 @@ body.in-game .landscape-theater::before{content:'HOUSE OF ROOKS'!important}
 }
 /* FREEZE is diagnostic: pin the chosen visual object to its current viewport point while SOL is open. */
 .sol-studio-editing .sol-studio-frozen{position:fixed!important;left:var(--sol-freeze-left)!important;top:var(--sol-freeze-top)!important;right:auto!important;bottom:auto!important;margin:0!important;z-index:999988!important;}
+\n/* ===== Rook533: viewport-authoritative SOL + phone guides ===== */
+.sol-studio-managed{translate:calc(var(--sol-vs-x,0px) + var(--sol-safe-x,0px)) var(--sol-vs-y,0px)!important}
+.sol-studio-offscreen{outline-color:#ff6b57!important}
+.sol-s24-guide body::after,.sol-universal-guide body::after{pointer-events:none;position:fixed;z-index:999987;box-sizing:border-box;font:800 9px/1 system-ui;padding:4px;color:#ffe69a}
+/* Galaxy S24 reference: 19.5:9 canvas, scaled to fit the live browser viewport. */
+.sol-s24-guide body::after{content:'GALAXY S24';width:min(100vw,calc(100vh * 9 / 19.5));height:min(100vh,calc(100vw * 19.5 / 9));left:50%;top:50%;transform:translate(-50%,-50%);border:2px solid rgba(80,210,255,.9);box-shadow:0 0 0 9999px rgba(0,0,0,.06)}
+/* Conservative gameplay-safe region for narrower/shorter mobile browser viewports. */
+.sol-universal-guide body::after{content:'UNIVERSAL SAFE';left:max(12px,env(safe-area-inset-left));right:max(12px,env(safe-area-inset-right));top:max(54px,env(safe-area-inset-top));bottom:max(54px,env(safe-area-inset-bottom));border:2px dashed rgba(255,214,90,.9)}
+@media (orientation:portrait){
+  #feltBidDock{max-width:min(78vw,17.5rem)!important}
+  #slot-left .name,#slot-right .name,#slot-partner .name,#slot-me .name{max-width:34vw;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+}
