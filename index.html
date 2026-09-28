@@ -15,18 +15,18 @@
     (function () {
       // Rook522: remember the build only. Service-worker activation owns updates.
       // Never redirect/reload here: competing page + SW reload paths caused loops.
-      var BUILD = '522';
+      var BUILD = '523';
       try { localStorage.setItem('horBuild', BUILD); } catch (e) {}
     })();
   </script>
   <link rel="manifest" href="manifest.json">
   <link rel="icon" href="icon-192.png">
   <link rel="apple-touch-icon" href="apple-touch-icon.png">
-  <link rel="stylesheet" href="style.css?v=522">
-  <link rel="stylesheet" href="rook510.css?v=522">
-  <link rel="stylesheet" href="rook513.css?v=522">
-  <link rel="stylesheet" href="rook518-trump.css?v=522">
-  <script src="vendor/peerjs.min.js?v=522" onerror="this.onerror=null;this.src='https://cdn.jsdelivr.net/npm/peerjs@1.5.5/dist/peerjs.min.js';"></script>
+  <link rel="stylesheet" href="style.css?v=523">
+  <link rel="stylesheet" href="rook510.css?v=523">
+  <link rel="stylesheet" href="rook513.css?v=523">
+  <link rel="stylesheet" href="rook518-trump.css?v=523">
+  <script src="vendor/peerjs.min.js?v=523" onerror="this.onerror=null;this.src='https://cdn.jsdelivr.net/npm/peerjs@1.5.5/dist/peerjs.min.js';"></script>
   <style>
     /* Emergency layout if style.css fails to load — joiners still see a usable page */
     body{margin:0;background:#1a120b;color:#f3e6c8;font-family:sans-serif}
@@ -103,8 +103,8 @@
     <div class="lt-decor lt-corner lt-tl"><img class="rook-ui-bird" src="cardback-raven.jpg" alt=""></div>
     <div class="lt-decor lt-corner lt-tr"><img class="rook-ui-bird" src="cardback-raven.jpg" alt=""></div>
     <div id="ltKittyWait" class="lt-wait-banner hidden" aria-live="polite">
-      <img id="ltWaitArtNest" class="lt-wait-art" src="wait-nest-landscape.jpg?v=522" alt="">
-      <img id="ltWaitArtTrump" class="lt-wait-art" src="wait-trump-landscape.jpg?v=522" alt="">
+      <img id="ltWaitArtNest" class="lt-wait-art" src="wait-nest-landscape.jpg?v=523" alt="">
+      <img id="ltWaitArtTrump" class="lt-wait-art" src="wait-trump-landscape.jpg?v=523" alt="">
       <div class="lt-wait-veil"></div>
       <div class="lt-wait-copy">
         <div class="lt-wait-kicker" id="ltWaitKicker">The nest is open</div>
@@ -193,10 +193,17 @@
           <button id="joinCancelBtn" class="btn link" type="button">Back</button>
         </div>
         <div class="lobby-actions">
-          <button id="soloPracticeBtn" class="btn primary lobby-main" type="button">Play offline<span class="lobby-btn-sub">You vs three bots</span></button>
-          <button id="friendsToggleBtn" class="btn lobby-main" type="button">Play with friends<span class="lobby-btn-sub">Host a table · they join from the website</span></button>
-          <button id="joinBtn" class="btn lobby-main" type="button">Join with a code<span class="lobby-btn-sub">Sit at a friend’s table</span></button>
-          <button id="installAppBtn" class="btn lobby-main" type="button">Install on this phone<span class="lobby-btn-sub">Home screen app — no browser bar</span></button>
+          <button id="soloPracticeBtn" class="btn primary lobby-main lobby-play-now" type="button">Play now<span class="lobby-btn-sub">Jump straight in against three bots</span></button>
+          <div class="lobby-online-row">
+            <button id="friendsToggleBtn" class="btn lobby-main" type="button">Play with friends<span class="lobby-btn-sub">Host a table</span></button>
+            <button id="joinBtn" class="btn lobby-main" type="button">Join a table<span class="lobby-btn-sub">Enter a room code</span></button>
+          </div>
+          <details class="lobby-more">
+            <summary>More options</summary>
+            <div class="lobby-more-actions">
+              <button id="installAppBtn" class="btn lobby-main" type="button">Install on this phone<span class="lobby-btn-sub">Home screen app — no browser bar</span></button>
+            </div>
+          </details>
         </div>
         <section class="lobby-info-card" aria-label="Game information and support">
           <div class="lobby-info-title">HOUSE OF ROOKS INFO & SUPPORT</div>
@@ -250,16 +257,19 @@
           Both people open House of Rooks on their own phone, then the guest taps Join with a code and types the 4-letter code.
         </p>
       </div>
-      <div class="rules-link">
-        <button id="showRules" class="btn link">How to play</button>
-        <button id="replayTutorialBtn" class="btn link" type="button">House tour</button>
-        <button id="newPlayersLobbyBtn" class="btn link" type="button">New players</button>
-        <button id="btnCardBackLobby" class="btn link" type="button">Card backs</button>
-        <button class="btn link" type="button" data-hor-my-career="1">My Career / Stats</button>
-        <button id="toggleMuteLobby" class="btn link" type="button">🔊 Sound on</button>
-        <button id="btnForceRefreshLobby" class="btn link" type="button" title="Clear this app's cached files and reload the latest version">Force refresh</button>
-        <span id="appVersionTag" class="version-tag"></span>
-      </div>
+      <details class="lobby-discover">
+        <summary>Explore Griffin House</summary>
+        <div class="rules-link">
+          <button id="showRules" class="btn link">How to play</button>
+          <button id="replayTutorialBtn" class="btn link" type="button">House tour</button>
+          <button id="newPlayersLobbyBtn" class="btn link" type="button">Players</button>
+          <button id="btnCardBackLobby" class="btn link" type="button">Card backs</button>
+          <button class="btn link" type="button" data-hor-my-career="1">Career / Stats</button>
+          <button id="toggleMuteLobby" class="btn link" type="button">🔊 Sound on</button>
+          <button id="btnForceRefreshLobby" class="btn link" type="button" title="Clear this app's cached files and reload the latest version">Force refresh</button>
+          <span id="appVersionTag" class="version-tag"></span>
+        </div>
+      </details>
       <p class="legal-footer">House of Rooks by Jerome Griffin. Independent trick-taking table. Not affiliated with Hasbro.<br>
         Names stay on this device. <a href="privacy.html">Privacy</a> · <a href="shuffle-statistics.html">Shuffle statistics</a><br>
         Questions, comments, or suggestions: <a href="mailto:jeromeleegriffin@gmail.com">jeromeleegriffin@gmail.com</a><br>
@@ -808,19 +818,24 @@
         <div class="toolbar" id="topToolbar">
           <button type="button" id="btnMute" class="icon-btn" title="Mute">🔊</button>
           <button type="button" id="btnSort" class="icon-btn" title="Sort hand">⇅</button>
-          <button type="button" id="btnStats" class="icon-btn" title="Match stats">📊</button>
-          <button type="button" id="btnTransferHost" class="icon-btn host-only hidden" title="Transfer host">👑</button>
-          <button type="button" id="btnA11y" class="icon-btn" title="High contrast">◐</button>
-          <button type="button" id="btnReduceMotion" class="icon-btn" title="Reduce motion">✨</button>
-          <button type="button" id="btnHistory" class="icon-btn" title="History">📋</button>
-          <button type="button" id="btnRulesInGame" class="icon-btn" title="Rules">?</button>
-          <button type="button" id="btnGameOptions" class="icon-btn host-only hidden" title="Game options">⚙️</button>
-          <button type="button" id="btnTheme" class="icon-btn" title="Cycle table colors">🎨</button>
-          <button type="button" id="btnCardBack" class="icon-btn" title="Card backs">🃏</button>
           <button type="button" id="btnPause" class="icon-btn host-only hidden" title="Pause / Resume">⏸</button>
-          <button type="button" id="btnRedeal" class="icon-btn host-only hidden" title="Redeal">🔄</button>
-          <button type="button" id="btnPerfectDeal" class="icon-btn host-only hidden" title="Deal perfect test hand">🧪</button>
-          <button type="button" id="btnUndo" class="icon-btn host-only hidden" title="Undo (bots)">↩</button>
+          <button type="button" id="btnGameOptions" class="icon-btn host-only hidden" title="Game options">⚙️</button>
+          <details class="game-more">
+            <summary class="icon-btn" title="More controls" aria-label="More controls">•••</summary>
+            <div class="game-more-menu">
+              <button type="button" id="btnStats" class="icon-btn" title="Match stats">📊 <span>Stats</span></button>
+              <button type="button" id="btnHistory" class="icon-btn" title="History">📋 <span>History</span></button>
+              <button type="button" id="btnRulesInGame" class="icon-btn" title="Rules">? <span>Rules</span></button>
+              <button type="button" id="btnTheme" class="icon-btn" title="Table colors">🎨 <span>Table color</span></button>
+              <button type="button" id="btnCardBack" class="icon-btn" title="Card backs">🃏 <span>Card backs</span></button>
+              <button type="button" id="btnA11y" class="icon-btn" title="High contrast">◐ <span>Contrast</span></button>
+              <button type="button" id="btnReduceMotion" class="icon-btn" title="Reduce motion">✨ <span>Motion</span></button>
+              <button type="button" id="btnTransferHost" class="icon-btn host-only hidden" title="Transfer host">👑 <span>Transfer host</span></button>
+              <button type="button" id="btnRedeal" class="icon-btn host-only developer-only hidden" title="Developer redeal">🔄 <span>Redeal test</span></button>
+              <button type="button" id="btnPerfectDeal" class="icon-btn host-only developer-only hidden" title="Deal perfect test hand">🧪 <span>Perfect hand test</span></button>
+              <button type="button" id="btnUndo" class="icon-btn host-only developer-only hidden" title="Developer undo">↩ <span>Undo test</span></button>
+            </div>
+          </details>
         </div>
       </div>
 
@@ -859,8 +874,8 @@
               <div id="widowSpread" class="widow-spread hidden" aria-label="Widow"></div>
               <div id="botThinking" class="bot-thinking hidden">Thinking…</div>
               <div id="ptWaitBanner" class="pt-wait-banner hidden" aria-live="polite">
-                <img id="ptWaitArtNest" class="pt-wait-art" src="wait-nest-portrait.jpg?v=522" alt="">
-                <img id="ptWaitArtTrump" class="pt-wait-art" src="wait-trump-portrait.jpg?v=522" alt="">
+                <img id="ptWaitArtNest" class="pt-wait-art" src="wait-nest-portrait.jpg?v=523" alt="">
+                <img id="ptWaitArtTrump" class="pt-wait-art" src="wait-trump-portrait.jpg?v=523" alt="">
                 <div class="pt-wait-veil"></div>
                 <div class="pt-wait-copy">
                   <div class="pt-wait-kicker" id="ptWaitKicker">House of Rooks</div>
@@ -1195,15 +1210,15 @@
       paintInstall();
     })();
   </script>
-  <script src="rules.js?v=522"></script>
-  <script src="bots.js?v=522"></script>
-  <script src="game.js?v=522"></script>
-  <script src="rook510-avatars.js?v=522"></script>
-  <script src="rook512-room.js?v=522"></script>
-  <script src="rook513.js?v=522"></script>
-  <script src="polish.js?v=522"></script>
+  <script src="rules.js?v=523"></script>
+  <script src="bots.js?v=523"></script>
+  <script src="game.js?v=523"></script>
+  <script src="rook510-avatars.js?v=523"></script>
+  <script src="rook512-room.js?v=523"></script>
+  <script src="rook513.js?v=523"></script>
+  <script src="polish.js?v=523"></script>
   <!-- Dormant career/achievement framework. Master switch is OFF in progression.js. -->
-  <script src="progression.js?v=522"></script>
+  <script src="progression.js?v=523"></script>
   <div id="horBootError"></div>
   <script>
     window.addEventListener('error', function (ev) {
@@ -1217,7 +1232,7 @@
   </script>
   <script>
     if ('serviceWorker' in navigator) {
-      navigator.serviceWorker.register('sw.js?v=522', { updateViaCache: 'none' })
+      navigator.serviceWorker.register('sw.js?v=523', { updateViaCache: 'none' })
         .then(function (reg) { try { reg.update(); } catch (e) {} })
         .catch(() => {});
       // Rook522: do not reload on controllerchange. The new worker takes control

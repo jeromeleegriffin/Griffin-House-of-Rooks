@@ -1,0 +1,27 @@
+17212cbfee6f9ca626a3e99f7935fe328565eeda857c7f49ac5a1aeec52de80a  index.html
+f78b2bf13707ba7f24bd65263e845eaf5c2955b53bd566a782d2e73c73ac272e  game.js
+9e080c70b5b452aac5a7c376b1dffacc1dcdb3b92866f574cf7fd4414706f92a  style.css
+d29eb2985cecb16c12af2871b6fb02b93e717b0de215672875e2b7f8581260db  sw.js
+a260d162b8ad26d180d7a386a5f0ebc0b625d1b942b55ca0b64664ce4103f2ab  hor-version.js
+
+Validation performed:
+- node --check game.js: PASS
+- node --check polish.js: PASS
+- node --check sw.js: PASS
+- node --check hor-version.js: PASS
+- duplicate HTML id scan: PASS (0 duplicates)
+- build/version assertions: PASS
+- developer-tool gate assertions: PASS
+- Rook522 controllerchange reload strategy preserved: manual source check required below
+1235-      navigator.serviceWorker.register('sw.js?v=523', { updateViaCache: 'none' })
+1236-        .then(function (reg) { try { reg.update(); } catch (e) {} })
+1237-        .catch(() => {});
+1238:      // Rook522: do not reload on controllerchange. The new worker takes control
+1239-      // without forcing the currently running hand/page through a reload cycle.
+1240-    }
+1241-  </script>
+1242-  <script>
+1243-    // Rook522: no automatic page reload/update loop. The service worker uses
+1244-    // network-first loading for HTML/JS/CSS, and updates are picked up on the
+1245-    // next normal navigation. Force Refresh remains a manual escape hatch.
+1246-  </script>

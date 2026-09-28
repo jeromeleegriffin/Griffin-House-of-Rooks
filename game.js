@@ -7,7 +7,7 @@
 // It's exchanged during the join handshake so a stale host or joiner (e.g.
 // one still running old cached JS) gets caught and auto-updated instead of
 // silently failing or behaving unpredictably against a mismatched peer.
-const APP_VERSION = '522';
+const APP_VERSION = '523';
 
 function horThisIndex() {
   try {
@@ -6673,10 +6673,24 @@ function hostStartGame() {
   hostDeal();
 }
 
+function horDeveloperToolsEnabled() {
+  try {
+    const q = new URLSearchParams(location.search);
+    return q.get('dev') === '1' || localStorage.getItem('horDeveloperTools') === '1';
+  } catch (e) { return false; }
+}
+
 function showHostGameTools(on) {
+  const devTools = horDeveloperToolsEnabled();
   document.querySelectorAll('.host-only').forEach(el => {
+    if (el.classList.contains('developer-only')) {
+      let showDev = !!(on && isHost && devTools);
+      if (el.id === 'btnPerfectDeal') showDev = showDev && isHostOnlyHuman() && experimentalHandOpt;
+      el.classList.toggle('hidden', !showDev);
+      return;
+    }
     if (el.id === 'btnPerfectDeal') {
-      const showExp = on && isHost && isHostOnlyHuman() && experimentalHandOpt;
+      const showExp = on && isHost && isHostOnlyHuman() && experimentalHandOpt && devTools;
       el.classList.toggle('hidden', !showExp);
       return;
     }
@@ -11314,7 +11328,7 @@ function renderUI() {
       el.appendChild(leadTag);
     }
     if (idx === trickLeadIdx && !quietSeats) {
-      leadTag.textContent = 'LEADING';
+      leadTag.textContent = 'LEAD';
       leadTag.classList.remove('hidden');
     } else {
       leadTag.textContent = '';
@@ -11355,7 +11369,7 @@ function renderUI() {
       meSlot.appendChild(meLead);
     }
     if (seatBase === trickLeadIdx && !quietMe) {
-      meLead.textContent = 'LEADING';
+      meLead.textContent = 'LEAD';
       meLead.classList.remove('hidden');
     } else {
       meLead.textContent = '';
