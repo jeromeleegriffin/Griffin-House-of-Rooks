@@ -7,7 +7,7 @@
 // It's exchanged during the join handshake so a stale host or joiner (e.g.
 // one still running old cached JS) gets caught and auto-updated instead of
 // silently failing or behaving unpredictably against a mismatched peer.
-const APP_VERSION = '539';
+const APP_VERSION = '531';
 
 function horThisIndex() {
   try {
@@ -4453,14 +4453,8 @@ function handleMessage(data, conn) {
         if (players.find(p => p.id === data.id)) {
           return;
         }
-        // Rook536: avatar ownership is exclusive within one active table.
-        // A joining human may prefer an avatar, but cannot duplicate one already owned
-        // by a seated/standing human, bot, or reconnect-reserved player.
-        const requestedAvatar = AVATARS.includes(avatarKey(data.avatar)) ? avatarKey(data.avatar) : AVATARS[0];
-        const usedAvatars = new Set((players || []).filter(p => p && p.avatar).map(p => avatarKey(p.avatar)));
-        const joinAvatar = !usedAvatars.has(requestedAvatar) ? requestedAvatar : (AVATARS.find(a => !usedAvatars.has(a)) || requestedAvatar);
-        players.push({ id: data.id, name: data.name, team: 0, isHost: false, isBot: false, seat: -1, bank: Math.max(0, Math.floor(Number(data.bank) || 0)), avatar: joinAvatar, careerPublic: null });
-        if (data.id) playerAvatars[data.id] = joinAvatar;
+        players.push({ id: data.id, name: data.name, team: 0, isHost: false, isBot: false, seat: -1, bank: Math.max(0, Math.floor(Number(data.bank) || 0)), avatar: AVATARS.includes(avatarKey(data.avatar)) ? avatarKey(data.avatar) : AVATARS[0], careerPublic: null });
+        if (data.id) playerAvatars[data.id] = AVATARS.includes(avatarKey(data.avatar)) ? avatarKey(data.avatar) : AVATARS[0];
         const wantSeat = parseInt(data.preferredSeat, 10);
         let seatedOk = false;
         if (!isNaN(wantSeat) && wantSeat >= 0 && wantSeat <= 3) {
@@ -4518,20 +4512,11 @@ function handleMessage(data, conn) {
       case 'declineClaim':
         if (game && game.phase === 'play') hostDeclineClaim(data.player);
         break;
-      case 'avatar': {
-        const wanted = avatarKey(data.avatar || data.emoji || AVATARS[0]);
-        const owner = (players || []).find(p => p && p.id !== data.id && avatarKey(p.avatar || playerAvatars[p.id]) === wanted);
-        if (owner) {
-          try { conn.send({ type: 'avatarRejected', avatar: wanted, message: (AVATAR_LABELS[wanted] || 'That avatar') + ' is already in use at this table.' }); } catch (e) {}
-          break;
-        }
-        if (data.id) playerAvatars[data.id] = wanted;
-        const ap = (players || []).find(p => p && p.id === data.id);
-        if (ap) ap.avatar = wanted;
-        broadcast({ type: 'avatar', id: data.id, avatar: wanted });
+      case 'avatar':
+        if (data.id) playerAvatars[data.id] = data.avatar || data.emoji || AVATARS[0];
+        broadcast({ type: 'avatar', id: data.id, avatar: data.avatar || data.emoji || AVATARS[0] });
         try { renderUI(); } catch (e) {}
         break;
-      }
       case 'leaveReplace':
         hostReplaceWithBot(data.playerId || conn.peer, data.name);
         break;
@@ -4888,15 +4873,7 @@ function handleMessage(data, conn) {
         break;
 
       case 'avatar':
-        if (data.id) {
-          playerAvatars[data.id] = data.avatar || data.emoji || AVATARS[0];
-          const ap = (players || []).find(p => p && p.id === data.id);
-          if (ap) ap.avatar = data.avatar || data.emoji || AVATARS[0];
-        }
-        try { renderUI(); } catch (e) {}
-        break;
-      case 'avatarRejected':
-        try { horToast(data.message || 'That avatar is already in use at this table.'); } catch (e) {}
+        if (data.id) playerAvatars[data.id] = data.avatar || data.emoji || AVATARS[0];
         try { renderUI(); } catch (e) {}
         break;
       case 'hostHandoff':
@@ -5265,17 +5242,11 @@ function showWaiting() {
     const sk = $('opt-sound-tick'); if (sk) { sk.checked = soundTick; sk.onchange = () => { soundTick = sk.checked; }; }
     const avatarGrid = $('avatarGrid');
     if (avatarGrid) {
-      const myCurrentAvatar = avatarKey(playerAvatars[myPeerId] || ((players || []).find(p => p && p.id === myPeerId) || {}).avatar || loadPreferredAvatar());
-      const tableAvatarOwners = new Set((players || []).filter(p => p && p.id !== myPeerId && p.avatar).map(p => avatarKey(p.avatar)));
-      avatarGrid.innerHTML = AVATARS.map((id) => {
-        const inUse = tableAvatarOwners.has(id);
-        const label = AVATAR_LABELS[id] || id;
-        return `<button type="button" class="avatar-choice${inUse ? ' in-use' : ''}" data-avatar="${id}" ${inUse ? 'disabled aria-disabled="true"' : ''} title="${label}${inUse ? ' — In use at this table' : ''}"><img src="${avatarSrc(id)}" alt="${label}"><span>${label}${inUse ? ' • IN USE' : ''}</span></button>`;
-      }).join('');
+      avatarGrid.innerHTML = AVATARS.map((id, i) => `<button type="button" class="avatar-choice" data-avatar="${id}" title="${AVATAR_LABELS[id]}"><img src="${avatarSrc(id)}" alt="${AVATAR_LABELS[id]}"><span>${AVATAR_LABELS[id]}</span></button>`).join('');
       avatarGrid.querySelectorAll('.avatar-choice').forEach(btn => {
         btn.onclick = () => {
           const id = btn.getAttribute('data-avatar');
-          if (!id || btn.disabled || tableAvatarOwners.has(id)) return;
+          if (!id) return;
           savePreferredAvatar(id);
           if (myPeerId) playerAvatars[myPeerId] = id;
           const meP = players.find(p => p.id === myPeerId);
@@ -7871,7 +7842,6 @@ function hostSendDiscardStart(playerIdx, peerId, showKitty) {
 
 
 function isLandscapeNow() {
-  if (window._horSolForcePortrait) return false;
   try {
     if (window.matchMedia && window.matchMedia('(orientation: landscape)').matches) return true;
   } catch (e) {}
@@ -8031,12 +8001,12 @@ function showDiscardUI(showKitty) {
     }).join('');
 
     ov.innerHTML = `
-      <div class="discard-sheet" data-sol-id="discard-picker">
+      <div class="discard-sheet">
         ${kittyBlock}
         <h2 class="discard-title">Select ${count} cards to discard</h2>
         <p class="discard-sub"><span id="discardCountLabel">${nSel}</span> / ${count} selected</p>
         <div class="discard-groups">${rows}</div>
-        <div class="discard-actions" data-sol-id="discard-actions">
+        <div class="discard-actions">
           <button type="button" class="btn primary" id="confirmDiscard" ${nSel !== count ? 'disabled' : ''}>
             Confirm Discard (${nSel}/${count})
           </button>
@@ -8922,34 +8892,12 @@ function hostTryReclaimSeat(conn, data) {
   return true;
 }
 
-function horReturnToCleanLobby(delayMs) {
-  // Rook536: deliberate leave is NOT a reconnect. Clear only transient room/session
-  // state; permanent settings, stats, career data and SOL layout remain untouched.
-  window._horIntentionalLeave = true;
-  try { sessionStorage.removeItem('rookSession'); } catch (e) {}
-  try { teardownMultiplayerBeforeLobby(); } catch (e) { console.error(e); }
-  try { sessionStorage.removeItem('rookSession'); } catch (e) {}
-  setTimeout(() => {
-    try { sessionStorage.removeItem('rookSession'); } catch (e) {}
-    location.reload();
-  }, Math.max(0, Number(delayMs) || 0));
-}
-
 function clientLeaveReplace() {
   if (isHost) {
-    const otherHumans = (players || []).filter(p => p && !p.isBot && p.id !== myPeerId);
-    if (!otherHumans.length) {
-      // Last human owns no useful persistent room. Bots must never keep a Friends
-      // room alive after the sole human deliberately returns to the lobby.
-      if (!confirm('Leave this table and return to the lobby?')) return;
-      try { broadcast({ type: 'hostGone', message: 'The last human left. This room is closed.' }); } catch (e) {}
-      horReturnToCleanLobby(60);
-      return;
-    }
-    // Preserve the existing explicit transfer path when real humans remain; never
-    // silently strand them or turn the room into a bot-only zombie session.
-    alert('Other human players are still at this table. Transfer host before leaving so their game can continue.');
-    try { hostTransferHost(); } catch (e) { console.error(e); }
+    // Host leaving ends the room for others unless we transfer — keep simple: confirm
+    if (!confirm('You are the host. Leaving will end the room for everyone. Continue?')) return;
+    try { broadcast({ type: 'error', message: 'Host left the game.' }); } catch (e) {}
+    location.reload();
     return;
   }
   if (!confirm('Leave and let a bot take your seat?')) return;
@@ -8958,7 +8906,7 @@ function clientLeaveReplace() {
       hostConnection.send({ type: 'leaveReplace', playerId: myPeerId, name: myName });
     }
   } catch (e) {}
-  horReturnToCleanLobby(180);
+  setTimeout(() => location.reload(), 300);
 }
 
 /** Sole holder of every remaining trump, or null. */
@@ -11498,7 +11446,7 @@ function renderUI() {
     window._trickTakenRel = -1;
     try { clearTrickFlightLayers(); } catch (e) {}
     try { clearBottomTookMark(); } catch (e) {}
-    trickArea.innerHTML = ''; // Rook532: keep structural TRICK container without placeholder text
+    trickArea.innerHTML = '<div class="trick-empty">Trick</div>';
     try {
       const room = document.querySelector('.game-room');
       if (room) room.classList.remove('trick-resolving');
@@ -14418,9 +14366,9 @@ function positionPortraitLast3Btn() {
  * Pick virtually any live table/UI element, move it, size it, lock it, save it, and export later.
  */
 (function horInstallVisualStudio(){
-  const KEY='horSolVisualStudioV7', PANEL_KEY='horSolStudioPanelV7';
-  const DEFAULT_PORTRAIT={"#slot-me .seat-avatar":{"x":27,"y":-15,"w":null,"h":null,"scale":1.4,"font":null,"z":null,"hidden":false,"locked":false},"#slot-partner .seat-avatar":{"x":0,"y":0,"w":null,"h":null,"scale":1.2,"font":null,"z":null,"hidden":false,"locked":true},"#slot-left .seat-avatar-side":{"x":14,"y":-11,"w":null,"h":null,"scale":1.2,"font":1,"z":null,"hidden":false,"locked":true},"#slot-right .seat-avatar-side":{"x":-24,"y":-21,"w":null,"h":null,"scale":1.2,"font":null,"z":null,"hidden":false,"locked":false},"#feltBidDock":{"x":29,"y":47,"w":null,"h":null,"scale":0.85,"font":null,"z":null,"hidden":false,"locked":false},"#actionPanel":{"x":-13,"y":-30,"w":null,"h":null,"scale":0.87,"font":null,"z":null,"hidden":false,"locked":true},"#slot-me .bid-badge":{"x":-17,"y":145,"w":null,"h":null,"scale":1,"font":null,"z":null,"hidden":false,"locked":false},"#slot-left .name":{"x":8,"y":2,"w":null,"h":null,"scale":1,"font":null,"z":null,"hidden":false,"locked":true},"#slot-partner .name":{"x":-82,"y":-5,"w":null,"h":null,"scale":1.2,"font":null,"z":null,"hidden":false,"locked":true},"#slot-right .name":{"x":19,"y":-6,"w":null,"h":null,"scale":1,"font":null,"z":null,"hidden":false,"locked":false},"#portraitLast3Btn":{"x":58,"y":49,"w":null,"h":null,"scale":1,"font":null,"z":null,"hidden":false,"locked":true},"#slot-me .name":{"x":12,"y":-23,"w":null,"h":null,"scale":1.2,"font":null,"z":null,"hidden":false,"locked":false},"#slot-right .bid-badge":{"x":119,"y":12,"w":null,"h":null,"scale":1,"font":null,"z":null,"hidden":false,"locked":true},"#trickArea":{"x":14,"y":-109,"w":null,"h":null,"scale":1,"font":null,"z":null,"hidden":false,"locked":true},"#slot-right":{"x":-8,"y":-7,"w":null,"h":null,"scale":1,"font":null,"z":null,"hidden":false,"locked":true},"#btnToggleTopOpts":{"x":-15,"y":95,"w":null,"h":null,"scale":1,"font":null,"z":null,"hidden":false,"locked":true},"#leaveReplaceBtn":{"x":-15,"y":18,"w":null,"h":null,"scale":1,"font":null,"z":null,"hidden":false,"locked":true},"#myHand":{"x":1,"y":0,"w":null,"h":null,"scale":1,"font":null,"z":null,"hidden":false,"locked":true},"#botThinking":{"x":24,"y":-50,"w":null,"h":null,"scale":1.04,"font":null,"z":null,"hidden":false,"locked":true},"#slot-left .bid-badge":{"x":-15,"y":26,"w":null,"h":null,"scale":1,"font":null,"z":null,"hidden":false,"locked":true},"#slot-left":{"x":-9,"y":-19,"w":null,"h":null,"scale":1,"font":null,"z":null,"hidden":false,"locked":true},"#slot-partner .bid-badge":{"x":25,"y":-108,"w":null,"h":null,"scale":1,"font":null,"z":null,"hidden":false,"locked":true}};
-  let editing=false,picking=false,target=null,targetKey='',drag=null,panelDrag=null,history=[],future=[],grid=1,aspect=true,quickGroup=[],quickGroupUndo=[];
+  const KEY='horSolVisualStudioV1', PANEL_KEY='horSolStudioPanelV3';
+  const DEFAULT_PORTRAIT={"#slot-me .seat-avatar":{"x":29,"y":-17,"w":null,"h":null,"scale":1.4,"font":null,"z":null,"hidden":false,"locked":false},"#slot-partner .seat-avatar":{"x":0,"y":0,"w":null,"h":null,"scale":1.2,"font":null,"z":null,"hidden":false,"locked":false},"#slot-left .seat-avatar-side":{"x":14,"y":-11,"w":null,"h":null,"scale":1.2,"font":1,"z":null,"hidden":false,"locked":false},"#slot-right .seat-avatar-side":{"x":-6,"y":-18,"w":null,"h":null,"scale":1.2,"font":null,"z":null,"hidden":false,"locked":false},"#feltBidDock":{"x":134,"y":39,"w":null,"h":null,"scale":0.85,"font":null,"z":null,"hidden":false,"locked":false},"#actionPanel":{"x":-13,"y":-30,"w":null,"h":null,"scale":0.87,"font":null,"z":null,"hidden":false,"locked":false},"#slot-me .bid-badge":{"x":-21,"y":-238,"w":null,"h":null,"scale":1,"font":null,"z":null,"hidden":false,"locked":false},"#slot-left .name":{"x":-12,"y":9,"w":null,"h":null,"scale":1,"font":null,"z":null,"hidden":false,"locked":false},"#slot-partner .name":{"x":-57,"y":-2,"w":null,"h":null,"scale":1.2,"font":null,"z":null,"hidden":false,"locked":false},"#slot-right .name":{"x":81,"y":1,"w":null,"h":null,"scale":1,"font":null,"z":null,"hidden":false,"locked":false},"#portraitLast3Btn":{"x":58,"y":49,"w":null,"h":null,"scale":1,"font":null,"z":null,"hidden":false,"locked":false},"#slot-me .name":{"x":35,"y":-8,"w":null,"h":null,"scale":1.2,"font":null,"z":null,"hidden":false,"locked":false},"#slot-right .bid-badge":{"x":119,"y":12,"w":null,"h":null,"scale":1,"font":null,"z":null,"hidden":false,"locked":false},"#trickArea":{"x":14,"y":-109,"w":null,"h":null,"scale":1,"font":null,"z":null,"hidden":false,"locked":false},"#slot-right":{"x":-8,"y":-7,"w":null,"h":null,"scale":1,"font":null,"z":null,"hidden":false,"locked":false},"#btnToggleTopOpts":{"x":-15,"y":95,"w":null,"h":null,"scale":1,"font":null,"z":null,"hidden":false,"locked":false},"#leaveReplaceBtn":{"x":-15,"y":18,"w":null,"h":null,"scale":1,"font":null,"z":null,"hidden":false,"locked":false}};
+  let editing=false,picking=false,target=null,targetKey='',drag=null,panelDrag=null,history=[],future=[],grid=1,aspect=true;
   const orientation=()=>innerWidth>innerHeight?'landscape':'portrait';
   const q=s=>document.querySelector(s);
   const safeNum=(v,d=0)=>Number.isFinite(Number(v))?Number(v):d;
@@ -14429,27 +14377,15 @@ function positionPortraitLast3Btn() {
   function readPanel(){try{return JSON.parse(localStorage.getItem(PANEL_KEY)||'{}')||{};}catch(_){return {};}}
   function writePanel(v){localStorage.setItem(PANEL_KEY,JSON.stringify(v));}
   function keyFor(el){
-    if(!el)return''; if(el.id)return'#'+CSS.escape(el.id); if(el.dataset&&el.dataset.solId)return '[data-sol-id=\"'+CSS.escape(el.dataset.solId)+'\"]';
+    if(!el)return''; if(el.id)return'#'+CSS.escape(el.id);
     const seat=el.closest&&el.closest('.player-slot');
     if(seat&&seat.id){if(el===seat)return'#'+CSS.escape(seat.id);const cls=[...el.classList].find(c=>!c.startsWith('sol-')&&c!=='hidden');if(cls)return'#'+CSS.escape(seat.id)+' .'+CSS.escape(cls);}
     let cur=el,path=[];while(cur&&cur!==document.body&&path.length<6){let part=cur.tagName.toLowerCase();const cls=[...cur.classList].find(c=>!c.startsWith('sol-')&&c!=='hidden');if(cls)part+='.'+CSS.escape(cls);const par=cur.parentElement;if(par){const same=[...par.children].filter(x=>x.tagName===cur.tagName);if(same.length>1)part+=`:nth-of-type(${same.indexOf(cur)+1})`;}path.unshift(part);cur=par;}return path.join('>');
   }
-  function recFor(key=targetKey){const a=readAll(),o=orientation();return Object.assign({x:0,y:0,w:null,h:null,scale:1,font:null,z:null,hidden:false,locked:false,freeze:false},a[o]&&a[o][key]||{});}
+  function recFor(key=targetKey){const a=readAll(),o=orientation();return Object.assign({x:0,y:0,w:null,h:null,scale:1,font:null,z:null,hidden:false,locked:false},a[o]&&a[o][key]||{});}
   function saveRec(r,key=targetKey){if(!key)return;const a=readAll(),o=orientation();a[o]=a[o]||{};a[o][key]=r;writeAll(a);}
-  function applyRec(el,key){if(!el||!key)return;const r=recFor(key);el.classList.add('sol-studio-managed');el.style.setProperty('--sol-vs-x',safeNum(r.x)+'px');el.style.setProperty('--sol-vs-y',safeNum(r.y)+'px');el.style.setProperty('--sol-vs-scale',safeNum(r.scale,1));el.style.width=r.w==null?'':safeNum(r.w)+'px';el.style.height=r.h==null?'':safeNum(r.h)+'px';el.style.fontSize=r.font==null?'':safeNum(r.font)+'px';el.style.zIndex=r.z==null?'':String(Math.round(safeNum(r.z)));el.classList.toggle('sol-studio-hidden',!!r.hidden);el.classList.toggle('sol-studio-locked',!!r.locked);el.classList.toggle('sol-studio-frozen',!!r.freeze);if(r.freeze&&editing){if(r.fx==null||r.fy==null){const b=el.getBoundingClientRect();r.fx=b.left;r.fy=b.top;saveRec(r);}el.style.setProperty('--sol-freeze-left',safeNum(r.fx)+'px');el.style.setProperty('--sol-freeze-top',safeNum(r.fy)+'px');}else{el.style.removeProperty('--sol-freeze-left');el.style.removeProperty('--sol-freeze-top');}requestAnimationFrame(()=>safeClamp(el,key));}
-  function safeClamp(el,key){
-    if(!el||orientation()!=='portrait')return;
-    const critical=key==='#feltBidDock'||key==='#actionPanel'||key==='#botThinking'||key==='#portraitLast3Btn'||/\.name$/.test(key)||/bid-badge$/.test(key);
-    if(!critical)return;
-    el.style.setProperty('--sol-safe-x','0px');
-    const b=el.getBoundingClientRect(), pad=8;
-    const outside=b.left<pad||b.right>innerWidth-pad||b.top<pad||b.bottom>innerHeight-pad;
-    el.classList.toggle('sol-studio-offscreen',outside);
-  }
-  function applySavedOnce(){const a=readAll(),o=orientation(),m=a[o]||{};Object.keys(m).forEach(k=>{try{const el=q(k);if(el){applyRec(el,k);requestAnimationFrame(()=>safeClamp(el,k));}}catch(_){}});}
-  let stabilityQueued=false;
-  function queueStabilityPass(){if(stabilityQueued)return;stabilityQueued=true;requestAnimationFrame(()=>{stabilityQueued=false;applySavedOnce();});}
-
+  function applyRec(el,key){if(!el||!key)return;const r=recFor(key);el.classList.add('sol-studio-managed');el.style.setProperty('--sol-vs-x',safeNum(r.x)+'px');el.style.setProperty('--sol-vs-y',safeNum(r.y)+'px');el.style.setProperty('--sol-vs-scale',safeNum(r.scale,1));el.style.width=r.w==null?'':safeNum(r.w)+'px';el.style.height=r.h==null?'':safeNum(r.h)+'px';el.style.fontSize=r.font==null?'':safeNum(r.font)+'px';el.style.zIndex=r.z==null?'':String(Math.round(safeNum(r.z)));el.classList.toggle('sol-studio-hidden',!!r.hidden);el.classList.toggle('sol-studio-locked',!!r.locked);}
+  function applySavedOnce(){const a=readAll(),o=orientation(),m=a[o]||{};Object.keys(m).forEach(k=>{try{const el=q(k);if(el)applyRec(el,k);}catch(_){}});}
   function snap(v){return grid>1?Math.round(v/grid)*grid:Math.round(v);}
   function pushHistory(){if(!targetKey)return;history.push({o:orientation(),key:targetKey,r:recFor()});if(history.length>80)history.shift();future=[];}
   function restore(h){if(!h)return;const a=readAll();a[h.o]=a[h.o]||{};a[h.o][h.key]=h.r;writeAll(a);if(h.o===orientation()){const el=q(h.key);if(el)applyRec(el,h.key);}paint();}
@@ -14461,42 +14397,11 @@ function positionPortraitLast3Btn() {
     const nm=el.closest&&el.closest('.player-slot .name'); if(nm)return nm;
     return el;
   }
-  function setTarget(el){el=normalizeTarget(el);if(!el||el.closest('#solStudioPanel')||el.closest('#solQuickPanel'))return;target=el;targetKey=keyFor(el);document.querySelectorAll('.sol-studio-target').forEach(x=>x.classList.remove('sol-studio-target'));target.classList.add('sol-studio-target');picking=false;document.documentElement.classList.remove('sol-studio-picking');applyRec(target,targetKey);paint();}
+  function setTarget(el){el=normalizeTarget(el);if(!el||el.closest('#solStudioPanel'))return;target=el;targetKey=keyFor(el);document.querySelectorAll('.sol-studio-target').forEach(x=>x.classList.remove('sol-studio-target'));target.classList.add('sol-studio-target');picking=false;document.documentElement.classList.remove('sol-studio-picking');applyRec(target,targetKey);paint();}
   function field(id){return q('#'+id);}
   function restorePanelPosition(){const p=q('#solStudioPanel');if(!p)return;const all=readPanel(),r=all[orientation()]||{};p.classList.toggle('collapsed',!!r.collapsed);p.style.left=r.left!=null?r.left+'px':'';p.style.top=r.top!=null?r.top+'px':'';p.style.right=r.left!=null?'auto':'';p.style.bottom=r.top!=null?'auto':'';if(r.width)p.style.width=r.width+'px';if(r.height)p.style.height=r.height+'px';}
   function savePanelPosition(){const p=q('#solStudioPanel');if(!p)return;const all=readPanel(),o=orientation(),box=p.getBoundingClientRect();all[o]={left:Math.round(box.left),top:Math.round(box.top),width:Math.round(box.width),height:p.classList.contains('collapsed')?null:Math.round(box.height),collapsed:p.classList.contains('collapsed')};writePanel(all);}
   function dockPanel(side){const p=q('#solStudioPanel');if(!p)return;const box=p.getBoundingClientRect(),pad=6;let left=box.left,top=box.top;if(side==='left'){left=pad;top=Math.max(pad,Math.min(innerHeight-box.height-pad,top));}if(side==='right'){left=Math.max(pad,innerWidth-box.width-pad);top=Math.max(pad,Math.min(innerHeight-box.height-pad,top));}if(side==='top'){top=pad;left=Math.max(pad,Math.min(innerWidth-box.width-pad,left));}if(side==='bottom'){top=Math.max(pad,innerHeight-box.height-pad);left=Math.max(pad,Math.min(innerWidth-box.width-pad,left));}p.style.left=left+'px';p.style.top=top+'px';p.style.right='auto';p.style.bottom='auto';savePanelPosition();}
-  function setPhoneDesign(on){
-    window._horSolForcePortrait=!!on;
-    document.documentElement.classList.toggle('sol-phone-design',!!on);
-    document.documentElement.classList.toggle('sol-s24-guide',false);
-    const b=q('#solVsPhoneDesign');if(b)b.classList.toggle('active',!!on);
-    document.body&&document.body.classList.toggle('sol-force-portrait',!!on);
-    if(on){
-      const p=ensurePanel();
-      // Keep tools outside the calibrated 360px phone canvas whenever the desktop has room.
-      if(innerWidth>=900){p.style.left='calc(50% + 205px)';p.style.top='24px';p.style.right='auto';p.style.bottom='auto';p.style.width='min(430px, calc(50vw - 230px))';p.style.height='min(780px, calc(100vh - 48px))';}
-    }else restorePanelPosition();
-    paint();queueStabilityPass();
-  }
-  function togglePhoneDesign(){setPhoneDesign(!document.documentElement.classList.contains('sol-phone-design'));}
-  function ensureResizeHandles(){
-    let box=q('#solObjectHandles');if(box)return box;box=document.createElement('div');box.id='solObjectHandles';box.className='sol-object-handles hidden';
-    ['nw','n','ne','e','se','s','sw','w'].forEach(d=>{const h=document.createElement('i');h.dataset.dir=d;h.className='sol-resize-handle sol-rh-'+d;box.appendChild(h);});document.body.appendChild(box);
-    let rr=null;box.addEventListener('pointerdown',e=>{const h=e.target.closest('.sol-resize-handle');if(!h||!targetKey)return;const r=recFor();if(r.locked)return;pushHistory();const b=target.getBoundingClientRect(),sc=Math.max(.1,safeNum(r.scale,1));rr={id:e.pointerId,dir:h.dataset.dir,sx:e.clientX,sy:e.clientY,w:r.w==null?b.width/sc:r.w,h:r.h==null?b.height/sc:r.h,x:r.x,y:r.y,sc};h.setPointerCapture&&h.setPointerCapture(e.pointerId);e.preventDefault();e.stopPropagation();});
-    box.addEventListener('pointermove',e=>{if(!rr||e.pointerId!==rr.id)return;let dx=(e.clientX-rr.sx)/rr.sc,dy=(e.clientY-rr.sy)/rr.sc,r=recFor(),d=rr.dir;if(d.includes('e'))r.w=Math.max(12,rr.w+dx);if(d.includes('s'))r.h=Math.max(12,rr.h+dy);if(d.includes('w')){r.w=Math.max(12,rr.w-dx);r.x=snap(rr.x+(e.clientX-rr.sx));}if(d.includes('n')){r.h=Math.max(12,rr.h-dy);r.y=snap(rr.y+(e.clientY-rr.sy));}saveRec(r);applyRec(target,targetKey);paint();e.preventDefault();e.stopPropagation();});
-    box.addEventListener('pointerup',e=>{if(rr&&e.pointerId===rr.id){rr=null;paint();}});return box;
-  }
-  function positionResizeHandles(){const box=ensureResizeHandles();if(!editing||!target||!targetKey||recFor().locked){box.classList.add('hidden');return;}const b=target.getBoundingClientRect();box.classList.remove('hidden');box.style.left=Math.round(b.left)+'px';box.style.top=Math.round(b.top)+'px';box.style.width=Math.round(b.width)+'px';box.style.height=Math.round(b.height)+'px';}
-  const QUICK_SELECTORS=['#slot-me .seat-avatar','#slot-partner .seat-avatar','#slot-left .seat-avatar-side','#slot-right .seat-avatar-side','#slot-me .name','#slot-partner .name','#slot-left .name','#slot-right .name','#feltBidDock','#actionPanel','#portraitLast3Btn','#slot-me .bid-badge','#slot-partner .bid-badge','#slot-left .bid-badge','#slot-right .bid-badge','#botThinking','#myHand'];
-  function quickSelectAll(){quickGroup=[];QUICK_SELECTORS.forEach(k=>{try{const el=q(k);if(el&&!el.classList.contains('hidden'))quickGroup.push({el,key:k});}catch(_){}});document.querySelectorAll('.sol-quick-group').forEach(x=>x.classList.remove('sol-quick-group'));quickGroup.forEach(x=>x.el.classList.add('sol-quick-group'));const st=q('#solQuickStatus');if(st)st.textContent=quickGroup.length+' ITEMS SELECTED';}
-  function quickClear(){document.querySelectorAll('.sol-quick-group').forEach(x=>x.classList.remove('sol-quick-group'));quickGroup=[];const st=q('#solQuickStatus');if(st)st.textContent=targetKey||'PICK ONE OR SELECT ALL';}
-  function quickMove(dx,dy){if(!quickGroup.length){if(targetKey&&target){const r=recFor();if(r.locked)return;pushHistory();r.x=snap(r.x+dx);r.y=snap(r.y+dy);saveRec(r);applyRec(target,targetKey);paint();}return;}const before=[];quickGroup.forEach(({el,key})=>{const r=recFor(key);before.push({key,r:Object.assign({},r)});r.x=snap(r.x+dx);r.y=snap(r.y+dy);saveRec(r,key);applyRec(el,key);});quickGroupUndo.push(before);if(quickGroupUndo.length>30)quickGroupUndo.shift();}
-  function quickUndo(){if(quickGroup.length&&quickGroupUndo.length){const before=quickGroupUndo.pop(),a=readAll(),o=orientation();a[o]=a[o]||{};before.forEach(x=>{a[o][x.key]=x.r;const el=q(x.key);if(el)applyRec(el,x.key);});writeAll(a);return;}undo();}
-  function ensureQuickPanel(){let p=q('#solQuickPanel');if(p)return p;p=document.createElement('div');p.id='solQuickPanel';p.className='sol-quick-panel hidden';p.innerHTML=`<div class="sol-quick-head"><b>SOL QUICK MOVE</b><button id="solQuickDone">DONE</button></div><div id="solQuickStatus" class="sol-quick-status">PICK ONE OR SELECT ALL</div><div class="sol-quick-row"><button id="solQuickPick">PICK</button><button id="solQuickAll">SELECT ALL</button><button id="solQuickClear">CLEAR</button></div><div class="sol-quick-pad"><button data-qmove="0,-10">▲</button><button data-qmove="-10,0">◀</button><button data-qmove="10,0">▶</button><button data-qmove="0,10">▼</button></div><div class="sol-quick-row"><button id="solQuickUndo">UNDO</button><button id="solQuickLock">LOCK ONE</button><button id="solQuickAdvanced">ADVANCED</button></div><div class="sol-quick-note">SELECT ALL moves the visible table UI together. Table/background structure stays put.</div>`;document.body.appendChild(p);
-    q('#solQuickDone').onclick=()=>setEditing(false);q('#solQuickPick').onclick=()=>{quickClear();picking=true;document.documentElement.classList.add('sol-studio-picking');};q('#solQuickAll').onclick=quickSelectAll;q('#solQuickClear').onclick=quickClear;q('#solQuickUndo').onclick=quickUndo;q('#solQuickLock').onclick=()=>{if(!targetKey)return;mut(r=>r.locked=!r.locked);};q('#solQuickAdvanced').onclick=()=>{const a=ensurePanel();a.classList.toggle('hidden');};p.querySelectorAll('[data-qmove]').forEach(b=>b.onclick=()=>{const [x,y]=b.dataset.qmove.split(',').map(Number);quickMove(x,y);});
-    let pd=null;p.querySelector('.sol-quick-head').addEventListener('pointerdown',e=>{if(e.target.closest('button'))return;const b=p.getBoundingClientRect();pd={id:e.pointerId,dx:e.clientX-b.left,dy:e.clientY-b.top};p.setPointerCapture(e.pointerId);});p.addEventListener('pointermove',e=>{if(!pd||e.pointerId!==pd.id)return;p.style.left=Math.max(4,Math.min(innerWidth-p.offsetWidth-4,e.clientX-pd.dx))+'px';p.style.top=Math.max(4,Math.min(innerHeight-p.offsetHeight-4,e.clientY-pd.dy))+'px';p.style.right='auto';p.style.bottom='auto';});p.addEventListener('pointerup',()=>pd=null);
-    return p;}
   function ensurePanel(){let p=q('#solStudioPanel');if(p)return p;p=document.createElement('div');p.id='solStudioPanel';p.className='sol-studio-panel hidden';p.innerHTML=`
    <div class="sol-studio-head" id="solVsHandle"><b>SOL VISUAL STUDIO</b><span id="solVsOrient"></span><button id="solVsCollapse" title="Collapse">—</button><button id="solVsDone">DONE</button></div>
    <div class="sol-studio-body">
@@ -14510,8 +14415,8 @@ function positionPortraitLast3Btn() {
     <label>SCALE<input id="solVsScale" type="number" step="0.01" min="0.1" max="5"></label><label>FONT<input id="solVsFont" type="number" step="1" placeholder="auto"></label>
     <label>Z<input id="solVsZ" type="number" step="1" placeholder="auto"></label><label>GRID<select id="solVsGrid"><option>1</option><option>2</option><option>5</option><option>10</option></select></label>
    </div>
-   <div class="sol-studio-row"><button id="solVsSmaller">− SIZE</button><button id="solVsLarger">+ SIZE</button><button id="solVsAspect">🔗 ASPECT ON</button><button id="solVsHide">HIDE</button><button id="solVsLock">LOCK</button><button id="solVsFreeze" type="button">FREEZE</button><button id="solVsReset">RESET ITEM</button></div>
-   <div class="sol-studio-row"><button id="solVsUndo">↶ UNDO</button><button id="solVsRedo">↷ REDO</button><button id="solVsGuides">CENTER GUIDES</button><button id="solVsPhoneDesign">PHONE STUDIO 360×780</button><button id="solVsPhone">S24 FRAME</button><button id="solVsUniversal">UNIVERSAL SAFE</button><button id="solVsBoxes">BOXES</button></div><div class="sol-studio-row"><button id="solVsLockAll">LOCK ALL</button><button id="solVsUnlockAll">UNLOCK ALL</button><button id="solVsUnhideAll">UNHIDE ALL</button><button id="solVsHidden">HIDDEN ITEMS</button></div><div id="solVsHiddenList" class="sol-hidden-list hidden"></div><div class="sol-studio-row"><button id="solVsThinking">PREVIEW THINKING</button><button id="solVsImport">IMPORT LAYOUT</button></div>
+   <div class="sol-studio-row"><button id="solVsSmaller">− SIZE</button><button id="solVsLarger">+ SIZE</button><button id="solVsAspect">🔗 ASPECT ON</button><button id="solVsHide">HIDE</button><button id="solVsLock">LOCK</button><button id="solVsReset">RESET ITEM</button></div>
+   <div class="sol-studio-row"><button id="solVsUndo">↶ UNDO</button><button id="solVsRedo">↷ REDO</button><button id="solVsGuides">GUIDES + SAFE AREA</button><button id="solVsBoxes">BOXES</button></div><div class="sol-studio-row"><button id="solVsLockAll">LOCK ALL</button><button id="solVsUnlockAll">UNLOCK ALL</button><button id="solVsUnhideAll">UNHIDE ALL</button><button id="solVsHidden">HIDDEN ITEMS</button></div><div id="solVsHiddenList" class="sol-hidden-list hidden"></div><div class="sol-studio-row"><button id="solVsThinking">PREVIEW THINKING</button><button id="solVsImport">IMPORT LAYOUT</button></div>
    <div class="sol-studio-row"><button id="solVsCopy">COPY VALUES</button><button id="solVsPaste">PASTE VALUES</button><button id="solVsExport">FINALIZE / EXPORT</button><button id="solVsResetOri">RESET ORIENTATION</button></div>
    <div class="sol-studio-row sol-studio-dock"><span>MOVE EDITOR:</span><button data-sol-dock="left">◀</button><button data-sol-dock="top">▲</button><button data-sol-dock="bottom">▼</button><button data-sol-dock="right">▶</button></div>
    <textarea id="solVsExportBox" class="hidden"></textarea><div class="sol-studio-viewport" id="solVsViewport"></div><div class="sol-studio-resize" id="solVsResize" title="Resize editor">↘</div>
@@ -14523,8 +14428,8 @@ function positionPortraitLast3Btn() {
    p.querySelectorAll('[data-sol-find]').forEach(b=>b.onclick=()=>{const kind=b.getAttribute('data-sol-find');const sels={bid:['#bidPanel','.bid-panel','.bidding-panel','.bid-controls','#bidControls'],trump:['#actionPanel','#ltTrumpBar','#trumpBanner','#trumpPanel','.trump-panel','.trump-showdown'],nest:['#nestArea','.nest-area','.kitty-area'],last:['#btnLast3','.last-three','.last3']}[kind]||[];const el=sels.map(x=>q(x)).find(Boolean);if(el)setTarget(el);});
    ['X','Y','W','H','Scale','Font','Z'].forEach(n=>field('solVs'+n).addEventListener('change',applyFields));q('#solVsGrid').onchange=e=>grid=safeNum(e.target.value,1);
    q('#solVsSmaller').onclick=()=>mut(r=>r.scale=Math.max(.1,safeNum(r.scale,1)-.05));q('#solVsLarger').onclick=()=>mut(r=>r.scale=Math.min(5,safeNum(r.scale,1)+.05));
-   q('#solVsAspect').onclick=()=>{aspect=!aspect;paint();};q('#solVsHide').onclick=()=>mut(r=>r.hidden=!r.hidden);q('#solVsLock').onclick=()=>mut(r=>r.locked=!r.locked);q('#solVsFreeze').onclick=()=>mut(r=>{r.freeze=!r.freeze;if(r.freeze&&target){const b=target.getBoundingClientRect();r.fx=b.left;r.fy=b.top;}else{r.fx=null;r.fy=null;}});q('#solVsReset').onclick=resetItem;
-   q('#solVsUndo').onclick=undo;q('#solVsRedo').onclick=redo;q('#solVsGuides').onclick=()=>document.documentElement.classList.toggle('sol-studio-guides');q('#solVsPhoneDesign').onclick=togglePhoneDesign;q('#solVsPhone').onclick=()=>document.documentElement.classList.toggle('sol-s24-guide');q('#solVsUniversal').onclick=()=>document.documentElement.classList.toggle('sol-universal-guide');q('#solVsBoxes').onclick=()=>document.documentElement.classList.toggle('sol-studio-boxes');
+   q('#solVsAspect').onclick=()=>{aspect=!aspect;paint();};q('#solVsHide').onclick=()=>mut(r=>r.hidden=!r.hidden);q('#solVsLock').onclick=()=>mut(r=>r.locked=!r.locked);q('#solVsReset').onclick=resetItem;
+   q('#solVsUndo').onclick=undo;q('#solVsRedo').onclick=redo;q('#solVsGuides').onclick=()=>document.documentElement.classList.toggle('sol-studio-guides');q('#solVsBoxes').onclick=()=>document.documentElement.classList.toggle('sol-studio-boxes');
    q('#solVsCopy').onclick=()=>{if(targetKey)sessionStorage.setItem('horSolVsClipboard',JSON.stringify(recFor()));};q('#solVsPaste').onclick=()=>{try{const r=JSON.parse(sessionStorage.getItem('horSolVsClipboard')||'null');if(r){pushHistory();saveRec(r);applyRec(target,targetKey);paint();}}catch(_){}};
    q('#solVsExport').onclick=exportLayout;q('#solVsResetOri').onclick=resetOrientation;
    q('#solVsLockAll').onclick=()=>bulkFlag('locked',true);q('#solVsUnlockAll').onclick=()=>bulkFlag('locked',false);q('#solVsUnhideAll').onclick=()=>bulkFlag('hidden',false);q('#solVsHidden').onclick=showHidden;q('#solVsThinking').onclick=previewThinking;q('#solVsImport').onclick=importLayout;
@@ -14543,65 +14448,19 @@ function positionPortraitLast3Btn() {
   function structuralLabel(){if(!target)return'';if(target.id==='trickArea'||target.classList.contains('center-area')||target.classList.contains('trick-stack'))return '⚠ PROTECTED STRUCTURE — contains/positions played cards. Move carefully; do not hide/delete.';if(target.id==='botThinking')return 'THINKING BOX — independent transient UI.';if(target.id==='actionPanel'||target.id==='ltTrumpBar')return 'TRUMP/ACTION UI — separate from TRICK.';return '';}
   function mut(fn){if(!targetKey)return;pushHistory();const r=recFor();fn(r);saveRec(r);applyRec(target,targetKey);paint();}
   function applyFields(){if(!targetKey)return;pushHistory();const r=recFor();r.x=snap(safeNum(field('solVsX').value));r.y=snap(safeNum(field('solVsY').value));r.w=field('solVsW').value===''?null:Math.max(1,safeNum(field('solVsW').value));r.h=field('solVsH').value===''?null:Math.max(1,safeNum(field('solVsH').value));r.scale=Math.max(.1,Math.min(5,safeNum(field('solVsScale').value,1)));r.font=field('solVsFont').value===''?null:Math.max(1,safeNum(field('solVsFont').value));r.z=field('solVsZ').value===''?null:safeNum(field('solVsZ').value);saveRec(r);applyRec(target,targetKey);paint();}
-  function resetItem(){if(!targetKey)return;pushHistory();const a=readAll(),o=orientation();if(a[o])delete a[o][targetKey];writeAll(a);if(target){target.classList.remove('sol-studio-managed','sol-studio-hidden','sol-studio-locked','sol-studio-frozen');target.style.removeProperty('--sol-freeze-left');target.style.removeProperty('--sol-freeze-top');['--sol-vs-x','--sol-vs-y','--sol-vs-scale'].forEach(x=>target.style.removeProperty(x));['width','height','font-size','z-index'].forEach(x=>target.style.removeProperty(x));}paint();}
+  function resetItem(){if(!targetKey)return;pushHistory();const a=readAll(),o=orientation();if(a[o])delete a[o][targetKey];writeAll(a);if(target){target.classList.remove('sol-studio-managed','sol-studio-hidden','sol-studio-locked');['--sol-vs-x','--sol-vs-y','--sol-vs-scale'].forEach(x=>target.style.removeProperty(x));['width','height','font-size','z-index'].forEach(x=>target.style.removeProperty(x));}paint();}
   function resetOrientation(){if(!confirm('Reset every SOL override for '+orientation()+'?'))return;const a=readAll();delete a[orientation()];writeAll(a);location.reload();}
-  function exportLayout(){const box=q('#solVsExportBox');box.value=JSON.stringify({build:536,orientation:orientation(),layout:readAll()[orientation()]||{}},null,2);box.classList.remove('hidden');box.select();try{navigator.clipboard&&navigator.clipboard.writeText(box.value);}catch(_){} }
-  function paint(){ensurePanel();const r=recFor();q('#solVsOrient').textContent=orientation().toUpperCase();q('#solVsTarget').textContent=targetKey||'Nothing selected';q('#solVsSafety').textContent=structuralLabel()+(target?('  RENDERED '+Math.round(target.getBoundingClientRect().width)+'×'+Math.round(target.getBoundingClientRect().height)):'');q('#solVsViewport').textContent=innerWidth+'×'+innerHeight+' '+orientation();if(!targetKey)return;field('solVsX').value=Math.round(r.x);field('solVsY').value=Math.round(r.y);field('solVsW').value=r.w==null?'':Math.round(r.w);field('solVsH').value=r.h==null?'':Math.round(r.h);field('solVsScale').value=safeNum(r.scale,1).toFixed(2);field('solVsFont').value=r.font==null?'':Math.round(r.font);field('solVsZ').value=r.z==null?'':Math.round(r.z);q('#solVsAspect').textContent=aspect?'🔗 ASPECT ON':'⛓ ASPECT OFF';q('#solVsHide').classList.toggle('active',!!r.hidden);q('#solVsLock').classList.toggle('active',!!r.locked);q('#solVsFreeze').classList.toggle('active',!!r.freeze);const pd=q('#solVsPhoneDesign');if(pd)pd.classList.toggle('active',document.documentElement.classList.contains('sol-phone-design'));requestAnimationFrame(positionResizeHandles);}
-  function setEditing(on){if(!horDeveloperToolsEnabled())on=false;editing=!!on;document.documentElement.classList.toggle('sol-studio-editing',editing);const adv=ensurePanel(),quick=ensureQuickPanel();adv.classList.add('hidden');quick.classList.toggle('hidden',!editing);if(editing){quickClear();}if(!editing){quickClear();picking=false;document.documentElement.classList.remove('sol-studio-picking');document.querySelectorAll('.sol-studio-target').forEach(x=>x.classList.remove('sol-studio-target'));const hb=q('#solObjectHandles');if(hb)hb.classList.add('hidden');}}
+  function exportLayout(){const box=q('#solVsExportBox');box.value=JSON.stringify({build:531,orientation:orientation(),layout:readAll()[orientation()]||{}},null,2);box.classList.remove('hidden');box.select();try{navigator.clipboard&&navigator.clipboard.writeText(box.value);}catch(_){} }
+  function paint(){ensurePanel();const r=recFor();q('#solVsOrient').textContent=orientation().toUpperCase();q('#solVsTarget').textContent=targetKey||'Nothing selected';q('#solVsSafety').textContent=structuralLabel();q('#solVsViewport').textContent=innerWidth+'×'+innerHeight+' '+orientation();if(!targetKey)return;field('solVsX').value=Math.round(r.x);field('solVsY').value=Math.round(r.y);field('solVsW').value=r.w==null?'':Math.round(r.w);field('solVsH').value=r.h==null?'':Math.round(r.h);field('solVsScale').value=safeNum(r.scale,1).toFixed(2);field('solVsFont').value=r.font==null?'':Math.round(r.font);field('solVsZ').value=r.z==null?'':Math.round(r.z);q('#solVsAspect').textContent=aspect?'🔗 ASPECT ON':'⛓ ASPECT OFF';q('#solVsHide').classList.toggle('active',!!r.hidden);q('#solVsLock').classList.toggle('active',!!r.locked);}
+  function setEditing(on){if(!horDeveloperToolsEnabled())on=false;editing=!!on;document.documentElement.classList.toggle('sol-studio-editing',editing);ensurePanel().classList.toggle('hidden',!editing);if(editing)restorePanelPosition();if(!editing){picking=false;document.documentElement.classList.remove('sol-studio-picking');document.querySelectorAll('.sol-studio-target').forEach(x=>x.classList.remove('sol-studio-target'));}}
   function toggle(){setEditing(!editing);}
   function ensureButton(){const toolbar=q('#topToolbar')||q('.toolbar');if(!toolbar||q('#btnSolStudio'))return;const old=q('#btnSolLayout');if(old)old.remove();const b=document.createElement('button');b.type='button';b.id='btnSolStudio';b.className='icon-btn developer-only hidden sol-studio-launch';b.title='SOL Visual Layout Studio';b.innerHTML='✥ <span>SOL Studio</span>';b.onclick=e=>{e.preventDefault();toggle();};const more=toolbar.querySelector('.game-more');toolbar.insertBefore(b,more||null);}
-  document.addEventListener('pointerdown',e=>{if(!editing||e.target.closest('#solStudioPanel')||e.target.closest('#solQuickPanel'))return;if(picking){e.preventDefault();e.stopPropagation();setTarget(e.target);return;}if(!target||!target.contains(e.target))return;const r=recFor();if(r.locked)return;e.preventDefault();e.stopPropagation();pushHistory();drag={id:e.pointerId,sx:e.clientX,sy:e.clientY,x:r.x,y:r.y};try{target.setPointerCapture(e.pointerId)}catch(_){}target.classList.add('sol-studio-dragging');},true);
+  document.addEventListener('pointerdown',e=>{if(!editing||e.target.closest('#solStudioPanel'))return;if(picking){e.preventDefault();e.stopPropagation();setTarget(e.target);return;}if(!target||!target.contains(e.target))return;const r=recFor();if(r.locked)return;e.preventDefault();e.stopPropagation();pushHistory();drag={id:e.pointerId,sx:e.clientX,sy:e.clientY,x:r.x,y:r.y};try{target.setPointerCapture(e.pointerId)}catch(_){}target.classList.add('sol-studio-dragging');},true);
   document.addEventListener('pointermove',e=>{if(!drag||e.pointerId!==drag.id)return;e.preventDefault();const r=recFor();r.x=snap(drag.x+e.clientX-drag.sx);r.y=snap(drag.y+e.clientY-drag.sy);saveRec(r);applyRec(target,targetKey);paint();},true);
   document.addEventListener('pointerup',e=>{if(!drag||e.pointerId!==drag.id)return;target&&target.classList.remove('sol-studio-dragging');drag=null;},true);
   document.addEventListener('keydown',e=>{if(!editing||!targetKey||['INPUT','TEXTAREA','SELECT'].includes(document.activeElement&&document.activeElement.tagName))return;if(e.ctrlKey&&e.key.toLowerCase()==='z'){e.preventDefault();return e.shiftKey?redo():undo();}if(e.ctrlKey&&e.key.toLowerCase()==='y'){e.preventDefault();return redo();}const d={ArrowLeft:[-1,0],ArrowRight:[1,0],ArrowUp:[0,-1],ArrowDown:[0,1]}[e.key];if(!d)return;e.preventDefault();const step=(e.shiftKey?10:1)*grid;mut(r=>{if(!r.locked){r.x=snap(r.x+d[0]*step);r.y=snap(r.y+d[1]*step);}});},true);
-  addEventListener('resize',()=>{restorePanelPosition();paint();queueStabilityPass();});
-  document.addEventListener('DOMContentLoaded',()=>{ensureButton();applySavedOnce();const root=q('#gameScreen')||document.body;new MutationObserver(queueStabilityPass).observe(root,{subtree:true,childList:true,attributes:true,attributeFilter:['class']});setInterval(()=>{ensureButton();const b=q('#btnSolStudio');if(b)b.classList.toggle('hidden',!horDeveloperToolsEnabled());},800);});
+  addEventListener('resize',()=>{restorePanelPosition();paint();});
+  document.addEventListener('DOMContentLoaded',()=>{ensureButton();applySavedOnce();setInterval(()=>{ensureButton();const b=q('#btnSolStudio');if(b)b.classList.toggle('hidden',!horDeveloperToolsEnabled());},800);});
   window.HORSolVisualStudio={toggle,apply:applySavedOnce,export:()=>JSON.stringify(readAll(),null,2),unhideAll:()=>bulkFlag('hidden',false),lockAll:()=>bulkFlag('locked',true),unlockAll:()=>bulkFlag('locked',false),reset:()=>{localStorage.removeItem(KEY);location.reload();}};
 })();;
 
-
-
-/* ===== Rook539: read-only pixel measurement overlay ===== */
-(()=>{
-  let on=false;
-  const q=s=>document.querySelector(s);
-  function labelFor(el){
-    if(!el) return '—';
-    if(el.id) return '#'+el.id;
-    const cls=[...el.classList].filter(x=>!x.startsWith('sol-')).slice(0,2);
-    return el.tagName.toLowerCase()+(cls.length?'.'+cls.join('.'):'');
-  }
-  function ensureOverlay(){
-    let o=q('#horPixelOverlay');
-    if(o) return o;
-    o=document.createElement('div'); o.id='horPixelOverlay'; o.className='hor-pixel-overlay hidden';
-    o.innerHTML='<div class="hor-pixel-v"></div><div class="hor-pixel-h"></div><div class="hor-pixel-readout">X 0 • Y 0</div><div class="hor-pixel-help">10px grid • pointer is exact • overlay never moves game objects</div>';
-    document.body.appendChild(o); return o;
-  }
-  function ensureButton(){
-    const toolbar=q('#topToolbar')||q('.toolbar');
-    if(!toolbar||q('#btnPixelOverlay')) return;
-    const b=document.createElement('button'); b.type='button'; b.id='btnPixelOverlay';
-    b.className='icon-btn developer-only hidden hor-pixel-launch'; b.title='Pixel measurement overlay'; b.innerHTML='▦ <span>PIXELS</span>';
-    b.onclick=e=>{e.preventDefault();toggle();};
-    const sol=q('#btnSolStudio'); toolbar.insertBefore(b,sol||toolbar.querySelector('.game-more')||null);
-  }
-  function toggle(force){
-    if(typeof horDeveloperToolsEnabled==='function'&&!horDeveloperToolsEnabled()) return;
-    on=typeof force==='boolean'?force:!on;
-    ensureOverlay().classList.toggle('hidden',!on);
-    document.documentElement.classList.toggle('hor-pixel-on',on);
-    const b=q('#btnPixelOverlay'); if(b)b.classList.toggle('active',on);
-  }
-  document.addEventListener('pointermove',e=>{
-    if(!on)return;
-    const o=ensureOverlay(),v=o.querySelector('.hor-pixel-v'),h=o.querySelector('.hor-pixel-h'),r=o.querySelector('.hor-pixel-readout');
-    v.style.left=e.clientX+'px'; h.style.top=e.clientY+'px';
-    const el=document.elementsFromPoint(e.clientX,e.clientY).find(x=>x!==o&&!x.closest('#horPixelOverlay')&&!x.closest('#solStudioPanel')&&!x.closest('#solQuickPanel'));
-    r.textContent=`X ${Math.round(e.clientX)} • Y ${Math.round(e.clientY)} • ${labelFor(el)}`;
-    const left=Math.min(innerWidth-210,Math.max(4,e.clientX+12)); const top=Math.min(innerHeight-32,Math.max(4,e.clientY+12));
-    r.style.left=left+'px'; r.style.top=top+'px';
-  },true);
-  document.addEventListener('DOMContentLoaded',()=>{ensureOverlay();ensureButton();setInterval(()=>{ensureButton();const b=q('#btnPixelOverlay');if(b&&typeof horDeveloperToolsEnabled==='function')b.classList.toggle('hidden',!horDeveloperToolsEnabled());},800);});
-  window.HORPixelOverlay={toggle};
-})();

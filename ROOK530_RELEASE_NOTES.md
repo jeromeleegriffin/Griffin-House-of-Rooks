@@ -10,6 +10,3 @@
 - Fixed Trump stamp word fitting without changing the approved stamp size or landing position. RED, BLACK, GREEN and YELLOW have fixed fit typography.
 - Rook529 Message Table removal remains intact.
 - Core rules, shuffle, dealing, scoring and multiplayer protocol were not intentionally changed.
-
-## Continuity
-See `GRIFFIN_HOUSE_SOL_LAYOUT_KNOWN_ISSUES.md` and `ROOK530_PORTRAIT_LAYOUT_EXPORT.json` in subsequent builds for authoritative SOL/table findings and the preserved portrait layout.
