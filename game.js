@@ -7,7 +7,7 @@
 // It's exchanged during the join handshake so a stale host or joiner (e.g.
 // one still running old cached JS) gets caught and auto-updated instead of
 // silently failing or behaving unpredictably against a mismatched peer.
-const APP_VERSION = '525';
+const APP_VERSION = '528';
 
 function horThisIndex() {
   try {
@@ -6693,7 +6693,10 @@ function hostStartGame() {
 function horDeveloperToolsEnabled() {
   try {
     const q = new URLSearchParams(location.search);
-    return q.get('dev') === '1' || localStorage.getItem('horDeveloperTools') === '1';
+    const enteredName = String(myName || (($('hor-player-name') && $('hor-player-name').value) || '')).trim().toUpperCase();
+    // SOL is Jerome's intentionally quiet, offline developer identity. It is convenience, not security.
+    const solOffline = enteredName === 'SOL' && !roomCode;
+    return solOffline || q.get('dev') === '1' || localStorage.getItem('horDeveloperTools') === '1';
   } catch (e) { return false; }
 }
 
@@ -14392,4 +14395,77 @@ function positionPortraitLast3Btn() {
 
 
 
+
+
+
+/* Rook528 — SOL Visual Layout Studio
+ * Developer-only visual layout workbench. SOL can pick live UI elements, move/resize them,
+ * type exact geometry, nudge with keys, hide/lock, adjust text/z-index, preview guides,
+ * undo/redo, save portrait/landscape overrides, and export the approved layout JSON.
+ * Production defaults are never rewritten by the editor.
+ */
+(function horInstallVisualStudio(){
+  const KEY='horSolVisualStudioV1';
+  const LEGACY='horSolLayoutV2';
+  let editing=false,picking=false,target=null,targetKey='',drag=null,history=[],future=[],grid=1,aspect=true;
+  const orientation=()=>innerWidth>innerHeight?'landscape':'portrait';
+  const q=s=>document.querySelector(s);
+  const safeNum=(v,d=0)=>Number.isFinite(Number(v))?Number(v):d;
+  function readAll(){try{return JSON.parse(localStorage.getItem(KEY)||'{}')||{};}catch(_){return {};}}
+  function writeAll(v){localStorage.setItem(KEY,JSON.stringify(v));}
+  function keyFor(el){
+    if(!el)return''; if(el.id)return'#'+CSS.escape(el.id);
+    const seat=el.closest&&el.closest('.player-slot');
+    if(seat&&seat.id){if(el===seat)return'#'+CSS.escape(seat.id);const cls=[...el.classList].find(c=>!c.startsWith('sol-'));if(cls)return'#'+CSS.escape(seat.id)+' .'+CSS.escape(cls);}
+    let cur=el,path=[];while(cur&&cur!==document.body&&path.length<5){let part=cur.tagName.toLowerCase();const cls=[...cur.classList].find(c=>!c.startsWith('sol-')&&c!=='hidden');if(cls)part+='.'+CSS.escape(cls);const par=cur.parentElement;if(par){const same=[...par.children].filter(x=>x.tagName===cur.tagName);if(same.length>1)part+=`:nth-of-type(${same.indexOf(cur)+1})`;}path.unshift(part);cur=par;}return path.join('>');
+  }
+  function recFor(key=targetKey){const a=readAll(),o=orientation();return Object.assign({x:0,y:0,w:null,h:null,scale:1,font:null,z:null,hidden:false,locked:false},a[o]&&a[o][key]||{});}
+  function saveRec(r,key=targetKey){if(!key)return;const a=readAll(),o=orientation();a[o]=a[o]||{};a[o][key]=r;writeAll(a);}
+  function applyRec(el,key){if(!el||!key)return;const r=recFor(key);el.classList.add('sol-studio-managed');el.style.setProperty('--sol-vs-x',safeNum(r.x)+'px');el.style.setProperty('--sol-vs-y',safeNum(r.y)+'px');el.style.setProperty('--sol-vs-scale',safeNum(r.scale,1));el.style.width=r.w==null?'':safeNum(r.w)+'px';el.style.height=r.h==null?'':safeNum(r.h)+'px';el.style.fontSize=r.font==null?'':safeNum(r.font)+'px';el.style.zIndex=r.z==null?'':String(Math.round(safeNum(r.z)));el.classList.toggle('sol-studio-hidden',!!r.hidden);el.classList.toggle('sol-studio-locked',!!r.locked);}
+  function applyAll(){const a=readAll(),o=orientation(),m=a[o]||{};Object.keys(m).forEach(k=>{try{const el=q(k);if(el)applyRec(el,k);}catch(_){}});}
+  function snap(v){return grid>1?Math.round(v/grid)*grid:Math.round(v);}
+  function pushHistory(){if(!targetKey)return;history.push({o:orientation(),key:targetKey,r:recFor()});if(history.length>80)history.shift();future=[];}
+  function restore(h){if(!h)return;const a=readAll();a[h.o]=a[h.o]||{};a[h.o][h.key]=h.r;writeAll(a);applyAll();if(h.o===orientation()&&h.key===targetKey)paint();}
+  function undo(){if(!history.length)return;future.push({o:orientation(),key:targetKey,r:recFor()});restore(history.pop());}
+  function redo(){if(!future.length)return;history.push({o:orientation(),key:targetKey,r:recFor()});restore(future.pop());}
+  function setTarget(el){if(!el||el.closest('#solStudioPanel'))return;target=el;targetKey=keyFor(el);document.querySelectorAll('.sol-studio-target').forEach(x=>x.classList.remove('sol-studio-target'));target.classList.add('sol-studio-target');picking=false;document.documentElement.classList.remove('sol-studio-picking');paint();}
+  function field(id){return q('#'+id);}
+  function ensurePanel(){let p=q('#solStudioPanel');if(p)return p;p=document.createElement('div');p.id='solStudioPanel';p.className='sol-studio-panel hidden';p.innerHTML=`
+   <div class="sol-studio-head"><b>SOL VISUAL STUDIO</b><span id="solVsOrient"></span><button id="solVsDone">DONE</button></div>
+   <div class="sol-studio-row"><button id="solVsPick">PICK ELEMENT</button><span id="solVsTarget">Nothing selected</span></div>
+   <div class="sol-studio-grid">
+    <label>X<input id="solVsX" type="number" step="1"></label><label>Y<input id="solVsY" type="number" step="1"></label>
+    <label>W<input id="solVsW" type="number" step="1" placeholder="auto"></label><label>H<input id="solVsH" type="number" step="1" placeholder="auto"></label>
+    <label>SCALE<input id="solVsScale" type="number" step="0.01" min="0.1" max="5"></label><label>FONT<input id="solVsFont" type="number" step="1" placeholder="auto"></label>
+    <label>Z<input id="solVsZ" type="number" step="1" placeholder="auto"></label><label>GRID<select id="solVsGrid"><option>1</option><option>2</option><option>5</option><option>10</option></select></label>
+   </div>
+   <div class="sol-studio-row"><button id="solVsAspect">🔗 ASPECT ON</button><button id="solVsHide">HIDE</button><button id="solVsLock">LOCK</button><button id="solVsReset">RESET ITEM</button></div>
+   <div class="sol-studio-row"><button id="solVsUndo">↶ UNDO</button><button id="solVsRedo">↷ REDO</button><button id="solVsGuides">GUIDES</button><button id="solVsBoxes">BOXES</button></div>
+   <div class="sol-studio-row"><button id="solVsCopy">COPY VALUES</button><button id="solVsPaste">PASTE VALUES</button><button id="solVsExport">EXPORT LAYOUT</button><button id="solVsResetOri">RESET ORIENTATION</button></div>
+   <textarea id="solVsExportBox" class="hidden" readonly></textarea>
+   <div class="sol-studio-help">Drag selected element • arrows 1px • Shift+arrows 10px • typed values apply immediately</div>`;document.body.appendChild(p);
+   q('#solVsDone').onclick=()=>setEditing(false);q('#solVsPick').onclick=()=>{picking=true;document.documentElement.classList.add('sol-studio-picking');};
+   ['X','Y','W','H','Scale','Font','Z'].forEach(n=>field('solVs'+n).addEventListener('change',applyFields));q('#solVsGrid').onchange=e=>grid=safeNum(e.target.value,1);
+   q('#solVsAspect').onclick=()=>{aspect=!aspect;paint();};q('#solVsHide').onclick=()=>mut(r=>r.hidden=!r.hidden);q('#solVsLock').onclick=()=>mut(r=>r.locked=!r.locked);q('#solVsReset').onclick=resetItem;
+   q('#solVsUndo').onclick=undo;q('#solVsRedo').onclick=redo;q('#solVsGuides').onclick=()=>document.documentElement.classList.toggle('sol-studio-guides');q('#solVsBoxes').onclick=()=>document.documentElement.classList.toggle('sol-studio-boxes');
+   q('#solVsCopy').onclick=()=>{if(targetKey)sessionStorage.setItem('horSolVsClipboard',JSON.stringify(recFor()));};q('#solVsPaste').onclick=()=>{try{const r=JSON.parse(sessionStorage.getItem('horSolVsClipboard')||'null');if(r){pushHistory();saveRec(r);applyRec(target,targetKey);paint();}}catch(_){}};
+   q('#solVsExport').onclick=exportLayout;q('#solVsResetOri').onclick=resetOrientation;return p;
+  }
+  function mut(fn){if(!targetKey)return;pushHistory();const r=recFor();fn(r);saveRec(r);applyRec(target,targetKey);paint();}
+  function applyFields(){if(!targetKey)return;pushHistory();const r=recFor();r.x=snap(safeNum(field('solVsX').value));r.y=snap(safeNum(field('solVsY').value));r.w=field('solVsW').value===''?null:Math.max(1,safeNum(field('solVsW').value));r.h=field('solVsH').value===''?null:Math.max(1,safeNum(field('solVsH').value));r.scale=Math.max(.1,Math.min(5,safeNum(field('solVsScale').value,1)));r.font=field('solVsFont').value===''?null:Math.max(1,safeNum(field('solVsFont').value));r.z=field('solVsZ').value===''?null:safeNum(field('solVsZ').value);saveRec(r);applyRec(target,targetKey);paint();}
+  function resetItem(){if(!targetKey)return;pushHistory();const a=readAll(),o=orientation();if(a[o])delete a[o][targetKey];writeAll(a);if(target){target.classList.remove('sol-studio-managed','sol-studio-hidden','sol-studio-locked');['--sol-vs-x','--sol-vs-y','--sol-vs-scale'].forEach(x=>target.style.removeProperty(x));['width','height','font-size','z-index'].forEach(x=>target.style.removeProperty(x));}paint();}
+  function resetOrientation(){if(!confirm('Reset every SOL override for '+orientation()+'?'))return;const a=readAll();delete a[orientation()];writeAll(a);location.reload();}
+  function exportLayout(){const box=q('#solVsExportBox');box.value=JSON.stringify({build:528,orientation:orientation(),layout:readAll()[orientation()]||{}},null,2);box.classList.remove('hidden');box.select();try{navigator.clipboard&&navigator.clipboard.writeText(box.value);}catch(_){} }
+  function paint(){const p=ensurePanel(),r=recFor();q('#solVsOrient').textContent=orientation().toUpperCase();q('#solVsTarget').textContent=targetKey||'Nothing selected';if(!targetKey)return;field('solVsX').value=Math.round(r.x);field('solVsY').value=Math.round(r.y);field('solVsW').value=r.w==null?'':Math.round(r.w);field('solVsH').value=r.h==null?'':Math.round(r.h);field('solVsScale').value=safeNum(r.scale,1).toFixed(2);field('solVsFont').value=r.font==null?'':Math.round(r.font);field('solVsZ').value=r.z==null?'':Math.round(r.z);q('#solVsAspect').textContent=aspect?'🔗 ASPECT ON':'⛓ ASPECT OFF';q('#solVsHide').classList.toggle('active',!!r.hidden);q('#solVsLock').classList.toggle('active',!!r.locked);}
+  function setEditing(on){if(!horDeveloperToolsEnabled())on=false;editing=!!on;document.documentElement.classList.toggle('sol-studio-editing',editing);ensurePanel().classList.toggle('hidden',!editing);if(!editing){picking=false;document.documentElement.classList.remove('sol-studio-picking');document.querySelectorAll('.sol-studio-target').forEach(x=>x.classList.remove('sol-studio-target'));}}
+  function toggle(){setEditing(!editing);}
+  function ensureButton(){const menu=q('.game-more-menu');if(!menu||q('#btnSolStudio'))return;const old=q('#btnSolLayout');if(old)old.remove();const b=document.createElement('button');b.type='button';b.id='btnSolStudio';b.className='icon-btn developer-only hidden';b.title='SOL Visual Layout Studio';b.innerHTML='✥ <span>Visual studio</span>';b.onclick=e=>{e.preventDefault();toggle();const d=b.closest('details');if(d)d.open=false;};menu.appendChild(b);}
+  document.addEventListener('pointerdown',e=>{if(!editing||e.target.closest('#solStudioPanel'))return;if(picking){e.preventDefault();e.stopPropagation();setTarget(e.target);return;}if(!target||!target.contains(e.target))return;const r=recFor();if(r.locked)return;e.preventDefault();e.stopPropagation();pushHistory();drag={id:e.pointerId,sx:e.clientX,sy:e.clientY,x:r.x,y:r.y};try{target.setPointerCapture(e.pointerId)}catch(_){}target.classList.add('sol-studio-dragging');},true);
+  document.addEventListener('pointermove',e=>{if(!drag||e.pointerId!==drag.id)return;e.preventDefault();const r=recFor();r.x=snap(drag.x+e.clientX-drag.sx);r.y=snap(drag.y+e.clientY-drag.sy);saveRec(r);applyRec(target,targetKey);paint();},true);
+  document.addEventListener('pointerup',e=>{if(!drag||e.pointerId!==drag.id)return;target&&target.classList.remove('sol-studio-dragging');drag=null;},true);
+  document.addEventListener('keydown',e=>{if(!editing||!targetKey||['INPUT','TEXTAREA','SELECT'].includes(document.activeElement&&document.activeElement.tagName))return;if(e.ctrlKey&&e.key.toLowerCase()==='z'){e.preventDefault();return e.shiftKey?redo():undo();}if(e.ctrlKey&&e.key.toLowerCase()==='y'){e.preventDefault();return redo();}const d={ArrowLeft:[-1,0],ArrowRight:[1,0],ArrowUp:[0,-1],ArrowDown:[0,1]}[e.key];if(!d)return;e.preventDefault();const step=(e.shiftKey?10:1)*grid;mut(r=>{if(!r.locked){r.x=snap(r.x+d[0]*step);r.y=snap(r.y+d[1]*step);}});},true);
+  addEventListener('resize',()=>{applyAll();paint();});
+  document.addEventListener('DOMContentLoaded',()=>{ensureButton();applyAll();setInterval(()=>{ensureButton();applyAll();const b=q('#btnSolStudio');if(b)b.classList.toggle('hidden',!horDeveloperToolsEnabled());},800);});
+  window.HORSolVisualStudio={toggle,apply:applyAll,export:()=>JSON.stringify(readAll(),null,2),reset:()=>{localStorage.removeItem(KEY);location.reload();}};
+})();
 

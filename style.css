@@ -13144,3 +13144,32 @@ body.in-game .game-room > #messageArea.message{display:none!important;visibility
 
 /* Never revive the old chess-glyph decoration / stray symbol line. */
 body.in-game .landscape-theater::before{content:'HOUSE OF ROOKS'!important}
+
+
+/* Rook527 — SOL developer layout editor Phase 2 */
+.player-slot.sol-layout-positioned { translate:var(--sol-seat-x,0px) var(--sol-seat-y,0px); }
+.player-slot .seat-avatar.sol-avatar-positioned,
+.player-slot .seat-avatar-side.sol-avatar-positioned { translate:var(--sol-avatar-x,0px) var(--sol-avatar-y,0px); scale:var(--sol-avatar-scale,1); transform-origin:center; }
+.player-slot .name.sol-name-positioned { translate:var(--sol-name-x,0px) var(--sol-name-y,0px); }
+.sol-layout-editing .sol-layout-drag-target { cursor:grab!important; outline:2px dashed rgba(255,215,90,.95)!important; outline-offset:5px; touch-action:none; }
+.sol-layout-editing .sol-layout-dragging { cursor:grabbing!important; outline-style:solid!important; filter:drop-shadow(0 0 8px rgba(255,210,70,.7)); }
+.sol-layout-panel { position:fixed; z-index:1000001; left:50%; bottom:max(8px,env(safe-area-inset-bottom)); transform:translateX(-50%); display:flex; flex-direction:column; align-items:stretch; gap:.3rem; width:min(96vw,430px); box-sizing:border-box; padding:.45rem .55rem; border:1px solid #b98a36; border-radius:10px; background:rgba(18,12,7,.96); color:#ffe8a8; box-shadow:0 4px 18px rgba(0,0,0,.55); font:700 11px/1.1 system-ui,sans-serif; }
+.sol-layout-panel.hidden { display:none!important; }
+.sol-layout-row { display:flex; align-items:center; justify-content:center; gap:.3rem; flex-wrap:wrap; }
+.sol-layout-panel button { border:1px solid #a77a2c; border-radius:7px; min-height:30px; padding:.3rem .46rem; background:#3a2812; color:#ffe8a8; font-weight:800; font-size:10px; }
+.sol-layout-panel button.active { background:#d0a23c; color:#1a1007; border-color:#ffe69a; box-shadow:inset 0 1px 0 rgba(255,255,255,.45); }
+#solLayoutCoords { min-width:170px; text-align:center; }
+
+
+/* Rook528 — SOL Visual Layout Studio */
+.sol-studio-managed{translate:var(--sol-vs-x,0px) var(--sol-vs-y,0px)!important;scale:var(--sol-vs-scale,1)!important;transform-origin:center center!important}
+.sol-studio-hidden{opacity:.12!important}
+.sol-studio-editing .sol-studio-target{outline:2px dashed #ffd65a!important;outline-offset:4px!important;cursor:move!important;touch-action:none!important}
+.sol-studio-editing .sol-studio-dragging{outline-style:solid!important;filter:drop-shadow(0 0 8px rgba(255,210,70,.8))}
+.sol-studio-editing.sol-studio-picking *, .sol-studio-picking *{cursor:crosshair!important}
+.sol-studio-boxes .player-slot,.sol-studio-boxes .hand,.sol-studio-boxes .trick-area,.sol-studio-boxes button,.sol-studio-boxes .modal{outline:1px solid rgba(100,220,255,.55)!important}
+.sol-studio-guides body:before,.sol-studio-guides body:after{content:"";position:fixed;z-index:999990;pointer-events:none;background:rgba(255,90,90,.55)}
+.sol-studio-guides body:before{left:50%;top:0;width:1px;height:100vh}.sol-studio-guides body:after{top:50%;left:0;height:1px;width:100vw}
+.sol-studio-panel{position:fixed;z-index:1000002;right:max(6px,env(safe-area-inset-right));bottom:max(6px,env(safe-area-inset-bottom));width:min(96vw,520px);max-height:48vh;overflow:auto;box-sizing:border-box;padding:.5rem;border:1px solid #b98a36;border-radius:10px;background:rgba(18,12,7,.97);color:#ffe8a8;box-shadow:0 5px 22px rgba(0,0,0,.65);font:700 10px/1.15 system-ui,sans-serif}
+.sol-studio-panel.hidden,.sol-studio-panel .hidden{display:none!important}.sol-studio-head,.sol-studio-row{display:flex;gap:.3rem;align-items:center;justify-content:center;flex-wrap:wrap;margin:.22rem 0}.sol-studio-head b{margin-right:auto}.sol-studio-grid{display:grid;grid-template-columns:repeat(4,minmax(64px,1fr));gap:.3rem}.sol-studio-grid label{display:flex;align-items:center;gap:.2rem;font-size:9px}.sol-studio-grid input,.sol-studio-grid select{width:100%;min-width:0;box-sizing:border-box;background:#160f08;color:#ffe8a8;border:1px solid #795b28;border-radius:5px;padding:.25rem}.sol-studio-panel button{border:1px solid #a77a2c;border-radius:6px;min-height:28px;padding:.25rem .42rem;background:#3a2812;color:#ffe8a8;font-weight:800;font-size:9px}.sol-studio-panel button.active{background:#d0a23c;color:#1a1007}.sol-studio-help{opacity:.75;text-align:center;font-size:9px;margin-top:.25rem}.sol-studio-panel textarea{width:100%;height:90px;box-sizing:border-box;background:#0c0906;color:#f7df9c;font:9px monospace}
+@media (max-width:600px){.sol-studio-panel{left:2vw;right:2vw;width:96vw}.sol-studio-grid{grid-template-columns:repeat(4,1fr)}}
