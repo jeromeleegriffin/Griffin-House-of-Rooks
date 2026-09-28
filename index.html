@@ -13,20 +13,20 @@
   <title>House of Rooks</title>
   <script>
     (function () {
-      // Rook521: remember the build only. Service-worker activation owns updates.
+      // Rook522: remember the build only. Service-worker activation owns updates.
       // Never redirect/reload here: competing page + SW reload paths caused loops.
-      var BUILD = '521';
+      var BUILD = '522';
       try { localStorage.setItem('horBuild', BUILD); } catch (e) {}
     })();
   </script>
   <link rel="manifest" href="manifest.json">
   <link rel="icon" href="icon-192.png">
   <link rel="apple-touch-icon" href="apple-touch-icon.png">
-  <link rel="stylesheet" href="style.css?v=521">
-  <link rel="stylesheet" href="rook510.css?v=521">
-  <link rel="stylesheet" href="rook513.css?v=521">
-  <link rel="stylesheet" href="rook518-trump.css?v=521">
-  <script src="vendor/peerjs.min.js?v=521" onerror="this.onerror=null;this.src='https://cdn.jsdelivr.net/npm/peerjs@1.5.5/dist/peerjs.min.js';"></script>
+  <link rel="stylesheet" href="style.css?v=522">
+  <link rel="stylesheet" href="rook510.css?v=522">
+  <link rel="stylesheet" href="rook513.css?v=522">
+  <link rel="stylesheet" href="rook518-trump.css?v=522">
+  <script src="vendor/peerjs.min.js?v=522" onerror="this.onerror=null;this.src='https://cdn.jsdelivr.net/npm/peerjs@1.5.5/dist/peerjs.min.js';"></script>
   <style>
     /* Emergency layout if style.css fails to load — joiners still see a usable page */
     body{margin:0;background:#1a120b;color:#f3e6c8;font-family:sans-serif}
@@ -103,8 +103,8 @@
     <div class="lt-decor lt-corner lt-tl"><img class="rook-ui-bird" src="cardback-raven.jpg" alt=""></div>
     <div class="lt-decor lt-corner lt-tr"><img class="rook-ui-bird" src="cardback-raven.jpg" alt=""></div>
     <div id="ltKittyWait" class="lt-wait-banner hidden" aria-live="polite">
-      <img id="ltWaitArtNest" class="lt-wait-art" src="wait-nest-landscape.jpg?v=521" alt="">
-      <img id="ltWaitArtTrump" class="lt-wait-art" src="wait-trump-landscape.jpg?v=521" alt="">
+      <img id="ltWaitArtNest" class="lt-wait-art" src="wait-nest-landscape.jpg?v=522" alt="">
+      <img id="ltWaitArtTrump" class="lt-wait-art" src="wait-trump-landscape.jpg?v=522" alt="">
       <div class="lt-wait-veil"></div>
       <div class="lt-wait-copy">
         <div class="lt-wait-kicker" id="ltWaitKicker">The nest is open</div>
@@ -859,8 +859,8 @@
               <div id="widowSpread" class="widow-spread hidden" aria-label="Widow"></div>
               <div id="botThinking" class="bot-thinking hidden">Thinking…</div>
               <div id="ptWaitBanner" class="pt-wait-banner hidden" aria-live="polite">
-                <img id="ptWaitArtNest" class="pt-wait-art" src="wait-nest-portrait.jpg?v=521" alt="">
-                <img id="ptWaitArtTrump" class="pt-wait-art" src="wait-trump-portrait.jpg?v=521" alt="">
+                <img id="ptWaitArtNest" class="pt-wait-art" src="wait-nest-portrait.jpg?v=522" alt="">
+                <img id="ptWaitArtTrump" class="pt-wait-art" src="wait-trump-portrait.jpg?v=522" alt="">
                 <div class="pt-wait-veil"></div>
                 <div class="pt-wait-copy">
                   <div class="pt-wait-kicker" id="ptWaitKicker">House of Rooks</div>
@@ -1195,15 +1195,15 @@
       paintInstall();
     })();
   </script>
-  <script src="rules.js?v=521"></script>
-  <script src="bots.js?v=521"></script>
-  <script src="game.js?v=521"></script>
-  <script src="rook510-avatars.js?v=521"></script>
-  <script src="rook512-room.js?v=521"></script>
-  <script src="rook513.js?v=521"></script>
-  <script src="polish.js?v=521"></script>
+  <script src="rules.js?v=522"></script>
+  <script src="bots.js?v=522"></script>
+  <script src="game.js?v=522"></script>
+  <script src="rook510-avatars.js?v=522"></script>
+  <script src="rook512-room.js?v=522"></script>
+  <script src="rook513.js?v=522"></script>
+  <script src="polish.js?v=522"></script>
   <!-- Dormant career/achievement framework. Master switch is OFF in progression.js. -->
-  <script src="progression.js?v=521"></script>
+  <script src="progression.js?v=522"></script>
   <div id="horBootError"></div>
   <script>
     window.addEventListener('error', function (ev) {
@@ -1217,49 +1217,17 @@
   </script>
   <script>
     if ('serviceWorker' in navigator) {
-      navigator.serviceWorker.register('sw.js?v=521', { updateViaCache: 'none' })
+      navigator.serviceWorker.register('sw.js?v=522', { updateViaCache: 'none' })
         .then(function (reg) { try { reg.update(); } catch (e) {} })
         .catch(() => {});
-      // Rook521: do not reload on controllerchange. The new worker takes control
+      // Rook522: do not reload on controllerchange. The new worker takes control
       // without forcing the currently running hand/page through a reload cycle.
     }
   </script>
   <script>
-    // Same-host version check. After a GitHub Pages deploy, this tab
-    // picks up the new files without jumping to another site.
-    (function () {
-      function liveVersionFromHtml(html) {
-        const m = /game\.js\?v=(\d+)/.exec(html || '');
-        return m ? parseInt(m[1], 10) : null;
-      }
-      function myVersion() {
-        if (typeof APP_VERSION === 'undefined') return 0;
-        return typeof horVersionNum === 'function' ? horVersionNum(APP_VERSION) : parseInt(APP_VERSION, 10);
-      }
-      function applyLiveVersion(liveVer) {
-        if (!liveVer) return;
-        const myVer = myVersion();
-        if (!myVer || liveVer <= myVer) return;
-        const activePhases = ['dealing', 'bidding', 'discard', 'trump', 'play'];
-        const midHand = typeof game !== 'undefined' && game && activePhases.indexOf(game.phase) !== -1;
-        const offline = (typeof isSoloPractice !== 'undefined' && isSoloPractice) || (typeof roomCode !== 'undefined' && roomCode === 'OFFLINE');
-        const inGame = !!(document.body && document.body.classList.contains('in-game'));
-        if (!midHand && !offline && !inGame) { try { horForceUpdate(); } catch (e) {} }
-      }
-      function checkForNewerVersion() {
-        if (window.__horUpdating) return;
-        if (location.protocol === 'file:') return;
-        fetch('index.html?checkver=' + Date.now(), { cache: 'no-store' })
-          .then((r) => (r && r.ok ? r.text() : null))
-          .then((html) => applyLiveVersion(liveVersionFromHtml(html)))
-          .catch(() => {});
-      }
-      setTimeout(checkForNewerVersion, 2500);
-      setInterval(checkForNewerVersion, 2 * 60 * 1000);
-      document.addEventListener('visibilitychange', () => {
-        if (document.visibilityState === 'visible') checkForNewerVersion();
-      });
-    })();
+    // Rook522: no automatic page reload/update loop. The service worker uses
+    // network-first loading for HTML/JS/CSS, and updates are picked up on the
+    // next normal navigation. Force Refresh remains a manual escape hatch.
   </script>
 </body>
 </html>

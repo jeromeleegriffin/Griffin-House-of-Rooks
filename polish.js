@@ -11,7 +11,7 @@
     'netSequencing','netReconnect','netBackoff','netHeartbeat','netDelta','netAuthoritative','netTimerSync',
     'netDuplicateGuard','netTurnGuard','netConnectionUI','netTurnHandoff','netOwnTurnRecovery','netDiagnostics','netGraceRecovery',
     'netSameIdResync','netNameReclaim','netActionQueue','netIceWatch','netResyncOnReclaim','netHoldTimerOnDisconnect','netSilentDropDetect',
-    'tableAtmosphere','rookAnimation','cardJuice','avatarPersonality','statusIndicators','matchProgress','lobbyReconnect','cacheRefresh',
+    'tableAtmosphere','rookAnimation','cardJuice','avatarPersonality','statusIndicators','matchProgress','lobbyReconnect',
     'friendlyErrors','renderOptimization','debugPanel',
     'customTurnServers','hostMigration','seatPips','thinkingPulse','confirmPlay','lagSandbox','webpRookArt','waitingQrAuto',
     'turnAlert','coachOverlay','careerStats','shareHandCard','tournamentLock','spectatorLateJoin','hostKickMute',
@@ -44,11 +44,11 @@
     try {
       const raw = localStorage.getItem(EXP_KEY);
       if (!raw) return defaultExperimental();
-      return forceNetAlwaysOn(Object.assign(defaultExperimental(), JSON.parse(raw)));
+      const saved = Object.assign(defaultExperimental(), JSON.parse(raw)); delete saved.cacheRefresh; return forceNetAlwaysOn(saved);
     } catch(e) { return defaultExperimental(); }
   }
   function saveExperimental(next) {
-    const clean = forceNetAlwaysOn(Object.assign(defaultExperimental(), next || {}));
+    const clean = forceNetAlwaysOn(Object.assign(defaultExperimental(), next || {})); delete clean.cacheRefresh;
     try { localStorage.setItem(EXP_KEY, JSON.stringify(clean)); } catch(e) {}
     window.horExperimental = clean;
     return clean;
@@ -150,7 +150,7 @@
     if(A)A.textContent=a+' '+(scores[0]||0); if(B)B.textContent=b+' '+(scores[1]||0); if(F)F.style.width=Math.min(100,Math.max(0,Math.max(scores[0]||0,scores[1]||0)/goal*100))+'%';
   }
   function removeMatchProgress(){ const p=$('horMatchProgress'); if(p)p.remove(); }
-  function experimentalTick(){ if(window.horExperimental.matchProgress)ensureMatchProgress(); if(window.horExperimental.netConnectionUI||window.horExperimental.netDiagnostics)ensureConnectionBadge(); if((window.horExperimental.netTurnHandoff||window.horExperimental.netOwnTurnRecovery) && typeof game!=='undefined' && game && !game.paused && game.currentPlayer===myIndex){ try{ if(typeof renderUI==='function') renderUI(); }catch(e){} } if(window.horExperimental.cacheRefresh && navigator.serviceWorker){ navigator.serviceWorker.getRegistration().then(r=>{if(r&&r.update)r.update()}).catch(()=>{}); } try { tickTestingFeatures(); } catch(e) {} }
+  function experimentalTick(){ if(window.horExperimental.matchProgress)ensureMatchProgress(); if(window.horExperimental.netConnectionUI||window.horExperimental.netDiagnostics)ensureConnectionBadge(); if((window.horExperimental.netTurnHandoff||window.horExperimental.netOwnTurnRecovery) && typeof game!=='undefined' && game && !game.paused && game.currentPlayer===myIndex){ try{ if(typeof renderUI==='function') renderUI(); }catch(e){} } try { tickTestingFeatures(); } catch(e) {} }
   setInterval(experimentalTick,1200);
 
   window.handsPlayedSession = window.handsPlayedSession || 0;
