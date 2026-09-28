@@ -7,7 +7,7 @@
 // It's exchanged during the join handshake so a stale host or joiner (e.g.
 // one still running old cached JS) gets caught and auto-updated instead of
 // silently failing or behaving unpredictably against a mismatched peer.
-const APP_VERSION = '538';
+const APP_VERSION = '539';
 
 function horThisIndex() {
   try {
@@ -14559,3 +14559,49 @@ function positionPortraitLast3Btn() {
   window.HORSolVisualStudio={toggle,apply:applySavedOnce,export:()=>JSON.stringify(readAll(),null,2),unhideAll:()=>bulkFlag('hidden',false),lockAll:()=>bulkFlag('locked',true),unlockAll:()=>bulkFlag('locked',false),reset:()=>{localStorage.removeItem(KEY);location.reload();}};
 })();;
 
+
+
+/* ===== Rook539: read-only pixel measurement overlay ===== */
+(()=>{
+  let on=false;
+  const q=s=>document.querySelector(s);
+  function labelFor(el){
+    if(!el) return '—';
+    if(el.id) return '#'+el.id;
+    const cls=[...el.classList].filter(x=>!x.startsWith('sol-')).slice(0,2);
+    return el.tagName.toLowerCase()+(cls.length?'.'+cls.join('.'):'');
+  }
+  function ensureOverlay(){
+    let o=q('#horPixelOverlay');
+    if(o) return o;
+    o=document.createElement('div'); o.id='horPixelOverlay'; o.className='hor-pixel-overlay hidden';
+    o.innerHTML='<div class="hor-pixel-v"></div><div class="hor-pixel-h"></div><div class="hor-pixel-readout">X 0 • Y 0</div><div class="hor-pixel-help">10px grid • pointer is exact • overlay never moves game objects</div>';
+    document.body.appendChild(o); return o;
+  }
+  function ensureButton(){
+    const toolbar=q('#topToolbar')||q('.toolbar');
+    if(!toolbar||q('#btnPixelOverlay')) return;
+    const b=document.createElement('button'); b.type='button'; b.id='btnPixelOverlay';
+    b.className='icon-btn developer-only hidden hor-pixel-launch'; b.title='Pixel measurement overlay'; b.innerHTML='▦ <span>PIXELS</span>';
+    b.onclick=e=>{e.preventDefault();toggle();};
+    const sol=q('#btnSolStudio'); toolbar.insertBefore(b,sol||toolbar.querySelector('.game-more')||null);
+  }
+  function toggle(force){
+    if(typeof horDeveloperToolsEnabled==='function'&&!horDeveloperToolsEnabled()) return;
+    on=typeof force==='boolean'?force:!on;
+    ensureOverlay().classList.toggle('hidden',!on);
+    document.documentElement.classList.toggle('hor-pixel-on',on);
+    const b=q('#btnPixelOverlay'); if(b)b.classList.toggle('active',on);
+  }
+  document.addEventListener('pointermove',e=>{
+    if(!on)return;
+    const o=ensureOverlay(),v=o.querySelector('.hor-pixel-v'),h=o.querySelector('.hor-pixel-h'),r=o.querySelector('.hor-pixel-readout');
+    v.style.left=e.clientX+'px'; h.style.top=e.clientY+'px';
+    const el=document.elementsFromPoint(e.clientX,e.clientY).find(x=>x!==o&&!x.closest('#horPixelOverlay')&&!x.closest('#solStudioPanel')&&!x.closest('#solQuickPanel'));
+    r.textContent=`X ${Math.round(e.clientX)} • Y ${Math.round(e.clientY)} • ${labelFor(el)}`;
+    const left=Math.min(innerWidth-210,Math.max(4,e.clientX+12)); const top=Math.min(innerHeight-32,Math.max(4,e.clientY+12));
+    r.style.left=left+'px'; r.style.top=top+'px';
+  },true);
+  document.addEventListener('DOMContentLoaded',()=>{ensureOverlay();ensureButton();setInterval(()=>{ensureButton();const b=q('#btnPixelOverlay');if(b&&typeof horDeveloperToolsEnabled==='function')b.classList.toggle('hidden',!horDeveloperToolsEnabled());},800);});
+  window.HORPixelOverlay={toggle};
+})();
