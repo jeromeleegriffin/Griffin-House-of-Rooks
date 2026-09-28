@@ -1,0 +1,313 @@
+/* Griffin House of Rooks — Rook518 Signature Trump Medallion
+   The trump declaration is the hero move of the hand: one hard impact,
+   then a quiet physical brass/enamel marker that lives on the table. */
+
+.trump-banner.trump-signature {
+  --trump-enamel:#111111;
+  --trump-enamel-hi:#343434;
+  --trump-enamel-lo:#050505;
+  position:relative !important;
+  display:grid !important;
+  place-items:center !important;
+  width:clamp(58px,15vmin,76px) !important;
+  height:clamp(73px,18.5vmin,92px) !important;
+  min-width:0 !important;
+  margin:0 auto .12rem !important;
+  padding:0 !important;
+  border:0 !important;
+  border-radius:0 !important;
+  background:transparent !important;
+  color:#f4dfaa !important;
+  box-shadow:none !important;
+  overflow:visible !important;
+  isolation:isolate;
+  pointer-events:none;
+  transform:none;
+  text-shadow:none;
+  letter-spacing:normal;
+  will-change:transform,filter;
+}
+.trump-banner.trump-signature.hidden { display:none !important; }
+
+/* Exact identity colors are derived from the actual card faces, not generic suit colors. */
+.trump-signature.trump-green  { --trump-enamel:#00b34a; --trump-enamel-hi:#2eea7b; --trump-enamel-lo:#006c2c; }
+.trump-signature.trump-red    { --trump-enamel:#ff1744; --trump-enamel-hi:#ff637f; --trump-enamel-lo:#9e001f; }
+.trump-signature.trump-yellow { --trump-enamel:#b8860b; --trump-enamel-hi:#e0bc3a; --trump-enamel-lo:#735307; }
+.trump-signature.trump-black  { --trump-enamel:#111111; --trump-enamel-hi:#414141; --trump-enamel-lo:#020202; }
+
+.trump-medallion {
+  position:relative;
+  z-index:2;
+  display:flex;
+  flex-direction:column;
+  align-items:center;
+  justify-content:flex-start;
+  width:100%;
+  height:100%;
+  transform-origin:50% 62%;
+  filter:drop-shadow(0 5px 4px rgba(0,0,0,.48));
+}
+.trump-medallion-edge {
+  position:relative;
+  display:grid;
+  place-items:center;
+  width:clamp(52px,13.2vmin,68px);
+  aspect-ratio:1;
+  border-radius:50%;
+  padding:3px;
+  box-sizing:border-box;
+  background:
+    conic-gradient(from 18deg,
+      #5d3c16 0 5%, #e3bc69 8% 15%, #77501e 19% 27%, #f0d38a 31% 38%,
+      #6b4618 42% 50%, #c6923f 55% 63%, #f5d990 67% 73%, #6b4518 77% 84%,
+      #d4a956 88% 94%, #604018 97% 100%);
+  box-shadow:
+    inset 0 1px 1px rgba(255,245,205,.78),
+    inset 0 -3px 4px rgba(44,24,5,.78),
+    0 1px 0 rgba(255,225,151,.25),
+    0 4px 6px rgba(0,0,0,.48);
+}
+.trump-medallion-edge::before {
+  content:"";
+  position:absolute;
+  inset:2px;
+  border-radius:50%;
+  border:1px solid rgba(255,231,170,.45);
+  box-shadow:inset 0 0 0 1px rgba(48,28,7,.55);
+  pointer-events:none;
+}
+.trump-medallion-edge::after {
+  content:"";
+  position:absolute;
+  left:12%; right:12%; bottom:-4px;
+  height:7px;
+  border-radius:50%;
+  background:rgba(0,0,0,.42);
+  filter:blur(3px);
+  z-index:-1;
+}
+.trump-medallion-face {
+  position:relative;
+  display:grid;
+  place-items:center;
+  width:100%;
+  height:100%;
+  border-radius:50%;
+  padding:5px;
+  box-sizing:border-box;
+  background:
+    radial-gradient(circle at 34% 25%, rgba(255,238,190,.24), transparent 23%),
+    linear-gradient(145deg,#b98232 0%,#f0d184 19%,#7a4e1b 43%,#d9ad58 68%,#6a4317 100%);
+  box-shadow:
+    inset 0 2px 2px rgba(255,242,203,.5),
+    inset 0 -3px 4px rgba(52,29,7,.62),
+    0 0 0 1px rgba(58,35,11,.8);
+}
+.trump-enamel {
+  position:relative;
+  display:grid;
+  place-items:center;
+  width:100%;
+  height:100%;
+  border-radius:50%;
+  overflow:hidden;
+  background:
+    radial-gradient(circle at 32% 23%, rgba(255,255,255,.30), transparent 19%),
+    radial-gradient(circle at 68% 74%, rgba(0,0,0,.28), transparent 48%),
+    linear-gradient(145deg,var(--trump-enamel-hi) 0%,var(--trump-enamel) 40%,var(--trump-enamel-lo) 100%);
+  box-shadow:
+    inset 0 2px 5px rgba(255,255,255,.16),
+    inset 0 -4px 7px rgba(0,0,0,.44),
+    0 0 0 1px rgba(34,20,5,.86);
+}
+.trump-enamel::before {
+  content:"";
+  position:absolute;
+  inset:8% 10% 48% 10%;
+  border-radius:50%;
+  background:linear-gradient(180deg,rgba(255,255,255,.19),rgba(255,255,255,0));
+  transform:rotate(-11deg);
+  opacity:.8;
+}
+.trump-enamel::after {
+  content:"";
+  position:absolute;
+  width:54%; height:1px;
+  left:22%; bottom:19%;
+  background:rgba(255,255,255,.14);
+  box-shadow:0 2px 0 rgba(0,0,0,.16);
+  transform:rotate(-8deg);
+  opacity:.65;
+}
+.trump-griffin-mark {
+  position:relative;
+  z-index:2;
+  font-family:Georgia,'Times New Roman',serif;
+  font-size:clamp(15px,4vmin,21px);
+  font-weight:900;
+  letter-spacing:-.08em;
+  color:rgba(51,31,8,.72);
+  text-shadow:
+    0 1px 0 rgba(255,235,180,.42),
+    0 -1px 0 rgba(31,18,5,.46);
+  transform:translateX(-.04em) scaleX(.94);
+}
+.trump-medallion-name {
+  display:flex;
+  align-items:baseline;
+  gap:3px;
+  margin-top:3px;
+  padding:2px 5px 1px;
+  border:1px solid rgba(178,130,52,.42);
+  border-radius:5px;
+  background:linear-gradient(180deg,rgba(35,22,12,.94),rgba(13,10,7,.96));
+  box-shadow:inset 0 1px 0 rgba(255,232,175,.08),0 2px 3px rgba(0,0,0,.35);
+  color:#efd69b;
+  font:800 clamp(7px,1.8vmin,9px)/1.05 system-ui,sans-serif;
+  letter-spacing:.09em;
+  white-space:nowrap;
+}
+.trump-medallion-name small {
+  font-size:.72em;
+  letter-spacing:.13em;
+  color:rgba(239,214,155,.68);
+}
+
+/* The declaration exists only during the impact. It does not become another permanent banner. */
+.trump-impact-copy {
+  position:absolute;
+  left:50%; top:42%;
+  z-index:5;
+  display:flex;
+  flex-direction:column;
+  align-items:center;
+  justify-content:center;
+  min-width:min(70vw,270px);
+  padding:.42rem .9rem .48rem;
+  border:1px solid rgba(226,184,89,.78);
+  border-radius:9px;
+  background:
+    linear-gradient(180deg,rgba(43,28,15,.98),rgba(12,9,7,.99));
+  box-shadow:
+    inset 0 1px 0 rgba(255,238,194,.13),
+    0 10px 25px rgba(0,0,0,.58),
+    0 0 0 1px rgba(38,21,8,.7);
+  opacity:0;
+  transform:translate(-50%,-50%) scale(1.7) rotate(-4deg);
+  transform-origin:center;
+  white-space:nowrap;
+}
+.trump-impact-color {
+  color:var(--trump-enamel);
+  font:950 clamp(1.15rem,5.5vw,1.8rem)/.95 system-ui,sans-serif;
+  letter-spacing:.12em;
+  text-shadow:0 2px 3px rgba(0,0,0,.75);
+}
+.trump-signature.trump-yellow .trump-impact-color { color:#d6a51b; }
+.trump-signature.trump-black .trump-impact-color { color:#e6e0d4; }
+.trump-impact-is {
+  margin-top:.18rem;
+  color:#ead29a;
+  font:850 clamp(.68rem,2.8vw,.92rem)/1 system-ui,sans-serif;
+  letter-spacing:.22em;
+}
+
+/* Signature sequence: WHAM -> compression -> the announcement clears -> the heavy marker settles. */
+.trump-signature.trump-stamp-anim .trump-impact-copy {
+  animation:ghTrumpImpactCopy 1.18s cubic-bezier(.18,.78,.18,1) both;
+}
+.trump-signature.trump-stamp-anim .trump-medallion {
+  animation:ghTrumpMedallionLand 1.55s cubic-bezier(.18,.78,.2,1) both;
+}
+@keyframes ghTrumpImpactCopy {
+  0%   { opacity:0; transform:translate(-50%,-92%) scale(1.8) rotate(-5deg); filter:blur(2px); }
+  16%  { opacity:1; transform:translate(-50%,-50%) scale(.92) rotate(1.2deg); filter:blur(0); }
+  23%  { transform:translate(-50%,-50%) scale(1.055) rotate(-.45deg); }
+  34%  { transform:translate(-50%,-50%) scale(1) rotate(0); }
+  62%  { opacity:1; transform:translate(-50%,-50%) scale(1); }
+  83%,100% { opacity:0; transform:translate(-50%,-44%) scale(.96); }
+}
+@keyframes ghTrumpMedallionLand {
+  0%,48% { opacity:0; transform:translateY(-12px) scale(1.22) rotate(-3deg); filter:blur(1px); }
+  58% { opacity:1; transform:translateY(2px) scale(.94) rotate(.8deg); filter:blur(0); }
+  68% { transform:translateY(-1px) scale(1.035) rotate(-.25deg); }
+  79% { transform:translateY(0) scale(.99); }
+  100% { opacity:1; transform:none; }
+}
+
+/* Ordinary trump play: barely perceptible table response. */
+.trump-signature.trump-react .trump-medallion {
+  animation:ghTrumpMicro .38s ease-out both;
+}
+.trump-signature.trump-react .trump-enamel::before {
+  animation:ghTrumpGlint .38s ease-out both;
+}
+@keyframes ghTrumpMicro {
+  0% { transform:none; }
+  28% { transform:translateY(1px) scale(.988); }
+  62% { transform:translateY(-.5px) scale(1.006); }
+  100% { transform:none; }
+}
+@keyframes ghTrumpGlint {
+  0%,100% { opacity:.8; transform:translateX(0) rotate(-11deg); }
+  45% { opacity:1; transform:translateX(7%) rotate(-11deg); }
+}
+
+/* The Rook is one notch stronger, never a jackpot effect. */
+.trump-signature.trump-rook-react .trump-medallion {
+  animation:ghTrumpRook .56s cubic-bezier(.2,.75,.2,1) both;
+}
+.trump-signature.trump-rook-react .trump-medallion-edge {
+  animation:ghTrumpBrassFlash .56s ease-out both;
+}
+@keyframes ghTrumpRook {
+  0% { transform:none; }
+  24% { transform:translateY(2px) scale(.975); }
+  54% { transform:translateY(-1px) scale(1.018); }
+  100% { transform:none; }
+}
+@keyframes ghTrumpBrassFlash {
+  0%,100% { filter:none; }
+  42% { filter:brightness(1.24) saturate(1.08); }
+}
+
+/* Landscape keeps the same physical object but yields more room to the giant-card view. */
+@media (orientation:landscape) {
+  .landscape-theater .trump-banner.trump-signature {
+    width:56px !important;
+    height:69px !important;
+    margin:.05rem auto .1rem !important;
+  }
+  .landscape-theater .trump-medallion-edge { width:50px; }
+  .landscape-theater .trump-impact-copy { min-width:min(44vw,250px); }
+}
+
+/* Reduced motion still gets the permanent physical marker, without the slam/reactions. */
+body.reduce-motion .trump-signature.trump-stamp-anim .trump-impact-copy,
+body.reduce-motion .trump-signature.trump-stamp-anim .trump-medallion,
+body.reduce-motion .trump-signature.trump-react .trump-medallion,
+body.reduce-motion .trump-signature.trump-rook-react .trump-medallion,
+body.reduce-motion .trump-signature.trump-rook-react .trump-medallion-edge { animation:none !important; }
+body.reduce-motion .trump-signature .trump-impact-copy { display:none !important; }
+
+/* Screen-reader helper if an older stylesheet does not already provide it. */
+.sr-only { position:absolute!important; width:1px!important; height:1px!important; padding:0!important; margin:-1px!important; overflow:hidden!important; clip:rect(0,0,0,0)!important; white-space:nowrap!important; border:0!important; }
+
+/* Portrait critique pass: the old pill lived in the bottom-seat flex column.
+   A real medallion must not steal vertical room from the large human portrait or hand rack,
+   so it sits on the felt just to the right of the player's seat instead. */
+@media (orientation:portrait) {
+  .bottom-seat-row { position:relative; }
+  .bottom-seat-row > #trumpBanner.trump-signature {
+    position:absolute !important;
+    left:calc(50% + clamp(42px,12vmin,58px)) !important;
+    top:50% !important;
+    transform:translateY(-50%) !important;
+    margin:0 !important;
+    z-index:7 !important;
+  }
+}
+
+/* Defeat the pre-518 rubber-stamp transform on the outer banner. The new sequence
+   animates its announcement and medallion independently so the resting object never wobbles. */
+.trump-banner.trump-signature.trump-stamp-anim { animation:none !important; }

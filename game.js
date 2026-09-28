@@ -7,7 +7,7 @@
 // It's exchanged during the join handshake so a stale host or joiner (e.g.
 // one still running old cached JS) gets caught and auto-updated instead of
 // silently failing or behaving unpredictably against a mismatched peer.
-const APP_VERSION = '517';
+const APP_VERSION = '519';
 
 function horThisIndex() {
   try {
@@ -3733,38 +3733,15 @@ function horEnsurePeerJS() {
   return horPeerLoadPromise;
 }
 
-function createRoom(preserveCode) {
-  // A normal button tap may arrive again while PeerJS is still registering the
-  // host id. Do not destroy that healthy in-flight attempt and start over.
-  // Internal broker/collision retries pass preserveCode=true and are allowed
-  // to continue the same creation attempt.
-  if (!preserveCode && horHostCreateInProgress) {
-    horSetHostCreateBusy(true, 'Still creating your room…');
-    return;
-  }
-  if (phoneLooksOffline()) {
-    horSetHostCreateBusy(false);
-
-    offerOfflinePlay();
-    return;
-  }
-  window._horNoServiceStop = false;
+function createRoom() {
   myName = ($('hor-player-name').value || '').trim() || 'Host';
   if (typeof Peer === 'undefined') {
-    horSetHostCreateBusy(true, 'Loading multiplayer connection…');
-    horEnsurePeerJS().then(() => {
-      horSetHostCreateBusy(false);
-      createRoom(true);
-    }).catch(err => {
-      horSetHostCreateBusy(false);
-      $('lobbyStatus').textContent = 'Multiplayer could not load. Check your internet connection and try again.';
-      console.error('PeerJS load failed:', err);
-    });
+    $('lobbyStatus').textContent = 'PeerJS failed to load. Check your internet connection and refresh.';
     return;
   }
-  if (!preserveCode || !roomCode) roomCode = shortCode();
+  roomCode = shortCode();
   isHost = true;
-  horSetHostCreateBusy(true, preserveCode ? brokerRetryMessage() : 'Creating room… one tap is enough.');
+  $('lobbyStatus').textContent = 'Creating room…';
 
   try {
     if (peer) {
@@ -3774,39 +3751,17 @@ function createRoom(preserveCode) {
     const opts = peerOptions();
     horDebugLog('HOST: creating peer on broker ' + opts.host + ' code=' + roomCode);
     peer = new Peer(peerRoomId(roomCode), opts);
-    horClearHostCreateWatchdog();
-    horHostCreateWatchdog = setTimeout(() => {
-      if (!horHostCreateInProgress) return;
-      horDebugLog('HOST: signaling open timed out; returning control to lobby');
-      try { if (peer) peer.destroy(); } catch (e) {}
-      peer = null;
-      horSetHostCreateBusy(false, 'Could not open the multiplayer room. Tap Play with friends to try again.');
-    }, 12000);
   } catch (e) {
     console.error(e);
-    horSetHostCreateBusy(false);
     $('lobbyStatus').textContent = 'Could not create Peer: ' + e.message;
     return;
   }
 
   peer.on('open', id => {
-    horClearHostCreateWatchdog();
     horDebugLog('HOST: peer open, id=' + id + ', room code=' + roomCode);
     myPeerId = id;
-    horSetHostCreateBusy(false);
     if (window._horHandoffSnapshot) {
       try { finishHostHandoff(id); } catch (e) { console.error(e); }
-      return;
-    }
-    if (isSoloPractice || window._horStayInGame || roomCode === 'OFFLINE') {
-      horDebugLog('HOST: peer open ignored — offline/live table');
-      return;
-    }
-    if (typeof horClientIsPlaying === 'function' && horClientIsPlaying()) {
-      horDebugLog('HOST: peer re-open during live hand — keep table');
-      return;
-    }
-    if (game && game.phase && !['lobby','waiting',''].includes(game.phase)) {
       return;
     }
     players = [{ id, name: myName, team: 0, isHost: true, isBot: false, seat: 0, bank: loadMyBank(), avatar: loadPreferredAvatar() || AVATARS[0], careerPublic: horMyCareerProfile() }];
@@ -3839,37 +3794,27 @@ function createRoom(preserveCode) {
   // reconnect() method — without this, the room would silently stop
   // being joinable while the UI still showed the host screen normally.
   peer.on('disconnected', () => {
-    if (phoneLooksOffline() || window._horNoServiceStop || isSoloPractice || roomCode === 'OFFLINE') {
-      stopNetworkRetries();
-      if (!isSoloPractice && !(game && game.phase && !['lobby','waiting',''].includes(game.phase))) offerOfflinePlay();
-      return;
-    }
     console.warn('Host peer disconnected from signaling server, attempting reconnect…');
     horDebugLog('HOST: peer disconnected from signaling server, attempting reconnect…');
     try { peer.reconnect(); } catch (e) {}
   });
 
   peer.on('error', err => {
-    horClearHostCreateWatchdog();
     console.error('Peer error:', err);
     horDebugLog('HOST: peer error type=' + (err && err.type) + ' msg=' + (err && err.message));
     if (err.type === 'unavailable-id') {
       roomCode = shortCode();
       try { peer.destroy(); } catch (e) {}
       peer = null;
-      scheduleNetRetry(() => createRoom(true), 200);
+      // Retry once with new code
+      setTimeout(createRoom, 200);
     } else if (err.type === 'network' || err.type === 'server-error' || err.type === 'socket-error' || err.type === 'socket-closed') {
-      if (phoneLooksOffline() || window._horNoServiceStop) {
-        offerOfflinePlay();
-        return;
-      }
       const next = horNextBroker();
       $('lobbyStatus').textContent = brokerRetryMessage();
       try { peer.destroy(); } catch (e) {}
       peer = null;
-      scheduleNetRetry(() => createRoom(true), 350);
+      setTimeout(createRoom, 350);
     } else {
-      horSetHostCreateBusy(false);
       $('lobbyStatus').textContent = 'Error: ' + (err.type || err.message || 'unknown');
     }
   });
@@ -3881,16 +3826,11 @@ function joinRoom() {
   const code = ($('hor-room-code').value || '').trim().toUpperCase().replace(/\s+/g, '');
   if (!code) return alert('Enter a room code');
   if (phoneLooksOffline()) {
-    offerOfflinePlay();
+    setJoinStatus(noServiceJoinMessage());
     return;
   }
-  window._horNoServiceStop = false;
   if (typeof Peer === 'undefined') {
-    setJoinStatus('Loading multiplayer connection…');
-    horEnsurePeerJS().then(() => joinRoom()).catch(err => {
-      setJoinStatus('Multiplayer could not load. Check your internet connection and try again.');
-      console.error('PeerJS load failed:', err);
-    });
+    setJoinStatus('PeerJS failed to load. Check your internet connection and refresh.');
     return;
   }
   roomCode = code;
@@ -3928,7 +3868,7 @@ function joinRoom() {
     const targetId = peerRoomId(roomCode);
     horDebugLog('JOIN: attempt ' + joinTries + '/' + maxJoinTries + ', connecting to targetId=' + targetId);
     setJoinStatus(joinTries >= 3
-      ? 'Table found. Retrying the connection…'
+      ? 'Table found. This hotspot is blocking a direct path — trying a relay…'
       : 'Table found. Linking to the host…');
     let conn;
     try {
@@ -3958,7 +3898,7 @@ function joinRoom() {
           if (ice === 'failed' || cs === 'failed') {
             setJoinStatus('Table found, but this network blocked the direct path. Trying another way…');
           } else if (horForceRelayIce || joinTries >= 3) {
-            setJoinStatus('Table found. Retrying the connection…');
+            setJoinStatus('Table found. Using a relay so a hotspot can reach the host…');
           } else {
             setJoinStatus('Table found. Linking to the host…');
           }
@@ -4006,15 +3946,32 @@ function joinRoom() {
       try { conn.close(); } catch (e) {}
       if (joinTries >= maxJoinTries) {
         horDebugLog('JOIN: giving up after ' + joinTries + ' attempts');
-        finishFailure('The table was found, but the connection never finished. Keep the host screen open, check that both phones have internet access, and try the code again.');
+        finishFailure('The table was found, but this hotspot never finished the link. Phone hotspots often block phone-to-phone play. Put both phones on the same regular Wi‑Fi, or use cell data on both — not one phone as a hotspot. Keep the host screen open and try the code again.');
         return;
       }
       horDebugLog('JOIN: attempt ' + joinTries + ' timed out, retrying…');
-      // Retry the DataConnection without destroying the healthy signaling
-      // Peer.  Recreating the Peer mid-join used to orphan callbacks and was
-      // a major source of the apparent frozen-table state.
+      if (joinTries >= 2 && !horForceRelayIce) {
+        horForceRelayIce = true;
+        setJoinStatus('Table found. Switching to a relay path for this hotspot…');
+        try { if (peer) peer.destroy(); } catch (e) {}
+        peer = null;
+        setTimeout(() => {
+          if (finished) return;
+          try {
+            peer = new Peer(undefined, peerOptions(null, true));
+            peer.on('open', (id) => {
+              myPeerId = id;
+              setTimeout(() => { try { tryConnect(); } catch (e2) {} }, 400);
+            });
+            peer.on('error', () => { try { tryConnect(); } catch (e3) {} });
+          } catch (e4) {
+            setTimeout(tryConnect, 500);
+          }
+        }, 300);
+        return;
+      }
       setJoinStatus(joinTries >= 3
-        ? 'Still linking to the host…'
+        ? 'Still linking through a relay. Hotspots are slow to open this path…'
         : 'Table found. Still linking to the host…');
       setTimeout(tryConnect, 600);
     }, tryTimeoutMs);
@@ -4030,11 +3987,6 @@ function joinRoom() {
   // See the matching comment in createRoom() — the signaling connection can
   // drop silently in the background without the Peer object being destroyed.
   peer.on('disconnected', () => {
-    if (phoneLooksOffline() || window._horNoServiceStop || isSoloPractice) {
-      stopNetworkRetries();
-      offerOfflinePlay();
-      return;
-    }
     console.warn('Join peer disconnected from signaling server, attempting reconnect…');
     horDebugLog('JOIN: peer disconnected from signaling server, attempting reconnect…');
     try { peer.reconnect(); } catch (e) {}
@@ -4053,16 +4005,11 @@ function joinRoom() {
       }
       finishFailure('That room code is not currently available. Verify the host is still on the table and use the current code.');
     } else if (type === 'network' || type === 'server-error' || type === 'socket-error') {
-      if (phoneLooksOffline() || window._horNoServiceStop) {
-        offerOfflinePlay();
-        return;
-      }
       const next = horNextBroker();
       setJoinStatus(brokerRetryMessage());
       try { if (peer) peer.destroy(); } catch (e) {}
       peer = null;
-      joinInProgress = false;
-      scheduleNetRetry(() => { try { const codeEl=$('hor-room-code'); if(codeEl) codeEl.value=roomCode; joinRoom(); } catch (e2) {} }, 400);
+      setTimeout(() => { try { joinRoom(); } catch (e2) {} }, 400);
     } else finishFailure('Multiplayer error: ' + (type || err.message || 'unknown error') + (err && err.message ? '' : ''));
   });
 }
@@ -11032,38 +10979,87 @@ function clearTrumpBanners() {
     const el = typeof $ === 'function' ? $(id) : document.getElementById(id);
     if (!el) return;
     el.classList.add('hidden');
-    el.classList.remove('trump-stamp-anim');
-    el.textContent = '';
+    el.classList.remove('trump-stamp-anim', 'trump-react', 'trump-rook-react');
+    el.innerHTML = '';
     delete el.dataset.trumpStamped;
-    try {
-      el.querySelectorAll('.trump-stamp-burst').forEach((n) => n.remove());
-    } catch (e) {}
+    delete el.dataset.trumpColor;
   });
+  window.__horTrumpReactionKey = '';
   const tb = typeof $ === 'function' ? $('trumpBadge') : document.getElementById('trumpBadge');
   if (tb) tb.classList.add('hidden');
 }
 
-// ========== Trump stamp FX ==========
+function trumpMarkerMarkup(color) {
+  const safe = COLORS.includes(color) ? color : 'black';
+  const name = String((COLOR_NAMES && COLOR_NAMES[safe]) || safe).toUpperCase();
+  return '<span class="trump-impact-copy" aria-hidden="true">' +
+      '<span class="trump-impact-color">' + name + '</span>' +
+      '<span class="trump-impact-is">IS TRUMP</span>' +
+    '</span>' +
+    '<span class="trump-medallion" aria-hidden="true">' +
+      '<span class="trump-medallion-edge">' +
+        '<span class="trump-medallion-face">' +
+          '<span class="trump-enamel"><span class="trump-griffin-mark">GH</span></span>' +
+        '</span>' +
+      '</span>' +
+      '<span class="trump-medallion-name">' + name + '<small>TRUMP</small></span>' +
+    '</span>' +
+    '<span class="sr-only">' + name + ' is trump</span>';
+}
+
+function paintTrumpMarker(el, color) {
+  if (!el || !color) return;
+  const isNew = el.dataset.trumpStamped !== color;
+  if (el.dataset.trumpColor !== color || !el.querySelector('.trump-medallion')) {
+    el.innerHTML = trumpMarkerMarkup(color);
+    el.dataset.trumpColor = color;
+  }
+  el.classList.remove('hidden');
+  COLORS.forEach((c) => el.classList.remove('trump-' + c));
+  el.classList.add('trump-banner', 'trump-signature', 'trump-' + color);
+  if (isNew) {
+    el.dataset.trumpStamped = color;
+    playTrumpStampFx(el);
+  }
+}
+
+// ========== Griffin House signature trump FX ==========
 function playTrumpStampFx(el) {
   if (!el) return;
-  // Restart the CSS animation even if it's already mid-play.
-  el.classList.remove('trump-stamp-anim');
-  // eslint-disable-next-line no-unused-expressions
-  void el.offsetWidth; // force reflow so the class re-triggers
+  el.classList.remove('trump-stamp-anim', 'trump-react', 'trump-rook-react');
+  void el.offsetWidth;
   el.classList.add('trump-stamp-anim');
+  window.setTimeout(() => {
+    try { el.classList.remove('trump-stamp-anim'); } catch (e) {}
+  }, 1650);
+}
 
-  // Little impact ring/dust burst at the moment the "stamp" lands.
-  const burst = document.createElement('span');
-  burst.className = 'trump-stamp-burst';
-  el.appendChild(burst);
-  setTimeout(() => burst.remove(), 1000);
-
-  el.addEventListener('animationend', function onEnd(ev) {
-    if (ev.animationName === 'trumpStampSlam') {
-      el.classList.remove('trump-stamp-anim');
-      el.removeEventListener('animationend', onEnd);
-    }
+function reactTrumpMarker(isRook) {
+  ['trumpBanner', 'ltTrumpStamp'].forEach((id) => {
+    const el = typeof $ === 'function' ? $(id) : document.getElementById(id);
+    if (!el || el.classList.contains('hidden')) return;
+    el.classList.remove('trump-react', 'trump-rook-react');
+    void el.offsetWidth;
+    el.classList.add(isRook ? 'trump-rook-react' : 'trump-react');
+    window.setTimeout(() => {
+      try { el.classList.remove('trump-react', 'trump-rook-react'); } catch (e) {}
+    }, isRook ? 620 : 430);
   });
+}
+
+function maybeReactTrumpPlay() {
+  if (!game || game.phase !== 'play' || !game.trump || !Array.isArray(game.trick) || !game.trick.length) return;
+  const play = game.trick[game.trick.length - 1];
+  const card = play && (play.card || play);
+  if (!card) return;
+  const key = [game.trump, game.trick.length, play && play.player, card.id || (card.color + '-' + card.rank)].join('|');
+  if (window.__horTrumpReactionKey === key) return;
+  window.__horTrumpReactionKey = key;
+  let isTrump = false;
+  try { isTrump = typeof isTrumpCard === 'function' ? isTrumpCard(card, game.trump) : card.color === game.trump; } catch (e) {}
+  if (!isTrump) return;
+  const isRook = card.color === 'rook' || card.id === 'rook';
+  window.requestAnimationFrame(() => reactTrumpMarker(isRook));
 }
 
 // ========== Rendering ==========
@@ -11150,25 +11146,8 @@ function renderUI() {
       tb.className = 'felt-badge trump-' + game.trump;
       tb.classList.remove('hidden');
     }
-    const stamp = 'TRUMP  ·  ' + String(COLOR_NAMES[game.trump] || game.trump).toUpperCase();
-    // NOTE: renderUI() runs very frequently (turn-flash re-application, network
-    // updates, etc). Rebuilding className on every call would clobber the
-    // 'trump-stamp-anim' class mid-animation before the browser ever paints
-    // it, so we only touch the specific classes/attrs that actually need to
-    // change instead of overwriting className wholesale.
-    ['trumpBanner', 'ltTrumpStamp'].forEach((id) => {
-      const el = $(id);
-      if (!el) return;
-      const isNewStamp = el.dataset.trumpStamped !== game.trump;
-      el.textContent = stamp;
-      el.classList.remove('hidden');
-      COLORS.forEach((c) => el.classList.remove('trump-' + c));
-      el.classList.add('trump-banner', 'trump-' + game.trump);
-      if (isNewStamp) {
-        el.dataset.trumpStamped = game.trump;
-        playTrumpStampFx(el);
-      }
-    });
+    ['trumpBanner', 'ltTrumpStamp'].forEach((id) => paintTrumpMarker($(id), game.trump));
+    try { maybeReactTrumpPlay(); } catch (e) {}
   } else {
     if ($('trumpDisplay')) $('trumpDisplay').textContent = game.bid ? `Bid: ${formatBidAmount(game.bid, { short: true })}` : '';
     const tb = $('trumpBadge');

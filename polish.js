@@ -1756,21 +1756,10 @@
     window.hostProcessTrump = function (data) {
       const r = _trump.apply(this, arguments);
       if (gfxOn('trumpBanner') && data && data.color) {
-        const name = (typeof COLOR_NAMES !== 'undefined' && COLOR_NAMES[data.color]) || data.color;
-        const line = 'TRUMP  ·  ' + String(name).toUpperCase();
         ['trumpBanner', 'ltTrumpStamp'].forEach((id) => {
           const el = $(id);
           if (!el) return;
-          el.textContent = line;
-          // NOTE: rebuild only the color/hidden classes here — do NOT overwrite
-          // className wholesale. game.js's renderUI() already added the
-          // 'trump-stamp-anim' class on this same element (this handler runs
-          // right after it, via the wrapped hostProcessTrump), and a full
-          // className reset here would wipe that class before the browser
-          // ever paints a frame with it, silently killing the animation.
-          (typeof COLORS !== 'undefined' ? COLORS : ['red', 'green', 'yellow', 'black']).forEach((c) => el.classList.remove('trump-' + c));
-          el.classList.add('trump-banner', 'trump-' + data.color);
-          el.classList.remove('hidden');
+          if (typeof paintTrumpMarker === 'function') paintTrumpMarker(el, data.color);
         });
       }
       return r;
