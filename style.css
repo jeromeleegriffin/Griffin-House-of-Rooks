@@ -13186,3 +13186,16 @@ body.in-game .landscape-theater::before{content:'HOUSE OF ROOKS'!important}
    cannot rewrite the saved SOL translation/scale. */
 .sol-studio-managed{translate:var(--sol-vs-x,0px) var(--sol-vs-y,0px)!important;scale:var(--sol-vs-scale,1)!important}
 \n/* ===== Rook531: SOL Studio 3 safety/workflow ===== */\n.sol-studio-panel{resize:none!important;min-width:280px!important;min-height:180px!important;max-width:98vw!important;max-height:92vh!important}\n.sol-studio-resize{position:absolute;right:2px;bottom:2px;width:24px;height:24px;display:grid;place-items:center;cursor:nwse-resize;touch-action:none;color:#ffd65a;font-size:16px;z-index:3}\n.sol-studio-safety{min-height:12px;text-align:center;color:#ffcf66;font-size:8px;font-weight:900}\n.sol-hidden-list{max-height:90px;overflow:auto;border:1px solid rgba(185,138,54,.4);padding:3px}.sol-hidden-list button{display:block;width:100%;text-align:left;margin:2px 0}\n.sol-studio-viewport{position:sticky;bottom:0;margin:3px 26px 0 0;text-align:right;pointer-events:none;opacity:.75;font-size:8px}\n.sol-studio-guides:before{content:"PHONE SAFE AREA";position:fixed;inset:10px;z-index:999989;border:1px dashed rgba(255,214,90,.8);box-shadow:0 0 0 10px rgba(255,80,80,.08);pointer-events:none;color:#ffd65a;font:700 8px system-ui;padding:2px}\n#trickArea{pointer-events:none}#trickArea .trick-card-wrap,#trickArea .card{pointer-events:auto}\n
+
+/* ===== Rook532: portrait workflow stabilization ===== */
+@media (orientation:portrait){
+  .discard-sheet:not(.discard-sheet-kitty-only){justify-content:flex-start!important;gap:.22rem!important;padding:.3rem .2rem .35rem!important;}
+  .discard-sheet:not(.discard-sheet-kitty-only) .discard-groups{flex:0 1 auto!important;max-height:calc(100dvh - 9.2rem)!important;gap:.24rem!important;padding-bottom:.12rem!important;}
+  .discard-sheet:not(.discard-sheet-kitty-only) .discard-color-row{padding:.18rem .3rem .22rem!important;border-radius:8px!important;}
+  .discard-sheet:not(.discard-sheet-kitty-only) .discard-color-label{margin-bottom:.16rem!important;font-size:.66rem!important;}
+  .discard-sheet:not(.discard-sheet-kitty-only) .discard-actions{position:sticky!important;bottom:0!important;margin-top:.05rem!important;padding:.28rem .35rem calc(.3rem + env(safe-area-inset-bottom,0px))!important;}
+  .discard-sheet:not(.discard-sheet-kitty-only) .discard-actions .btn{min-width:min(15rem,88vw)!important;padding:.48rem .8rem!important;font-size:.9rem!important;}
+  .table-felt > #trumpBanner.trump-signature{top:15%!important;}
+}
+/* FREEZE is diagnostic: pin the chosen visual object to its current viewport point while SOL is open. */
+.sol-studio-editing .sol-studio-frozen{position:fixed!important;left:var(--sol-freeze-left)!important;top:var(--sol-freeze-top)!important;right:auto!important;bottom:auto!important;margin:0!important;z-index:999988!important;}

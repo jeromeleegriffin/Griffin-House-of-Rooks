@@ -325,3 +325,11 @@ body.reduce-motion .trump-signature .trump-impact-copy { display:none !important
 .trump-signature.trump-red .trump-stamp-word{font-size:10px!important;letter-spacing:.08em!important}
 .trump-signature.trump-green .trump-stamp-word,.trump-signature.trump-black .trump-stamp-word{font-size:9px!important;letter-spacing:-.02em!important}
 .trump-signature.trump-yellow .trump-stamp-word{font-size:8px!important;letter-spacing:-.055em!important}
+
+
+/* Rook532 — final fixed-stamp word fit. Physical medallion size unchanged. */
+.trump-signature .trump-stamp-word{max-width:88%!important;margin-inline:auto!important;letter-spacing:-.04em!important;font-size:8.5px!important;}
+.trump-signature.trump-red .trump-stamp-word{font-size:9px!important;letter-spacing:.02em!important;}
+.trump-signature.trump-green .trump-stamp-word{font-size:8px!important;letter-spacing:-.06em!important;}
+.trump-signature.trump-black .trump-stamp-word{font-size:8.5px!important;letter-spacing:-.04em!important;}
+.trump-signature.trump-yellow .trump-stamp-word{font-size:7.5px!important;letter-spacing:-.075em!important;}
