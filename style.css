@@ -13091,3 +13091,56 @@ body.gfx-seatPlaques #slot-partner .name,
   transform:translateY(2px) !important;
   box-shadow:inset 0 1px 0 rgba(255,255,255,.18), inset 0 -1px 0 rgba(0,0,0,.25), 0 1px 3px rgba(0,0,0,.35) !important;
 }
+
+
+/* ===== Rook525: structural cleanup roll =====
+   Preserve: left/right seat concept, top avatar anchor, approved trump-stamp landing spot.
+   Goal: stable table geometry, less reading, protected player identity. */
+
+/* Build number is always visible on the landing page, even while Explore is closed. */
+.lobby-build-line{display:flex;justify-content:center;align-items:center;min-height:18px;margin:.18rem 0 .08rem;pointer-events:none}
+.lobby-build-line .version-tag{display:inline-block!important;opacity:.72;font-size:.62rem;letter-spacing:.08em;color:#d8c58c}
+
+/* Routine prose no longer occupies or floats across the table. Legal play is communicated by
+   playable/dimmed cards and controls. Important modal/error flows remain separate. */
+body.in-game .game-room > #messageArea.message{display:none!important;visibility:hidden!important;width:0!important;height:0!important;min-height:0!important;max-height:0!important;padding:0!important;margin:0!important;border:0!important}
+
+/* Current-trick points live as a tiny physical pot marker. Zero layout footprint. */
+.hand-area .trick-pts-bar{
+  position:absolute!important;left:50%!important;top:2px!important;transform:translateX(-50%)!important;
+  margin:0!important;padding:.08rem .38rem!important;max-width:none!important;z-index:40!important;
+  border-radius:999px!important;background:rgba(18,12,7,.72)!important;border:1px solid rgba(201,162,39,.32)!important;
+  color:rgba(255,224,130,.82)!important;font-size:.58rem!important;font-weight:800!important;letter-spacing:.06em!important;
+  box-shadow:none!important;pointer-events:none!important;white-space:nowrap!important;
+}
+
+/* More is a compact sheet anchored to the toolbar, never a vertical stack across the felt. */
+.game-more-menu{
+  position:absolute!important;right:4px!important;top:calc(100% + 5px)!important;width:min(310px,94vw)!important;
+  grid-template-columns:repeat(2,minmax(0,1fr))!important;gap:6px!important;padding:8px!important;
+  max-height:min(62vh,330px)!important;overflow-y:auto!important;overscroll-behavior:contain!important;z-index:1400!important;
+}
+.game-more-menu .icon-btn{min-height:42px!important;padding:.32rem .42rem!important}
+
+/* Seat identity: keep the top portrait anchor. Name/level are a protected companion unit. */
+#slot-partner .name{transform:translateY(2px)!important}
+#slot-me .name{transform:translateY(-1px)!important}
+#slot-me .seat-identity-copy,#slot-partner .seat-identity-copy{max-width:8.8rem!important}
+#slot-me .seat-identity-copy .player-name-text,#slot-partner .seat-identity-copy .player-name-text{max-width:7.5rem!important}
+
+/* Right seat keeps the approved placement but buys a little more name runway. */
+.player-slot.right .seat-avatar-side{transform:translateX(-4px)!important;margin-right:-2px!important}
+.player-slot.right .seat-identity-copy .player-name-text{max-width:6.8rem!important}
+.player-slot.right .name{max-width:9.6rem!important}
+
+/* Tiny name drop without moving avatars. */
+.player-slot.left .name{transform:translateY(2px)!important}
+
+/* Landscape has more safe room: bring the human identity upward, not the hand/cards. */
+@media (orientation:landscape){
+  #slot-me.player-slot.bottom{transform:translateY(-6px)!important}
+  #slot-me .name{transform:none!important}
+}
+
+/* Never revive the old chess-glyph decoration / stray symbol line. */
+body.in-game .landscape-theater::before{content:'HOUSE OF ROOKS'!important}

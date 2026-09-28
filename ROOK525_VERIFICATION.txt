@@ -1,0 +1,11 @@
+Rook525 verification
+node game.js PASS
+node polish.js PASS
+node sw.js PASS
+node hor-version.js PASS
+duplicate HTML IDs: 0
+APP_VERSION/HOR_LIVE_VERSION/HOR_BUILD: 525
+service worker cache: v525
+ZIP integrity: PASS
+ZIP first entry: index.html
+Interactive browser/device gameplay test: NOT performed

@@ -7,7 +7,7 @@
 // It's exchanged during the join handshake so a stale host or joiner (e.g.
 // one still running old cached JS) gets caught and auto-updated instead of
 // silently failing or behaving unpredictably against a mismatched peer.
-const APP_VERSION = '524';
+const APP_VERSION = '525';
 
 function horThisIndex() {
   try {
@@ -11265,7 +11265,7 @@ function renderUI() {
       const leadName = (trickLeadIdx >= 0 && game.players && game.players[trickLeadIdx] && game.players[trickLeadIdx].name)
         ? game.players[trickLeadIdx].name
         : '';
-      ptsBar.textContent = pts + ' pts' + (leadName ? ' · ' + leadName + ' leading' : '');
+      ptsBar.textContent = 'POT • ' + pts;
       ptsBar.classList.remove('hidden');
     } else {
       ptsBar.textContent = '';
@@ -11370,7 +11370,7 @@ function renderUI() {
       const meName = (meP && meP.name) || myName || 'Player';
       const meId = (meP && meP.id) || myPeerId;
       const av = playerAvatars[meId] || (meP && meP.avatar) || AVATARS[seatBase % AVATARS.length];
-      meNameEl.innerHTML = `<span class="seat-avatar">${avatarHTML(av)}</span> <span class="player-name-text">${escapeHtmlSafe(meName)}</span>${meP?horCareerBadgeHtml(meP):''}`;
+      meNameEl.innerHTML = `<span class="seat-avatar">${avatarHTML(av)}</span><span class="seat-identity-copy"><span class="player-name-text">${escapeHtmlSafe(meName)}</span>${meP?horCareerBadgeHtml(meP):''}</span>`;
       applyBotNameAttr(meNameEl, meP);
       try { updateBankDisplays(); } catch (e) {}
       try { horBindCareerBadges(meSlot); } catch (e) { console.error('[Career badge bind]', e); }
