@@ -7,7 +7,7 @@
 // It's exchanged during the join handshake so a stale host or joiner (e.g.
 // one still running old cached JS) gets caught and auto-updated instead of
 // silently failing or behaving unpredictably against a mismatched peer.
-const APP_VERSION = '535';
+const APP_VERSION = '536';
 
 function horThisIndex() {
   try {
@@ -4453,8 +4453,14 @@ function handleMessage(data, conn) {
         if (players.find(p => p.id === data.id)) {
           return;
         }
-        players.push({ id: data.id, name: data.name, team: 0, isHost: false, isBot: false, seat: -1, bank: Math.max(0, Math.floor(Number(data.bank) || 0)), avatar: AVATARS.includes(avatarKey(data.avatar)) ? avatarKey(data.avatar) : AVATARS[0], careerPublic: null });
-        if (data.id) playerAvatars[data.id] = AVATARS.includes(avatarKey(data.avatar)) ? avatarKey(data.avatar) : AVATARS[0];
+        // Rook536: avatar ownership is exclusive within one active table.
+        // A joining human may prefer an avatar, but cannot duplicate one already owned
+        // by a seated/standing human, bot, or reconnect-reserved player.
+        const requestedAvatar = AVATARS.includes(avatarKey(data.avatar)) ? avatarKey(data.avatar) : AVATARS[0];
+        const usedAvatars = new Set((players || []).filter(p => p && p.avatar).map(p => avatarKey(p.avatar)));
+        const joinAvatar = !usedAvatars.has(requestedAvatar) ? requestedAvatar : (AVATARS.find(a => !usedAvatars.has(a)) || requestedAvatar);
+        players.push({ id: data.id, name: data.name, team: 0, isHost: false, isBot: false, seat: -1, bank: Math.max(0, Math.floor(Number(data.bank) || 0)), avatar: joinAvatar, careerPublic: null });
+        if (data.id) playerAvatars[data.id] = joinAvatar;
         const wantSeat = parseInt(data.preferredSeat, 10);
         let seatedOk = false;
         if (!isNaN(wantSeat) && wantSeat >= 0 && wantSeat <= 3) {
@@ -4512,11 +4518,20 @@ function handleMessage(data, conn) {
       case 'declineClaim':
         if (game && game.phase === 'play') hostDeclineClaim(data.player);
         break;
-      case 'avatar':
-        if (data.id) playerAvatars[data.id] = data.avatar || data.emoji || AVATARS[0];
-        broadcast({ type: 'avatar', id: data.id, avatar: data.avatar || data.emoji || AVATARS[0] });
+      case 'avatar': {
+        const wanted = avatarKey(data.avatar || data.emoji || AVATARS[0]);
+        const owner = (players || []).find(p => p && p.id !== data.id && avatarKey(p.avatar || playerAvatars[p.id]) === wanted);
+        if (owner) {
+          try { conn.send({ type: 'avatarRejected', avatar: wanted, message: (AVATAR_LABELS[wanted] || 'That avatar') + ' is already in use at this table.' }); } catch (e) {}
+          break;
+        }
+        if (data.id) playerAvatars[data.id] = wanted;
+        const ap = (players || []).find(p => p && p.id === data.id);
+        if (ap) ap.avatar = wanted;
+        broadcast({ type: 'avatar', id: data.id, avatar: wanted });
         try { renderUI(); } catch (e) {}
         break;
+      }
       case 'leaveReplace':
         hostReplaceWithBot(data.playerId || conn.peer, data.name);
         break;
@@ -4873,7 +4888,15 @@ function handleMessage(data, conn) {
         break;
 
       case 'avatar':
-        if (data.id) playerAvatars[data.id] = data.avatar || data.emoji || AVATARS[0];
+        if (data.id) {
+          playerAvatars[data.id] = data.avatar || data.emoji || AVATARS[0];
+          const ap = (players || []).find(p => p && p.id === data.id);
+          if (ap) ap.avatar = data.avatar || data.emoji || AVATARS[0];
+        }
+        try { renderUI(); } catch (e) {}
+        break;
+      case 'avatarRejected':
+        try { horToast(data.message || 'That avatar is already in use at this table.'); } catch (e) {}
         try { renderUI(); } catch (e) {}
         break;
       case 'hostHandoff':
@@ -5242,11 +5265,17 @@ function showWaiting() {
     const sk = $('opt-sound-tick'); if (sk) { sk.checked = soundTick; sk.onchange = () => { soundTick = sk.checked; }; }
     const avatarGrid = $('avatarGrid');
     if (avatarGrid) {
-      avatarGrid.innerHTML = AVATARS.map((id, i) => `<button type="button" class="avatar-choice" data-avatar="${id}" title="${AVATAR_LABELS[id]}"><img src="${avatarSrc(id)}" alt="${AVATAR_LABELS[id]}"><span>${AVATAR_LABELS[id]}</span></button>`).join('');
+      const myCurrentAvatar = avatarKey(playerAvatars[myPeerId] || ((players || []).find(p => p && p.id === myPeerId) || {}).avatar || loadPreferredAvatar());
+      const tableAvatarOwners = new Set((players || []).filter(p => p && p.id !== myPeerId && p.avatar).map(p => avatarKey(p.avatar)));
+      avatarGrid.innerHTML = AVATARS.map((id) => {
+        const inUse = tableAvatarOwners.has(id);
+        const label = AVATAR_LABELS[id] || id;
+        return `<button type="button" class="avatar-choice${inUse ? ' in-use' : ''}" data-avatar="${id}" ${inUse ? 'disabled aria-disabled="true"' : ''} title="${label}${inUse ? ' — In use at this table' : ''}"><img src="${avatarSrc(id)}" alt="${label}"><span>${label}${inUse ? ' • IN USE' : ''}</span></button>`;
+      }).join('');
       avatarGrid.querySelectorAll('.avatar-choice').forEach(btn => {
         btn.onclick = () => {
           const id = btn.getAttribute('data-avatar');
-          if (!id) return;
+          if (!id || btn.disabled || tableAvatarOwners.has(id)) return;
           savePreferredAvatar(id);
           if (myPeerId) playerAvatars[myPeerId] = id;
           const meP = players.find(p => p.id === myPeerId);
@@ -8893,12 +8922,34 @@ function hostTryReclaimSeat(conn, data) {
   return true;
 }
 
+function horReturnToCleanLobby(delayMs) {
+  // Rook536: deliberate leave is NOT a reconnect. Clear only transient room/session
+  // state; permanent settings, stats, career data and SOL layout remain untouched.
+  window._horIntentionalLeave = true;
+  try { sessionStorage.removeItem('rookSession'); } catch (e) {}
+  try { teardownMultiplayerBeforeLobby(); } catch (e) { console.error(e); }
+  try { sessionStorage.removeItem('rookSession'); } catch (e) {}
+  setTimeout(() => {
+    try { sessionStorage.removeItem('rookSession'); } catch (e) {}
+    location.reload();
+  }, Math.max(0, Number(delayMs) || 0));
+}
+
 function clientLeaveReplace() {
   if (isHost) {
-    // Host leaving ends the room for others unless we transfer — keep simple: confirm
-    if (!confirm('You are the host. Leaving will end the room for everyone. Continue?')) return;
-    try { broadcast({ type: 'error', message: 'Host left the game.' }); } catch (e) {}
-    location.reload();
+    const otherHumans = (players || []).filter(p => p && !p.isBot && p.id !== myPeerId);
+    if (!otherHumans.length) {
+      // Last human owns no useful persistent room. Bots must never keep a Friends
+      // room alive after the sole human deliberately returns to the lobby.
+      if (!confirm('Leave this table and return to the lobby?')) return;
+      try { broadcast({ type: 'hostGone', message: 'The last human left. This room is closed.' }); } catch (e) {}
+      horReturnToCleanLobby(60);
+      return;
+    }
+    // Preserve the existing explicit transfer path when real humans remain; never
+    // silently strand them or turn the room into a bot-only zombie session.
+    alert('Other human players are still at this table. Transfer host before leaving so their game can continue.');
+    try { hostTransferHost(); } catch (e) { console.error(e); }
     return;
   }
   if (!confirm('Leave and let a bot take your seat?')) return;
@@ -8907,7 +8958,7 @@ function clientLeaveReplace() {
       hostConnection.send({ type: 'leaveReplace', playerId: myPeerId, name: myName });
     }
   } catch (e) {}
-  setTimeout(() => location.reload(), 300);
+  horReturnToCleanLobby(180);
 }
 
 /** Sole holder of every remaining trump, or null. */
@@ -14485,7 +14536,7 @@ function positionPortraitLast3Btn() {
   function applyFields(){if(!targetKey)return;pushHistory();const r=recFor();r.x=snap(safeNum(field('solVsX').value));r.y=snap(safeNum(field('solVsY').value));r.w=field('solVsW').value===''?null:Math.max(1,safeNum(field('solVsW').value));r.h=field('solVsH').value===''?null:Math.max(1,safeNum(field('solVsH').value));r.scale=Math.max(.1,Math.min(5,safeNum(field('solVsScale').value,1)));r.font=field('solVsFont').value===''?null:Math.max(1,safeNum(field('solVsFont').value));r.z=field('solVsZ').value===''?null:safeNum(field('solVsZ').value);saveRec(r);applyRec(target,targetKey);paint();}
   function resetItem(){if(!targetKey)return;pushHistory();const a=readAll(),o=orientation();if(a[o])delete a[o][targetKey];writeAll(a);if(target){target.classList.remove('sol-studio-managed','sol-studio-hidden','sol-studio-locked','sol-studio-frozen');target.style.removeProperty('--sol-freeze-left');target.style.removeProperty('--sol-freeze-top');['--sol-vs-x','--sol-vs-y','--sol-vs-scale'].forEach(x=>target.style.removeProperty(x));['width','height','font-size','z-index'].forEach(x=>target.style.removeProperty(x));}paint();}
   function resetOrientation(){if(!confirm('Reset every SOL override for '+orientation()+'?'))return;const a=readAll();delete a[orientation()];writeAll(a);location.reload();}
-  function exportLayout(){const box=q('#solVsExportBox');box.value=JSON.stringify({build:535,orientation:orientation(),layout:readAll()[orientation()]||{}},null,2);box.classList.remove('hidden');box.select();try{navigator.clipboard&&navigator.clipboard.writeText(box.value);}catch(_){} }
+  function exportLayout(){const box=q('#solVsExportBox');box.value=JSON.stringify({build:536,orientation:orientation(),layout:readAll()[orientation()]||{}},null,2);box.classList.remove('hidden');box.select();try{navigator.clipboard&&navigator.clipboard.writeText(box.value);}catch(_){} }
   function paint(){ensurePanel();const r=recFor();q('#solVsOrient').textContent=orientation().toUpperCase();q('#solVsTarget').textContent=targetKey||'Nothing selected';q('#solVsSafety').textContent=structuralLabel()+(target?('  RENDERED '+Math.round(target.getBoundingClientRect().width)+'×'+Math.round(target.getBoundingClientRect().height)):'');q('#solVsViewport').textContent=innerWidth+'×'+innerHeight+' '+orientation();if(!targetKey)return;field('solVsX').value=Math.round(r.x);field('solVsY').value=Math.round(r.y);field('solVsW').value=r.w==null?'':Math.round(r.w);field('solVsH').value=r.h==null?'':Math.round(r.h);field('solVsScale').value=safeNum(r.scale,1).toFixed(2);field('solVsFont').value=r.font==null?'':Math.round(r.font);field('solVsZ').value=r.z==null?'':Math.round(r.z);q('#solVsAspect').textContent=aspect?'🔗 ASPECT ON':'⛓ ASPECT OFF';q('#solVsHide').classList.toggle('active',!!r.hidden);q('#solVsLock').classList.toggle('active',!!r.locked);q('#solVsFreeze').classList.toggle('active',!!r.freeze);const pd=q('#solVsPhoneDesign');if(pd)pd.classList.toggle('active',document.documentElement.classList.contains('sol-phone-design'));requestAnimationFrame(positionResizeHandles);}
   function setEditing(on){if(!horDeveloperToolsEnabled())on=false;editing=!!on;document.documentElement.classList.toggle('sol-studio-editing',editing);ensurePanel().classList.toggle('hidden',!editing);if(editing)restorePanelPosition();if(!editing){picking=false;document.documentElement.classList.remove('sol-studio-picking');document.querySelectorAll('.sol-studio-target').forEach(x=>x.classList.remove('sol-studio-target'));const hb=q('#solObjectHandles');if(hb)hb.classList.add('hidden');}}
   function toggle(){setEditing(!editing);}

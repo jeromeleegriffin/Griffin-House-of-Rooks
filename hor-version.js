@@ -1,2 +1,2 @@
-window.HOR_LIVE_VERSION = 535;
-window.HOR_BUILD = 535;
+window.HOR_LIVE_VERSION = 536;
+window.HOR_BUILD = 536;

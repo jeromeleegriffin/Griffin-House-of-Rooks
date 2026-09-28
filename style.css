@@ -13223,3 +13223,11 @@ body.in-game .landscape-theater::before{content:'HOUSE OF ROOKS'!important}
 .sol-studio-editing #feltBidDock.sol-studio-target .bid-stepper{max-width:100%!important}
 /* In Phone Studio, the old advisory S24/universal overlays are suppressed so they cannot be mistaken for the calibrated viewport. */
 .sol-phone-design.sol-s24-guide body::after,.sol-phone-design.sol-universal-guide body::after{display:none!important}
+
+
+/* ===== Rook536: table avatar ownership + SOL workspace truthfulness ===== */
+.avatar-choice.in-use,.avatar-choice:disabled{opacity:.34!important;filter:grayscale(.7)!important;cursor:not-allowed!important;transform:none!important}
+.avatar-choice.in-use span{white-space:normal!important;text-align:center!important}
+/* 535's painted phone rectangle was not a real viewport. Do not present it as one. */
+.sol-phone-design body::before{content:'PHONE DESIGN REFERENCE — NOT DEVICE EMULATION'!important;border-style:dashed!important;opacity:.65!important}
+@media (min-width:900px){html.sol-phone-design .sol-studio-panel{left:12px!important;right:auto!important;top:24px!important;bottom:auto!important;width:min(430px,calc(50vw - 40px))!important}html.sol-phone-design body::before{left:calc(50% + 24px)!important;top:24px!important}}
