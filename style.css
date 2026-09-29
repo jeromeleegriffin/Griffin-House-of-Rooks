@@ -13186,3 +13186,66 @@ body.in-game .landscape-theater::before{content:'HOUSE OF ROOKS'!important}
    cannot rewrite the saved SOL translation/scale. */
 .sol-studio-managed{translate:var(--sol-vs-x,0px) var(--sol-vs-y,0px)!important;scale:var(--sol-vs-scale,1)!important}
 \n/* ===== Rook531: SOL Studio 3 safety/workflow ===== */\n.sol-studio-panel{resize:none!important;min-width:280px!important;min-height:180px!important;max-width:98vw!important;max-height:92vh!important}\n.sol-studio-resize{position:absolute;right:2px;bottom:2px;width:24px;height:24px;display:grid;place-items:center;cursor:nwse-resize;touch-action:none;color:#ffd65a;font-size:16px;z-index:3}\n.sol-studio-safety{min-height:12px;text-align:center;color:#ffcf66;font-size:8px;font-weight:900}\n.sol-hidden-list{max-height:90px;overflow:auto;border:1px solid rgba(185,138,54,.4);padding:3px}.sol-hidden-list button{display:block;width:100%;text-align:left;margin:2px 0}\n.sol-studio-viewport{position:sticky;bottom:0;margin:3px 26px 0 0;text-align:right;pointer-events:none;opacity:.75;font-size:8px}\n.sol-studio-guides:before{content:"PHONE SAFE AREA";position:fixed;inset:10px;z-index:999989;border:1px dashed rgba(255,214,90,.8);box-shadow:0 0 0 10px rgba(255,80,80,.08);pointer-events:none;color:#ffd65a;font:700 8px system-ui;padding:2px}\n#trickArea{pointer-events:none}#trickArea .trick-card-wrap,#trickArea .card{pointer-events:auto}\n
+/* ===== Rook531currentlive: exact Rook584 portrait bid-box presentation =====
+   Surgical transplant only: Rook584 approved live-gap placement + bid-control skins. */
+@media (orientation:portrait) {
+  #feltBidDock.felt-bid-dock,
+  #feltBidDock.felt-bid-dock.sol-studio-managed,
+  #feltBidDock.rook550-bid-authority {
+    position:fixed !important;
+    left:50vw !important;
+    right:auto !important;
+    bottom:auto !important;
+    translate:none !important;
+    scale:1 !important;
+    transform:translate(-50%,-50%) !important;
+    margin:0 !important;
+    width:min(13.2rem,68vw) !important;
+    max-width:min(13.2rem,68vw) !important;
+    padding:.2rem .28rem .26rem !important;
+    gap:.12rem !important;
+    border:0 !important;
+    outline:0 !important;
+    background:transparent !important;
+    border-radius:0 !important;
+    box-shadow:none !important;
+    backdrop-filter:none !important;
+    -webkit-backdrop-filter:none !important;
+    overflow:visible !important;
+  }
+  #feltBidDock .felt-bid-name,#feltBidDock .bid-meta { display:none !important; }
+  #feltBidDock .bid-stepper { display:grid !important;grid-template-columns:2.8rem 1fr 2.8rem;align-items:center;gap:.38rem !important; }
+  #feltBidDock .bid-buttons { display:grid !important;grid-template-columns:1.35fr .9fr;gap:.42rem !important;margin-top:.28rem !important; }
+  #feltBidDock .bid-value { min-width:0 !important;text-align:center !important;font-weight:900 !important;line-height:1 !important; }
+  #feltBidDock .btn { min-height:2.18rem !important;margin:0 !important;font-weight:850 !important;line-height:1 !important;box-shadow:none; }
+  #feltBidDock .bid-stepper .btn { width:2.8rem !important;min-width:2.8rem !important;padding:0 !important;justify-self:center;border-radius:50% !important; }
+  #feltBidDock .bid-buttons .btn { padding:.42rem .62rem !important; }
+  body.hor-bid-theme-classic #feltBidDock .bid-value { color:#f6cf66 !important;font-size:1.46rem !important;text-shadow:0 1px 2px #000,0 0 7px rgba(235,184,54,.3); }
+  body.hor-bid-theme-classic #feltBidDock .btn { border:1px solid #d9ad45 !important;color:#fff1c0 !important;background:linear-gradient(#39240f,#17100a) !important; }
+  body.hor-bid-theme-classic #feltBidDock .btn.primary { color:#211300 !important;background:linear-gradient(#ffe38a,#c99326) !important;border-color:#ffe08a !important;border-radius:.62rem !important; }
+  body.hor-bid-theme-classic #feltBidDock .btn.danger { background:linear-gradient(#3a2a19,#1b130c) !important;border-radius:.62rem !important; }
+  body.hor-bid-theme-royal #feltBidDock .bid-value { color:#ffe38b !important;font-size:1.48rem !important;text-shadow:0 0 8px rgba(255,203,70,.42); }
+  body.hor-bid-theme-royal #feltBidDock .btn { color:#fff0b8 !important;border:1px solid #f0c252 !important;background:linear-gradient(#271c10,#08090a) !important;box-shadow:inset 0 1px rgba(255,245,190,.18),0 0 7px rgba(225,177,52,.22) !important; }
+  body.hor-bid-theme-royal #feltBidDock .bid-stepper .btn { border-radius:.35rem !important;clip-path:polygon(12% 0,88% 0,100% 22%,100% 78%,88% 100%,12% 100%,0 78%,0 22%); }
+  body.hor-bid-theme-royal #feltBidDock .bid-buttons .btn { border-radius:.34rem !important;clip-path:polygon(7% 0,93% 0,100% 25%,100% 75%,93% 100%,7% 100%,0 75%,0 25%); }
+  body.hor-bid-theme-royal #feltBidDock .btn.primary { background:linear-gradient(#e9bd50,#8b5a13) !important;color:#1b1003 !important; }
+  body.hor-bid-theme-modern #feltBidDock .bid-value { color:#f7d36c !important;font-size:1.5rem !important;text-shadow:0 0 5px rgba(245,199,73,.3); }
+  body.hor-bid-theme-modern #feltBidDock .btn { border:1px solid rgba(237,197,91,.72) !important;color:#f9e8b5 !important;background:rgba(10,16,22,.82) !important; }
+  body.hor-bid-theme-modern #feltBidDock .btn.primary { border-radius:.7rem !important;background:linear-gradient(#f4d06d,#c6932d) !important;color:#1c1304 !important; }
+  body.hor-bid-theme-modern #feltBidDock .btn.danger { border-radius:.7rem !important; }
+  body.hor-bid-theme-coin #feltBidDock .bid-value { color:#f0c75d !important;font-size:1.48rem !important;text-shadow:0 1px #382000; }
+  body.hor-bid-theme-coin #feltBidDock .bid-stepper .btn { border:3px double #d5a63d !important;color:#fff0b5 !important;background:radial-gradient(circle at 35% 28%,#65451c,#21160b 62%,#090807) !important;box-shadow:inset 0 0 0 2px rgba(255,217,112,.12),0 2px 4px #000 !important; }
+  body.hor-bid-theme-coin #feltBidDock .bid-buttons .btn { border:2px solid #c99b35 !important;border-radius:.48rem !important;background:linear-gradient(#3b2712,#17100a) !important;color:#f7df9b !important; }
+  body.hor-bid-theme-coin #feltBidDock .btn.primary { background:linear-gradient(#e5b94d,#8c5a16) !important;color:#211300 !important; }
+  body.hor-bid-theme-low #feltBidDock .bid-value { color:#f2cf6b !important;font-size:1.4rem !important; }
+  body.hor-bid-theme-low #feltBidDock .btn { min-height:1.95rem !important;border:1px solid #b98d31 !important;color:#f4dfaa !important;background:rgba(11,13,14,.76) !important; }
+  body.hor-bid-theme-low #feltBidDock .bid-stepper .btn { width:2.45rem !important;min-width:2.45rem !important; }
+  body.hor-bid-theme-low #feltBidDock .bid-buttons .btn { border-radius:1rem !important;padding:.32rem .55rem !important; }
+  body.hor-bid-theme-low #feltBidDock .btn.primary { background:rgba(28,25,18,.9) !important;color:#ffe39a !important; }
+  body.hor-bid-theme-signature #feltBidDock .bid-value { color:#ffe286 !important;font-size:1.52rem !important;text-shadow:0 0 10px rgba(255,199,53,.55); }
+  body.hor-bid-theme-signature #feltBidDock .btn { border:1px solid #e4b642 !important;color:#fff0b5 !important;background:linear-gradient(#311c0d,#0d0a08) !important;box-shadow:0 0 8px rgba(225,169,40,.18) !important; }
+  body.hor-bid-theme-signature #feltBidDock .bid-stepper .btn { border-radius:.3rem !important;clip-path:polygon(18% 0,82% 0,100% 18%,100% 82%,82% 100%,18% 100%,0 82%,0 18%); }
+  body.hor-bid-theme-signature #feltBidDock .bid-buttons .btn { border-radius:.28rem !important;clip-path:polygon(6% 0,94% 0,100% 22%,100% 78%,94% 100%,6% 100%,0 78%,0 22%); }
+  body.hor-bid-theme-signature #feltBidDock .btn.primary { background:linear-gradient(#f2c95e,#9a6517) !important;color:#1b0e02 !important;box-shadow:0 0 11px rgba(240,185,44,.35) !important; }
+  body.hor-bid-theme-signature #feltBidDock .btn.danger { background:linear-gradient(#5a1c14,#220b08) !important; }
+}

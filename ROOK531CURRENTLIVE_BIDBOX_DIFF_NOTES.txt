@@ -1,0 +1,15 @@
+Rook531currentlive
+Baseline: Rook531_ROLLBACK_BASELINE(3)
+Reference: Rook584_ROLLBACK_WAIT_NEST_REPAIR(1)
+
+Surgical change only:
+- Preserved Rook531 gameplay/source baseline.
+- Matched Rook584 portrait bid box geometry and visual styling.
+- Matched Rook584 approved live-gap placement: centered dynamically between the visible played-card area and the bottom player's avatar.
+- Added Rook584 bid theme presentation behavior without importing unrelated Rook584 gameplay changes.
+- Added runtime authority so older saved SOL/studio offsets cannot displace the bid box while it is visible.
+
+Touched files:
+- style.css
+- game.js
+- this notes file
