@@ -7454,6 +7454,51 @@ function syncLandscapeKittyWait() {
   if (sub) sub.textContent = copy.sub;
 }
 
+// Rook531currentlive: exact Rook584 bid-box visual/placement authority only.
+const R531_BID_VISUAL_THEMES = ['classic','royal','modern','coin','low','signature'];
+function r531ApplyRook584BidTheme() {
+  try {
+    const idx = Math.max(0, Array.isArray(handHistory) ? handHistory.length : Number((matchStats && matchStats.hands) || 0));
+    const theme = R531_BID_VISUAL_THEMES[idx % R531_BID_VISUAL_THEMES.length];
+    R531_BID_VISUAL_THEMES.forEach(t => document.body.classList.toggle('hor-bid-theme-'+t, t===theme));
+  } catch (e) {
+    R531_BID_VISUAL_THEMES.forEach(t => document.body.classList.toggle('hor-bid-theme-'+t, t==='classic'));
+  }
+}
+function centerPortraitBidDockInLiveGap() {
+  try {
+    if (window.matchMedia && !window.matchMedia('(orientation: portrait)').matches) return;
+    const dock=$('feltBidDock'), me=$('slot-me'), trick=$('trickArea');
+    if (!dock || !me || dock.classList.contains('hidden')) return;
+    const avatar=me.querySelector('.seat-avatar,.seat-avatar-side');
+    if (!avatar) return;
+    const avatarR=avatar.getBoundingClientRect();
+    const lower=avatarR.top;
+    const candidates=trick ? [...trick.querySelectorAll('.card,.card-face,.trick-card-wrap,.trick-card,[data-card],[data-id]')]
+      .map(el=>el.getBoundingClientRect())
+      .filter(r=>r.width>8 && r.height>8 && r.bottom>0 && r.top<innerHeight && r.bottom<lower) : [];
+    let upper=candidates.length ? Math.max(...candidates.map(r=>r.bottom)) : NaN;
+    if (!Number.isFinite(upper) && trick) {
+      const tr=trick.getBoundingClientRect();
+      if (tr.height>8 && tr.bottom>0 && tr.bottom<lower) upper=tr.bottom;
+    }
+    if (!Number.isFinite(upper)) upper=Math.min(lower-72, innerHeight*0.43);
+    const gap=Math.max(0, lower-upper);
+    const center=upper + gap/2;
+    dock.classList.add('rook550-bid-authority');
+    dock.style.setProperty('position','fixed','important');
+    dock.style.setProperty('left','50vw','important');
+    dock.style.setProperty('top',center+'px','important');
+    dock.style.setProperty('right','auto','important');
+    dock.style.setProperty('bottom','auto','important');
+    dock.style.setProperty('transform','translate(-50%,-50%)','important');
+    dock.style.setProperty('translate','none','important');
+    dock.style.setProperty('scale','1','important');
+    dock.style.setProperty('margin','0','important');
+    dock.style.setProperty('z-index','140000','important');
+    dock.style.setProperty('--hor-bid-gap',gap+'px');
+  } catch(e) {}
+}
 function showBidUI() {
   try { hideBotStyleTip(); } catch (e) {}
   if (nestAuctionLocked()) return;
@@ -7482,8 +7527,12 @@ function showBidUI() {
   if (!landscape) {
     try { hideActionPanel(); } catch (e) {}
     if (dock) {
+      r531ApplyRook584BidTheme();
       dock.innerHTML = html;
       dock.classList.remove('hidden');
+      requestAnimationFrame(() => requestAnimationFrame(centerPortraitBidDockInLiveGap));
+      setTimeout(centerPortraitBidDockInLiveGap, 80);
+      setTimeout(centerPortraitBidDockInLiveGap, 220);
     }
   } else {
     if (dock) { dock.classList.add('hidden'); dock.innerHTML = ''; }
@@ -14464,34 +14513,3 @@ function positionPortraitLast3Btn() {
   window.HORSolVisualStudio={toggle,apply:applySavedOnce,export:()=>JSON.stringify(readAll(),null,2),unhideAll:()=>bulkFlag('hidden',false),lockAll:()=>bulkFlag('locked',true),unlockAll:()=>bulkFlag('locked',false),reset:()=>{localStorage.removeItem(KEY);location.reload();}};
 })();;
 
-
-/* ===== Rook531currentlive: Rook584 bid-box placement/design authority ===== */
-(function(){
-  const themes=['classic','royal','modern','coin','low','signature'];
-  function apply584BidTheme(){
-    try{
-      const idx=Math.max(0,Array.isArray(window.handHistory)?window.handHistory.length:0);
-      const theme=themes[idx%themes.length];
-      themes.forEach(t=>document.body.classList.toggle('hor-bid-theme-'+t,t===theme));
-    }catch(e){}
-  }
-  function center584BidDock(){
-    try{
-      if(window.matchMedia&&!window.matchMedia('(orientation: portrait)').matches)return;
-      const dock=document.getElementById('feltBidDock'),me=document.getElementById('slot-me'),trick=document.getElementById('trickArea');
-      if(!dock||!me||dock.classList.contains('hidden'))return;
-      const avatar=me.querySelector('.seat-avatar,.seat-avatar-side'); if(!avatar)return;
-      const lower=avatar.getBoundingClientRect().top;
-      const candidates=trick?[...trick.querySelectorAll('.card,.card-face,.trick-card-wrap,.trick-card,[data-card],[data-id]')].map(el=>el.getBoundingClientRect()).filter(r=>r.width>8&&r.height>8&&r.bottom>0&&r.top<innerHeight&&r.bottom<lower):[];
-      let upper=candidates.length?Math.max(...candidates.map(r=>r.bottom)):NaN;
-      if(!Number.isFinite(upper)&&trick){const tr=trick.getBoundingClientRect();if(tr.height>8&&tr.bottom>0&&tr.bottom<lower)upper=tr.bottom;}
-      if(!Number.isFinite(upper))upper=Math.min(lower-72,innerHeight*.43);
-      const center=upper+Math.max(0,lower-upper)/2;
-      dock.classList.add('rook550-bid-authority');
-      dock.style.setProperty('position','fixed','important');dock.style.setProperty('left','50vw','important');dock.style.setProperty('top',center+'px','important');dock.style.setProperty('right','auto','important');dock.style.setProperty('bottom','auto','important');dock.style.setProperty('transform','translate(-50%,-50%)','important');dock.style.setProperty('translate','none','important');dock.style.setProperty('scale','1','important');dock.style.setProperty('margin','0','important');dock.style.setProperty('z-index','140000','important');
-    }catch(e){}
-  }
-  function sync(){apply584BidTheme();requestAnimationFrame(()=>requestAnimationFrame(center584BidDock));setTimeout(center584BidDock,80);setTimeout(center584BidDock,220);}
-  function start(){sync();const dock=document.getElementById('feltBidDock');if(dock)new MutationObserver(sync).observe(dock,{attributes:true,attributeFilter:['class']});window.addEventListener('resize',()=>requestAnimationFrame(center584BidDock));window.addEventListener('orientationchange',()=>setTimeout(sync,80));}
-  if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',start);else start();
-})();
