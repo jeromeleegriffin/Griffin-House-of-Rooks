@@ -60,11 +60,10 @@
       window.avatarSrc = function(id) {
         var key = (window.avatarKey ? window.avatarKey(id) : String(id == null ? '' : id).toLowerCase().replace(/[^a-z0-9]/g,''));
         if (key === 'jerome') return 'avatar-jerome.png';
-        /* Existing saved cartoon/default human choices migrate visually to Anchor. */
-        if (!key || key === 'rookling') return 'avatar-anchor.webp';
-        var src = prior ? prior(id) : ('avatar-' + key + '.webp');
-        if (src === 'avatar-rookling.svg') return 'avatar-anchor.webp';
-        return src;
+        /* Preserve the current rookling asset (approved Eagle) instead of
+   migrating it to the legacy Anchor portrait. */
+var src = prior ? prior(id) : ('avatar-' + key + '.webp');
+return src;
       };
     } catch(e) {}
   }
