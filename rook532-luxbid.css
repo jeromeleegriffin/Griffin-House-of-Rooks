@@ -1,0 +1,110 @@
+/* Rook532 — luxury bid plate (PNG chrome + live controls) */
+.felt-bid-dock.lux-bid,
+.lt-felt-bid.lux-bid {
+  display: grid !important;
+  grid-template-rows: 0 0 minmax(0, 1.15fr) minmax(0, 1fr);
+  grid-template-columns: 1fr;
+  align-items: stretch;
+  gap: 0 !important;
+  width: min(92vw, 22.5rem) !important;
+  max-width: 94vw !important;
+  aspect-ratio: 1615 / 555;
+  height: auto !important;
+  min-height: 0 !important;
+  padding: 11% 4.2% 5.4% 4.2% !important;
+  border: 0 !important;
+  border-radius: 12px !important;
+  background:
+    url('lux-bid-panel.png') center / 100% 100% no-repeat !important;
+  box-shadow: 0 10px 22px rgba(0,0,0,.5) !important;
+  overflow: hidden !important;
+  box-sizing: border-box !important;
+}
+@media (orientation: landscape) {
+  .lt-felt-bid.lux-bid {
+    width: min(36vw, 24rem) !important;
+    max-width: 42vw !important;
+  }
+}
+.lux-bid .lux-sr,
+.felt-bid-dock.lux-bid .felt-bid-name,
+.felt-bid-dock.lux-bid .bid-meta,
+.lt-felt-bid.lux-bid .felt-bid-name,
+.lt-felt-bid.lux-bid .bid-meta {
+  position: absolute !important;
+  width: 1px !important;
+  height: 1px !important;
+  overflow: hidden !important;
+  clip: rect(0 0 0 0) !important;
+  padding: 0 !important;
+  margin: 0 !important;
+  border: 0 !important;
+  background: none !important;
+}
+.lux-bid .lux-bid-step,
+.felt-bid-dock.lux-bid .bid-stepper,
+.lt-felt-bid.lux-bid .bid-stepper {
+  display: grid !important;
+  grid-template-columns: 22% 1fr 22%;
+  gap: 2.4% !important;
+  align-items: stretch !important;
+  min-height: 0 !important;
+}
+.lux-bid .lux-bid-actions,
+.felt-bid-dock.lux-bid .bid-buttons,
+.lt-felt-bid.lux-bid .bid-buttons {
+  display: grid !important;
+  grid-template-columns: 1.18fr .82fr;
+  gap: 2.2% !important;
+  margin-top: 3.2% !important;
+  min-height: 0 !important;
+}
+.lux-bid .lux-chip,
+.lux-bid .lux-action,
+.felt-bid-dock.lux-bid .btn,
+.lt-felt-bid.lux-bid .btn {
+  background: transparent !important;
+  border: 0 !important;
+  box-shadow: none !important;
+  border-radius: 10px !important;
+  color: #f6e2a8 !important;
+  font-family: "Cinzel", "Times New Roman", serif !important;
+  font-weight: 800 !important;
+  letter-spacing: .06em !important;
+  text-shadow: 0 1px 0 #4a3208, 0 0 8px rgba(0,0,0,.35) !important;
+  min-height: 0 !important;
+  height: 100% !important;
+  padding: 0 !important;
+}
+.lux-bid .lux-chip-minus,
+.lux-bid .lux-action-pass { color: #f6e2a8 !important; }
+.lux-bid .lux-val,
+.felt-bid-dock.lux-bid .bid-value,
+.lt-felt-bid.lux-bid .bid-value {
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  margin: 1.5% 8% !important;
+  border-radius: 999px !important;
+  background: #050505 !important;
+  color: #f3d27a !important;
+  font-family: "Cinzel", "Times New Roman", serif !important;
+  font-size: clamp(1.15rem, 4.6vw, 1.85rem) !important;
+  font-weight: 800 !important;
+  letter-spacing: .04em !important;
+  text-shadow: 0 1px 0 #6a4a10 !important;
+  line-height: 1 !important;
+}
+.lux-bid .lux-action-bid,
+.lux-bid .lux-action-pass {
+  font-size: clamp(.72rem, 2.6vw, .95rem) !important;
+}
+.lux-bid .lux-action-bid {
+  background: linear-gradient(#1c6b34, #0d3f1d) !important;
+  border: 2px solid #d4af37 !important;
+}
+.lux-bid .lux-action-pass {
+  background: linear-gradient(#1a1a1a, #070707) !important;
+  border: 2px solid #d4af37 !important;
+}
+.lux-bid button:active { filter: brightness(1.12); }
