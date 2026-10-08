@@ -1650,25 +1650,17 @@
     };
   }
 
-  const _clientLeave = window.clientLeaveReplace;
   window.clientLeaveReplace = async function () {
+    const offline = isSoloPractice || roomCode === 'OFFLINE';
     const ok = await houseConfirm({
-      title: isHost ? 'Leave this table?' : 'Leave and seat a bot?',
-      body: isHost ? 'You are the host. Leaving ends the room for everyone.' : 'A bot will take your chair for the rest of the night.',
+      title: offline || isHost ? 'Leave this table?' : 'Leave and seat a bot?',
+      body: offline ? 'Return to the lobby from this offline game.' : isHost
+        ? 'You are the host. Leaving ends the room for everyone.'
+        : 'A bot will take your chair for the rest of the night.',
       danger: true,
     });
     if (!ok) return;
-    if (isHost) {
-      try { broadcast({ type: 'error', message: 'Host left the game.' }); } catch (e) {}
-      location.reload();
-      return;
-    }
-    try {
-      if (hostConnection && hostConnection.open) {
-        hostConnection.send({ type: 'leaveReplace', playerId: myPeerId, name: myName });
-      }
-    } catch (e) {}
-    setTimeout(() => location.reload(), 300);
+    leaveTableAfterConfirmation531();
   };
 
   const _redeal = window.hostRedeal;

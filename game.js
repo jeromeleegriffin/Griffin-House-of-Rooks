@@ -3052,6 +3052,11 @@ function auctionNextMin() {
 
 function saveSession() {
   if (window._horIntentionalLeave) return;
+  // Offline tables never create a multiplayer rejoin session.
+  if (isSoloPractice || roomCode === 'OFFLINE') {
+    try { sessionStorage.removeItem('rookSession'); } catch (e) {}
+    return;
+  }
   try {
     sessionStorage.setItem('rookSession', JSON.stringify({
       roomCode, myName, isHost, isSpectator, myPeerId
@@ -3763,6 +3768,13 @@ function horEnsurePeerJS() {
 
 function createRoom() {
   window._horIntentionalLeave = false;
+  window._horNoServiceStop = false;
+  isSoloPractice = false;
+  // Recover stale activity left by older builds when hosting from the lobby.
+  if (!horClientIsPlaying()) {
+    horMarkActiveTable(false);
+    window._horStayInGame = false;
+  }
   myName = ($('hor-player-name').value || '').trim() || 'Host';
   if (typeof Peer === 'undefined') {
     $('lobbyStatus').textContent = 'PeerJS failed to load. Check your internet connection and refresh.';
@@ -8942,20 +8954,59 @@ function hostTryReclaimSeat(conn, data) {
 }
 
 function clientLeaveReplace() {
-  if (isHost) {
-    // Host leaving ends the room for others unless we transfer — keep simple: confirm
-    if (!confirm('You are the host. Leaving will end the room for everyone. Continue?')) return;
-    try { broadcast({ type: 'error', message: 'Host left the game.' }); } catch (e) {}
-    location.reload();
-    return;
-  }
-  if (!confirm('Leave and let a bot take your seat?')) return;
+  const offline = isSoloPractice || roomCode === 'OFFLINE';
+  const message = offline ? 'Leave this offline table?' : isHost
+    ? 'You are the host. Leaving will end the room for everyone. Continue?'
+    : 'Leave and let a bot take your seat?';
+  if (!confirm(message)) return;
+  leaveTableAfterConfirmation531();
+}
+
+function forgetRoomSession531() {
+  try { sessionStorage.removeItem('rookSession'); } catch (e) {}
+  horMarkActiveTable(false);
   try {
-    if (hostConnection && hostConnection.open) {
-      hostConnection.send({ type: 'leaveReplace', playerId: myPeerId, name: myName });
-    }
+    ['rejoinBtn', 'reconnectBox'].forEach(id => {
+      const el = $(id);
+      if (el) el.classList.add('hidden');
+    });
+    const input = $('hor-room-code');
+    if (input) input.value = '';
   } catch (e) {}
-  setTimeout(() => location.reload(), 300);
+  try {
+    const url = new URL(location.href);
+    url.searchParams.delete('room');
+    url.searchParams.delete('code');
+    history.replaceState(history.state, '', url.href);
+  } catch (e) {}
+}
+
+function leaveTableAfterConfirmation531() {
+  const offline = isSoloPractice || roomCode === 'OFFLINE';
+  // Mark leaving before notification, so close/error callbacks cannot rejoin.
+  window._horIntentionalLeave = true;
+  window._horNoServiceStop = true;
+  if (!offline && isHost) {
+    try { broadcast({ type: 'error', message: 'Host left the game.' }); } catch (e) {}
+  } else if (!offline) {
+    try {
+      if (hostConnection && hostConnection.open) {
+        hostConnection.send({ type: 'leaveReplace', playerId: myPeerId, name: myName });
+      }
+    } catch (e) {}
+  }
+  // Allow a guest's replacement request to leave the channel before closing it.
+  if (!offline && !isHost) {
+    forgetRoomSession531();
+    setTimeout(leaveTableToLobby531, 300);
+  } else leaveTableToLobby531();
+}
+
+function leaveTableToLobby531() {
+  forgetRoomSession531();
+  try { teardownMultiplayerBeforeLobby(); } catch (e) { console.error(e); }
+  forgetRoomSession531();
+  location.reload();
 }
 
 /** Sole holder of every remaining trump, or null. */
@@ -13154,6 +13205,9 @@ function startSoloPractice() {
     window._horNetRetryTimers = [];
     joinInProgress = false;
 
+    teardownMultiplayerBeforeLobby();
+    forgetRoomSession531();
+    window._horIntentionalLeave = false;
     ensureAudio();
     isSpectator = false;
     isSoloPractice = true;
@@ -13281,6 +13335,7 @@ function teardownMultiplayerBeforeLobby() {
   // Play Offline press.
   window._horNoServiceStop = true;
   window._horStayInGame = false;
+  horMarkActiveTable(false);
   try {
     (window._horNetRetryTimers || []).forEach((t) => clearTimeout(t));
   } catch (e) {}
@@ -13321,21 +13376,7 @@ function teardownMultiplayerBeforeLobby() {
   game = null;
 }
 
-bindClick('leaveBtn', () => {
-  try { sessionStorage.removeItem('rookSession'); } catch (e) {}
-  try { teardownMultiplayerBeforeLobby(); } catch (e) { console.error(e); }
-  // Teardown can synchronously fire PeerJS callbacks. Clear the saved room a
-  // second time after all connections are closed so deliberate Leave can never
-  // surface a stale Rejoin control on the fresh lobby.
-  try { sessionStorage.removeItem('rookSession'); } catch (e) {}
-  try {
-    const rb = $('rejoinBtn');
-    const rc = $('reconnectBox');
-    if (rb) rb.classList.add('hidden');
-    if (rc) rc.classList.add('hidden');
-  } catch (e) {}
-  location.reload();
-});
+bindClick('leaveBtn', leaveTableToLobby531);
 bindClick('showRules', () => {
   try { showVariantRules(); } catch (e) {}
   if (rulesModal) rulesModal.classList.remove('hidden');
