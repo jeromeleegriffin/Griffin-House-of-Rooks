@@ -10,7 +10,7 @@ permissions:
   id-token: write
 concurrency:
   group: pages-810
-  cancel-in-progress: false
+  cancel-in-progress: true
 jobs:
   publish:
     runs-on: ubuntu-latest
@@ -31,7 +31,8 @@ jobs:
           with tarfile.open(fileobj=io.BytesIO(raw),mode='r:gz') as archive:
             prefix=archive.getmembers()[0].name.split('/')[0]+'/'
             manifest=json.load(archive.extractfile(prefix+'coordination/releases/810-approved/runtime-sha256.json'))
-            for name,expected in manifest.items():
+            for name in sorted(manifest, key=lambda name: archive.getmember(prefix+name).offset_data):
+              expected=manifest[name]
               p=pathlib.PurePosixPath(name)
               if p.is_absolute() or '..' in p.parts:raise RuntimeError('Unsafe path')
               member=archive.getmember(prefix+name)
