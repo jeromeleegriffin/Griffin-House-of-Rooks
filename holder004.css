@@ -22,7 +22,7 @@
     pointer-events:none; z-index:1;
   }
   body.in-game .game-room > .hand-area::before { content:none !important; display:none !important; }
-  body.in-game:has(#decisionConsole.approved-bid-portrait.decision-mode-bid:not(.hidden)):not(:has(> .moon-approved-overlay)) .game-room > .hand-area::before {
+  body.in-game:has(#decisionConsole.approved-bid-portrait.decision-mode-bid:not(.hidden)) .game-room > .hand-area::before {
     content:"" !important; display:block !important; position:absolute !important;
     left:var(--holder004-left, 7.7%) !important;
     width:var(--holder004-width, 84.6%) !important;

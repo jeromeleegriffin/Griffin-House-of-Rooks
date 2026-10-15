@@ -28,7 +28,7 @@
           surface.setAttribute('aria-label', 'Place your bid');
           const art = document.createElement('img');
           art.className = 'approved-bid-art';
-          art.src = 'assets/bidbox-approved/bidbox_complete_blank.png?v=712';
+          art.src = 'assets/bidbox-moon-review/bidbox-approved-scrollwork.png';
           art.alt = '';
           art.setAttribute('aria-hidden', 'true');
           art.draggable = false;

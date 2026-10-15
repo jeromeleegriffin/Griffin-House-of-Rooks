@@ -7,7 +7,7 @@
 // It's exchanged during the join handshake so a stale host or joiner (e.g.
 // one still running old cached JS) gets caught and auto-updated instead of
 // silently failing or behaving unpredictably against a mismatched peer.
-const APP_VERSION = '810';
+const APP_VERSION = '810-moon-bidtext-review';
 window.HOR_SCRIPT_BUILD = APP_VERSION;
 
 function horThisIndex() {
@@ -6918,7 +6918,7 @@ function showBidUI() {
   const highNum = auctionHigh();
   const high = highNum > 0 ? highNum : '—';
   const bidderName = (players[myIndex] && players[myIndex].name) || myName || 'Player';
-  const html = `<div class="bid-console-title"><img class="bid-title-griffin-left" src="assets/images/griffin-icon.png?v=635" alt=""><span>PLACE YOUR BID</span><img class="bid-title-griffin-right" src="assets/images/griffin-icon.png?v=635" alt=""></div>
+  const html = `<div class="moon-bid-plaque" id="moonBidPlaque" hidden role="note"><img src="assets/moon-plaque/concept-a.png" alt="" aria-hidden="true" draggable="false"><div class="moon-bid-copy"><strong id="moonBidPoints"></strong><span>Win the game</span><span id="moonBidLoss"></span></div><div class="moon-bid-mount moon-bid-mount-left" aria-hidden="true"><img src="assets/bidbox-moon-review/gold-connector.png" alt="" draggable="false"></div><div class="moon-bid-mount moon-bid-mount-right" aria-hidden="true"><img src="assets/bidbox-moon-review/gold-connector.png" alt="" draggable="false"></div></div><div class="bid-console-title"><img class="bid-title-griffin-left" src="assets/images/griffin-icon.png?v=635" alt=""><span>PLACE YOUR BID</span><img class="bid-title-griffin-right" src="assets/images/griffin-icon.png?v=635" alt=""></div>
       <div class="felt-bid-name">${bidderName}</div>
       <div class="bid-meta" aria-hidden="true"></div>
       <div class="bid-stepper">
@@ -6944,6 +6944,13 @@ function showBidUI() {
     const valEl = $('bidValue');
     const confBtn = $('bidConfirm');
     const sync = () => {
+      // Keep the fixed slot, but remove an unavailable raise action at the ceiling.
+      if (plus) {
+        const atCeiling = suggested >= ceiling;
+        plus.disabled = atCeiling;
+        plus.style.setProperty('visibility', atCeiling ? 'hidden' : 'visible', 'important');
+        plus.setAttribute('aria-hidden', String(atCeiling));
+      }
       if (valEl) {
         valEl.textContent = String(suggested);
         valEl.classList.toggle('is-moon', isShootMoonBid(suggested));
@@ -6961,6 +6968,7 @@ function showBidUI() {
         }
       }
       _ltBidSuggested = suggested;
+      syncMoonBidPlaque(suggested);
       try { syncLandscapeBidBar(); } catch (e) {}
     };
     if (confBtn) confBtn.disabled = !Number.isSafeInteger(suggested) || suggested % 5 !== 0 || suggested < nextMin || suggested > ceiling;
@@ -6976,6 +6984,7 @@ function showBidUI() {
     };
     if (plus) plus.onclick = (e) => {
       e.preventDefault(); e.stopPropagation();
+      if (suggested >= ceiling) return;
       try { playSfx('bidUp'); } catch (err) {}
       suggested = Math.min(ceiling, (Number.isSafeInteger(suggested)&&suggested%5===0?suggested:nextMin)+5); sync();
     };
@@ -6984,16 +6993,11 @@ function showBidUI() {
     if (conf) conf.onclick = (e) => {
       e.preventDefault(); e.stopPropagation();
       try { playSfx('bidUp'); } catch (err) {}
-      if (isShootMoonBid(suggested)) {
-        showApprovedMoonDeclaration(suggested, () => {
-          // Rook653: BACK DOWN is not Pass; resume ordinary bidding at 195.
-          suggested = maxBid() - 5;
-          sync();
-        });
-      } else {
-        submitBid(suggested);
-      }
+      if (!game || game.phase !== 'bidding' || game.currentPlayer !== myIndex || game.paused || isSpectator) return;
+      // The displayed plaque is the declaration. Only this intentional tap submits.
+      submitBid(suggested, { moonConfirmed: isShootMoonBid(suggested) });
     };
+    sync();
     if (pass) pass.onclick = (e) => {
       e.preventDefault(); e.stopPropagation();
       try { playSfx('bidDown'); } catch (err) {}
@@ -7012,59 +7016,25 @@ function showBidUI() {
 }
 
 
-// Rook648: restore the previously approved dedicated Shoot-the-Moon presentation.
-// This is a decision gate only: it never owns bidding, discard, trump, or scoring.
-function closeApprovedMoonDeclaration() {
-  const old = document.querySelector('.moon-approved-overlay');
-  if (old) old.remove();
-}
-function showApprovedMoonDeclaration(value, onBackDown) {
-  closeApprovedMoonDeclaration();
-  if (!shootMoonEnabled || !isShootMoonBid(value) || !moonBidAllowed(myIndex)) return false;
-  // Warm the confirmed cue while the player reviews the declaration so the
-  // wolf starts immediately on the second confirmation.
+// Owner-approved Concept A: artwork and live stakes attached to the existing Bid Box.
+// Presentation never submits a bid or dispatches speech/howl.
+function syncMoonBidPlaque(value) {
+  const plaque = $('moonBidPlaque');
+  if (!plaque) return;
+  const active = !!(game && game.phase === 'bidding' && game.currentPlayer === myIndex
+    && !game.paused && !isSpectator && shootMoonEnabled && isShootMoonBid(value) && moonBidAllowed(myIndex));
+  plaque.hidden = !active;
+  if (!active) { $('bidConfirm')?.removeAttribute('aria-describedby'); return; }
+  $('moonBidPoints').textContent = value + ' POINTS';
+  $('moonBidLoss').textContent = 'or lose ' + value;
+  plaque.setAttribute('aria-label', 'Shoot the Moon: capture all ' + value + ' points to win the game. Zero-point tricks may be lost. If you miss, your team loses ' + value + ' points; opponents score captured points.');
+  const confirm = $('bidConfirm');
+  if (confirm) confirm.setAttribute('aria-describedby', 'moonBidPlaque');
   try { window.HORMoonHowl?.preload(); } catch (e) {}
-  const ov = document.createElement('div');
-  ov.className = 'moon-approved-overlay';
-  ov.setAttribute('role', 'dialog');
-  ov.setAttribute('aria-modal', 'true');
-  ov.setAttribute('aria-label', 'Shoot the Moon confirmation');
-  ov.innerHTML = '<div class="moon-approved-card">' +
-    '<img class="moon-approved-art" src="assets/images/shoot-the-moon-approved.jpg" alt="Gold griffin under a full moon" aria-hidden="true">' +
-    '<div class="moon-live-points">' + value + ' POINTS</div>' +
-    '<div class="moon-live-rules"><span>Capture all ' + value + ' points. Zero-point tricks may be lost.</span><strong>MAKE IT: Win the entire game.</strong><span>MISS IT: Your team loses ' + value + ' points. Opponents score captured points.</span></div>' +
-    '<div class="moon-approved-actions">' +
-      '<button type="button" data-moon-confirm aria-label="Shoot the Moon">SHOOT THE MOON</button>' +
-      '<button type="button" data-moon-back aria-label="Back Down">BACK DOWN</button>' +
-    '</div></div>';
-  document.body.appendChild(ov);
-  const confirm = ov.querySelector('[data-moon-confirm]');
-  const back = ov.querySelector('[data-moon-back]');
-  if (confirm) confirm.onclick = (e) => {
-    e.preventDefault(); e.stopPropagation();
-    closeApprovedMoonDeclaration();
-    submitBid(value, { moonConfirmed: true });
-  };
-  if (back) {
-    let backHandled = false;
-    const doBackDown = (e) => {
-      if (e) { e.preventDefault(); e.stopPropagation(); }
-      if (backHandled) return;
-      backHandled = true;
-      closeApprovedMoonDeclaration();
-      _ltBidSuggested = maxBid() - 5;
-      if (typeof onBackDown === 'function') {
-        onBackDown();
-      } else {
-        try {
-          if (game && game.phase === 'bidding' && game.currentPlayer === myIndex && !isSpectator) showBidUI();
-        } catch (err) {}
-      }
-    };
-    back.addEventListener('pointerup', doBackDown);
-    back.addEventListener('click', doBackDown);
-  }
-  return true;
+}
+function closeMoonBidPlaque() {
+  const plaque = $('moonBidPlaque');
+  if (plaque) plaque.hidden = true;
 }
 function positionSeatLeadTags() {
   try {
@@ -7127,24 +7097,8 @@ function submitBid(val, opts) {
     if (ma) ma.textContent = 'Shoot the Moon is turned off for this game.';
     return;
   }
-  // Rook648: a human Moon bid must pass through the approved declaration gate.
-  if (value !== 0 && isShootMoonBid(value) && !(opts && opts.moonConfirmed)) {
-    showApprovedMoonDeclaration(value, () => {
-      try {
-        _ltBidSuggested = maxBid() - 5;
-        showBidUI();
-        const v = $('bidValue');
-        const b = $('bidConfirm');
-        if (v) { v.textContent = String(maxBid() - 5); v.classList.remove('is-moon'); }
-        if (b) {
-          b.classList.remove('bid-shoot-moon');
-          b.setAttribute('data-live-bid', String(maxBid() - 5));
-          b.innerHTML = 'Bid <span id="bidConfirmVal">' + (maxBid() - 5) + '</span>';
-        }
-      } catch (e) {}
-    });
-    return;
-  }
+  // Selecting the ceiling is not confirmation; callers must represent an intentional tap.
+  if (value !== 0 && isShootMoonBid(value) && !(opts && opts.moonConfirmed)) return;
   if (isHost) {
     hostProcessBid({ player: myIndex, value, voiceLine: true, actionId: horNewActionId('bid') });
   } else {
@@ -7244,7 +7198,7 @@ function hostProcessBid(data) {
     game.shotTheMoon = !!(shootMoonEnabled && data.value === maxBid());
     if (game.shotTheMoon) {
       const howlId=(game.careerMatchId||(game.careerMatchId=crypto.randomUUID()))+':'+handHistory.length+':moon:'+data.player;
-      // The declaration screen preloads this clip; start it before bid UI/SFX
+      // The in-place plaque preloads this clip; start it before bid UI/SFX
       // work so the cue lands directly on the confirmed 200 bid.
       window.HORMoonHowl?.play(howlId);
       broadcast({type:'moonHowl',id:howlId});
@@ -7315,7 +7269,7 @@ function nestCardsToText(cards) {
 function finishBidding() {
   game.phase = 'discard';
   // Rook648: bidding/Moon and discard are mutually exclusive visual states.
-  try { closeApprovedMoonDeclaration(); } catch (e) {}
+  try { closeMoonBidPlaque(); } catch (e) {}
   try {
     const d = $('decisionConsole');
     if (d) { d.classList.add('hidden'); d.classList.remove('decision-mode-trump'); d.innerHTML = ''; }
@@ -7514,7 +7468,7 @@ function positionDiscardOverlay(overlay, landscape) {
 
 function showDiscardUI(showKitty) {
   // Rook648: discard owns the screen; retire all bid/Moon presentation first.
-  try { closeApprovedMoonDeclaration(); } catch (e) {}
+  try { closeMoonBidPlaque(); } catch (e) {}
   try {
     const d = $('decisionConsole');
     if (d) { d.classList.add('hidden'); d.classList.remove('decision-mode-trump'); d.innerHTML = ''; }

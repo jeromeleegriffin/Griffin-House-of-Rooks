@@ -98,15 +98,6 @@ body #decisionConsole.approved-bid-portrait button:disabled {
 body #decisionConsole.approved-bid-portrait #bidConfirm.bid-shoot-moon {padding:0 !important;}
 body #decisionConsole.approved-bid-portrait #bidConfirm .moon-approved-button795 {display:block!important;width:100%!important;height:100%!important;max-width:100%!important;min-width:0!important;object-fit:contain!important;pointer-events:none!important;}
 body #decisionConsole.approved-bid-portrait :is(#bidMinus,#bidPlus) {touch-action:none!important;user-select:none!important;-webkit-user-select:none!important;-webkit-touch-callout:none!important;}
-/* Existing Moon dialog remains the only gate. Yield only this painted surface,
-   preserving root geometry used by the unchanged R706 seat observer. */
-body:has(> .moon-approved-overlay) #decisionConsole.approved-bid-portrait .approved-bid-surface {
-  visibility: hidden !important;
-  pointer-events: none !important;
-}
-body:has(> .moon-approved-overlay) #decisionConsole.approved-bid-portrait .approved-bid-surface button {
-  pointer-events: none !important;
-}
 body #decisionConsole.approved-bid-portrait #bidMinus { left: 4.9928673324% !important; top: 25.1724137931% !important; width: 21.2553495007% !important; height: 34.4827586207% !important; }
 body #decisionConsole.approved-bid-portrait #bidPlus { left: 73.6091298146% !important; top: 25.1724137931% !important; width: 20.9700427960% !important; height: 34.4827586207% !important; }
 body #decisionConsole.approved-bid-portrait #bidValue { left: 38.3737517832% !important; top: 33.7931034483% !important; width: 23.6804564907% !important; height: 18.9655172414% !important; }

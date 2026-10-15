@@ -2,9 +2,13 @@
  * Author: Jerome Griffin
  * Copyright (c) 2026 Jerome Griffin / Griffin House
  */
-const BUILD = '810';
-const CACHE = 'house-of-rooks-810-loading';
+const BUILD = '810-moon-bidtext-review';
+const CACHE = 'house-of-rooks-810-moon-bidtext-review';
 const SHELL = [
+ "./assets/bidbox-moon-review/bidbox-approved-scrollwork.png",
+ "./assets/bidbox-moon-review/gold-connector.png",
+ "./moon-plaque.css?v=810-moon-bidtext-review",
+ "./assets/moon-plaque/concept-a.png",
  "./assets/bidbox-approved/bidbox_complete_blank.png?v=712",
  "./assets/images/griffin-icon.png",
  "./assets/images/griffin-icon.png?v=631",
@@ -484,10 +488,10 @@ const SHELL = [
  "./assets/characters077/willow-right.webp",
  "./assets/characters077/willow-top.webp",
  './room-approved805.css?v=805-ownerreview','./room-approved805.js?v=805-ownerreview',
- './menu-approved805.css?v=805-atmosphere1','./menu-approved805.js?v=805-atmosphere1',
+ './menu-approved805.css?v=810-moon-bidtext-review','./menu-approved805.js?v=805-atmosphere1',
  './assets/approved805/griffin-logo.png','./assets/approved805/ceiling-wood.png',
  './landing783.css?v=805-ownerreview','./landing783.js?v=810-loading',
- './hor-version.js?v=810',
+ './hor-version.js?v=810-moon-bidtext-review',
  './friends803.js?v=810-loading','./friends803.css?v=805-ownerreview',
  './audio-mixer.js?v=805-ownerreview','./audio-mixer.css?v=805-ownerreview',
  './career-phone-test.js?v=career-phone-test-v1',
@@ -544,7 +548,7 @@ const SHELL = [
  './assets/cards/numbered/yellow-8.png',
  './assets/cards/numbered/yellow-9.png',
 
- './character-library774.js?v=795',"./assets/images/avatar-claire.svg","./assets/images/avatar-june.svg","./assets/images/avatar-tess.svg","./assets/images/avatar-marcus.svg","./assets/images/avatar-owen.svg","./assets/images/avatar-daniel.svg","./assets/images/avatar-sofia.svg","./assets/images/avatar-rafael.svg","./assets/images/avatar-samir.svg", './asset-loading772.js?v=810-loading','./asset-loading772.css?v=795',
+ './character-library774.js?v=795',"./assets/images/avatar-claire.svg","./assets/images/avatar-june.svg","./assets/images/avatar-tess.svg","./assets/images/avatar-marcus.svg","./assets/images/avatar-owen.svg","./assets/images/avatar-daniel.svg","./assets/images/avatar-sofia.svg","./assets/images/avatar-rafael.svg","./assets/images/avatar-samir.svg", './asset-loading772.js?v=810-moon-bidtext-review','./asset-loading772.css?v=795',
  './responsive-review.js?v=795','./responsive-review.css?v=795',
  './characters077.js?v=810-loading','./characters077.css?v=795',
  './x1/bidding.js','./x1/core.js','./x1/sha256.js','./x1/worker.js','./x1/integration.js?v=808-local',
@@ -666,9 +670,9 @@ const SHELL = [
   './',
   './index.html',
   './kitty736.css?v=795',
-  './holder004.css?v=732',
+  './holder004.css?v=810-moon-bidtext-review',
   './holder004.js?v=732',
-  './game060.js?v=810',
+  './game060.js?v=810-moon-bidtext-review',
   './assets/cardholder/holder047.png',
   './assets/cardholder/connector050.png',
   './assets/cardholder/backrest004.png',
@@ -686,7 +690,7 @@ const SHELL = [
   './assets/audio/card-wash-max-cc0.wav',
   './vendor/peerjs.min.js',
   './vendor/peerjs.min.js?v=rook044',
-  './style057.css?v=795',
+  './style057.css?v=810-moon-bidtext-review',
   './rules.js?v=810-loading',
   './game.js?v=rook044',
   './polish.js?v=810-loading',
@@ -714,8 +718,8 @@ const SHELL = [
   './style.css?v=732',
   './hor-version.js',
   './hor-version.js?v=736',
-  './approved-bid-portrait.js?v=732',
-  './approved-bid-portrait.css?v=808-local',
+  './approved-bid-portrait.js?v=810-moon-bidtext-review',
+  './approved-bid-portrait.css?v=810-moon-bidtext-review',
   './assets/bidbox-approved/bidbox_complete_blank.png?v=732',
   './assets/bidbox-approved/asset_map.json',
   './assets/images/wait-nest-portrait.jpg?v=732',

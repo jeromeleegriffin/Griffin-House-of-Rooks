@@ -1,7 +1,7 @@
 // Griffin House of Rooks — 810 runtime marker, no gameplay ownership.
-window.HOR_LIVE_VERSION = '810';
-window.HOR_BUILD = '810';
-window.GHR_BUILD = "Rook810 · Loading integration review";
+window.HOR_LIVE_VERSION = '810-moon-bidtext-review';
+window.HOR_BUILD = '810-moon-bidtext-review';
+window.GHR_BUILD = "Rook810 · Moon integration review";
 window.HORRuntimeTruth = async function () {
   const controller = navigator.serviceWorker && navigator.serviceWorker.controller;
   const worker = controller ? await new Promise(resolve => {
@@ -12,7 +12,7 @@ window.HORRuntimeTruth = async function () {
   }) : null;
   return {page:window.HOR_PAGE_BUILD, script:window.HOR_SCRIPT_BUILD,
     marker:window.HOR_BUILD, worker, controller:controller && controller.scriptURL,
-    coherent:window.HOR_PAGE_BUILD === '810' && window.HOR_SCRIPT_BUILD === '810' &&
-      window.HOR_BUILD === '810' && !!worker && worker.build === '810' &&
-      worker.cache === 'house-of-rooks-810-loading'};
+    coherent:window.HOR_PAGE_BUILD === '810-moon-bidtext-review' && window.HOR_SCRIPT_BUILD === '810-moon-bidtext-review' &&
+      window.HOR_BUILD === '810-moon-bidtext-review' && !!worker && worker.build === '810-moon-bidtext-review' &&
+      worker.cache === 'house-of-rooks-810-moon-bidtext-review'};
 };

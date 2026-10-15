@@ -102,21 +102,7 @@ body:not(.house-owner-local) label[for=opt-force-nest-reveal],body:not(.house-ow
 #houseDetails805 .house-note{line-height:1.45}
 #horPublicCareerCard #horCareerCardClose{min-width:28px;min-height:28px;padding:2px 5px}
 #horPublicCareerCard .career-head>div:last-child{display:flex;gap:5px}
-/* Live copy covers only obsolete text in the immutable approved Moon artwork. */
-.moon-approved-card{width:min(92vw,430px,64dvh)!important;aspect-ratio:2/3!important;height:auto!important;max-height:96dvh!important}
-.moon-live-points{position:absolute;left:25%;top:51.3%;width:50%;height:5.5%;display:flex;align-items:center;justify-content:center;background:#080d07;color:#f5dda2;font:bold clamp(14px,4.5vw,30px)/1 Georgia,serif;text-shadow:0 2px 2px #000}
-.moon-live-rules{position:absolute;left:15%;top:59%;width:70%;height:9.4%;box-sizing:border-box;background:#090e07;color:#f6e8c5;display:flex;flex-direction:column;justify-content:center;gap:2px;text-align:center;padding:2px;font:clamp(8px,2.3vw,11px)/1.15 Georgia,serif;text-shadow:0 1px 1px #000}
-.moon-live-rules strong{color:#ffe9a1;font-weight:bold}
-@media(max-height:420px){.moon-live-rules{font-size:6px;gap:1px}.moon-live-points{font-size:15px}.house-public-dialog .visual-head805 h2{font-size:16px!important}}
-.moon-live-rules{top:58.1%;height:11.2%;font-size:clamp(9px,2.65vw,11px);line-height:1.03;gap:1px;border:1px solid #a58c5266;border-radius:5px}
-@media(orientation:landscape) and (max-height:500px){
- .moon-approved-card{width:min(760px,96vw)!important;height:96dvh!important;aspect-ratio:auto!important;background:linear-gradient(140deg,#071b17,#060e0b);border:1px solid #a9915c;border-radius:12px}
- .moon-approved-art{position:absolute;left:0;top:0;width:64dvh;height:96dvh;max-width:none;object-fit:contain}
- .moon-approved-card::before{content:'';position:absolute;left:9.6dvh;top:51%;width:44.8dvh;height:18.3%;background:#090e07;z-index:1;border:1px solid #8a754d55}
- .moon-live-points{left:calc(64dvh + 12px);top:9%;width:calc(100% - 64dvh - 24px);height:15%;font-size:23px;background:none}
- .moon-live-rules{left:calc(64dvh + 12px);top:28%;width:calc(100% - 64dvh - 24px);height:48%;font-size:14px;line-height:1.4;gap:12px;background:none;border:0}
- .moon-approved-actions{width:64dvh!important;right:auto!important}
-}
+@media(max-height:420px){.house-public-dialog .visual-head805 h2{font-size:16px!important}}
 
 /* Shared finish for remaining legacy menus; game artwork and table surfaces excluded. */
 :root{--house-menu-surface:repeating-linear-gradient(0deg,#ffffff02 0 1px,transparent 1px 3px),repeating-linear-gradient(90deg,#00000009 0 1px,transparent 1px 3px),radial-gradient(ellipse at 20% 0,#1a314ccc,transparent 65%),linear-gradient(155deg,#0c2035fa,#071324fc);--house-menu-button:linear-gradient(150deg,#1b3550,#10253c 60%,#0b1e33)}

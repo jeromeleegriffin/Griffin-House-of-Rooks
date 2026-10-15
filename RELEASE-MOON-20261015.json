@@ -1,0 +1,10 @@
+{
+  "build": "810-moon-bidtext-review",
+  "sourceRepository": "jeromeleegriffin/Test",
+  "sourceCommit": "3d41595f0a6ee4850c54aaf6e1d7bfd51891ca06",
+  "verifiedRuntimeFiles": 1502,
+  "zipSha256": "d5fa04321795e4c58c6b5a8577cf5dce9266d377ecbdefe66acced5089811f08",
+  "ownerAuthorized": true,
+  "rollbackBranch": "rollback/pre-moon-20261015-1833",
+  "previousCommit": "87fb13419242786d6d99d285d0ab40dc622c2c29"
+}

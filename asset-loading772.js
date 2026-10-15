@@ -1,6 +1,6 @@
 /* Extends the 772 readiness service; presentation only, no player-state writes. */
 (()=>{'use strict';
-const paths=["assets/images/RookPremium.png?v=632","assets/images/Red2Premium.png?v=632","assets/images/Rook.webp","assets/images/Red2-card.webp",
+const paths=["assets/bidbox-moon-review/bidbox-approved-scrollwork.png","assets/bidbox-moon-review/gold-connector.png","assets/moon-plaque/concept-a.png","assets/images/RookPremium.png?v=632","assets/images/Red2Premium.png?v=632","assets/images/Rook.webp","assets/images/Red2-card.webp",
   "assets/cards/numbered/black-1.png",
   "assets/cards/numbered/black-10.png",
   "assets/cards/numbered/black-11.png",
