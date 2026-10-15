@@ -1,10 +1,52 @@
 {
   "build": "810",
-  "sourceRepository": "jeromeleegriffin/Test",
-  "sourceCommit": "9dba4bd7070b14a217b68d42764d82719bee9617",
-  "verifiedRuntimeFiles": 1498,
-  "zipSha256": "c7f2f30ddc6daecdcb47852dffaf1261c45e44b1267e18213da01a2fdc43f0d7",
-  "ownerAuthorized": true,
-  "rollbackBranch": "rollback/pre-810-20261015",
-  "previousCommit": "542d7d5be8a5183b5d759cfcdc15051529d777a1"
+  "status": "OWNER_APPROVED_DEPLOYED_BOTH",
+  "owner": "Jerome Griffin",
+  "ownerDecisionAt": "2026-10-15T12:41:55-04:00",
+  "ownerQuote": "Lock it down as the most recent ... Push this to the actual Rook repository and the test repository.",
+  "sha256": "c7f2f30ddc6daecdcb47852dffaf1261c45e44b1267e18213da01a2fdc43f0d7",
+  "libraryFileId": "libfile_e853285ef0308191a811470c6f089203",
+  "deploymentStatus": "COMPLETE",
+  "physicalAndroidExhaustivelyVerified": false,
+  "landscapeIncluded": false,
+  "rollback": {
+    "Test": {
+      "branch": "rollback/pre-810-20261015",
+      "commit": "4ec1020cb178fe8d6a179eb0c5f5d8e8acf82909"
+    },
+    "Griffin-House-of-Rooks": {
+      "branch": "rollback/pre-810-20261015",
+      "commit": "542d7d5be8a5183b5d759cfcdc15051529d777a1"
+    }
+  },
+  "productionCommit": "7a5ede7773deb267c26647f9e4ec7f6215b54d80",
+  "testCommit": "9dba4bd7070b14a217b68d42764d82719bee9617",
+  "verifiedAt": "2026-10-15",
+  "runtimeFilesVerifiedPerRepository": 1498,
+  "repositoryHashMismatches": 0,
+  "test": {
+    "commit": "9dba4bd7070b14a217b68d42764d82719bee9617",
+    "workflowRun": 38771606831,
+    "conclusion": "success",
+    "url": "https://jeromeleegriffin.github.io/Test/",
+    "changedLiveFilesVerified": 11,
+    "browserStartup": "PASS_CLOUD_BROWSER_LANDING"
+  },
+  "production": {
+    "commit": "7a5ede7773deb267c26647f9e4ec7f6215b54d80",
+    "workflowRun": 38772804684,
+    "conclusion": "success",
+    "url": "https://jeromeleegriffin.github.io/Griffin-House-of-Rooks/",
+    "changedLiveFilesVerified": 11
+  },
+  "supersededImportRun": {
+    "id": 38771769716,
+    "conclusion": "cancelled",
+    "reason": "Replaced slow random archive reads with sequential import; no runtime differences"
+  },
+  "limits": "Physical Android cache upgrade, full live match and real-network multiplayer not newly certified. Prior local 810 scored-hand/offline tests retained. Exact earlier Android first-card stall not reproduced.",
+  "rollbackInstructions": "Both repositories retain rollback/pre-810-20261015. Restore only runtime files from the appropriate checkpoint in a new commit and redeploy; retain history, player data and release records. Do not force-reset main.",
+  "canonicalMasterBrain": "https://github.com/jeromeleegriffin/Test/blob/main/brain/current.json",
+  "masterBrainVersion": "AE",
+  "masterBrainPublicationCommit": "914c1b2045ae4c15fba288152e73e141a549b731"
 }
