@@ -1,0 +1,22 @@
+{
+  "build": "810",
+  "status": "OWNER_APPROVED_RELEASE_AUTHORIZED",
+  "owner": "Jerome Griffin",
+  "ownerDecisionAt": "2026-10-15T12:41:55-04:00",
+  "ownerQuote": "Lock it down as the most recent ... Push this to the actual Rook repository and the test repository.",
+  "sha256": "c7f2f30ddc6daecdcb47852dffaf1261c45e44b1267e18213da01a2fdc43f0d7",
+  "libraryFileId": "libfile_e853285ef0308191a811470c6f089203",
+  "deploymentStatus": "IN_PROGRESS",
+  "physicalAndroidExhaustivelyVerified": false,
+  "landscapeIncluded": false,
+  "rollback": {
+    "Test": {
+      "branch": "rollback/pre-810-20261015",
+      "commit": "4ec1020cb178fe8d6a179eb0c5f5d8e8acf82909"
+    },
+    "Griffin-House-of-Rooks": {
+      "branch": "rollback/pre-810-20261015",
+      "commit": "542d7d5be8a5183b5d759cfcdc15051529d777a1"
+    }
+  }
+}
