@@ -1,0 +1,94 @@
+/* 793: front-face warm highlight plus matching panel edges; existing cue lifecycle/haptics. */
+/* Notification brightness belongs to furniture only; card faces never inherit it. */
+@keyframes holder789-turn {
+  0%,100% { filter:brightness(1.50); }
+  50% { filter:brightness(1); }
+}
+@keyframes holder789-win {
+  15%,30%,72.5%,100% { filter:brightness(1); }
+  0%,42.5% { filter:brightness(1.65); }
+}
+body.in-game .hand-area[data-holder-cue="turn"] > .hand-rail,
+body.in-game .hand-area[data-holder-cue="turn"] > .holder004-backrest,
+body.in-game .hand-area[data-holder-cue="turn"]::after {
+  animation:holder789-turn 2200ms ease-in-out infinite !important;
+}
+body.in-game .hand-area[data-holder-cue="win"] > .hand-rail,
+body.in-game .hand-area[data-holder-cue="win"] > .holder004-backrest,
+body.in-game .hand-area[data-holder-cue="win"]::after {
+  animation:holder789-win 800ms ease-in-out 1 !important;
+}
+body.in-game .hand-area[data-holder-reduced="true"][data-holder-cue] > .hand-rail,
+body.in-game .hand-area[data-holder-reduced="true"][data-holder-cue] > .holder004-backrest,
+body.in-game .hand-area[data-holder-reduced="true"][data-holder-cue]::after {
+  animation:none !important;
+  filter:brightness(1.25) !important;
+}
+/* Retired visible signs. The action itself remains accessible through the cue's live region. */
+#railTrickWon752,#bottomTrickWinnerNotice,.you-took-chip,
+#botThinking[data-human-turn="1"] { display:none !important; }
+body.in-game #slot-me.is-turn .seat-avatar,
+body.in-game #slot-me.is-turn .seat-avatar-img,
+body.in-game #slot-me.is-turn .name,
+body.in-game .lt-hand.lt-turn-flash .card-face.playable,
+body.in-game .lt-hand-label.lt-turn-flash-label { animation:none !important; }
+.holder-cue-accessible789 {
+  position:absolute;width:1px;height:1px;overflow:hidden;
+  clip-path:inset(50%);white-space:nowrap;pointer-events:none;
+}
+
+/* Landscape has an existing hand frame, not the portrait furniture asset.
+   Highlight that frame without filtering its cards or changing geometry. */
+@keyframes holder789-landscape-turn {
+  0%,100% { box-shadow:inset 0 0 0 2px rgba(244,201,117,.80); }
+  50% { box-shadow:inset 0 0 0 2px rgba(224,183,104,.06); }
+}
+@keyframes holder789-landscape-win {
+  0%,42.5% { box-shadow:inset 0 0 0 2px rgba(244,201,117,.95); }
+  15%,30%,72.5%,100% { box-shadow:inset 0 0 0 2px rgba(224,183,104,.06); }
+}
+body.in-game .lt-hand-wrap[data-holder-cue="turn"] { animation:holder789-landscape-turn 2200ms ease-in-out infinite !important; }
+body.in-game .lt-hand-wrap[data-holder-cue="win"] { animation:holder789-landscape-win 800ms ease-in-out 1 !important; }
+body.in-game .lt-hand-wrap[data-holder-reduced="true"][data-holder-cue] { animation:none !important;box-shadow:inset 0 0 0 2px rgba(244,201,117,.65); }
+
+/* Overlay follows the exact existing front-face mask, below live labels and above wood.
+   No table glow, cards, hit targets, text signs or geometry changes. */
+.holder-cue-wash793{display:none;pointer-events:none!important;}
+@media(orientation:portrait){
+ body.in-game .game-room>.hand-area>.holder-cue-wash793{
+  display:block;position:absolute;left:0;right:0;bottom:0;height:var(--holder049-height);
+  z-index:11;pointer-events:none!important;opacity:0;
+  /* The same raster registration as the furniture: brighten the complete
+     wooden center face, inside its brass frame, without touching end caps. */
+  clip-path:inset(55% 5.5% 7% 5.5%);
+  background:url("assets/cardholder/holder047.png") 50% 49.2% / 104.458% 253.333% no-repeat;
+  filter:brightness(1.65);
+ }
+ body.in-game .hand-area #holderPlaques784{z-index:12!important;}
+ body.in-game .hand-area #holderIdentity784::after,
+ body.in-game .hand-area #holderPlaques784 #trickPtsBar::after{
+  content:"";position:absolute;inset:0;border-radius:1px;pointer-events:none!important;
+  box-shadow:inset 0 0 0 1px #ffe5a0;opacity:0;
+ }
+ body.in-game .hand-area[data-holder-cue="turn"]>.holder-cue-wash793,
+ body.in-game .hand-area[data-holder-cue="turn"] #holderIdentity784::after,
+ body.in-game .hand-area[data-holder-cue="turn"] #holderPlaques784 #trickPtsBar::after{animation:holder793-turn 2200ms ease-in-out infinite!important;}
+ body.in-game .hand-area[data-holder-cue="win"]>.holder-cue-wash793,
+ body.in-game .hand-area[data-holder-cue="win"] #holderIdentity784::after,
+ body.in-game .hand-area[data-holder-cue="win"] #holderPlaques784 #trickPtsBar::after{animation:holder793-win 800ms ease-in-out 1!important;}
+ body.in-game .hand-area[data-holder-reduced="true"][data-holder-cue]>.holder-cue-wash793,
+ body.in-game .hand-area[data-holder-reduced="true"][data-holder-cue] #holderIdentity784::after,
+ body.in-game .hand-area[data-holder-reduced="true"][data-holder-cue] #holderPlaques784 #trickPtsBar::after{animation:none!important;opacity:.65;}
+
+ /* Owner's phone correction: both cues belong on the straight front
+    strip. Keep both curved brass end caps and the backrest at normal brightness.
+    The existing wash/plaque cue owns the pulse, including reduced motion. */
+ body.in-game .game-room>.hand-area[data-holder-cue]>.hand-rail,
+ body.in-game .game-room>.hand-area[data-holder-cue]>.holder004-backrest,
+ body.in-game .game-room>.hand-area[data-holder-cue]::after{
+  animation:none!important;
+  filter:none!important;
+ }
+}
+@keyframes holder793-turn{0%,100%{opacity:.85}50%{opacity:0}}
+@keyframes holder793-win{0%,42.5%{opacity:1}15%,30%,72.5%,100%{opacity:0}}

@@ -1,0 +1,29 @@
+[
+  {
+    "name": "approach",
+    "source": "natural063/wings-01.wav",
+    "startSeconds": 0.08,
+    "durationSeconds": 0.5,
+    "peak": 0.01800537109375,
+    "lowpassHz": 1800,
+    "fadeSeconds": 0.06
+  },
+  {
+    "name": "call",
+    "source": "card-play/raven-caw-recorded.wav",
+    "startSeconds": 0.02,
+    "durationSeconds": 0.72,
+    "peak": 0.045013427734375,
+    "lowpassHz": 1600,
+    "fadeSeconds": 0.06
+  },
+  {
+    "name": "flutter",
+    "source": "natural063/wings-01.wav",
+    "startSeconds": 0.7,
+    "durationSeconds": 0.40008333333333335,
+    "peak": 0.01007080078125,
+    "lowpassHz": 1500,
+    "fadeSeconds": 0.06
+  }
+]

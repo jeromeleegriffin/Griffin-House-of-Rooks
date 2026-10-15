@@ -1,0 +1,41 @@
+/* Build 738: portrait house-effects refinement only, over the banked 736 art. */
+@media(orientation:portrait){
+ /* Dim the complete opening, including the three tongues, by a fixed amount.
+    Brightness never animates; movement and light intensity remain separate. */
+ body.in-game #quietFire034{filter:brightness(.75) saturate(.94);}
+ body.in-game #fireGlow059 .fire-glow-pulse059{opacity:.34!important;}
+ body.in-game.cabin-fire-active041 .tongue-a736{animation:hearth-a738 2.9s -.8s ease-in-out infinite;}
+ body.in-game.cabin-fire-active041 .tongue-b736{animation:hearth-b738 3.8s -2.1s ease-in-out infinite;}
+ body.in-game.cabin-fire-active041 .tongue-c736{animation:hearth-c738 4.7s -3.4s ease-in-out infinite;}
+ body.in-game.cabin-fire-active041 .lantern-flame736{animation:lantern-wick738 3.9s -.7s ease-in-out infinite;}
+ body.reduce-motion :is(.hearth-tongue736,.lantern-flame736,.hearth-ember736){animation:none!important;}
+}
+@keyframes hearth-a738{
+ 0%,100%{transform:translate(-1px,1px) scaleY(.96) skewX(-3deg);}
+ 26%{transform:translate(2px,-2px) scaleY(1.10) skewX(3.5deg);}
+ 57%{transform:translate(.5px,-.5px) scaleY(1.035) skewX(-1deg);}
+ 79%{transform:translate(-1.5px,-1px) scaleY(1.065) skewX(-4deg);}
+}
+@keyframes hearth-b738{
+ 0%,100%{transform:translate(.5px,0) scaleY(1.02) skewX(1deg);}
+ 21%{transform:translate(-2px,-2px) scaleY(1.12) skewX(-4deg);}
+ 46%{transform:translate(1px,1px) scaleY(.97) skewX(2.5deg);}
+ 72%{transform:translate(2px,-1px) scaleY(1.08) skewX(4deg);}
+}
+@keyframes hearth-c738{
+ 0%,100%{transform:translate(1px,-.5px) scaleY(1.04) skewX(2deg);}
+ 31%{transform:translate(-1.5px,1px) scaleY(.95) skewX(-2deg);}
+ 54%{transform:translate(-2px,-2px) scaleY(1.105) skewX(-4deg);}
+ 83%{transform:translate(.5px,-1px) scaleY(1.065) skewX(1deg);}
+}
+@keyframes lantern-wick738{
+ 0%,100%{transform:scale(.96,1) skewX(-3deg);}
+ 19%{transform:scale(.91,1.09) skewX(4deg);}
+ 43%{transform:scale(1.025,.96) skewX(1deg);}
+ 61%{transform:scale(.94,1.12) skewX(-4.5deg);}
+ 73%{transform:scale(.98,1.035) skewX(-1deg);}
+ 88%{transform:scale(.95,1.065) skewX(2.5deg);}
+}
+@media(prefers-reduced-motion:reduce){
+ :is(.hearth-tongue736,.lantern-flame736,.hearth-ember736){animation:none!important;}
+}

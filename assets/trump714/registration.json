@@ -1,0 +1,54 @@
+{
+  "case": {
+    "source": "exec-2b5aceb4-50e9-4a27-8b91-3a248c6e6c7a.png",
+    "dimensions": [
+      2069,
+      760
+    ],
+    "viewBox": [
+      57,
+      136,
+      1980,
+      481
+    ]
+  },
+  "lid-inner": {
+    "source": "exec-00441532-5a7a-45a1-aa6b-3cd3e29226a6.png",
+    "dimensions": [
+      2187,
+      719
+    ],
+    "viewBox": [
+      57,
+      165,
+      2081,
+      412
+    ]
+  },
+  "stamp": {
+    "source": "exec-12a06e80-1c5b-4006-ab1b-6e86829b4ae3.png",
+    "dimensions": [
+      1254,
+      1254
+    ],
+    "viewBox": [
+      283,
+      107,
+      677,
+      1027
+    ]
+  },
+  "lid-outer": {
+    "source": "exec-f828a266-845f-4b31-96f7-1a7c650d99a5.png",
+    "dimensions": [
+      2172,
+      724
+    ],
+    "viewBox": [
+      38,
+      166,
+      2095,
+      392
+    ]
+  }
+}

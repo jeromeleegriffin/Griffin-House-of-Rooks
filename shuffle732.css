@@ -1,0 +1,19 @@
+/* Existing Griffin artwork, new physical motion; no replacement card design. */
+body.in-game #shuffleOverlay.shuffle732 .shuffle-card {
+ animation:none!important;
+ background-image:url('assets/images/cardback-griffin-approved-133.png')!important;
+ background-size:111.3% 111.9%!important;background-position:58% 40.5%!important;
+ background-repeat:no-repeat!important;background-color:#171717!important;
+ border:0!important;border-radius:5px!important;
+ box-shadow:0 .45px 0 #dbcfb4,0 .85px 0 #76634a,0 2px 2px #0004!important;
+ will-change:transform;backface-visibility:hidden;
+}
+body.in-game #shuffleOverlay.shuffle732 .shuffle-plane033 {perspective:650px;}
+body.in-game #shuffleOverlay.shuffle732 .shuffle-card.wash-extra {display:block;}
+body.in-game #shuffleOverlay.shuffle732 .shuffle-label {font-family:Georgia,serif;letter-spacing:.06em;color:#e3c997;}
+@media (orientation:landscape) {
+ body.in-game #shuffleOverlay.shuffle732 {background:transparent!important;}
+ body.in-game #shuffleOverlay.shuffle732 .shuffle-deck {width:240px;height:155px;}
+ body.in-game #shuffleOverlay.shuffle732 .shuffle-plane033 {display:block;position:absolute;inset:0;transform:rotateX(26deg);}
+ body.in-game #shuffleOverlay.shuffle732 .shuffle-label {display:none!important;}
+}

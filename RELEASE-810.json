@@ -1,0 +1,10 @@
+{
+  "build": "810",
+  "sourceRepository": "jeromeleegriffin/Test",
+  "sourceCommit": "9dba4bd7070b14a217b68d42764d82719bee9617",
+  "verifiedRuntimeFiles": 1498,
+  "zipSha256": "c7f2f30ddc6daecdcb47852dffaf1261c45e44b1267e18213da01a2fdc43f0d7",
+  "ownerAuthorized": true,
+  "rollbackBranch": "rollback/pre-810-20261015",
+  "previousCommit": "542d7d5be8a5183b5d759cfcdc15051529d777a1"
+}

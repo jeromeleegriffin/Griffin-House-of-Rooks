@@ -65,42 +65,32 @@ function cardColorWord(card) {
   return String(card.color || '');
 }
 
-/** Red 2 art: try Red2.png → Red2.webp → Red2.jpg → plain text face (no broken icon) */
+/** Red 2 art: try assets/images/Red2.png → assets/images/Red2.webp → Red2.jpg → plain text face (no broken icon) */
 window.__red2ImgError = function (img) {
   if (!img) return;
-  const step = img.dataset.fallback || '1';
-  if (step === '1') {
-    img.dataset.fallback = '2';
-    img.src = 'Red2.webp?v=48';
-    return;
-  }
-  img.onerror = null;
-  const parent = img.parentElement;
-  if (parent) {
-    parent.className = 'c-stack';
-    parent.innerHTML = '<div class="c-bar top"></div><div class="c-num">2</div><div class="c-color">trump</div><div class="c-bar bot"></div>';
-  }
-  const face = parent && parent.closest('.card-face');
-  if (face) face.classList.remove('red2-art');
+  img.style.display = 'none';
+  if (img.nextElementSibling) img.nextElementSibling.style.display = 'flex';
 };
 
 function cardInnerHTML(card) {
   if (card.color === 'rook' || card.id === 'rook') {
     return `
       <div class="c-stack rook-stack">
-        <img class="rook-bird-img" src="Rook.png" alt="Rook" draggable="false"
-          onerror="this.style.display='none'">
+        <img class="rook-bird-img" src="${document.documentElement.classList.contains('hor-original-cards') ? 'assets/images/Rook.png' : 'assets/images/RookPremium.png?v=rook036'}" alt="Rook" draggable="false"
+          onload="this.style.display='block';this.nextElementSibling.style.display='none'" onerror="this.style.display='none';this.nextElementSibling.style.display='flex'">
+        <span class="asset-bird-fallback772">BLACK BIRD</span>
       </div>
     `;
   }
   if (isRed2(card)) {
     // Special full-bleed art only when Red 2 is permanent trump (includeRed2).
-    // Image file must be in the same folder as index.html: Red2.png (or .webp / .jpg).
+    // Image file must be in the same folder as index.html: assets/images/Red2.png (or .webp / .jpg).
     if (includeRed2) {
       return `
         <div class="c-stack red2-stack">
-          <img class="red2-img" src="Red2.png?v=48" alt="Red 2 Trump" draggable="false"
-            data-fallback="1" onerror="window.__red2ImgError&&window.__red2ImgError(this)">
+          <img class="red2-img" src="${document.documentElement.classList.contains('hor-original-cards') ? 'assets/images/Red2.png?v=632' : 'assets/images/Red2-card.webp?v=rook036'}" alt="Red 2 Trump" draggable="false"
+            data-fallback="1" onload="this.style.display='block';this.nextElementSibling.style.display='none'" onerror="this.nextElementSibling.style.display='flex';window.__red2ImgError&&window.__red2ImgError(this)">
+          <span class="asset-bird-fallback772">RED 2</span>
         </div>
       `;
     }
@@ -125,13 +115,25 @@ function cardInnerHTML(card) {
   }
   const rank = card.rank;
   const color = cardColorWord(card);
+  // ROOK026: regular numbered cards are real production face assets.
+  // The text fallback remains for safety if an asset cannot load.
+  const assetColor = String(card.color || '').toLowerCase();
+  const assetSrc = `assets/cards/numbered/${assetColor}-${rank}.png`;
+  const needsOrientationMark036 = Number(rank) === 6 || Number(rank) === 9;
+  const ink036 = ({red:'#E11D2E',green:'#0E8F3E',yellow:'#B88B18',black:'#0B0B0B'})[assetColor] || '#0B0B0B';
+  const orientationMark036 = needsOrientationMark036
+    ? `<svg class="number-orientation-mark036" viewBox="0 0 580 840" preserveAspectRatio="none" aria-hidden="true" focusable="false"><path d="M205 478H375" fill="none" stroke="${ink036}" stroke-width="0.6" vector-effect="non-scaling-stroke"/></svg>` : '';
+
   return `
-    <div class="c-bar top"></div>
-    <div class="c-stack">
-      <div class="c-num">${rank}</div>
-      <div class="c-color">${color}</div>
+    <div class="c-stack numbered-asset-stack">
+      <img class="numbered-card-img" src="${assetSrc}" alt="${color} ${rank}" draggable="false"
+        onload="this.style.display='block';this.nextElementSibling.style.display='none'" onerror="this.style.display='none';this.nextElementSibling.style.display='flex'">
+      <div class="numbered-card-fallback" style="display:flex">
+        <div class="asset-fallback-rank772${needsOrientationMark036 ? ' number-ambiguous036' : ''}">${rank}</div>
+        <div class="asset-fallback-color772">${color}</div>
+      </div>
+      ${orientationMark036}
     </div>
-    <div class="c-bar bot"></div>
   `;
 }
 

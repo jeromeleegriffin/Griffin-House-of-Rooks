@@ -1,0 +1,142 @@
+/* One shared public menu. Existing controls keep their original handlers/storage. */
+(()=>{'use strict';
+function init(){
+ if(window.HORHouseMenu805)return;
+ const $=id=>document.getElementById(id),old=$('landingMenu783'),landing=$('landingMenuButton783'),table=$('btnToggleTopOpts');if(!old||!landing)return;
+ const dev=()=>['localhost','127.0.0.1','::1'].includes(location.hostname)&&new URLSearchParams(location.search).get('dev')==='1';
+ const legacyOpen=openHostOptionsModal;
+ horDeveloperToolsEnabled=dev;
+ document.body.classList.toggle('house-owner-local',dev());
+ const adapters=document.createElement('div');adapters.hidden=true;adapters.id='houseMenuAdapters';document.body.append(adapters);
+ for(const id of ['showRules','replayTutorialBtn','installAppBtn'])if($(id))adapters.append($(id));
+ const entry=document.createElement('div');entry.id='houseFriendsEntry805';const host=$('friendsToggleBtn');host.before(entry);entry.append(host,$('joinBtn'));$('joinBtn').textContent='Join by Code';
+ const stack=document.createElement('div');stack.id='headerContractStack805';const totals=document.createElement('div');totals.id='headerMatchTotals805';totals.setAttribute('aria-label','Match score');$('scoreSpeed701').before(stack);stack.append($('bidProgress'),totals);totals.append(...document.querySelectorAll('.header-match-total')); 
+ const layout=$('ghTopLayout693');if(layout){(dev()?$('btnSolDiagIdentify').parentElement:adapters).append(layout);}
+ old.hidden=true;
+ const make=(id,title)=>{const d=document.createElement('dialog');d.id=id;d.className='house-public-dialog';d.setAttribute('aria-label',title);d.innerHTML='<header class="visual-head805"><button type="button" class="house-back" aria-label="Back to previous menu">‹ Back</button><div><h2 tabindex="-1" autofocus></h2></div><button type="button" class="visual-close805" aria-label="Close">×</button></header><div class="house-content"></div>';d.querySelector('h2').textContent=title;if(id==='houseMenu805')d.querySelector('h2').hidden=true;document.body.append(d);return d};
+ const menu=make('houseMenu805','Menu'),sound=make('houseSound805','Sounds & Atmosphere'),details=make('houseDetails805','');
+ const nav=menu.querySelector('.house-content');nav.className='house-content visual-links805';
+
+ const pageState=new WeakMap();
+ function paginate(d,reset=false){
+  if(!d.open&&!(d.classList.contains('he064-shell')&&!$('houseEffects064').hidden))return;
+  const body=d.querySelector('.house-content')||d.querySelector('[data-he-pane]:not([hidden])');if(!body)return;
+  let state=pageState.get(d);if(!state){const bar=document.createElement('footer');bar.className='house-page-nav';bar.innerHTML='<button type="button" aria-label="Previous menu page">Previous</button><span role="status" aria-live="polite"></span><button type="button" aria-label="Next menu page">Next</button>';const foot=d.querySelector('.he064-foot');if(foot)foot.before(bar);else d.append(bar);state={bar,index:0,pages:[]};pageState.set(d,state);const bs=bar.querySelectorAll('button');bs[0].onclick=()=>{state.index--;paintPage(d)};bs[1].onclick=()=>{state.index++;paintPage(d)};}
+  const items=[...body.children];items.forEach(n=>n.removeAttribute('data-page-hidden'));
+  state.bar.hidden=false;
+  const css=getComputedStyle(d),head=d.querySelector('header').getBoundingClientRect().height;
+  let available=Math.floor(d.clientHeight-parseFloat(css.paddingTop)-parseFloat(css.paddingBottom)-head-state.bar.getBoundingClientRect().height-(d.querySelector('.he064-foot')?.getBoundingClientRect().height||0)-(d.classList.contains('he064-shell')?48:20));
+  const gap=parseFloat(getComputedStyle(body).rowGap)||0;
+  const total=items.filter(n=>!n.hidden&&getComputedStyle(n).display!=='none').reduce((sum,n)=>{const c=getComputedStyle(n);return sum+Math.ceil(n.getBoundingClientRect().height+(parseFloat(c.marginTop)||0)+(parseFloat(c.marginBottom)||0)+gap);},0);if(total<=available+state.bar.getBoundingClientRect().height+10)available+=state.bar.getBoundingClientRect().height+10;
+  let page=[],used=0;state.pages=[];
+  for(const n of items){if(n.hidden||getComputedStyle(n).display==='none')continue;const c=getComputedStyle(n),h=Math.ceil(n.getBoundingClientRect().height+(parseFloat(c.marginTop)||0)+(parseFloat(c.marginBottom)||0)+gap);if(page.length&&used+h>available){state.pages.push(page);page=[];used=0;}page.push(n);used+=h;}
+  if(page.length)state.pages.push(page);
+  state.index=reset?0:Math.min(state.index,Math.max(0,state.pages.length-1));paintPage(d);
+ }
+ function paintPage(d){const state=pageState.get(d),body=d.querySelector('.house-content')||d.querySelector('[data-he-pane]:not([hidden])');if(!state)return;const visible=new Set(state.pages[state.index]||[]);for(const n of body.children)n.toggleAttribute('data-page-hidden',!visible.has(n));state.bar.hidden=state.pages.length<2;const bs=state.bar.querySelectorAll('button');bs[0].disabled=state.index===0;bs[1].disabled=state.index>=state.pages.length-1;state.bar.querySelector('span').textContent='Page '+(state.index+1)+' of '+Math.max(1,state.pages.length);d.scrollTop=0;}
+ addEventListener('resize',()=>{for(const d of [menu,sound,details])paginate(d);const he=$('houseEffects064');if(he&&!he.hidden)paginate(he.querySelector('.he064-shell'));});
+ const he=$('houseEffects064');if(he)new MutationObserver(()=>requestAnimationFrame(()=>paginate(he.querySelector('.he064-shell'),true))).observe(he,{attributes:true,attributeFilter:['hidden'],subtree:true});
+ let returnFocus=landing,ownedPause=null,restore=[],currentRoute='Menu',history=[],returning=false,externalOpen=false,externalReturn='Sounds & Atmosphere';
+ function remember(route){if(route!==currentRoute&&!returning)history.push({route:currentRoute,page:pageState.get(currentRoute==='Menu'?menu:currentRoute==='Sounds & Atmosphere'?sound:details)?.index||0});currentRoute=route;}
+ function back(){const prev=history.pop();if(!prev){show(returnFocus);return;}returning=true;routes[prev.route]?.();returning=false;requestAnimationFrame(()=>{const d=currentRoute==='Menu'?menu:currentRoute==='Sounds & Atmosphere'?sound:details,state=pageState.get(d);if(state){state.index=Math.min(prev.page,state.pages.length-1);paintPage(d);}});}
+
+ const active=()=>!!(game&&game.phase&&!['lobby','waiting'].includes(game.phase)&&!$('game').classList.contains('hidden'));
+ const seated=()=>!!roomCode&&roomCode!=='OFFLINE';
+ const bidRequired=()=>window.HORBidRepair737?.required()||false;
+ function ownPause(){if(active()&&(isSoloPractice||roomCode==='OFFLINE')&&isHost&&!game.paused&&!['deal','score'].includes(game.phase)){const g=game;hostTogglePause();if(g.paused)ownedPause=g;}}
+ function releasePause(){if(externalOpen||[menu,sound,details].some(d=>d.open))return;if(ownedPause){const g=ownedPause;ownedPause=null;if(game===g&&isHost&&g.paused)hostTogglePause();}}
+ function close(d){if(d.open)d.close();}
+ function closeAll(){restoreControls();for(const d of [menu,sound,details])close(d);history=[];currentRoute='Menu';}
+ function open(d,from=returnFocus){returnFocus=from||landing;ownPause();for(const other of [menu,sound,details])if(other!==d)close(other);if(!d.open)d.showModal();d.querySelector('.house-back').hidden=d===menu;requestAnimationFrame(()=>paginate(d,true));landing.setAttribute('aria-expanded',String(menu.open));table?.setAttribute('aria-expanded',String(menu.open));}
+ function invoke(id){closeAll();$(id)?.click();}
+ function move(node,parent){if(!node)return;const marker=document.createComment('public-menu-control');node.before(marker);parent.append(node);restore.push(()=>{marker.replaceWith(node)});}
+ function restoreControls(){for(const n of details.querySelectorAll('[data-page-hidden]'))n.removeAttribute('data-page-hidden');for(const fn of restore.splice(0))fn();}
+ function detail(title){remember(title);restoreControls();details.querySelector('h2').textContent=title;details.setAttribute('aria-label',title);details.querySelector('.house-content').replaceChildren();open(details);return details.querySelector('.house-content');}
+ function action(parent,title,description,fn){const b=document.createElement('button');b.type='button';b.className='house-action';const name=document.createElement('b');name.textContent=title;b.append(name);if(description){const text=document.createElement('small');text.textContent=description;b.append(text);}b.onclick=fn;parent.append(b);return b;}
+ function note(parent,text){const p=document.createElement('p');p.className='house-note';p.textContent=text;if(currentRoute==='House Rules'){const m=text.match(/^(Teams & winning|Deal & bidding|First lead|Following color|Winning tricks|Special trump order|Card points|Nest & reveal|Scoring a bid|Shoot the Moon|Other table rules)\.\s*/);if(m){p.textContent=text.slice(m[0].length);const label=document.createElement('strong');label.className='house-rule-label';label.textContent=m[1];p.prepend(label);}}parent.append(p);}
+ function profile(){const body=detail('My Profile'),input=$('hor-player-name'),identity=input.parentNode.querySelector('.identity-choice'),label=document.querySelector('label[for="hor-player-name"]');move(label,body);move(input,body);move(identity,body);if(active())note(body,'Your name choice is saved for your next table.');action(body,'Choose a Favorite Partner','For your next offline game',()=>$('landingPartner783').click());action(body,'Save & Back','',()=>{input.dispatchEvent(new Event('change',{bubbles:true}));back();});}
+
+ function reference(title,source,hide){
+  const texts=[];
+  function read(n){if(n.matches?.('button,input,select,script,style'))return;if(n.matches?.('tr')){texts.push({text:[...n.children].map(c=>c.textContent.trim()).join(' · ')});return;}if(n.matches?.('p,li,h1,h2,h3,h4')||!n.children.length){const t=n.textContent.trim();if(t)texts.push({text:t,heading:n.matches?.('h1,h2,h3,h4')});return;}for(const c of n.children)read(c);}
+  read(source);hide();const body=detail(title);for(const item of texts){if(item.heading){const h=document.createElement('h3');h.className='house-rule-heading';h.textContent=item.text;body.append(h);continue;}const sentences=item.text.match(/[^.!?]+(?:[.!?]+(?=\s|$)|$)/g)||[item.text];let paragraph='';for(const sentence of sentences){if(paragraph&&(paragraph+' '+sentence).split(/\s+/).length>45){note(body,paragraph.trim());paragraph='';}paragraph+=(paragraph?' ':'')+sentence.trim();}if(paragraph)note(body,paragraph);} if(!texts.length)note(body,'No completed records yet.');
+ }
+ function rules(){ $('showRules')?.click();const source=$('rulesModal').querySelector('.rules-text');reference('House Rules',source,()=>$('rulesModal').classList.add('hidden'));}
+ function guide(){HORProgression.localCareer.showCareerGuide();const el=$('horCareerGuide');reference('Levels & awards guide',el,()=>el.style.display='none');}
+ function matchScore(){const body=detail('Match Score');note(body,`${$('scoreTeamNameA').textContent} ${$('scoreA').textContent} · ${$('scoreTeamNameB').textContent} ${$('scoreB').textContent}`);note(body,`First to ${$('targetDisplay').textContent}`);action(body,'Match statistics','Completed hands and results',()=>records('stats'));}
+ function records(kind){const id=kind==='stats'?'stats':'history';$(id==='stats'?'btnStats':'btnHistory')?.click();const modal=$(id+'Modal'),source=$(id==='stats'?'statsBody':'historyBody');reference(id==='stats'?'Match statistics':'Hand history',source,()=>modal.classList.add('hidden'));action(details.querySelector('.house-content'),'Copy scores','',()=>$(id==='stats'?'statsCopy':'historyCopy')?.click());}
+ function career(){const body=detail('My Career & Awards');action(body,'My career & achievement progress','Your level, statistics and earned awards',()=>{externalOpen=true;restoreControls();close(details);horShowMyCareer();});action(body,'Match statistics','Details from this game',()=>records('stats'));action(body,'Hand history','Review completed hands',()=>records('history'));action(body,'Levels & awards guide','Browse career requirements',guide);action(body,'Download career backup','Keep a copy of your saved progress',()=>HORProgression.protection.downloadBackup());action(body,'Restore career backup','Use your validated backup file',()=>HORProgression.localCareer.restoreCareerFromRecoveryCode());}
+ addEventListener('hor-career-card-closed',e=>{if(!externalOpen)return;externalOpen=false;if(e.detail?.back){returning=true;career();returning=false;}else closeAll();releasePause();});
+ function joinByCode(){if(active()||seated()){const body=detail('Join by Code');note(body,'Leave your current table before joining a different one. Your saved career stays on this device.');action(body,'Leave Table','Use the existing safe leave confirmation',()=>{closeAll();clientLeaveReplace();});}else invoke('joinBtn');}
+ function friends(){const body=detail('Play With Friends');if(active()||seated()){if(seated()){note(body,'Table '+roomCode);action(body,'Invite friends','Share this table invitation',()=>invoke('shareBtn'));action(body,'Invitation QR','Show the existing join code',()=>invoke('showQrBtn'));}else note(body,'You are playing at an offline table.');if(!active()&&isHost)action(body,'Table setup','Rules, teams and bot seats',tableSetup);if(active()&&seated()&&isHost){action(body,game.paused?'Resume table':'Pause table','Use the existing host confirmation',()=>invoke('btnPause'));if(!$('btnTransferHost').classList.contains('hidden'))action(body,'Transfer host','Use the existing host handoff',()=>invoke('btnTransferHost'));}note(body,'To host or join a different table, leave this table first.');action(body,'Leave Table','Use the existing safe leave confirmation',()=>{closeAll();clientLeaveReplace();});}else{action(body,'Host a table','Open a table for friends or fill seats with bots',()=>invoke('friendsToggleBtn'));action(body,'Join by Code','Enter an existing table code',joinByCode);}}
+ function tableSetup(){const body=detail('Game Setup');if(active()||(seated()&&!isHost)){note(body,active()?'Rules are locked for this game. Leave the table to set up a new game.':'The host chooses the table rules.');action(body,'View current rules','Selected score and options',rules);return;}syncOptionsUI();wireRuleOptionControls();wireTargetScoreUI();move($('targetScoreBlock'),body);move($('opt-include-red2')?.closest('label'),body);move($('opt-reveal-top-nest')?.closest('label'),body);note(body,'Red Two and Show Top Nest Card are on by default. Changes apply to the next game.');action(body,'More table rules','Other existing game variations',advancedRules);action(body,'View selected rules','How this table will play',rules);}
+ function advancedRules(){const body=detail('More table rules');if(active()||(seated()&&!isHost)){note(body,'Rules are locked for this game.');return;}syncOptionsUI();wireRuleOptionControls();for(const n of [...$('optPaneRules').children]){if(n.id==='targetScoreBlock'||n.querySelector?.('#opt-include-red2,#opt-reveal-top-nest,#opt-force-nest-reveal,#opt-experimental-hand')||n.matches?.('#opt-force-nest-reveal,label[for=opt-force-nest-reveal]')||/Host test only|perfect test deal|Bots only use public/.test(n.textContent))continue;move(n,body);}}
+ function how(){const body=detail('How to Play');action(body,'House rules','Bidding, scoring and Shoot the Moon',rules);action(body,'House Tour','Replay the existing guided tips',()=>invoke('replayTutorialBtn'));action(body,"I'm experienced",'Skip beginner tips for your player',()=>invoke('markMeExperiencedBtn'));}
+ const main=sound.querySelector('.house-content'),volume=document.createElement('div'),room=document.createElement('div');volume.hidden=true;room.hidden=true;adapters.append(volume,room);
+ const mute=$('toggleMuteLobby'),levels=$('horAudioLevels');if(mute)volume.append(mute);if(levels){for(const row of [...levels.children])if(row.matches('.hor-audio-row,.hor-audio-mute'))volume.append(row);levels.remove();}
+ const source=document.querySelector('.gh-menu-sound .gh-sound-panel');if(source){for(const el of [...source.children])if(el.tagName==='LABEL')room.append(el);source.querySelector('.option-hint')?.remove();const button=document.createElement('button');button.id='openSound805';button.type='button';button.textContent='Sounds & Atmosphere';button.onclick=()=>openSound(button);source.prepend(button);}
+ function volumes(){const body=detail('Volume Controls');for(const n of [...volume.children])move(n,body);}
+ function roomBalance(){const body=detail('Room Ambience');for(const n of [...room.children])if(n.querySelector('#opt-cabin-ambience,#opt-cabin-volume,#opt-fire-volume,#opt-owl-ambience'))move(n,body);for(const [key,title]of [['crickets','Crickets'],['thunder','Thunderstorms'],['rain','Rain'],['wolf','Distant wolf howl'],['bird','Outdoor birds'],['owl','Owls'],['wind','Wind']])action(body,title,'Volume'+(key==='thunder'||key==='crickets'?' and frequency':''),()=>ambientSound(key,title));}
+ function rangeControl(body,title,value,change){const label=document.createElement('label');label.className='house-sound-control';label.textContent=title+' ';const out=document.createElement('output'),slider=document.createElement('input');slider.type='range';slider.min='0';slider.max='100';slider.value=String(value);slider.setAttribute('aria-label',title);out.textContent=value+'%';slider.oninput=()=>{out.textContent=slider.value+'%';change(Number(slider.value));};label.append(out,slider);body.append(label);}
+ function ambientSound(key,title){routes[title]=()=>ambientSound(key,title);const body=detail(title),api=window.CabinAmbience041,values=api.settings();rangeControl(body,title+' volume',values[key],value=>api.setSound(key,value));note(body,'Set volume to 0% to turn this sound off. Your choice saves automatically.');if(key==='thunder'||key==='crickets'){const label=document.createElement('label');label.className='house-sound-control';label.textContent=key==='thunder'?'Time between storms':'Cricket frequency';const select=document.createElement('select');select.setAttribute('aria-label',label.textContent);const options=key==='thunder'?[[6,'Every 6 minutes'],[12,'Every 12 minutes (default)'],[24,'Every 24 minutes'],[60,'Every hour']]:[[.5,'Occasional: every 4–8 minutes'],[1,'Regular: every 2–4 minutes (default)'],[2,'Frequent: every 1–2 minutes']];for(const [value,text]of options){const o=new Option(text,value);select.append(o);}const pref=key==='thunder'?'stormMinutes':'cricketRate';select.value=String(values[pref]);select.onchange=()=>api.setSound(pref,Number(select.value));label.append(select);body.append(label);}note(body,key==='thunder'?'A short rain shower with distant thunder. Rain volume is controlled separately. Timers run during visible play and restart when you return.':'Outdoor sounds pause while the game is hidden. Wildlife waits until rain and other calls finish.');}
+ function effectControls(){const body=detail('Game & Character Effects');for(const n of [...room.children])if(!n.querySelector('#opt-cabin-ambience,#opt-cabin-volume,#opt-fire-volume,#opt-owl-ambience'))move(n,body);let v=100;try{const saved=localStorage.getItem('horMoonHowlVolumeV1');if(saved!==null)v=Number(saved)||0;}catch(_){}rangeControl(body,'Shoot the Moon wolf howl',v,value=>{try{localStorage.setItem('horMoonHowlVolumeV1',String(value));window.HORMoonHowl?.stop();}catch(_){}});action(body,'Sound variations & previews','Individual effect volumes and recordings',previews);}
+
+ function previews(){externalReturn=currentRoute;externalOpen=true;restoreControls();close(details);close(sound);$('openHouseEffects064').click();}
+ $('he064Done')?.addEventListener('click',()=>{if(!externalOpen)return;externalOpen=false;returning=true;routes[externalReturn]?.();returning=false;});
+ const heHead=$('houseEffects064')?.querySelector('.he064-head');if(heHead){const b=document.createElement('button');b.type='button';b.className='house-back';b.textContent='‹ Back';b.onclick=()=>$('he064Done').click();heHead.prepend(b);}
+ action(main,'Volume Controls','Master, voices, game effects, character effects and ambience',volumes);action(main,'Room Ambience','Fireplace and room balance',roomBalance);action(main,'Game & Character Effects','Turn tones, bird calls and the Moon howl',effectControls);action(main,'House Effects previews','Sound variations and individual volumes',previews);
+ function openSound(from=returnFocus){remember('Sounds & Atmosphere');if(!$('hostOptionsModal').classList.contains('hidden'))closeHostOptionsModal();open(sound,from);}
+ const routes={'Match Score':matchScore,'Join by Code':joinByCode,'Menu':()=>show(returnFocus),'My Profile':profile,'My Career & Awards':career,'Play With Friends':friends,'Sounds & Atmosphere':()=>openSound(),'Volume Controls':volumes,'Room Ambience':roomBalance,'Game & Character Effects':effectControls,'Game Setup':tableSetup,'More table rules':advancedRules,'How to Play':how,'House Rules':rules,'Levels & awards guide':guide,'Match statistics':()=>records('stats'),'Hand history':()=>records('history')};
+ // Latest owner-selected menu. This single definition is used at both triggers.
+ const definition=[
+  ['join','Join by Code',"Enter a friend's table code",'⌨',joinByCode],
+  ['score','Match Score','Running team scores and match statistics','♜',matchScore],
+  ['profile','My Profile','Your name, avatar and voice','◇',profile],
+  ['career','My Career & Awards','Level, statistics and achievement progress','★',career],
+  ['friends','Play With Friends','Host, join or invite friends','♧',friends],
+  ['sound','Sounds & Atmosphere','Voices, effects and the room around you','♪',()=>openSound()],
+  ['setup','Game Setup','Score to win and selected table rules','⚙',tableSetup],
+  ['rules','How to Play','Rules, bidding, scoring and the Moon','?',how],
+  ['install','Install on This Phone','Keep the House close at hand','↓',()=>invoke('installAppBtn')],
+  ['leave','Leave Table','Leave safely; saved progress stays','‹',()=>{closeAll();if(active()||seated())clientLeaveReplace();}],
+  ['owner','Owner Tools','Local development tools','⌘',()=>{if(!dev())return;closeAll();legacyOpen();}]
+ ];
+ const buttons=new Map();for(const [id,title,description,icon,fn]of definition){const b=document.createElement('button');b.type='button';b.dataset.houseAction=id;b.innerHTML='<span class="house-icon" aria-hidden="true"></span><span class="house-copy"><b></b><small></small></span><span class="house-chevron" aria-hidden="true">›</span>';b.querySelector('.house-icon').textContent=icon;if(id==='friends')b.querySelector('.house-icon').innerHTML='<svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="8" cy="7" r="3"/><circle cx="17" cy="8" r="2.5"/><path d="M2 20v-3a6 6 0 0 1 12 0v3zm13 0v-3a7 7 0 0 0-1-4c4-1 8 1 8 5v2z"/></svg>';b.querySelector('b').textContent=title;b.querySelector('small').textContent=description;b.onclick=fn;nav.append(b);buttons.set(id,b);}
+ function sync(){buttons.get('score').hidden=!active();buttons.get('owner').hidden=!dev();buttons.get('install').hidden=!$('installAppBtn')||$('installAppBtn').classList.contains('hidden');buttons.get('leave').hidden=!(active()||seated());if(bidRequired()){
+   const nativeOpen=menu.open||sound.open||details.open;
+   const career=$('horPublicCareerCard'),careerOpen=career&&getComputedStyle(career).display!=='none',previewOpen=$('houseEffects064')&&!$('houseEffects064').hidden;
+   const hadExternal=externalOpen||careerOpen||previewOpen;externalOpen=false;
+   if(careerOpen)career._horCareerClose?.();if(previewOpen)$('he064Done')?.click();
+   document.querySelectorAll('.identity-dialog[open]').forEach(d=>d.close());
+   if(nativeOpen||hadExternal)closeAll();releasePause();
+  }}
+ function show(from){if(bidRequired())return;remember('Menu');restoreControls();sync();if(!$('hostOptionsModal').classList.contains('hidden'))closeHostOptionsModal();open(menu,from);}
+ for(const trigger of [landing,table].filter(Boolean)){trigger.setAttribute('aria-haspopup','dialog');trigger.setAttribute('aria-controls','houseMenu805');trigger.addEventListener('click',e=>{e.preventDefault();e.stopImmediatePropagation();if(menu.open)close(menu);else show(trigger);},true);}
+ // Retired Settings entry routes to the remaining player preferences in My Profile.
+ openHostOptionsModal=()=>{if(dev())legacyOpen();else profile();};
+ $('hor-player-name').addEventListener('keydown',e=>{if(details.open&&e.key==='Enter'){e.preventDefault();e.stopImmediatePropagation();e.currentTarget.dispatchEvent(new Event('change',{bubbles:true}));back();}},true);
+ for(const d of [menu,sound,details]){d.querySelector('.visual-close805').onclick=closeAll;d.querySelector('.house-back').onclick=back;d.addEventListener('cancel',e=>{e.preventDefault();if(currentRoute==='Menu')closeAll();else back();});d.addEventListener('click',e=>{if(e.target!==d)return;const r=d.getBoundingClientRect();if(e.clientX<r.left||e.clientX>r.right||e.clientY<r.top||e.clientY>r.bottom){e.preventDefault();e.stopImmediatePropagation();closeAll();}});d.addEventListener('close',()=>{landing.setAttribute('aria-expanded',String(menu.open));table?.setAttribute('aria-expanded',String(menu.open));releasePause();if(![menu,sound,details].some(x=>x.open)&&returnFocus?.getClientRects().length)returnFocus.focus();});}
+ addEventListener('orientationchange',()=>{closeAll();document.querySelectorAll('.identity-dialog[open]').forEach(d=>d.close());});
+ details.addEventListener('change',()=>requestAnimationFrame(()=>paginate(details)));
+ setInterval(sync,200);sync();
+ window.HORHouseMenu805={open:()=>show(active()?table:landing),openSound,openCareer:career,close:closeAll,definition:definition.map(([id,title,description])=>({id,title,description})),ownerToolsAvailable:dev};
+}
+if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',init,{once:true});else init();
+})();
+
+/* Legacy list menus keep existing controls and handlers, with explicit pages instead of scrolling. */
+(()=>{'use strict';
+ for(const [modalId,bodyId,shellSelector] of [['historyModal','historyBody','.history-sheet'],['botPickerModal','botPickerGrid','.modal-content']]){
+  const modal=document.getElementById(modalId),body=document.getElementById(bodyId),shell=modal?.querySelector(shellSelector);if(!body||!shell)continue;
+  shell.classList.add('house-legacy-paged');body.classList.add('house-legacy-pagebody');
+  const nav=document.createElement('nav');nav.className='house-legacy-nav';nav.setAttribute('aria-label','Menu pages');nav.innerHTML='<button type="button">Previous</button><span role="status" aria-live="polite"></span><button type="button">Next</button>';body.after(nav);
+  const buttons=nav.querySelectorAll('button');let pages=[],page=0,frame=0;
+  function paint(){[...body.children].forEach((e,i)=>e.toggleAttribute('data-house-legacy-hidden',!pages[page]?.includes(i)));buttons[0].disabled=page===0;buttons[1].disabled=page>=pages.length-1;nav.querySelector('span').textContent='Page '+(page+1)+' of '+Math.max(1,pages.length);nav.hidden=pages.length<=1;}
+  function layout(reset=false){if(modal.classList.contains('hidden'))return;if(reset)page=0;const items=[...body.children];items.forEach(e=>e.removeAttribute('data-house-legacy-hidden'));nav.hidden=false;pages=[];let group=[],top=0;const available=Math.max(1,body.clientHeight-12);
+   for(let i=0;i<items.length;i++){const e=items[i],r=e.getBoundingClientRect();if(!group.length){top=r.top;group=[i];continue;}if(r.bottom-top>available+1){pages.push(group);group=[i];top=r.top;}else group.push(i);}
+   if(group.length)pages.push(group);page=Math.min(page,Math.max(0,pages.length-1));paint();}
+  function schedule(reset=false){cancelAnimationFrame(frame);frame=requestAnimationFrame(()=>layout(reset));}
+  buttons[0].onclick=()=>{page=Math.max(0,page-1);paint()};buttons[1].onclick=()=>{page=Math.min(pages.length-1,page+1);paint()};
+  new MutationObserver(()=>schedule(true)).observe(body,{childList:true});new MutationObserver(()=>schedule(true)).observe(modal,{attributes:true,attributeFilter:['class']});addEventListener('resize',()=>schedule());
+ }
+})();

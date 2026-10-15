@@ -1,0 +1,55 @@
+{
+  "source": "lid-inner.png",
+  "canvas": [
+    2187,
+    719
+  ],
+  "viewBox": [
+    57,
+    165,
+    2081,
+    412
+  ],
+  "panel": {
+    "left": 126,
+    "right": 2067,
+    "top": 244,
+    "bottom": 466,
+    "centerX": 1096.5,
+    "centerY": 355
+  },
+  "panelCorners": [
+    [
+      126,
+      244
+    ],
+    [
+      2067,
+      244
+    ],
+    [
+      2011,
+      466
+    ],
+    [
+      179,
+      466
+    ]
+  ],
+  "plaque": {
+    "file": "confirm-brass.png",
+    "nativeWidth": 2022,
+    "nativeHeight": 342,
+    "centerX": 1096.5,
+    "centerY": 355,
+    "width": 1000,
+    "height": 169.13946587537092,
+    "x": 596.5,
+    "y": 270.43026706231456
+  },
+  "measurementMethod": "Source-pixel tracing of the recessed face inside the wooden frame; excludes hinge occlusion and lower rail. Bounding midpoint per owner formula. Raster edge antialiasing gives +/-2 source-pixel tracing uncertainty.",
+  "centerErrorSourcePixels": [
+    0,
+    0
+  ]
+}

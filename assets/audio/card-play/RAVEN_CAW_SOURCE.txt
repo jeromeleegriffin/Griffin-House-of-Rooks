@@ -1,0 +1,10 @@
+Recorded corvid call for the special bird-card cue
+
+This short mono sample is decoded from the existing cabin ambience recording
+in cabin-ambience041.js. Its source attribution is recorded in
+assets/audio/cabin041/CC0_SOURCES.txt: “Crow Call” by qubodup, based on the
+CC0 crow.wav recording by nigelcoop, Freesound sound 813114. The CC0 source
+recording is an actual crow call in the raven family, not a separately sourced
+Common Raven recording. Runtime playback is reduced to 0.12 gain and is gated
+by the game's Rook sound and mute settings. The black Rook plays two calls;
+the Red 2 plays one.

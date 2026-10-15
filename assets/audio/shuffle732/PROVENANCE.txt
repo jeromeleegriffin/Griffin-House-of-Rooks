@@ -1,0 +1,4 @@
+Build732 audio is the approved731 mix, preserved as PCM at1x.
+Wash: krnfa, card mixing.wav, https://freesound.org/people/krnfa/sounds/413639/ — CC0 1.0. Contiguous excerpt1.55–3.20 seconds, gain0.65, placed0.18 seconds. Surface unspecified; not verified felt. Replaces rejected business-card rubbing sound.
+Riffle/bridge: SomeoneCool15, https://freesound.org/people/SomeoneCool15/sounds/423767/ — CC0; inherited approved729 mix:2.6-second sequence starting2.5 seconds, gain0.7, short endpoint fades. Second sequence belongs to bridge release, not squaring.
+2x/3x/4x files use ffmpeg atempo pitch-preserving compression. MAX uses no shuffle audio.

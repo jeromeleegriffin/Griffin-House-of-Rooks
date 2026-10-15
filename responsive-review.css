@@ -1,0 +1,31 @@
+/* Isolated responsive repair. Approved phone furniture and all artwork unchanged. */
+@media (orientation:portrait) and (min-width:429px) {
+ body.in-game #decisionConsole.approved-bid-portrait.decision-mode-bid:not(.hidden) {
+  left:var(--responsive-dock-left,calc(50% - 210px))!important;
+  bottom:var(--responsive-dock-bottom,120px)!important;
+ }
+ body.in-game .hand-area #trickPtsBar {
+  top:var(--responsive-pot-top,-28px)!important;
+ }
+}
+/* Centered overflowing flex rows put the first cards beyond the scroll origin.
+   Start alignment keeps every card reachable without changing selection logic. */
+@media (orientation:landscape) {
+ body.in-game #discardOverlay.landscape-discard-overlay .discard-color-row {
+  grid-template-columns:55px minmax(0,1fr)!important;
+ }
+ body.in-game #discardOverlay.landscape-discard-overlay .discard-color-cards {
+  justify-content:flex-start!important;min-width:0!important;
+  padding:5px 3px!important;touch-action:pan-x pan-y;
+  scroll-padding:3px;overscroll-behavior-x:contain;
+ }
+}
+/* Larger touch targets only on tablet CSS widths; phone pixels stay locked. */
+@media (min-width:429px) and (orientation:portrait) {
+ body.in-game #scoreSpeed701 button, body.in-game #portraitLastTrickButton,
+ body.in-game #btnScoreCollapse {min-height:40px!important;}
+}
+/* Reparented navigation retains its screen ownership and comfortable targets. */
+body:not(.in-game) > .in-game-leave{display:none!important}
+body.in-game > .in-game-leave{display:flex;flex-direction:column;gap:4px}
+body.in-game > .in-game-leave button{width:44px!important;height:44px!important;min-width:44px!important;min-height:44px!important}

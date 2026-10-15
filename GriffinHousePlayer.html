@@ -1,0 +1,437 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#14281c">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<title>Griffin House Player</title>
+<style>
+  :root {
+    --felt: #163224;
+    --felt-deep: #0d1c14;
+    --gold: #d7b15a;
+    --gold-dim: #8d7340;
+    --cream: #f4ecd8;
+    --ink: #1a140c;
+    --line: rgba(215, 177, 90, .35);
+  }
+  * { box-sizing: border-box; }
+  html, body { margin: 0; height: 100%; background: var(--felt-deep); color: var(--cream); font-family: Georgia, "Times New Roman", serif; }
+  button, input { font: inherit; }
+  body { min-height: 100%; }
+  .home {
+    min-height: 100%;
+    display: flex;
+    flex-direction: column;
+    padding: calc(22px + env(safe-area-inset-top)) 22px calc(22px + env(safe-area-inset-bottom));
+    background:
+      radial-gradient(1200px 500px at 50% -10%, rgba(215,177,90,.16), transparent 55%),
+      linear-gradient(180deg, #1c3a28 0%, var(--felt-deep) 70%);
+  }
+  .mark {
+    width: 74px; height: 74px; margin: 18px auto 8px;
+    border: 1px solid var(--gold);
+    border-radius: 50%;
+    display: grid; place-items: center;
+    color: var(--gold);
+    letter-spacing: .18em;
+    font-size: 13px;
+  }
+  h1 { text-align: center; font-weight: 500; letter-spacing: .14em; font-size: 22px; margin: 8px 0 4px; }
+  .sub { text-align: center; color: #cbb98a; font-size: 14px; margin: 0 0 22px; letter-spacing: .04em; }
+  label { display: block; font-size: 12px; letter-spacing: .12em; color: var(--gold); margin: 14px 0 6px; }
+  input[type="url"] {
+    width: 100%;
+    background: rgba(0,0,0,.28);
+    color: var(--cream);
+    border: 1px solid var(--line);
+    border-radius: 10px;
+    padding: 12px 12px;
+    font-size: 15px;
+  }
+  .actions { display: flex; flex-direction: column; gap: 10px; margin-top: 18px; }
+  button.main, button.alt {
+    border-radius: 12px;
+    padding: 14px 16px;
+    letter-spacing: .08em;
+    cursor: pointer;
+  }
+  button.main { background: var(--gold); color: var(--ink); border: 0; font-weight: 700; }
+  button.alt { background: transparent; color: var(--cream); border: 1px solid var(--line); }
+  button:active { transform: translateY(1px); }
+  .lists { display: flex; flex-direction: column; gap: 14px; margin-top: 16px; }
+  .pile { border: 1px solid var(--line); border-radius: 12px; padding: 10px; }
+  .pile h2 { margin: 0 0 8px; font-size: 13px; letter-spacing: .12em; font-weight: 500; color: var(--gold); }
+  .pile button.file {
+    display: block; width: 100%; text-align: left; margin-top: 6px;
+    background: rgba(0,0,0,.25); color: var(--cream); border: 0; border-radius: 8px; padding: 10px;
+  }
+  .row { display: flex; gap: 6px; margin-top: 6px; }
+  .row button { flex: 1; }
+  .hidden-file { position: absolute; left: -9999px; width: 1px; height: 1px; }
+  .stage { position: fixed; inset: 0; background: #000; display: none; flex-direction: column; }
+  .stage.on { display: flex; }
+  .bar {
+    height: calc(48px + env(safe-area-inset-top));
+    padding-top: env(safe-area-inset-top);
+    display: flex; align-items: center; gap: 8px;
+    background: rgba(13, 28, 20, .94);
+    border-bottom: 1px solid var(--line);
+    padding-left: 8px; padding-right: 8px;
+    z-index: 2;
+  }
+  .bar button {
+    background: transparent; color: var(--gold); border: 1px solid var(--line);
+    border-radius: 8px; padding: 7px 10px; font-size: 13px; letter-spacing: .06em;
+  }
+  .bar .title { flex: 1; text-align: center; font-size: 13px; letter-spacing: .12em; color: var(--cream); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  iframe, .local-frame { flex: 1; width: 100%; border: 0; background: #111; }
+  .toast {
+    position: fixed; left: 16px; right: 16px; bottom: calc(16px + env(safe-area-inset-bottom));
+    background: #24180c; color: var(--cream); border: 1px solid var(--gold-dim);
+    border-radius: 10px; padding: 12px 14px; display: none; z-index: 5; font-size: 14px;
+  }
+</style>
+</head>
+<body>
+  <section class="home" id="home">
+    <div class="mark">ROOK</div>
+    <h1>GRIFFIN HOUSE</h1>
+    <p class="sub">Pick the zip in Downloads. It finds index.html.</p>
+    <div class="actions">
+      <button class="main" id="scanDownloads" type="button">SCAN DOWNLOADS</button>
+      <button class="alt" id="pickZip" type="button">OPEN ONE ZIP</button>
+      <button class="alt" id="playSite" type="button">PLAY WEBSITE</button>
+    </div>
+    <div class="lists" id="lists"></div>
+    <label for="site">GAME WEBSITE</label>
+    <input id="site" type="url" inputmode="url" autocomplete="url" value="https://jeromeleegriffin.github.io/Test/">
+    <p class="note">Scan Downloads asks once for the Downloads folder, then splits files into Grok and ChatGPT. Each list is newest first, with the date and time on the row. Tap a zip to play it. Names with grok or griffin go to Grok. Names with chatgpt, gpt, or openai go to ChatGPT. Anything else stays unsorted until you file it.</p>
+    <input class="hidden-file" id="zipFile" type="file" accept=".zip,application/zip">
+    <input class="hidden-file" id="downloadFolder" type="file" webkitdirectory multiple>
+  </section>
+
+  <section class="stage" id="stage">
+    <div class="bar">
+      <button type="button" id="back">HOME</button>
+      <div class="title" id="stageTitle">HOUSE OF ROOKS</div>
+      <button type="button" id="reload">FRESH</button>
+    </div>
+    <iframe id="frame" title="Griffin House of Rooks" allow="fullscreen; clipboard-read; clipboard-write" referrerpolicy="no-referrer-when-downgrade"></iframe>
+  </section>
+  <div class="toast" id="toast"></div>
+
+<script>
+(function () {
+  var SITE_KEY = "griffin-house-player-site";
+  var siteInput = document.getElementById("site");
+  var home = document.getElementById("home");
+  var stage = document.getElementById("stage");
+  var stageTitle = document.getElementById("stageTitle");
+  var frameHost = document.querySelector(".stage");
+  var frame = document.getElementById("frame");
+  var blobs = [];
+  var lastLocalHtml = "";
+  var saved = localStorage.getItem(SITE_KEY);
+  if (saved) siteInput.value = saved;
+
+  function toast(msg) {
+    var el = document.getElementById("toast");
+    el.textContent = msg;
+    el.style.display = "block";
+    clearTimeout(toast._t);
+    toast._t = setTimeout(function () { el.style.display = "none"; }, 4600);
+  }
+
+  function dropBlobs() {
+    blobs.forEach(function (url) { try { URL.revokeObjectURL(url); } catch (e) {} });
+    blobs = [];
+  }
+
+  function newFrame() {
+    var next = document.createElement("iframe");
+    next.id = "frame";
+    next.title = "Griffin House of Rooks";
+    next.setAttribute("allow", "fullscreen; clipboard-read; clipboard-write");
+    next.referrerPolicy = "no-referrer";
+    if (frame && frame.parentNode) frame.parentNode.replaceChild(next, frame);
+    else frameHost.appendChild(next);
+    frame = next;
+    return frame;
+  }
+
+  function wipePlayerCache() {
+    var jobs = [];
+    if (window.caches && caches.keys) {
+      jobs.push(caches.keys().then(function (keys) {
+        return Promise.all(keys.map(function (key) { return caches.delete(key); }));
+      }).catch(function () {}));
+    }
+    if (navigator.serviceWorker && navigator.serviceWorker.getRegistrations) {
+      jobs.push(navigator.serviceWorker.getRegistrations().then(function (regs) {
+        return Promise.all(regs.map(function (reg) { return reg.unregister(); }));
+      }).catch(function () {}));
+    }
+    return Promise.all(jobs);
+  }
+
+  function guard(html) {
+    var block = "<script>try{if(navigator.serviceWorker){navigator.serviceWorker.register=function(){return Promise.reject(new Error('player blocked service worker'));};navigator.serviceWorker.getRegistrations&&navigator.serviceWorker.getRegistrations().then(function(rs){rs.forEach(function(r){r.unregister();});});}if(window.caches&&caches.keys){caches.keys().then(function(keys){keys.forEach(function(k){caches.delete(k);});});}}catch(e){}<\/script>";
+    if (/<head[^>]*>/i.test(html)) return html.replace(/<head[^>]*>/i, function (tag) { return tag + block; });
+    return block + html;
+  }
+
+  function showStage(title) {
+    stageTitle.textContent = title;
+    home.style.display = "none";
+    stage.classList.add("on");
+  }
+
+  function showHome() {
+    dropBlobs();
+    lastLocalHtml = "";
+    newFrame();
+    stage.classList.remove("on");
+    home.style.display = "flex";
+    wipePlayerCache();
+  }
+
+  function freshUrl(url) {
+    var u = new URL(url);
+    u.searchParams.set("fresh", String(Date.now()));
+    return u.toString();
+  }
+
+  function playSite() {
+    var url = (siteInput.value || "").trim();
+    if (!/^https?:\/\//i.test(url)) {
+      toast("Enter a full website address, starting with https://");
+      return;
+    }
+    localStorage.setItem(SITE_KEY, url);
+    dropBlobs();
+    lastLocalHtml = "";
+    wipePlayerCache().then(function () {
+      showStage("WEBSITE");
+      newFrame().src = freshUrl(url);
+      toast("Opened with a fresh address. The live site still has its own service worker.");
+    });
+  }
+
+  function openLocal(html, title) {
+    var page = URL.createObjectURL(new Blob([guard(html)], { type: "text/html" }));
+    blobs.push(page);
+    lastLocalHtml = html;
+    wipePlayerCache().then(function () {
+      showStage(title);
+      newFrame().src = page;
+    });
+  }
+
+  var SORT_KEY = "griffin-house-player-sort";
+  var sortMap = {};
+  try { sortMap = JSON.parse(localStorage.getItem(SORT_KEY) || "{}"); } catch (e) { sortMap = {}; }
+
+  function bucketFor(name) {
+    var savedBucket = sortMap[name];
+    if (savedBucket) return savedBucket;
+    var n = name.toLowerCase();
+    if (/grok|griffin|xai/.test(n)) return "grok";
+    if (/chatgpt|openai|\bgpt\b|gpt-/.test(n)) return "chatgpt";
+    return "other";
+  }
+
+  function remember(name, bucket) {
+    sortMap[name] = bucket;
+    localStorage.setItem(SORT_KEY, JSON.stringify(sortMap));
+  }
+
+  var scanned = [];
+
+  function renderLists() {
+    var lists = document.getElementById("lists");
+    lists.innerHTML = "";
+    var groups = [
+      ["grok", "GROK"],
+      ["chatgpt", "CHATGPT"],
+      ["other", "UNSORTED"]
+    ];
+    groups.forEach(function (group) {
+      var items = scanned.filter(function (item) { return bucketFor(item.name) === group[0]; });
+      items.sort(function (a, b) { return (b.file.lastModified || 0) - (a.file.lastModified || 0); });
+      if (!items.length) return;
+      var pile = document.createElement("div");
+      pile.className = "pile";
+      var title = document.createElement("h2");
+      title.textContent = group[1] + " (" + items.length + ")";
+      pile.appendChild(title);
+      items.forEach(function (item) {
+        var open = document.createElement("button");
+        open.className = "file";
+        open.type = "button";
+        var when = item.file.lastModified ? new Date(item.file.lastModified).toLocaleString() : "no date";
+        open.textContent = when + "  \u2014  " + item.name;
+        open.addEventListener("click", function () {
+          if (!/\.zip$/i.test(item.name)) { toast("Only a zip can be played from here."); return; }
+          item.file.arrayBuffer().then(function (buf) { return playZipBuffer(buf, item.name); }).catch(function (err) {
+            toast(err && err.message ? err.message : "Could not open that zip.");
+          });
+        });
+        pile.appendChild(open);
+        if (group[0] === "other") {
+          var row = document.createElement("div");
+          row.className = "row";
+          ["grok", "chatgpt"].forEach(function (bucket) {
+            var move = document.createElement("button");
+            move.className = "alt";
+            move.type = "button";
+            move.textContent = bucket === "grok" ? "FILE AS GROK" : "FILE AS CHATGPT";
+            move.addEventListener("click", function () { remember(item.name, bucket); renderLists(); });
+            row.appendChild(move);
+          });
+          pile.appendChild(row);
+        }
+      });
+      lists.appendChild(pile);
+    });
+  }
+
+  function addScanned(fileList) {
+    scanned = Array.prototype.slice.call(fileList).map(function (file) {
+      return { name: file.name, file: file };
+    }).sort(function (a, b) { return b.file.lastModified - a.file.lastModified; });
+    renderLists();
+    toast(scanned.length + " files split into Grok and ChatGPT.");
+  }
+
+  async function scanDownloads() {
+    if (window.showDirectoryPicker) {
+      try {
+        var dir = await window.showDirectoryPicker({ mode: "read", startIn: "downloads" });
+        var found = [];
+        for await (var entry of dir.values()) {
+          if (entry.kind === "file") found.push(await entry.getFile());
+        }
+        addScanned(found);
+        return;
+      } catch (err) {
+        if (err && err.name === "AbortError") return;
+      }
+    }
+    document.getElementById("downloadFolder").click();
+  }
+
+  document.getElementById("scanDownloads").addEventListener("click", function () { scanDownloads(); });
+  document.getElementById("downloadFolder").addEventListener("change", function (ev) {
+    addScanned(ev.target.files || []);
+    ev.target.value = "";
+  });
+
+  document.getElementById("pickZip").addEventListener("click", function () {
+    document.getElementById("zipFile").click();
+  });
+
+  function mimeFor(name) {
+    var ext = (name.split(".").pop() || "").toLowerCase();
+    var map = {
+      html: "text/html", htm: "text/html", js: "text/javascript", mjs: "text/javascript",
+      css: "text/css", json: "application/json", svg: "image/svg+xml",
+      png: "image/png", jpg: "image/jpeg", jpeg: "image/jpeg", gif: "image/gif",
+      webp: "image/webp", webm: "video/webm", mp3: "audio/mpeg", wav: "audio/wav",
+      woff: "font/woff", woff2: "font/woff2", txt: "text/plain", xml: "application/xml"
+    };
+    return map[ext] || "application/octet-stream";
+  }
+
+  function inflateRaw(bytes) {
+    if (typeof DecompressionStream !== "function") return Promise.reject(new Error("This phone cannot unpack a zip."));
+    var stream = new Blob([bytes]).stream().pipeThrough(new DecompressionStream("deflate-raw"));
+    return new Response(stream).arrayBuffer().then(function (buf) { return new Uint8Array(buf); });
+  }
+
+  function readZip(buf) {
+    var view = new DataView(buf);
+    var jobs = [];
+    var offset = 0;
+    while (offset + 30 < buf.byteLength) {
+      if (view.getUint32(offset, true) !== 0x04034b50) break;
+      var flags = view.getUint16(offset + 6, true);
+      var method = view.getUint16(offset + 8, true);
+      var compSize = view.getUint32(offset + 18, true);
+      var nameLen = view.getUint16(offset + 26, true);
+      var extraLen = view.getUint16(offset + 28, true);
+      var name = new TextDecoder().decode(new Uint8Array(buf, offset + 30, nameLen));
+      var dataStart = offset + 30 + nameLen + extraLen;
+      if (flags & 8) throw new Error("That zip has no file sizes in the header. Re-save it and try again.");
+      var comp = new Uint8Array(buf.slice(dataStart, dataStart + compSize));
+      if (!name.endsWith("/")) {
+        jobs.push((function (entryName, compressed, entryMethod) {
+          return (entryMethod === 0 ? Promise.resolve(compressed) : inflateRaw(compressed)).then(function (data) {
+            return { name: entryName, data: data };
+          });
+        })(name, comp, method));
+      }
+      offset = dataStart + compSize;
+    }
+    return Promise.all(jobs).then(function (items) {
+      var files = {};
+      items.forEach(function (item) { files[item.name.replace(/\\/g, "/")] = item.data; });
+      return files;
+    });
+  }
+
+  function rewriteHtml(html, urlFor) {
+    return html.replace(/(src|href)=(["'])([^"']+)\2/gi, function (all, attr, quote, value) {
+      if (/^(https?:|data:|blob:|mailto:|#|\/\/)/i.test(value)) return all;
+      var next = urlFor(value);
+      return next ? attr + "=" + quote + next + quote : all;
+    });
+  }
+
+  function playZipBuffer(buf, label) {
+    toast("Reading " + label + "\u2026");
+    return readZip(buf).then(function (files) {
+      var indexes = Object.keys(files).filter(function (name) {
+        return /(^|\/)index\.html$/i.test(name);
+      }).sort(function (a, b) { return a.length - b.length; });
+      if (!indexes.length) throw new Error("No index.html in that zip.");
+      var indexPath = indexes[0];
+      var root = indexPath.replace(/index\.html$/i, "");
+      dropBlobs();
+      var map = {};
+      Object.keys(files).forEach(function (name) {
+        if (root && name.indexOf(root) !== 0) return;
+        var rel = name.slice(root.length);
+        var url = URL.createObjectURL(new Blob([files[name]], { type: mimeFor(rel) }));
+        blobs.push(url);
+        map[rel] = url;
+      });
+      function urlFor(value) {
+        var clean = value.split("#")[0].split("?")[0].replace(/^\.\//, "");
+        return map[clean] || map[clean.replace(/^\/+/, "")] || "";
+      }
+      openLocal(rewriteHtml(new TextDecoder().decode(files[indexPath]), urlFor), label.toUpperCase());
+    });
+  }
+
+  document.getElementById("zipFile").addEventListener("change", function (ev) {
+    var file = ev.target.files && ev.target.files[0];
+    ev.target.value = "";
+    if (!file) return;
+    file.arrayBuffer().then(function (buf) { return playZipBuffer(buf, file.name); }).catch(function (err) {
+      toast(err && err.message ? err.message : "Could not open that zip.");
+    });
+  });
+
+  document.getElementById("playSite").addEventListener("click", playSite);
+  document.getElementById("back").addEventListener("click", showHome);
+  document.getElementById("reload").addEventListener("click", function () {
+    if (lastLocalHtml) openLocal(lastLocalHtml, stageTitle.textContent);
+    else if (frame && frame.src && frame.src.indexOf("http") === 0) playSite();
+  });
+})();
+</script>
+</body>
+</html>

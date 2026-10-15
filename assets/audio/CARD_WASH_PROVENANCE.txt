@@ -1,0 +1,10 @@
+ROOK035 card audio: Using playing cards by Magnesus.
+https://freesound.org/people/Magnesus/sounds/749323/
+CC0 1.0: https://creativecommons.org/publicdomain/zero/1.0/
+Commercial use and modification permitted; credit not required.
+Owner identified wash around 1:36 and dealing around 0:55.
+Wash source 94.5–99.0 seconds; deal source 55.88–56.22.
+Approved softened preview processing: highpass, noise reduction, treble reduction, fades, volume adjustment.
+Pitch-preserving tempo edits fit 1x, 3x and MAX; single-card tail shortened.
+Recorded from creator-provided high-quality MP3 preview.
+ROOK034 Kenney recording replaced; no Kenney audio used by ROOK035 portrait shuffle.

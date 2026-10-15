@@ -1,0 +1,20 @@
+{
+  "renderer": "Blender 4.5.3 Cycles",
+  "fps": 30,
+  "frames": 168,
+  "durationMs": 5600,
+  "playback1xMs": 5600,
+  "cornerHingeM": 0.029,
+  "tile": [
+    384,
+    384
+  ],
+  "atlasGrid": [
+    3,
+    4
+  ],
+  "atlases": 14,
+  "maxDecodedAtlasBytes": 14155776,
+  "assetBytes": 1881351,
+  "sourceArtSha256": "0c631917b589471cb84583f28b59bba67eeb4036f294d6065492b8c92412d45d"
+}

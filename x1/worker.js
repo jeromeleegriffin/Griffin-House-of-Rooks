@@ -1,0 +1,4 @@
+'use strict';
+importScripts('core.js','sha256.js','bidding.js');
+self.onmessage=function(e){let {id,v,payload}=e.data;try{if(e.data.type==='bid'||e.data.type==='bidJump'){const t=performance.now(),result=e.data.type==='bidJump'?X1Bidding.decideJump(v):X1Bidding.decide(v);self.postMessage({id,result,ms:performance.now()-t});return;}let allowed=new Set(['h','tc','ts','tr','seat','bidder','bid','points','played','nest','voids','partnerMask']);if(Object.keys(v).some(k=>!allowed.has(k)))throw Error('unauthorized X1 input field');let bytes=x1SHA256(payload),seed=0n;for(let i=7;i>=0;i--)seed=(seed<<8n)|BigInt(bytes[i]);v.seed=String(seed);let t=performance.now(),r=X1Core.choose(v);self.postMessage({id,...r,seed:String(seed),ms:performance.now()-t});}catch(e){self.postMessage({id,error:String(e)});}};
+self.postMessage({ready:true});

@@ -1,0 +1,65 @@
+/* Isolated Build 740 Laid Down candidate. Portrait only; no scoreboard rules. */
+@media (orientation: portrait) {
+ #scoreModal.showing-remaining .modal-content.scoreboard-modal {
+  background: radial-gradient(ellipse at 50% 0%,rgba(193,120,40,.16),transparent 65%),
+   repeating-linear-gradient(3deg,rgba(4,1,0,.12) 0 2px,transparent 2px 8px),
+   linear-gradient(90deg,#28150c,#462618 2%,#22180f 5%,#22180f 95%,#462618 98%,#28150c) !important;
+  border-color: #bc9450 !important;
+  box-shadow: inset 0 0 0 2px #20130b,inset 0 0 0 4px #77603a,0 8px 28px #0009 !important;
+ }
+ #scoreModal.showing-remaining .claim-remaining-player {
+  border: 2px solid #664023 !important;
+  background: radial-gradient(ellipse at 35% 0%,#13573566,transparent 75%),
+   repeating-radial-gradient(circle at 10% 20%,#ffffff05 0 .5px,transparent .5px 2px),
+   linear-gradient(155deg,#09321f,#041b12) !important;
+  box-shadow: inset 0 0 0 1px #b08b43,inset 0 0 0 3px #24150b,0 3px 7px #0008 !important;
+ }
+ #scoreModal.showing-remaining .claim-remaining-player.is-laid-winner {
+  border-color: #d8b657 !important;
+  box-shadow: 0 0 0 1px #f0d183,inset 0 0 0 1px #ebca6a,inset 0 0 0 3px #664322,0 0 10px #d7a23b40 !important;
+ }
+ #scoreModal.showing-remaining .claim-remaining-player-title {
+  min-height: 24px;
+  color: #f4e3b6 !important;
+  gap: 3px !important;
+ }
+ #scoreModal.showing-remaining .claim-remaining-player-title span { opacity: 1 !important; }
+ #scoreModal.showing-remaining .cr-team { display: flex; align-items: center; gap: 3px; font-size: .68rem; }
+ #scoreModal.showing-remaining .cr-team::before {
+  content: ''; display: inline-block; flex: 0 0 22px; width: 22px; height: 22px;
+  background: center / contain no-repeat; pointer-events: none;
+ }
+ #scoreModal.showing-remaining [data-team="griffin"] .cr-team::before { background-image: url('assets/images/griffin-icon.png'); }
+ #scoreModal.showing-remaining [data-team="raven"] .cr-team::before { background-image: url('assets/images/avatar-raven-approved.jpg'); border-radius: 50%; }
+ #scoreModal.showing-remaining .winner-tag {
+  background: linear-gradient(#f4d778,#c39831) !important; color: #211708 !important;
+  box-shadow: inset 0 1px 0 #fff3; font-size: .63rem !important;
+ }
+ /* The PNG owns its border. Remove only the obsolete numbered-face wrapper. */
+ #scoreModal.showing-remaining .claim-remaining-card:has(.numbered-card-img) {
+  border: 0 !important; padding: 0 !important; border-radius: 3px !important;
+  background: transparent !important; box-shadow: 0 2px 4px #0008 !important;
+  overflow: visible !important; transform: none !important;
+ }
+ #scoreModal.showing-remaining .claim-remaining-card .c-stack.numbered-asset-stack {
+  inset: 0 !important; width: 100% !important; height: 100% !important;
+  margin: 0 !important; padding: 0 !important; transform: none !important;
+ }
+ #scoreModal.showing-remaining .claim-remaining-card .numbered-card-img {
+  inset: 0 !important; object-fit: contain !important; object-position: center !important;
+  width: 100% !important; height: 100% !important;
+ }
+ #scoreModal.showing-remaining .score-modal-actions .btn {
+  font-family: Georgia,serif !important;
+  font-size: clamp(10px,3vw,13px) !important; font-weight: 700 !important;
+  line-height: 1.14 !important; min-height: 44px !important;
+  padding: 5px 3px !important; overflow-wrap: normal !important; word-break: normal !important;
+  text-wrap: balance; border-color: #b99550 !important;
+  background: linear-gradient(#183e5e,#081b32) !important;
+  box-shadow: inset 0 1px 0 #ffffff25,0 3px 5px #0005 !important;
+ }
+ #scoreModal.showing-remaining #scoreModalRevealHands { white-space: nowrap !important; }
+ #scoreModal.showing-remaining #scoreModalNext {
+  color: #261b0a !important; background: linear-gradient(#edcf70,#a17424) !important;
+ }
+}

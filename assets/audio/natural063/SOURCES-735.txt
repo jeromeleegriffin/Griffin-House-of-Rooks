@@ -1,0 +1,2 @@
+smoothcard735-01.wav: existing owner-supplied MellowAudio paper-02.wav recording, gently low-pass filtered at 3400 Hz with 25 ms edge fades. Same sample, volume and playback rate on select and deselect. Original recording attribution remains in SOURCES.txt.
+Bid up/down: original 200 ms sine cues with smooth envelopes and restrained second harmonic; fixed rising 250–330 Hz / falling 330–250 Hz. No random variation. Existing sound mute/category/gain controls preserved.

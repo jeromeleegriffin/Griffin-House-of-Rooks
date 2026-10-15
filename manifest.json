@@ -11,25 +11,25 @@
   "orientation": "any",
   "icons": [
     {
-      "src": "icon-192.png",
+      "src": "assets/images/house-of-rooks-192.png?v=805-ownerreview",
       "sizes": "192x192",
       "type": "image/png",
       "purpose": "any"
     },
     {
-      "src": "icon-512.png",
+      "src": "assets/images/house-of-rooks-512.png?v=805-ownerreview",
       "sizes": "512x512",
       "type": "image/png",
       "purpose": "any"
     },
     {
-      "src": "icon-192-maskable.png",
+      "src": "assets/images/house-of-rooks-192-maskable.png?v=805-ownerreview",
       "sizes": "192x192",
       "type": "image/png",
       "purpose": "maskable"
     },
     {
-      "src": "icon-512-maskable.png",
+      "src": "assets/images/house-of-rooks-512-maskable.png?v=805-ownerreview",
       "sizes": "512x512",
       "type": "image/png",
       "purpose": "maskable"

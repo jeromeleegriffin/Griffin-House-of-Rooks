@@ -1,0 +1,6 @@
+#horAudioLevels{border:1px solid #8b7548;border-radius:9px;padding:12px;margin:10px 0;color:#f3e6cf;min-width:0}
+#horAudioLevels legend{font-weight:700;padding:0 6px}
+#horAudioLevels .hor-audio-row{display:grid;grid-template-columns:minmax(0,1fr) auto;gap:3px 10px;margin:9px 0;white-space:normal}
+#horAudioLevels input[type=range]{grid-column:1/-1;display:block;width:100%;max-width:100%;min-height:32px;accent-color:#d3ad55;margin:0}
+#horAudioLevels .hor-audio-mute{display:flex;align-items:center;gap:10px;min-height:44px}
+#horAudioLevels small{display:block;line-height:1.45;white-space:normal;overflow-wrap:anywhere}

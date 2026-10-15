@@ -456,7 +456,7 @@
     if (window._horTurnAlerted) return;
     window._horTurnAlerted = true;
     try { if (typeof playSfx === 'function') playSfx('turn', { broadcastNet: false }); } catch (e) {}
-    try { if (navigator.vibrate) navigator.vibrate([40, 40, 40]); } catch (e) {}
+    try { if (!window.HORHolderCues789 && navigator.vibrate) navigator.vibrate([40, 40, 40]); } catch (e) {}
   }
 
   function stripHostPeek() {
@@ -574,11 +574,6 @@
     const theme = ROOM_THEMES[id] ? id : 'midnight';
     Object.keys(ROOM_THEMES).forEach((k) => document.body.classList.remove('room-theme-' + k));
     document.body.classList.add('room-theme-' + theme);
-    document.querySelectorAll('.room-theme-btn').forEach((b) => {
-      b.classList.toggle('active', b.getAttribute('data-theme') === theme);
-    });
-    const hint = $('roomThemeHint');
-    if (hint) hint.textContent = ROOM_THEMES[theme];
     if (persist !== false) savePrefs({ roomTheme: theme });
     /* room theme class only */
   }
@@ -617,14 +612,12 @@
       ruleVariant,
       includeOnes, includeRed2, includeRed1, includeRook, rookLowest,
       red2Points, minBid, targetScore, specialsAnytime, mustTrumpWhenVoid,
-      bidOnlyScoring, sandbagging, nestGoesTo, leadOrder,
+      bidOnlyScoring, nestGoesTo, leadOrder,
       misdealOnNoCounters, screwTheDealer, comebackSpecialChance, openWidow, revealTopNest, shootMoonEnabled,
       teamNameA: houseTeamA,
       teamNameB: houseTeamB,
       luckySpecialsEnabled, luckySpecialsMode, luckySpecialsBoost,
       experimentalHandOpt,
-      buyBeerBots,
-      whisperHumans,
       roomTheme: loadPrefs().roomTheme || 'midnight',
       gfx: loadGfx(),
       gfxRev: 2,
@@ -645,11 +638,10 @@
     if (typeof p.rookLowest === 'boolean') rookLowest = p.rookLowest;
     if (p.red2Points) red2Points = p.red2Points;
     if (p.minBid) minBid = p.minBid;
-    if (p.targetScore) targetScore = p.targetScore;
+    if (p.targetScore) targetScore = normalizeTargetScore(p.targetScore);
     if (typeof p.specialsAnytime === 'boolean') specialsAnytime = p.specialsAnytime;
     if (typeof p.mustTrumpWhenVoid === 'boolean') mustTrumpWhenVoid = p.mustTrumpWhenVoid;
     if (typeof p.bidOnlyScoring === 'boolean') bidOnlyScoring = p.bidOnlyScoring;
-    if (typeof p.sandbagging === 'boolean') sandbagging = p.sandbagging;
     if (p.nestGoesTo) nestGoesTo = p.nestGoesTo;
     if (p.leadOrder) leadOrder = p.leadOrder;
     if (typeof p.misdealOnNoCounters === 'boolean') misdealOnNoCounters = p.misdealOnNoCounters;
@@ -662,14 +654,6 @@
     if (p.luckySpecialsMode === 'spinner' || p.luckySpecialsMode === 'fixed') luckySpecialsMode = p.luckySpecialsMode;
     if (typeof p.luckySpecialsBoost === 'number') luckySpecialsBoost = p.luckySpecialsBoost;
     if (typeof p.experimentalHandOpt === 'boolean') experimentalHandOpt = p.experimentalHandOpt;
-    if (typeof p.buyBeerBots === 'boolean') {
-      buyBeerBots = p.buyBeerBots;
-      document.body.classList.toggle('buy-beer-on', !!buyBeerBots);
-    }
-    if (typeof p.whisperHumans === 'boolean') {
-      whisperHumans = p.whisperHumans;
-      document.body.classList.toggle('whisper-on', !!whisperHumans);
-    }
     houseTeamA = asText(p.teamNameA, 'Griffin');
     houseTeamB = asText(p.teamNameB, 'Raven');
     try { if (typeof recomputeHandAndNest === 'function') recomputeHandAndNest(); } catch (e) {}
@@ -695,7 +679,7 @@
     persistPlayer();
     try { if (isHost && typeof broadcastPlaySettings === 'function') broadcastPlaySettings(); } catch (e) {}
     updateNestDestChip();
-    refreshLiveRules();
+    showVariantRules();
   }
   window.applyHousePreset = applyPreset;
 
@@ -817,11 +801,13 @@
       if (!sheet) { resolve(window.confirm(body || title)); return; }
       $('confirmTitle').textContent = title || 'Please confirm';
       $('confirmBody').textContent = body || '';
+      sheet.classList.toggle('leave-table-confirm', /^Leave this table\?$/i.test(title || ''));
       const ok = $('confirmOk');
       ok.classList.toggle('danger', danger !== false);
       sheet.classList.remove('hidden');
       const done = (val) => {
         sheet.classList.add('hidden');
+        sheet.classList.remove('leave-table-confirm');
         ok.onclick = null;
         $('confirmCancel').onclick = null;
         resolve(val);
@@ -832,21 +818,10 @@
   }
   window.houseConfirm = houseConfirm;
 
-  function refreshLiveRules() {
-    const intro = $('liveRulesIntro');
-    if (!intro) return;
-    const bird = includeRook ? (rookLowest ? 'the Bird is lowest trump' : 'the Bird is highest trump') : 'no Bird card';
-    const r2 = includeRed2 ? ('Red 2 is in, ' + red2Points + ' pts') : 'no Red 2';
-    const ones = includeOnes ? '1s are high in color (15 pts)' : 'no 1s';
-    const nest = nestGoesTo === 'bidder' ? 'nest counters go to the makers' : 'nest counters go to last trick';
-    const score = bidOnlyScoring ? 'makers score the bid only' : (sandbagging ? 'sandbagging penalty is on' : 'makers score counters taken');
-    intro.innerHTML = '';
-  }
-
   const PLAY_TIPS = {
     lobby: {
       title: 'New at this table',
-      html: '<p>Type your name, then tap <b>Play offline</b>. Tips pop up as the hand happens — bid, nest, trump, tricks, money, then messages.</p><p>Friends tables work the same way. Skip anytime if you already know it.</p>'
+      html: '<p>Type your name, then tap <b>Take Your Seat</b>. Tips pop up as the hand happens — bid, nest, trump, tricks, then scoring.</p><p>Friends tables work the same way. Skip anytime if you already know it.</p>'
     },
     sit: {
       title: 'Partners sit across',
@@ -854,7 +829,7 @@
     },
     bidding: {
       title: 'The auction is on',
-      html: '<p>Someone is bidding. Raise by fives or pass. Three passes and the high bidder buys the nest.</p><p>Counters that score: 5s, 10s, 14s, 1s (15), the Bird (20), Red 2 (20 when it is in).</p>'
+      html: '<p>Someone is bidding. Bid any amount divisible by five above the current bid or pass. You may raise by 5, 10, 15, 20, 25 or more. Tap or hold +5 and −5 to choose the amount, then confirm your bid. Three passes and the high bidder buys the nest.</p><p>Counters that score: 5s, 10s, 14s, 1s (15), the Bird (20), Red 2 (20 when it is in).</p>'
     },
     myBid: {
       title: 'Your bid',
@@ -890,20 +865,12 @@
       title: 'Follow color',
       html: '<p>Play the color that was led if you have it. If you are void you may trump or dump off-color. Highest trump, else highest of the led color, wins the trick.</p>'
     },
-    bank: {
-      title: 'That trick paid you',
-      html: '<p>Counters you personally take become <b>dollars on your chair</b>. That bank is not the team score. A 10 and a 5 in your trick is $15 in your pocket.</p>'
-    },
-    message: {
-      title: 'Buy a table message',
-      html: '<p>When your bank hits <b>$100</b>, tap your gold bank or ✉ Message · $100. Type a short shout and Send. Hold keeps the draft if you are still short. The $100 leaves your chair when it posts.</p>'
-    },
     score: {
       title: 'Hand is in',
-      html: '<p>Makers need at least the bid in counters. Miss it and they are set. Nest counters usually go to last trick.</p><p>Keep capturing — that is how you earn the $100 message. This tour will stay quiet unless you mark this name new again.</p>'
+      html: '<p>Makers need at least the bid in counters. Miss it and they are set. Nest counters usually go to last trick.</p><p>This tour will stay quiet unless you mark this name new again.</p>'
     }
   };
-  const PLAY_TIP_ORDER = ['lobby','sit','bidding','myBid','nest','nestWait','trump','trumpWait','lead','follow','bank','message','score'];
+  const PLAY_TIP_ORDER = ['lobby','sit','bidding','myBid','nest','nestWait','trump','trumpWait','lead','follow','score'];
 
   let tourActive = false;
   let currentTipId = '';
@@ -1135,6 +1102,8 @@
     const lobby = $('lobby');
     const onLobby = lobby && !lobby.classList.contains('hidden');
     if (onLobby) {
+      // Locked entrance already explains entry. Keep manual tour and in-game tips.
+      if (document.querySelector('link[href^="landing783.css"]') && !manualTour) return;
       if (!isNewPlayer()) return;
       if (window.__horLobbyTipShown) return;
       window.__horLobbyTipShown = true;
@@ -1165,17 +1134,13 @@
   }
 
   function markPartnerSeat() {
+    // A Rook 006: portrait partner relationship remains game state; the visible
+    // "YOUR PARTNER" presentation is intentionally removed. Clean up any
+    // legacy chip that may survive a hot reload without touching seat/name data.
     const el = $('slot-partner');
     if (!el) return;
-    let chip = el.querySelector('.partner-chip');
-    if (!chip) {
-      chip = document.createElement('div');
-      chip.className = 'partner-chip';
-      el.appendChild(chip);
-    }
-    const show = game && (game.phase === 'bidding' || game.phase === 'dealing' || game.phase === 'discard');
-    chip.textContent = 'your partner';
-    chip.classList.toggle('hidden', !show);
+    const chip = el.querySelector('.partner-chip');
+    if (chip) chip.remove();
   }
 
   function shouldShowCoach() {
@@ -1211,12 +1176,10 @@
     if (!summary) return '';
     const makers = teamLabel(summary.bidderTeam);
     const taken = summary.bidderTeam === 0 ? summary.pointsA : summary.pointsB;
+    if(summary.shotMoonResult==='made')return makers+' captured every point and shot the Moon — wins the entire game!';
+    if(summary.shotMoonResult==='failed')return makers+' missed the Moon: −'+summary.bid+'. Opponents score their captured points.';
     if (summary.made) {
       if (bidOnlyScoring) return makers + ' bid ' + summary.bid + ', took ' + taken + ' → +' + summary.bid + ' (bid only).';
-      if (sandbagging && taken > summary.bid) {
-        const over = taken - summary.bid;
-        return makers + ' bid ' + summary.bid + ', took ' + taken + ' → +' + (summary.bid - over) + ' after sandbag.';
-      }
       return makers + ' bid ' + summary.bid + ', took ' + taken + ' → +' + taken + '.';
     }
     return makers + ' bid ' + summary.bid + ', took ' + taken + ' → set, −' + summary.bid + '.';
@@ -1264,7 +1227,10 @@
         try {
           isSpectator = false;
           if (typeof createRoom === 'function') createRoom();
-        } catch (e) {}
+        } catch (e) {
+          const status = $('lobbyStatus');
+          if (status) status.textContent = 'Could not start multiplayer: ' + (e.message || e);
+        }
       };
     }
     document.querySelectorAll('.preset-btn').forEach((b) => {
@@ -1314,9 +1280,6 @@
     renderNewPlayerLists();
     try { applyPlaqueColors(); } catch (e) {}
     maybeTutorial();
-    document.querySelectorAll('.room-theme-btn').forEach((b) => {
-      b.onclick = () => applyRoomTheme(b.getAttribute('data-theme'), true);
-    });
     applyRoomTheme((p && p.roomTheme) || 'midnight', false);
     applyGfx((p && p.gfx) || loadGfx());
     document.querySelectorAll('a.cash-app-link').forEach(function (a) {
@@ -1355,13 +1318,13 @@
   }
 
   // ---- wrap existing functions ----
+  window.addEventListener('hor-table-ready', e => { speakCode(e.detail && e.detail.code); });
   const _createRoom = window.createRoom;
   window.createRoom = function () {
     persistPlayer();
     hideTourCard();
     myName = ($('hor-player-name') && $('hor-player-name').value || '').trim() || loadPrefs().name || 'Host';
     const r = _createRoom.apply(this, arguments);
-    setTimeout(() => speakCode(roomCode), 400);
     return r;
   };
 
@@ -1417,78 +1380,37 @@
           .replace(' (B)', ' · ' + teamLabel(1));
       }
     } catch (e) {}
-    try {
-      const base = (typeof myIndex === 'number' && myIndex >= 0) ? myIndex : 0;
-      const map = { me: base, left: (base + 1) % 4, partner: (base + 2) % 4, right: (base + 3) % 4 };
-      Object.keys(map).forEach((slot) => {
-        const el = $('slot-' + slot);
-        if (!el) return;
-        const p = (game && game.players && game.players[map[slot]]) || players[map[slot]];
-        const team = (p && typeof p.team === 'number') ? p.team : (map[slot] % 2);
-        el.setAttribute('data-plaque-team', String(team));
-        const nameEl = el.querySelector('.name');
-        if (nameEl) nameEl.setAttribute('data-plaque-team', String(team));
-      });
-      applyPlaqueColors();
-    } catch (e) {}
-    markPartnerSeat();
-    refreshTurnBanner();
-    updateNestDestChip();
-    updateSpectatorChrome();
-    try {
-      const base = (typeof myIndex === 'number' && myIndex >= 0) ? myIndex : 0;
-      const map = { me: base, left: (base + 1) % 4, partner: (base + 2) % 4, right: (base + 3) % 4 };
-      Object.keys(map).forEach((slot) => {
-        const el = $('slot-' + slot);
-        if (!el) return;
-        let btn = el.querySelector('.buy-beer-btn');
-        const idx = map[slot];
-        const p = players[idx];
-        let rack = el.querySelector('.seat-top-rack');
-        if (!rack) {
-          rack = document.createElement('div');
-          rack.className = 'seat-top-rack';
-          el.insertBefore(rack, el.firstChild);
-        }
-        if (buyBeerBots && p && p.isBot && slot !== 'me') {
-          if (!btn) {
-            btn = document.createElement('button');
-            btn.type = 'button';
-            btn.className = 'buy-beer-btn btn';
-            rack.appendChild(btn);
-          }
-          const buzzed = typeof isBuzzed === 'function' && isBuzzed(idx);
-          btn.textContent = buzzed ? '🍺 Buzzed' : '🍺 $150';
-          btn.onclick = (ev) => {
-            ev.preventDefault(); ev.stopPropagation();
-            if (buzzed) return;
-            if (typeof buyBotBeer === 'function') buyBotBeer(idx);
-          };
-          btn.oncontextmenu = (ev) => { ev.preventDefault(); ev.stopPropagation(); };
-          let holdT = 0;
-          btn.onpointerdown = (ev) => {
-            holdT = setTimeout(() => {
-              const msg = (typeof formatBuzzLeft === 'function') ? formatBuzzLeft(idx) : 'Buzzed';
-              try { showWhy(msg, ev.clientX || 80, ev.clientY || 40); } catch (e) {}
-            }, 380);
-          };
-          btn.onpointerup = btn.onpointercancel = btn.onpointerleave = () => clearTimeout(holdT);
-        } else if (btn) btn.remove();
-        let wbtn = el.querySelector('.whisper-btn');
-        if (whisperHumans && p && !p.isBot && slot !== 'me') {
-          if (!wbtn) {
-            wbtn = document.createElement('button');
-            wbtn.type = 'button';
-            wbtn.className = 'whisper-btn btn';
-            rack.appendChild(wbtn);
-          }
-          wbtn.textContent = '✉ $200';
-          wbtn.onclick = (ev) => { ev.preventDefault(); ev.stopPropagation(); if (typeof openWhisperBuy === 'function') openWhisperBuy(idx); };
-        } else if (wbtn) wbtn.remove();
-      });
-    } catch (e) {}
     maybeTutorial();
   };
+
+  // 743: measure only the portrait Scoreboard, including text/font/chrome changes.
+  // The compact mode recovers padding and ornament, never crops/shrinks card art.
+  let scoreFitKey743 = '', scoreFitFrame743 = 0, scoreFitObserver743;
+  function fitScoreboard743(reset = false) {
+    if (reset) scoreFitKey743 = '';
+    if (scoreFitFrame743) return;
+    scoreFitFrame743 = requestAnimationFrame(() => {
+      scoreFitFrame743 = 0;
+      const modal = $('scoreModal'), panel = modal?.querySelector('.scoreboard-modal');
+      const body = $('scoreModalBody'), board = body?.querySelector('.gh-approved-scoreboard');
+      const active = modal && board && !modal.classList.contains('hidden') &&
+        !modal.classList.contains('showing-remaining') && innerWidth <= 520 &&
+        window.matchMedia('(orientation: portrait)').matches;
+      if (!active) { modal?.classList.remove('score-compact743'); scoreFitKey743 = ''; return; }
+      const measurementKey = () => [innerWidth, innerHeight, panel.clientWidth, panel.clientHeight,
+        body.clientHeight, board.getBoundingClientRect().height,
+        getComputedStyle(document.documentElement).fontSize, board.textContent,
+        modal.querySelector('.score-modal-actions')?.textContent].join('|');
+      if (measurementKey() === scoreFitKey743) return;
+      modal.classList.remove('score-compact743');
+      if (board.getBoundingClientRect().bottom > body.getBoundingClientRect().bottom + 1 ||
+          body.scrollHeight > body.clientHeight + 1) modal.classList.add('score-compact743');
+      // Cache final geometry so compact-mode resize notifications cannot oscillate.
+      scoreFitKey743 = measurementKey();
+    });
+  }
+  window.addEventListener('resize', () => fitScoreboard743(true));
+  window.visualViewport?.addEventListener('resize', () => fitScoreboard743(true));
 
   const _showScore = window.showScoreModal;
   window.showScoreModal = function (summary) {
@@ -1500,15 +1422,34 @@
       if (body && summary) {
         const teach = document.createElement('p');
         teach.className = 'score-teach';
-        const nestLine = summary.nestPts
-          ? (' Nest ' + summary.nestPts + ' to ' + (summary.nestWinnerName || (nestGoesTo === 'bidder' ? 'makers' : 'last trick')) + '.')
+        const owned = body.querySelector('.ghsb-result-line');
+        const ownsPortraitScore = window.matchMedia('(orientation: portrait)').matches && owned;
+        const nestLine = (summary.nestPts || ownsPortraitScore)
+          ? (' Nest ' + (summary.nestPts || 0) + ' to ' + (summary.nestWinnerName ||
+              (ownsPortraitScore ? 'Winner' : (nestGoesTo === 'bidder' ? 'makers' : 'last trick'))) + '.')
           : '';
         teach.textContent = scoringSentence(summary) + nestLine +
           ' Running total: ' + teamLabel(0) + ' ' + summary.scores[0] + ' · ' + teamLabel(1) + ' ' + summary.scores[1] +
           ' (to ' + (game?.targetScore || targetScore) + ').';
         const banner = body.querySelector('.score-banner');
-        if (banner && banner.parentNode) banner.parentNode.insertBefore(teach, banner.nextSibling);
+        // The two summaries describe the same hand. Keep the existing scoring
+        // narrator's full explanation in the portrait renderer's single region.
+        // This retains set/bid-only scoring wording without a second copy.
+        if (ownsPortraitScore) {
+          owned.textContent = teach.textContent;
+        } else if (banner && banner.parentNode) {
+          banner.parentNode.insertBefore(teach, banner.nextSibling);
+        }
         body.querySelectorAll('.sb-label').forEach((el, i) => { el.textContent = teamLabel(i); });
+        if (!scoreFitObserver743 && window.ResizeObserver) {
+          scoreFitObserver743 = new ResizeObserver(() => fitScoreboard743());
+        }
+        if (scoreFitObserver743) {
+          const board = body.querySelector('.gh-approved-scoreboard');
+          if (board) { scoreFitObserver743.disconnect(); scoreFitObserver743.observe(body);
+            scoreFitObserver743.observe(body.closest('.scoreboard-modal')); scoreFitObserver743.observe(board); }
+        }
+        fitScoreboard743(true);
       }
     } catch (e) {}
   };
@@ -1537,27 +1478,7 @@
     maybeTutorial();
   };
 
-  const _showTrump = window.showTrumpUI;
-  window.showTrumpUI = function () {
-    const landscape = !!(window.matchMedia && window.matchMedia('(orientation: landscape)').matches);
-    if (landscape) return _showTrump.apply(this, arguments);
-    const panel = $('actionPanel');
-    if (!panel) return _showTrump.apply(this, arguments);
-    panel.classList.remove('hidden');
-    panel.classList.add('trump-showdown');
-    let html = '<h3>Stamp the trump</h3><div class="trump-showdown-grid">';
-    COLORS.forEach((c) => {
-      html += '<button type="button" class="trump-tile ' + c + '" data-trump="' + c + '"><span class="trump-swatch"></span>' + COLOR_NAMES[c] + '</button>';
-    });
-    html += '</div><p class="option-hint">' + (includeRook ? (rookLowest ? 'The Bird stays lowest trump.' : 'The Bird stays highest trump.') : '') + '</p>';
-    panel.innerHTML = html;
-    panel.querySelectorAll('[data-trump]').forEach((btn) => {
-      btn.onclick = () => {
-        try { hideActionPanel(); } catch (e) {}
-        submitTrump(btn.getAttribute('data-trump'));
-      };
-    });
-  };
+  // Rook560: showTrumpUI is owned only by game.js.
 
   const _finishBid = window.finishBidding;
   window.finishBidding = function () {
@@ -1611,16 +1532,8 @@
     bindWhyOnCards($('ltHand'));
   };
 
-  const _setBot = window.setBotThinking;
-  window.setBotThinking = function (on) {
-    _setBot.apply(this, arguments);
-    const el = $('botThinking');
-    if (!el || !on || !game) return;
-    const seat = players[game.currentPlayer] || players[game.bidder];
-    const av = seat && (playerAvatars[seat.id] || seat.avatar);
-    const label = seat ? seat.name : 'Bot';
-    el.innerHTML = (av ? '<span class="seat-avatar">' + avatarHTML(av) + '</span> ' : '') + label + ' is thinking…';
-  };
+  // Rook582: setBotThinking is owned exclusively by game.js.
+
 
   const _hostUndo = window.hostUndoLastPlay;
   window.hostUndoLastPlay = function () {
@@ -1660,7 +1573,7 @@
       danger: true,
     });
     if (!ok) return;
-    leaveTableAfterConfirmation531();
+    leaveTableAfterConfirmation043();
   };
 
   const _redeal = window.hostRedeal;
@@ -1694,12 +1607,6 @@
     return _xfer.apply(this, arguments);
   };
 
-  const _showRulesFn = window.showVariantRules;
-  window.showVariantRules = function () {
-    _showRulesFn.apply(this, arguments);
-    refreshLiveRules();
-  };
-
   const _syncOpts = window.syncOptionsUI;
   window.syncOptionsUI = function () {
     _syncOpts.apply(this, arguments);
@@ -1722,14 +1629,21 @@
     };
   }
 
-  // card art: prefer compact webp
+  // Keep the active bird artwork and a readable identity until decoding completes.
+  function birdFaceLoading(stack, imageClass, src, alt, label) {
+    return `<div class="c-stack ${stack}"><img class="${imageClass}" src="${src}" alt="${alt}" draggable="false" onload="this.style.display='block';this.nextElementSibling.style.display='none'" onerror="this.style.display='none';this.nextElementSibling.style.display='flex'"><span class="asset-bird-fallback772">${label}</span></div>`;
+  }
+  // card art: preserve the existing selected premium/original URLs
   const _inner = window.cardInnerHTML;
   window.cardInnerHTML = function (card) {
+    const premium = !document.documentElement.classList.contains('hor-original-cards');
     if (card && (card.color === 'rook' || card.id === 'rook')) {
-      return '<div class="c-stack rook-stack"><img class="rook-bird-img" src="Rook.webp" alt="Bird" draggable="false" onerror="this.src=\'Rook.png\'"></div>';
+      if (premium) return birdFaceLoading('rook-stack premium-raven', 'rook-bird-img', 'assets/images/RookPremium.png?v=632', 'Black Raven', 'BLACK BIRD');
+      return birdFaceLoading('rook-stack', 'rook-bird-img', 'assets/images/Rook.webp', 'Black Raven', 'BLACK BIRD');
     }
     if (card && typeof isRed2 === 'function' && isRed2(card) && includeRed2) {
-      return '<div class="c-stack red2-stack"><img class="red2-img" src="Red2-card.webp" alt="Red 2" draggable="false" onerror="this.src=\'Red2.png\'"></div>';
+      if (premium) return birdFaceLoading('red2-stack premium-raven', 'red2-img', 'assets/images/Red2Premium.png?v=632', 'Red 2', 'RED 2');
+      return birdFaceLoading('red2-stack', 'red2-img', 'assets/images/Red2-card.webp', 'Red 2', 'RED 2');
     }
     const html = _inner.apply(this, arguments);
     return html;
@@ -1743,20 +1657,7 @@
     el.classList.remove('hidden');
     setTimeout(() => { try { el.classList.add('hidden'); } catch (e) {} }, 2200);
   }
-  const _trump = window.hostProcessTrump;
-  if (typeof _trump === 'function') {
-    window.hostProcessTrump = function (data) {
-      const r = _trump.apply(this, arguments);
-      if (gfxOn('trumpBanner') && data && data.color) {
-        ['trumpBanner', 'ltTrumpStamp'].forEach((id) => {
-          const el = $(id);
-          if (!el) return;
-          if (typeof paintTrumpMarker === 'function') paintTrumpMarker(el, data.color);
-        });
-      }
-      return r;
-    };
-  }
+  // Rook560: hostProcessTrump / Trump announcement lifecycle is owned only by game.js.
   const _score = window.showScoreModal;
   if (typeof _score === 'function') {
     window.showScoreModal = function (summary) {
@@ -1785,14 +1686,18 @@
   if (typeof _sfx === 'function') {
     window.playSfx = function () {
       const r = _sfx.apply(this, arguments);
-      if (gfxOn('hapticsHeavy') && navigator.vibrate) {
+      if (gfxOn('hapticsHeavy') && navigator.vibrate && !(window.HORHolderCues789 && arguments[0] === 'turn')) {
         try { navigator.vibrate(12); } catch (e) {}
       }
       return r;
     };
   }
 
-  document.addEventListener('click', persistPlayer, true);
+  document.addEventListener('click', e => {
+    // Career viewing/export/recovery must not rewrite unrelated saved preferences.
+    if(window.__horCareerDismissGesture||e.target?.closest?.('#horActivationPanel,#horPublicCareerCard,#horCareerBackdrop,#horCareerGuide,[data-hor-career-export]'))return;
+    persistPlayer();
+  }, true);
 
   document.addEventListener('DOMContentLoaded', () => {});
   applyPrefsToEngine();
@@ -1801,7 +1706,7 @@
   wireExperimentalOptions();
   updateMuteButtons();
   updateNestDestChip();
-  refreshLiveRules();
+  showVariantRules();
 
   function formatNightScores() {
     const a = teamLabel(0);
@@ -1906,20 +1811,7 @@
     if (el) el.addEventListener('pointerdown', () => { try { ensureAudio(); } catch (e) {} }, { passive: true });
   });
 
-  if (typeof creditCapture === 'function') {
-    const _credit = creditCapture;
-    creditCapture = function (idx, pts) {
-      const r = _credit.apply(this, arguments);
-      try {
-        if (idx === myIndex && pts > 0) {
-          showPlayTip('bank');
-          const bank = (typeof bankOfSeat === 'function') ? bankOfSeat(idx) : 0;
-          if (bank >= 100) showPlayTip('message');
-        }
-      } catch (e) {}
-      return r;
-    };
-  }
+
 })();
 
 (function horLobbyHero() {

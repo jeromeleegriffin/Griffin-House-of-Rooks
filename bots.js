@@ -230,7 +230,7 @@ function extremeBid(hand, floor, ceiling, nextMin) {
       || (info.ev >= game.highestBid + 35 && info.goodTrump && (info.analysis.rook || info.trumpLen >= 6))
     );
     if (!steal) {
-      hostProcessBid({ player: seat, value: 0 });
+      hostProcessBid({ player: seat, value: 0, voiceLine: true });
       return;
     }
   }
@@ -283,7 +283,7 @@ function extremeBid(hand, floor, ceiling, nextMin) {
     if (!(info.trumpLen >= 7 && info.analysis.rook && info.marks >= 4)) bid = Math.max(0, ceiling - 20);
   }
 
-  hostProcessBid({ player: seat, value: bid });
+  hostProcessBid({ player: seat, value: bid, voiceLine: true });
 }
 
 function botDiscard() {
@@ -402,11 +402,6 @@ function botPlay() {
   if (!hand || !hand.length) return;
   let legal = hand.filter(c => canPlay(c, hand, game.ledColor, game.trump));
   if (!legal.length) legal = hand.slice();
-
-  if (isBuzzed(idx) && Math.random() < 0.42) {
-    hostProcessPlay({ player: idx, cardId: legal[Math.floor(Math.random() * legal.length)].id });
-    return;
-  }
 
   if (botLevel() === 'easy' && Math.random() < 0.12) {
     hostProcessPlay({ player: idx, cardId: legal[Math.floor(Math.random() * legal.length)].id });

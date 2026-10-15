@@ -1,0 +1,34 @@
+/* Room B source pixels and the approved raised logo; no player/table geometry changes. */
+.room-layer805{display:none;pointer-events:none!important;overflow:hidden}
+#landingBrand783:not(.room805-brand-ready){visibility:hidden}
+#landingBrand783>img{display:block;width:100%;height:auto}
+#landingBrand783{display:block;width:min(29.76vw,211px);line-height:0}
+@media(orientation:portrait){
+ .room805-ready .room-layer805{display:block;z-index:1}
+ #landingScene783>svg:not(.room-layer805),#friendsScene803>svg:not(.room-layer805){z-index:2}
+ #hor-room-bg>.room-layer805{position:fixed;width:875px;height:1797px;max-width:none;transform-origin:0 0;z-index:1}
+ body.room805-ready #quietFire034,body.room805-ready #houseLantern736,body.room805-ready #fireGlow059{display:none!important}
+ #landingBrand783{top:calc(var(--room805-scale, .45)*8.64px);width:calc(var(--room805-scale, .45)*260.4px);text-shadow:none;filter:drop-shadow(calc(var(--room805-scale)*.494px) 0 0 #080b08e8) drop-shadow(calc(var(--room805-scale)*-.494px) 0 0 #080b08e8) drop-shadow(0 calc(var(--room805-scale)*.494px) 0 #080b08e8) drop-shadow(0 calc(var(--room805-scale)*-.494px) 0 #080b08e8) drop-shadow(0 0 calc(var(--room805-scale)*2.468px) #e6b95b20)}
+ #landingPartner783{top:calc(var(--room805-scale,.45)*598.55px);width:calc(var(--room805-scale,.45)*272.75px);height:max(44px,calc(var(--room805-scale,.45)*98.73px));min-height:44px;padding:0;display:grid;place-items:center;background:none;border:0;border-radius:0;font:calc(var(--room805-scale,.45)*19.75px) Georgia,serif;color:#e9daba}
+ #landingPartner783>span{width:calc(var(--room805-scale,.45)*211.04px);height:calc(var(--room805-scale,.45)*44.43px);border:1px solid #af9352;border-radius:18px;background:#10241deb;display:flex;gap:calc(var(--room805-scale,.45)*8.64px);align-items:center;justify-content:center;box-shadow:0 2px 5px #0005}
+ #landingPartner783 svg{position:static;width:calc(var(--room805-scale,.45)*18.52px);height:calc(var(--room805-scale,.45)*18.52px);stroke:#cfb576;fill:none;stroke-width:1.3}
+}
+.room805-canvas{position:relative;width:875px;height:1797px;background:url('assets/trump746/table-faint.png') 0 0/875px 1797px}
+.room805-fireplace{position:absolute;left:420px;top:90px;width:365px;height:505px;background:url('assets/trump746/table-faint.png') -510px -90px/875px 1797px;mask-image:linear-gradient(to right,transparent,#000 2%,#000 98%,transparent)}
+.room805-hearth{position:absolute;left:100px;top:300px;width:190px;height:145px;overflow:hidden;background:#0b0806;filter:brightness(.82);mask-image:linear-gradient(to right,transparent,#000 7%,#000 93%,transparent),linear-gradient(to bottom,transparent,#000 7%,#000 93%,transparent);mask-composite:intersect}
+.room805-fire-base{position:absolute;inset:0;background:url('assets/table003/room-table-perspective.png') -610px -390px/875px 1797px;filter:brightness(.72) saturate(.9);opacity:.85}
+.room805-canvas .hearth-tongues736{visibility:visible!important}
+.room805-glow{position:absolute;inset:0;background:radial-gradient(ellipse at 50% 65%,#e98b2918,transparent 65%);opacity:.34;pointer-events:none}
+.room805-lamp-wall{position:absolute;left:132px;top:345px;width:92px;height:132px;background:url('assets/table003/room-table-perspective.png') -1072px -348px/3500px 1797px;mask-image:linear-gradient(to right,transparent,#000 8%,#000 92%,transparent),linear-gradient(to bottom,transparent,#000 6%,#000 94%,transparent);mask-composite:intersect}
+.room805-lantern{position:absolute;left:179px;top:307px;width:110px;height:165px;transform:scale(.95);transform-origin:50% 100%}
+.room805-lantern>img{width:110px;height:165px;filter:drop-shadow(0 2px 2px #130804)}
+.room805-lantern .lantern-flame736{position:absolute;left:51.6px;top:76.3px;width:8.1px;height:24.7px;background:url('assets/house736/lantern-approved.png') -51.6px -76.3px/110px 165px;mask-image:radial-gradient(ellipse 48% 48% at 50% 55%,#000 45%,transparent 100%);transform-origin:50% 95%;opacity:.35;mix-blend-mode:screen}
+.room805-ceiling{position:absolute;left:277px;top:0;width:383px;height:145px;background:url('assets/approved805/ceiling-wood.png') center/100% 100%;mask-image:linear-gradient(to right,transparent,#000 8%,#000 93%,transparent),linear-gradient(to bottom,#000 85%,transparent);mask-composite:intersect}
+.room805-shade{position:absolute;inset:0;pointer-events:none;background:linear-gradient(#080e0c33,transparent 23%),linear-gradient(90deg,#0806031c,transparent 25%,transparent 78%,#08060314)}
+body.room805-visible .room805-canvas .tongue-a736{animation:hearth-a738 2.9s -.8s ease-in-out infinite!important}
+body.room805-visible .room805-canvas .tongue-b736{animation:hearth-b738 3.8s -2.1s ease-in-out infinite!important}
+body.room805-visible .room805-canvas .tongue-c736{animation:hearth-c738 4.7s -3.4s ease-in-out infinite!important}
+body.room805-visible .room805-canvas .lantern-flame736{animation:lantern-wick738 3.9s -.7s ease-in-out infinite!important}
+body.room805-visible .room805-canvas .hearth-ember736{animation:hearth-ember736 11.3s -3s linear infinite!important}
+body.reduce-motion .room805-canvas :is(.hearth-tongue736,.lantern-flame736,.hearth-ember736){animation:none!important}
+@media(prefers-reduced-motion:reduce){body.room805-visible .room805-canvas :is(.hearth-tongue736,.lantern-flame736,.hearth-ember736){animation:none!important}}

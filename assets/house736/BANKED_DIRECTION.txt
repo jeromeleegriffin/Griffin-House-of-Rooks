@@ -1,0 +1,25 @@
+GRIFFIN HOUSE OF ROOKS — LANTERN AND FIREPLACE FLAME BANK
+Date: 2026-10-10
+Status: OWNER-APPROVED VISUAL CONCEPT; GAME INTEGRATION PENDING
+Scope: carry the approved lantern concept into the next owner-requested game ZIP. No game source was changed and no ZIP was built by this note.
+
+APPROVED LANTERN CONCEPT
+- Visual authority image: Warm Antique Library Oil Lantern.png (stored alongside this note in Visual Authorities).
+- Jerome approved this exact generated image to be used in the next game ZIP.
+- Design direction from prior discussion: old-fashioned oil lantern; aged brass and dark iron; glass chimney; small warm flame.
+- Fit it approximately within the existing lamp's current size and position. Preserve the locked room/background composition and do not cover cards, players, table, or UI.
+- The lantern flame should have a barely noticeable, natural flicker. Keep the rendering inexpensive and unobtrusive.
+- Treat the image as the approved visual asset/reference for integration; verify the actual rendered result on Jerome's Android phone before calling the integration complete.
+
+FIREPLACE FLAME — SEPARATE FOLLOW-UP
+- Keep the existing locked warm library scene as the visual reference.
+- Jerome disliked the fireplace's obvious pulsating brightness: it looked like a simple repeating flicker instead of natural moving fire.
+- Proposed treatment: create a few lightweight flame layers clipped inside the firebox. Animate small tongues independently so they curl and shift naturally, using slow, differing motion. Keep brightness changes minimal and the surrounding warm glow mostly steady; allow an occasional tiny ember. Remove the obvious pulse. The fire should stay subdued and must not dominate the game screen.
+- Build 065 only slowed and gently varied the existing flame artwork and reduced brightness changes. It did not yet provide independently dancing flame tongues. The actual Android result was not accepted/verified, so this proposal remains the intended direction rather than a completed fix.
+- Keep this fireplace refinement separate from the lantern asset and flicker. Inspect the current source and actual Android rendering before applying it, preserve the locked warm library background, and do not treat an unverified candidate as accepted.
+
+AUTHORITY / CONTINUITY
+- Latest retrieved startup handoff identifies Brain M as the current external pointer. Its ZIP remains a frozen version; this entry is a supplemental Library bank, not a modification or publication of Brain M.
+- The proposed Brain L roadmap is a draft (not published) and was read as supporting evidence for unfinished fireplace/lantern status.
+- Next game ZIP: include the approved lantern image as the agreed visual asset/reference and implement its restrained lantern flicker. Carry the fireplace treatment above as a separate refinement, with actual Android verification before calling either change complete.
+

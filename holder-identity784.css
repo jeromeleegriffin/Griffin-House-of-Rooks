@@ -1,0 +1,37 @@
+#holderPlaques784{display:none;}
+@media(orientation:portrait){
+ body.in-game #myHand.holder-hit-clip784{clip-path:inset(-1000px -1000px var(--holder-hit-cut784,0px) -1000px);}
+ body.in-game #holderPlaques784:not([hidden]){
+  position:absolute;display:flex;align-items:stretch;justify-content:center;gap:5px;
+  left:7%;right:7%;bottom:1px;height:calc(var(--holder049-height) * .32);
+  z-index:11;pointer-events:none;
+ }
+ /* The holder front is layer 10; these live insets are its immediate layer 11.
+    Plain brass edges keep decoration out of the narrow live-text area. */
+ #holderIdentity784,body.in-game #holderPlaques784 #trickPtsBar{
+  box-sizing:border-box;position:relative!important;inset:auto!important;transform:none!important;translate:none!important;
+  margin:0!important;padding:0 7px!important;min-height:0!important;height:100%!important;
+  border:1px solid #9b7b3e!important;border-image:none!important;
+  border-radius:2px!important;background:#211c12!important;box-shadow:inset 0 0 3px #000!important;
+  color:#efdaa0!important;font:600 clamp(8px,2.35vw,11px)/1.1 Arial,sans-serif!important;
+  white-space:nowrap!important;letter-spacing:0!important;text-shadow:none!important;
+ }
+ #holderIdentity784{display:flex;align-items:center;gap:5px;min-width:0;max-width:76%;pointer-events:auto;cursor:pointer;}
+ #holderIdentity784:focus-visible{outline:1px solid #fff0bd;outline-offset:1px;}
+ body.in-game #holderIdentity784 #holderPlayerName784{
+  display:flex!important;align-items:center!important;justify-content:center!important;position:static!important;
+  inset:auto!important;transform:none!important;translate:none!important;scale:none!important;rotate:none!important;
+  min-width:0!important;max-width:none!important;width:auto!important;height:auto!important;min-height:0!important;
+  padding:0!important;margin:0!important;flex:1 1 auto!important;gap:0!important;
+  background:none!important;border:0!important;box-shadow:none!important;opacity:1!important;
+  font:inherit!important;color:inherit!important;line-height:inherit!important;text-shadow:none!important;
+ }
+ #holderPlayerName784 .seat-avatar{display:none!important;}
+ #holderPlayerName784 .seat-identity-copy{display:flex!important;align-items:center!important;gap:4px!important;min-width:0!important;max-width:100%!important;width:auto!important;visibility:visible!important;}
+ #holderPlayerName784 .player-name-text{display:block!important;min-width:0!important;max-width:none!important;overflow:hidden!important;text-overflow:ellipsis!important;white-space:nowrap!important;font:inherit!important;color:inherit!important;}
+ #holderPlayerName784 .hor-career-badge{display:inline-flex!important;visibility:visible!important;flex:0 0 auto!important;margin:0!important;padding:0!important;border:0!important;background:none!important;font:inherit!important;color:inherit!important;line-height:inherit!important;position:static!important;}
+ #holderIdentity784>.auction-status{position:static!important;inset:auto!important;transform:none!important;translate:none!important;scale:none!important;display:block!important;flex:0 0 auto!important;margin:0!important;padding:0 0 0 5px!important;border:0!important;border-left:1px solid #796137!important;border-radius:0!important;box-shadow:none!important;background:none!important;font:inherit!important;color:inherit!important;line-height:inherit!important;min-height:0!important;height:auto!important;white-space:nowrap!important;pointer-events:none!important;}
+ #holderIdentity784>.auction-status.hidden{display:none!important;}
+ body.in-game #holderPlaques784 #trickPtsBar{display:flex;align-items:center;justify-content:center;flex:0 0 auto;max-width:30%!important;overflow:hidden!important;z-index:auto!important;pointer-events:none!important;}
+ body.in-game #holderPlaques784 #trickPtsBar.hidden{display:none!important;}
+}

@@ -1,0 +1,265 @@
+{
+  "name": "Approved standalone Bid Box",
+  "status": "VISUAL_APPROVAL_REQUIRED_BEFORE_ANY_GAME_INTEGRATION",
+  "workflow": "Reference-derived layered raster restoration; not a 3D render",
+  "canvas": {
+    "width": 701,
+    "height": 290,
+    "aspect_ratio": 2.4172413793103447,
+    "units": "native pixels",
+    "transparent_padding_included": true
+  },
+  "reference_crop": {
+    "source": "Luxurious Wood-and-Brass Bidding Table(8).png",
+    "xyxy": [
+      76,
+      1127,
+      777,
+      1417
+    ]
+  },
+  "layer_alignment": "All native assets use the same 701x290 canvas at x=0,y=0",
+  "openings": {
+    "minus": {
+      "safe_text_rect_xywh": [
+        55,
+        99,
+        116,
+        54
+      ],
+      "face_polygon_xy": [
+        [
+          43,
+          89
+        ],
+        [
+          174,
+          89
+        ],
+        [
+          184,
+          100
+        ],
+        [
+          184,
+          152
+        ],
+        [
+          174,
+          162
+        ],
+        [
+          43,
+          162
+        ],
+        [
+          35,
+          152
+        ],
+        [
+          35,
+          100
+        ]
+      ],
+      "asset": "face_minus.png",
+      "cropped_asset": "face_minus_cropped.png",
+      "cropped_asset_xyxy": [
+        35,
+        89,
+        184,
+        162
+      ]
+    },
+    "plus": {
+      "safe_text_rect_xywh": [
+        532,
+        99,
+        116,
+        54
+      ],
+      "face_polygon_xy": [
+        [
+          527,
+          89
+        ],
+        [
+          652,
+          89
+        ],
+        [
+          663,
+          100
+        ],
+        [
+          663,
+          151
+        ],
+        [
+          652,
+          162
+        ],
+        [
+          527,
+          162
+        ],
+        [
+          516,
+          151
+        ],
+        [
+          516,
+          100
+        ]
+      ],
+      "asset": "face_plus.png",
+      "cropped_asset": "face_plus_cropped.png",
+      "cropped_asset_xyxy": [
+        516,
+        89,
+        663,
+        162
+      ]
+    },
+    "center_amount": {
+      "safe_text_rect_xywh": [
+        269,
+        98,
+        166,
+        55
+      ],
+      "face_polygon_xy": [
+        [
+          267,
+          88
+        ],
+        [
+          437,
+          88
+        ],
+        [
+          437,
+          161
+        ],
+        [
+          267,
+          161
+        ]
+      ],
+      "asset": "face_center_amount.png",
+      "cropped_asset": "face_center_amount_cropped.png",
+      "cropped_asset_xyxy": [
+        267,
+        88,
+        437,
+        161
+      ]
+    },
+    "bid": {
+      "safe_text_rect_xywh": [
+        52,
+        193,
+        281,
+        46
+      ],
+      "face_polygon_xy": [
+        [
+          44,
+          182
+        ],
+        [
+          339,
+          182
+        ],
+        [
+          351,
+          194
+        ],
+        [
+          351,
+          239
+        ],
+        [
+          339,
+          250
+        ],
+        [
+          44,
+          250
+        ],
+        [
+          35,
+          240
+        ],
+        [
+          35,
+          193
+        ]
+      ],
+      "asset": "face_bid.png",
+      "cropped_asset": "face_bid_cropped.png",
+      "cropped_asset_xyxy": [
+        35,
+        182,
+        351,
+        250
+      ]
+    },
+    "pass": {
+      "safe_text_rect_xywh": [
+        396,
+        193,
+        247,
+        46
+      ],
+      "face_polygon_xy": [
+        [
+          389,
+          182
+        ],
+        [
+          650,
+          182
+        ],
+        [
+          663,
+          193
+        ],
+        [
+          663,
+          239
+        ],
+        [
+          652,
+          250
+        ],
+        [
+          389,
+          250
+        ],
+        [
+          378,
+          239
+        ],
+        [
+          378,
+          193
+        ]
+      ],
+      "asset": "face_pass.png",
+      "cropped_asset": "face_pass_cropped.png",
+      "cropped_asset_xyxy": [
+        378,
+        182,
+        663,
+        250
+      ]
+    }
+  },
+  "dynamic_text": "All five openings blank in production assets. Example 105 text hidden in master and preview-only.",
+  "upscaled_export": {
+    "width": 2103,
+    "height": 870,
+    "scale": 3,
+    "detail": "Lanczos enlargement; not native high-resolution artwork"
+  }
+}

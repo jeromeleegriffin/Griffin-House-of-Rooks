@@ -1,0 +1,37 @@
+Cabin ambience — Griffin House of Rooks, October 7, 2026
+All six sources are CC0 1.0 Universal, as verified on the official source pages.
+https://creativecommons.org/publicdomain/zero/1.0/
+CC0 permits modification and commercial use without attribution or permission.
+
+Fire — Crackling fireplace by nielstii
+https://freesound.org/people/nielstii/sounds/346321/
+https://cdn.freesound.org/previews/346/346321_6290213-hq.mp3
+Bird — Crow Call by qubodup (original CC0 crow.wav by nigelcoop)
+https://freesound.org/people/qubodup/sounds/813114/
+https://cdn.freesound.org/previews/813/813114_71257-hq.mp3
+Wolf — Cooper Creek solitary wolf howl by betchkal
+https://freesound.org/people/betchkal/sounds/500646/
+https://cdn.freesound.org/previews/500/500646_339183-hq.mp3
+Wind — Soft Wind by florianreichelt
+https://freesound.org/people/florianreichelt/sounds/459977/
+https://cdn.freesound.org/previews/459/459977_6253486-hq.mp3
+Crickets — Crickets - Warm Summer Night - Ambient.wav by Speziax
+https://freesound.org/people/Speziax/sounds/645329/
+https://cdn.freesound.org/previews/645/645329_988367-lq.mp3
+Rain — LightRainOctober31st2015.WAV by kvgarlic
+https://freesound.org/people/kvgarlic/sounds/328142/
+https://cdn.freesound.org/previews/328/328142_1050391-hq.mp3
+Rain source describes light rain falling on a leaf-covered yard, without thunder.
+
+Edits: all mono 12 kHz 16-bit PCM; deliberately low levels. Soft high-frequency
+filtering represents outdoor sound heard through cabin walls. Long loops use
+500 ms end-to-start crossfades. Voices fade gently in and out at runtime.
+Fire: source 8–20 s, highpass120/lowpass2800 Hz, softened transients and peak
+soft limit0.004; 11.5 s loop. Bird: full call, HP200/LP2400, peak0.009 before
+short fades. Wolf: source28–39.5 s, HP150/LP1800, peak0.007, short fades.
+Wind: source2–20 s, HP100/LP900, targetRMS0.00035, softlimit0.0015.
+Crickets: source2–16 s, HP350/LP2200, targetRMS0.00055, softlimit0.0025.
+Rain: source2–22 s, HP180/LP1300, targetRMS0.0011, softlimit0.003.
+Some downloads used HTTP byte ranges of public MP3 previews; only complete
+frames well inside the downloaded segment were decoded for these excerpts.
+Final sound taste is subject to owner Android review, not claimed listening QA.

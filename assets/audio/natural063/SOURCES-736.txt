@@ -1,0 +1,1 @@
+Discard deselection: existing owner-supplied MellowAudio paper-04.wav, softened at 3000 Hz with 30 ms edge fades. Distinct fixed recording from selection, same .35 volume and fixed playback rate. Original attribution in SOURCES.txt.

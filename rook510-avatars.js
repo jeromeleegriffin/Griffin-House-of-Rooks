@@ -27,13 +27,16 @@
   }
   window.AVATAR_PNG_IDS = PNG;
   window.avatarKey = function (id) {
-    return String(id == null ? '' : id).toLowerCase().replace(/[^a-z0-9]/g, '');
+    return String(id == null ? '' : id).toLowerCase().replace(/[^a-z0-9_]/g, '');
   };
   window.avatarSrc = function (id) {
     const key = window.avatarKey(id);
-    if (key && PNG[key]) return 'avatar-' + key + '.webp';
-    if (typeof AVATARS !== 'undefined' && AVATARS.indexOf(key) >= 0) return 'avatar-' + key + '.svg';
-    return 'avatar-rookling.svg';
+    if(window.HORHumanAvatars?.[key])return 'assets/characters077/human/'+key+'-portrait.webp';
+    if(key==='jerome_founder')return 'assets/characters077/jerome_founder-portrait.webp';
+    if (["blaze", "nix", "anchor", "wager", "ember", "titan", "pike", "drift", "dice", "hollow", "vex", "bramble", "emberlyn", "frost", "fang", "halo", "thistle", "pebble", "rookery", "sable", "willow", "quill", "moss", "gable", "marrow", "finch", "moth", "brandy", "ivy", "shade", "spark", "hearth", "grit", "copper", "flint", "barrel", "nettle", "ash", "cobalt", "harrier"].includes(key)) return 'assets/characters077/'+key+'-portrait.webp';
+    if (key && PNG[key]) return 'assets/images/avatar-' + key + '.webp';
+    if (typeof AVATARS !== 'undefined' && AVATARS.indexOf(key) >= 0) return 'assets/images/avatar-' + key + '.svg';
+    return 'assets/images/avatar-rookling.svg';
   };
   if (typeof BOT_PERSONAS !== 'undefined') {
     BOT_PERSONAS.forEach(function (p) {

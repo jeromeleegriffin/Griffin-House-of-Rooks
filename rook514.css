@@ -4,7 +4,7 @@
 /* ---------- PORTRAIT: room art composed for the actual exposed perimeter ---------- */
 @media (orientation: portrait) {
   #hor-room-bg {
-    background-image: url('./room-card-club-514.jpg') !important;
+    background-image: url('./assets/images/griffin-house-library-locked.png') !important;
     background-size: cover !important;
     background-position: center top !important;
     background-repeat: no-repeat !important;

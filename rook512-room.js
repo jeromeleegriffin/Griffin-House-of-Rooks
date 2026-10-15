@@ -4,19 +4,19 @@
   function addCss() {
     if (document.getElementById('rook514-css')) return;
     var l=document.createElement('link');
-    l.id='rook514-css'; l.rel='stylesheet'; l.href='rook514.css?v=518';
+    l.id='rook514-css'; l.rel='stylesheet'; l.href='rook514.css?v=632';
     document.head.appendChild(l);
   }
   function add513Css() {
     if (document.getElementById('rook513-css')) return;
     var l=document.createElement('link');
-    l.id='rook513-css'; l.rel='stylesheet'; l.href='rook513.css?v=518';
+    l.id='rook513-css'; l.rel='stylesheet'; l.href='rook513.css?v=632';
     document.head.appendChild(l);
   }
   function add513Js() {
     if (document.getElementById('rook513-js')) return;
     var s=document.createElement('script');
-    s.id='rook513-js'; s.src='rook513.js?v=518';
+    s.id='rook513-js'; s.src='rook513.js?v=632';
     document.head.appendChild(s);
   }
   function ensureRoom() {
@@ -32,7 +32,7 @@
     bg.style.setProperty('z-index','0','important');
     bg.style.setProperty('pointer-events','none','important');
     bg.style.setProperty('background-color','#07090f','important');
-    bg.style.setProperty('background-image',"url('./room-card-club-514.jpg')",'important');
+    bg.style.setProperty('background-image',"url('./assets/images/griffin-house-library-locked.png')",'important');
     bg.style.setProperty('background-repeat','no-repeat','important');
     bg.style.setProperty('background-size','cover','important');
     bg.style.setProperty('background-position','center top','important');
@@ -59,11 +59,12 @@
       var prior = window.avatarSrc;
       window.avatarSrc = function(id) {
         var key = (window.avatarKey ? window.avatarKey(id) : String(id == null ? '' : id).toLowerCase().replace(/[^a-z0-9]/g,''));
-        if (key === 'jerome') return 'avatar-jerome.png';
-        /* Preserve the current rookling asset (approved Eagle) instead of
-   migrating it to the legacy Anchor portrait. */
-var src = prior ? prior(id) : ('avatar-' + key + '.webp');
-return src;
+        if (key === 'jerome') return 'assets/images/avatar-jerome.png';
+        /* Existing saved cartoon/default human choices migrate visually to Anchor. */
+        if (!key || key === 'rookling') return 'assets/images/avatar-anchor.webp';
+        var src = prior ? prior(id) : ('avatar-' + key + '.webp');
+        if (src === 'assets/images/avatar-rookling.svg') return 'assets/images/avatar-anchor.webp';
+        return src;
       };
     } catch(e) {}
   }

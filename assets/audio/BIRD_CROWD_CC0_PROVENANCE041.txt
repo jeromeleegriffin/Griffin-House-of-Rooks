@@ -1,0 +1,14 @@
+Bird Nest crowd reaction — approved source choice, October 7, 2026
+Source: Crowd Oooh.wav by deleted_user_2104797
+https://freesound.org/people/deleted_user_2104797/sounds/324890/
+License: Creative Commons Zero (CC0 1.0 Universal)
+https://creativecommons.org/publicdomain/zero/1.0/
+Freesound source license was checked October 7, 2026. Source permits copying,
+modification, distribution and commercial use without permission.
+Downloaded HQ preview: https://cdn.freesound.org/previews/324/324890_2104797-hq.mp3
+Owner chose the three-second middle reaction preview.
+Final edit: source 6.30–8.85 seconds; mono 22050 Hz 16-bit PCM; highpass 110 Hz,
+lowpass 3600 Hz; gain 0.20; 80 ms fade-in and 430 ms fade-out.
+Result: 2.55 seconds, peak 0.169, RMS 0.0313; audition peak 0.462, RMS 0.0809.
+Use only when the optional face-up top Nest card reveals a bird; once per hand.
+Respects card sound and mute settings. Final owner phone/audio review pending.
