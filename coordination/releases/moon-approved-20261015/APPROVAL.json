@@ -1,0 +1,31 @@
+{
+  "releaseId": "moon-approved-20261015",
+  "runtime": "810-moon-bidtext-review",
+  "status": "OWNER_APPROVED_DEPLOYMENT_AUTHORIZED",
+  "owner": "Jerome Griffin",
+  "ownerApprovalAt": "2026-10-15T18:29:43-04:00",
+  "deploymentAuthorizedAt": "2026-10-15T18:33:33-04:00",
+  "ownerQuote": "Everything checks out. Make this the new live version. Push it to both repositories, test and house of rooks",
+  "zip": {
+    "filename": "Griffin_House_Moon_Bid_Text_Matched_Review.zip",
+    "bytes": 147679847,
+    "sha256": "d5fa04321795e4c58c6b5a8577cf5dce9266d377ecbdefe66acced5089811f08",
+    "libraryFileId": "libfile_ddcce3113ddc81919946aacbd7f5b8f8"
+  },
+  "runtimePaths": 1502,
+  "unchangedPriorRuntimePaths": 1487,
+  "changedOrNewRuntimePaths": 15,
+  "previousOfficial": "810",
+  "rollbackBranch": "rollback/pre-moon-20261015-1833",
+  "preReleaseHeads": {
+    "Test": "6c2156624406765501b2c00463fa671da3daf8f6",
+    "Griffin-House-of-Rooks": "87fb13419242786d6d99d285d0ab40dc622c2c29"
+  },
+  "checks": {
+    "package": "All ZIP CRC and manifest hashes pass; runtime bytes match approved ZIP",
+    "state": "14 UI/state tests, real adapter checks, 11 host progression/scoring fixture cases",
+    "phone": "Owner screenshots reviewed; owner explicitly approved and reported everything checks out",
+    "limits": "No assistant-run real browser, subjective listening, full played Moon hand, live multiplayer or installed worker/offline upgrade for this candidate. Landscape remains paused and excluded."
+  },
+  "runtimeLabelPolicy": "Retain exact tested artifact runtime/cache labels; no silent renumber or rebuild."
+}

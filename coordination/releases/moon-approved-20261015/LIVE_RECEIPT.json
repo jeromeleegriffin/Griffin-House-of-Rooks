@@ -1,0 +1,266 @@
+{
+  "releaseId": "moon-approved-20261015",
+  "status": "OWNER_APPROVED_DEPLOYED_BOTH",
+  "runtime": "810-moon-bidtext-review",
+  "date": "2026-10-15",
+  "artifact": {
+    "filename": "Griffin_House_Moon_Bid_Text_Matched_Review.zip",
+    "bytes": 147679847,
+    "sha256": "d5fa04321795e4c58c6b5a8577cf5dce9266d377ecbdefe66acced5089811f08",
+    "libraryFileId": "libfile_ddcce3113ddc81919946aacbd7f5b8f8"
+  },
+  "authorization": {
+    "releaseId": "moon-approved-20261015",
+    "runtime": "810-moon-bidtext-review",
+    "status": "OWNER_APPROVED_DEPLOYMENT_AUTHORIZED",
+    "owner": "Jerome Griffin",
+    "ownerApprovalAt": "2026-10-15T18:29:43-04:00",
+    "deploymentAuthorizedAt": "2026-10-15T18:33:33-04:00",
+    "ownerQuote": "Everything checks out. Make this the new live version. Push it to both repositories, test and house of rooks",
+    "zip": {
+      "filename": "Griffin_House_Moon_Bid_Text_Matched_Review.zip",
+      "bytes": 147679847,
+      "sha256": "d5fa04321795e4c58c6b5a8577cf5dce9266d377ecbdefe66acced5089811f08",
+      "libraryFileId": "libfile_ddcce3113ddc81919946aacbd7f5b8f8"
+    },
+    "runtimePaths": 1502,
+    "unchangedPriorRuntimePaths": 1487,
+    "changedOrNewRuntimePaths": 15,
+    "previousOfficial": "810",
+    "rollbackBranch": "rollback/pre-moon-20261015-1833",
+    "preReleaseHeads": {
+      "Test": "6c2156624406765501b2c00463fa671da3daf8f6",
+      "Griffin-House-of-Rooks": "87fb13419242786d6d99d285d0ab40dc622c2c29"
+    },
+    "checks": {
+      "package": "All ZIP CRC and manifest hashes pass; runtime bytes match approved ZIP",
+      "state": "14 UI/state tests, real adapter checks, 11 host progression/scoring fixture cases",
+      "phone": "Owner screenshots reviewed; owner explicitly approved and reported everything checks out",
+      "limits": "No assistant-run real browser, subjective listening, full played Moon hand, live multiplayer or installed worker/offline upgrade for this candidate. Landscape remains paused and excluded."
+    },
+    "runtimeLabelPolicy": "Retain exact tested artifact runtime/cache labels; no silent renumber or rebuild."
+  },
+  "test": {
+    "repository": "jeromeleegriffin/Test",
+    "runtimeCommit": "3d41595f0a6ee4850c54aaf6e1d7bfd51891ca06",
+    "runtimeTree": "f8ab0d38b191258dc7d5c93154e3b49a202a27e8",
+    "pagesRunId": 38821157572,
+    "pagesConclusion": "success",
+    "url": "https://jeromeleegriffin.github.io/Test/",
+    "runtimeGitBlobsVerified": 1502,
+    "changedLiveFilesVerified": 15,
+    "browserStartup": "PASS_CLOUD_BROWSER_LOBBY"
+  },
+  "production": {
+    "repository": "jeromeleegriffin/Griffin-House-of-Rooks",
+    "runtimeCommit": "72fa8d188b4d34b01dc31aeddf3c7231cde1af7b",
+    "runtimeTree": "a7b3d359b833804b45cbe77db7ba6c5764d10183",
+    "workflowCommit": "985906ec20a5546b7eff9a5166ac4732fa70ae64",
+    "pagesRunId": 38821389743,
+    "pagesConclusion": "success",
+    "url": "https://jeromeleegriffin.github.io/Griffin-House-of-Rooks/",
+    "runtimeGitBlobsVerified": 1502,
+    "changedLiveFilesVerified": 15,
+    "browserStartup": "PASS_CLOUD_BROWSER_LOBBY"
+  },
+  "rollbackBranch": "rollback/pre-moon-20261015-1833",
+  "preReleaseHeads": {
+    "Test": "6c2156624406765501b2c00463fa671da3daf8f6",
+    "Griffin-House-of-Rooks": "87fb13419242786d6d99d285d0ab40dc622c2c29"
+  },
+  "runtimeManifest": "runtime-sha256.json",
+  "liveHashEvidence": {
+    "Test": [
+      {
+        "path": "approved-bid-portrait.css",
+        "expected": "bf6c84d45d511c897a72118f9a2b38e62325f1dc3b407703a18f8b39a2c4e254",
+        "actual": "bf6c84d45d511c897a72118f9a2b38e62325f1dc3b407703a18f8b39a2c4e254",
+        "match": true
+      },
+      {
+        "path": "approved-bid-portrait.js",
+        "expected": "589af006020fa05baeccbdaac37711acddb92e9087ef2e441904b672afecff07",
+        "actual": "589af006020fa05baeccbdaac37711acddb92e9087ef2e441904b672afecff07",
+        "match": true
+      },
+      {
+        "path": "asset-loading772.js",
+        "expected": "2cee52b2d4cb75b538fcd35e75f88b213447dcce004d1a6bfa7042f88090fef2",
+        "actual": "2cee52b2d4cb75b538fcd35e75f88b213447dcce004d1a6bfa7042f88090fef2",
+        "match": true
+      },
+      {
+        "path": "assets/bidbox-moon-review/bidbox-approved-scrollwork.png",
+        "expected": "953a81454099fe24ad803c1c54ba83d9c46f67f5d3273c1d7dc6ffaab0b5b2b1",
+        "actual": "953a81454099fe24ad803c1c54ba83d9c46f67f5d3273c1d7dc6ffaab0b5b2b1",
+        "match": true
+      },
+      {
+        "path": "assets/bidbox-moon-review/gold-connector.png",
+        "expected": "a1e55a1ca1ff910dafcc99c96c7f6a445b077d2a7c097cc91502223f9475ffd0",
+        "actual": "a1e55a1ca1ff910dafcc99c96c7f6a445b077d2a7c097cc91502223f9475ffd0",
+        "match": true
+      },
+      {
+        "path": "assets/moon-plaque/concept-a.png",
+        "expected": "960f7258a1fa4d6b16105c47ca9d98b9ad651b74866886857cf66fc0de06261b",
+        "actual": "960f7258a1fa4d6b16105c47ca9d98b9ad651b74866886857cf66fc0de06261b",
+        "match": true
+      },
+      {
+        "path": "game060.js",
+        "expected": "3aedfa323249f44dccd239cdd6ce56401415d0c0077100bf01036879a1af024c",
+        "actual": "3aedfa323249f44dccd239cdd6ce56401415d0c0077100bf01036879a1af024c",
+        "match": true
+      },
+      {
+        "path": "holder004.css",
+        "expected": "feea2ce9a3582b92eb05178e7ba17edad5738d6ee15c4a3d8aac659bcef2fe4a",
+        "actual": "feea2ce9a3582b92eb05178e7ba17edad5738d6ee15c4a3d8aac659bcef2fe4a",
+        "match": true
+      },
+      {
+        "path": "hor-version.js",
+        "expected": "6e12a1dbb5523bd90c934356a12746aee0b4ac21fec52f1e0271c2df6f16a3d6",
+        "actual": "6e12a1dbb5523bd90c934356a12746aee0b4ac21fec52f1e0271c2df6f16a3d6",
+        "match": true
+      },
+      {
+        "path": "index.html",
+        "expected": "2871c92e2fdad3efa5d693175afe853ac3560159e5ecbec3df12d716c7e50a56",
+        "actual": "2871c92e2fdad3efa5d693175afe853ac3560159e5ecbec3df12d716c7e50a56",
+        "match": true
+      },
+      {
+        "path": "menu-approved805.css",
+        "expected": "53837c5676ccc9e19351537210dad06fc8a16c82e17cd58a93b9b92c7d50b40e",
+        "actual": "53837c5676ccc9e19351537210dad06fc8a16c82e17cd58a93b9b92c7d50b40e",
+        "match": true
+      },
+      {
+        "path": "moon-plaque.css",
+        "expected": "0a70398e6b03cb26e8dc4bba243e4d77b820472b02c29d9d14ef459681a20468",
+        "actual": "0a70398e6b03cb26e8dc4bba243e4d77b820472b02c29d9d14ef459681a20468",
+        "match": true
+      },
+      {
+        "path": "style.css",
+        "expected": "c7fa4560a6e46207fe22a4d96e2bc428701481c4c5bb6c4522cdfb759226c990",
+        "actual": "c7fa4560a6e46207fe22a4d96e2bc428701481c4c5bb6c4522cdfb759226c990",
+        "match": true
+      },
+      {
+        "path": "style057.css",
+        "expected": "71c851d36fa0d483daa63907131d3964d386b2911123103c2aa104abe5329384",
+        "actual": "71c851d36fa0d483daa63907131d3964d386b2911123103c2aa104abe5329384",
+        "match": true
+      },
+      {
+        "path": "sw060.js",
+        "expected": "111a9f5ca9dbb222b2f6b241e165da7710c3173efc9d0f61f0e7a8484f75aeed",
+        "actual": "111a9f5ca9dbb222b2f6b241e165da7710c3173efc9d0f61f0e7a8484f75aeed",
+        "match": true
+      }
+    ],
+    "Griffin-House-of-Rooks": [
+      {
+        "path": "approved-bid-portrait.css",
+        "expected": "bf6c84d45d511c897a72118f9a2b38e62325f1dc3b407703a18f8b39a2c4e254",
+        "actual": "bf6c84d45d511c897a72118f9a2b38e62325f1dc3b407703a18f8b39a2c4e254",
+        "match": true
+      },
+      {
+        "path": "approved-bid-portrait.js",
+        "expected": "589af006020fa05baeccbdaac37711acddb92e9087ef2e441904b672afecff07",
+        "actual": "589af006020fa05baeccbdaac37711acddb92e9087ef2e441904b672afecff07",
+        "match": true
+      },
+      {
+        "path": "asset-loading772.js",
+        "expected": "2cee52b2d4cb75b538fcd35e75f88b213447dcce004d1a6bfa7042f88090fef2",
+        "actual": "2cee52b2d4cb75b538fcd35e75f88b213447dcce004d1a6bfa7042f88090fef2",
+        "match": true
+      },
+      {
+        "path": "assets/bidbox-moon-review/bidbox-approved-scrollwork.png",
+        "expected": "953a81454099fe24ad803c1c54ba83d9c46f67f5d3273c1d7dc6ffaab0b5b2b1",
+        "actual": "953a81454099fe24ad803c1c54ba83d9c46f67f5d3273c1d7dc6ffaab0b5b2b1",
+        "match": true
+      },
+      {
+        "path": "assets/bidbox-moon-review/gold-connector.png",
+        "expected": "a1e55a1ca1ff910dafcc99c96c7f6a445b077d2a7c097cc91502223f9475ffd0",
+        "actual": "a1e55a1ca1ff910dafcc99c96c7f6a445b077d2a7c097cc91502223f9475ffd0",
+        "match": true
+      },
+      {
+        "path": "assets/moon-plaque/concept-a.png",
+        "expected": "960f7258a1fa4d6b16105c47ca9d98b9ad651b74866886857cf66fc0de06261b",
+        "actual": "960f7258a1fa4d6b16105c47ca9d98b9ad651b74866886857cf66fc0de06261b",
+        "match": true
+      },
+      {
+        "path": "game060.js",
+        "expected": "3aedfa323249f44dccd239cdd6ce56401415d0c0077100bf01036879a1af024c",
+        "actual": "3aedfa323249f44dccd239cdd6ce56401415d0c0077100bf01036879a1af024c",
+        "match": true
+      },
+      {
+        "path": "holder004.css",
+        "expected": "feea2ce9a3582b92eb05178e7ba17edad5738d6ee15c4a3d8aac659bcef2fe4a",
+        "actual": "feea2ce9a3582b92eb05178e7ba17edad5738d6ee15c4a3d8aac659bcef2fe4a",
+        "match": true
+      },
+      {
+        "path": "hor-version.js",
+        "expected": "6e12a1dbb5523bd90c934356a12746aee0b4ac21fec52f1e0271c2df6f16a3d6",
+        "actual": "6e12a1dbb5523bd90c934356a12746aee0b4ac21fec52f1e0271c2df6f16a3d6",
+        "match": true
+      },
+      {
+        "path": "index.html",
+        "expected": "2871c92e2fdad3efa5d693175afe853ac3560159e5ecbec3df12d716c7e50a56",
+        "actual": "2871c92e2fdad3efa5d693175afe853ac3560159e5ecbec3df12d716c7e50a56",
+        "match": true
+      },
+      {
+        "path": "menu-approved805.css",
+        "expected": "53837c5676ccc9e19351537210dad06fc8a16c82e17cd58a93b9b92c7d50b40e",
+        "actual": "53837c5676ccc9e19351537210dad06fc8a16c82e17cd58a93b9b92c7d50b40e",
+        "match": true
+      },
+      {
+        "path": "moon-plaque.css",
+        "expected": "0a70398e6b03cb26e8dc4bba243e4d77b820472b02c29d9d14ef459681a20468",
+        "actual": "0a70398e6b03cb26e8dc4bba243e4d77b820472b02c29d9d14ef459681a20468",
+        "match": true
+      },
+      {
+        "path": "style.css",
+        "expected": "c7fa4560a6e46207fe22a4d96e2bc428701481c4c5bb6c4522cdfb759226c990",
+        "actual": "c7fa4560a6e46207fe22a4d96e2bc428701481c4c5bb6c4522cdfb759226c990",
+        "match": true
+      },
+      {
+        "path": "style057.css",
+        "expected": "71c851d36fa0d483daa63907131d3964d386b2911123103c2aa104abe5329384",
+        "actual": "71c851d36fa0d483daa63907131d3964d386b2911123103c2aa104abe5329384",
+        "match": true
+      },
+      {
+        "path": "sw060.js",
+        "expected": "111a9f5ca9dbb222b2f6b241e165da7710c3173efc9d0f61f0e7a8484f75aeed",
+        "actual": "111a9f5ca9dbb222b2f6b241e165da7710c3173efc9d0f61f0e7a8484f75aeed",
+        "match": true
+      }
+    ]
+  },
+  "limits": "No assistant-run real browser, subjective listening, full played Moon hand, live multiplayer or installed worker/offline upgrade for this candidate. Landscape remains paused and excluded.",
+  "activeInstalledServiceWorkerVerified": false,
+  "offlineUpgradeVerified": false,
+  "approvedRuntimeModifiedDuringDeployment": false,
+  "landscapeIncluded": false,
+  "readScope": "Read live brain/current.json (AE), actual foundational H Master Bank and principal chronological I–AE documents, AE START HERE, current coordination startup/operating/control/repairs/numbering and registry, supplied START_HERE, comprehensive checkpoint, deployment state, approved manifests and workflow. Embedded AA in AB and AB in AC retain historical text; relevant newer sections read. Original package/owner phone evidence and exact 1502 runtime bytes verified. Not a fresh visual audit of every historical binary attachment.",
+  "brainVersion": "AE",
+  "brainPolicy": "AE remains immutable; this release checkpoint supplements current.json without creating a new Brain version."
+}
