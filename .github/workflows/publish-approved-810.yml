@@ -1,4 +1,4 @@
-name: Publish approved Moon and Bid Box
+name: Publish approved Rita and Jerome voice
 on:
   push:
     branches: [main]
@@ -25,12 +25,12 @@ jobs:
         run: |
           python3 - <<'PY'
           import urllib.request,tarfile,io,json,hashlib,pathlib,subprocess
-          commit='3d41595f0a6ee4850c54aaf6e1d7bfd51891ca06'
+          commit='2778543e6cdd894d2ce8bbe1ccbeee7a15114b05'
           raw=urllib.request.urlopen('https://codeload.github.com/jeromeleegriffin/Test/tar.gz/'+commit,timeout=120).read()
           output=pathlib.Path('/tmp/rook810-pages');output.mkdir()
           with tarfile.open(fileobj=io.BytesIO(raw),mode='r:gz') as archive:
             prefix=archive.getmembers()[0].name.split('/')[0]+'/'
-            manifest=json.load(archive.extractfile(prefix+'coordination/releases/moon-approved-20261015/runtime-sha256.json'))
+            manifest=json.load(archive.extractfile(prefix+'coordination/releases/rita-jerome-approved-20261015/runtime-sha256.json'))
             for name in sorted(manifest, key=lambda name: archive.getmember(prefix+name).offset_data):
               expected=manifest[name]
               p=pathlib.PurePosixPath(name)
@@ -41,12 +41,12 @@ jobs:
               if hashlib.sha256(data).hexdigest()!=expected:raise RuntimeError('Hash mismatch: '+name)
               for base in [pathlib.Path('.'),output]:
                 target=base/name;target.parent.mkdir(parents=True,exist_ok=True);target.write_bytes(data)
-          receipt={'build':'810-moon-bidtext-review','sourceRepository':'jeromeleegriffin/Test','sourceCommit':commit,'verifiedRuntimeFiles':len(manifest),'zipSha256':'d5fa04321795e4c58c6b5a8577cf5dce9266d377ecbdefe66acced5089811f08','ownerAuthorized':True,'rollbackBranch':'rollback/pre-moon-20261015-1833','previousCommit':'87fb13419242786d6d99d285d0ab40dc622c2c29'}
-          pathlib.Path('RELEASE-MOON-20261015.json').write_text(json.dumps(receipt,indent=2)+'\n')
-          subprocess.run(['git','add','--',*manifest.keys(),'RELEASE-MOON-20261015.json'],check=True)
+          receipt={"build":"810-rita-jerome-voice-review-20261015","sourceRepository":"jeromeleegriffin/Test","sourceCommit":"2778543e6cdd894d2ce8bbe1ccbeee7a15114b05","verifiedRuntimeFiles":1555,"ownerAuthorized":True,"landscapeIncluded":False,"studioIncluded":False,"rollbackBranch":"rollback/pre-rita-jerome-live-20261015","previousCommit":"e6253c8496b387dc9b858dcac1f8b53ca12e9661"}
+          pathlib.Path('RELEASE-RITA-JEROME-20261015.json').write_text(json.dumps(receipt,indent=2)+'\n')
+          subprocess.run(['git','add','--',*manifest.keys(),'RELEASE-RITA-JEROME-20261015.json'],check=True)
           subprocess.run(['git','config','user.name','github-actions[bot]'],check=True)
           subprocess.run(['git','config','user.email','41898282+github-actions[bot]@users.noreply.github.com'],check=True)
-          subprocess.run(['git','commit','-m','Install exact owner-approved Moon runtime; 1502 file hashes verified'],check=True)
+          subprocess.run(['git','commit','-m','Install exact owner-approved Rita/Jerome runtime; 1555 file hashes verified'],check=True)
           subprocess.run(['git','push','origin','HEAD:main'],check=True)
           PY
       - uses: actions/configure-pages@v5
