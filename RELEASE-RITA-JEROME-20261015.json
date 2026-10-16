@@ -1,0 +1,11 @@
+{
+  "build": "810-rita-jerome-voice-review-20261015",
+  "sourceRepository": "jeromeleegriffin/Test",
+  "sourceCommit": "2778543e6cdd894d2ce8bbe1ccbeee7a15114b05",
+  "verifiedRuntimeFiles": 1555,
+  "ownerAuthorized": true,
+  "landscapeIncluded": false,
+  "studioIncluded": false,
+  "rollbackBranch": "rollback/pre-rita-jerome-live-20261015",
+  "previousCommit": "e6253c8496b387dc9b858dcac1f8b53ca12e9661"
+}

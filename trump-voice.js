@@ -20,8 +20,8 @@
  function volume(){return 1;}
  function allowed(preview=false){return !document.hidden&&(preview||document.body.classList.contains('in-game'))&&typeof soundMuted!=='undefined'&&!soundMuted&&window.HORAudioMixer.voicesAllowed();}
  function stop(reason){serial++;event=null;if(source){try{source.stop();}catch(_){}source=null;}activeGain=null;record('stop',{reason});}
- function load(voice,color){
-  const path=assetPath(voice,color);if(!path)return Promise.resolve(null);
+ function load(voice,color,selectedPath){
+  const path=selectedPath||assetPath(voice,color);if(!path)return Promise.resolve(null);
   if(cache.has(path)){const hit=cache.get(path);cache.delete(path);cache.set(path,hit);return hit;}
   const promise=fetch(path).then(r=>{if(!r.ok)throw Error('voice asset '+r.status);return r.arrayBuffer();}).then(b=>ensureAudio().decodeAudioData(b)).catch(()=>{if(cache.get(path)===promise)cache.delete(path);record('load-failed',{path});return null;});
   cache.set(path,promise);while(cache.size>24)cache.delete(cache.keys().next().value);return promise;
@@ -33,19 +33,16 @@
  async function announce(e,isPreview=false){
   const token=serial,requested=performance.now();
   if(!allowed(isPreview)){record('suppressed',{reason:'sound-settings',color:e.color});return false;}
-  const buffer=await load(e.voice,e.color);
-  const current=()=>buffer&&token===serial&&event===e&&allowed(isPreview)&&performance.now()-requested<2500;
+  const selectedPath=window.HORJeromeVoiceLines?.resolve(e.voice,'trump',e.color);
+  const buffer=await load(e.voice,e.color,selectedPath);
+  const current=()=>buffer&&token===serial&&event===e&&allowed(isPreview)&&performance.now()-requested<8000;
   if(!current())return false;
   return new Promise(resolve=>{
-   const timeout=setTimeout(()=>resolve(false),2500);
-   whenAudioReady(ctx=>{
-    clearTimeout(timeout);if(!current()){resolve(false);return;}
-    const s=ctx.createBufferSource(),gain=ctx.createGain();s.buffer=buffer;gain.gain.value=.8*volume();
-    s.connect(gain);gain.connect(window.HORAudioMixer.output(ctx,'voices'));source=s;activeGain=gain;
-    if(typeof presentationSounds035!=='undefined')presentationSounds035.add(s);
-    s.onended=()=>{if(source===s){source=null;activeGain=null;}if(typeof presentationSounds035!=='undefined')presentationSounds035.delete(s);s.disconnect();gain.disconnect();};
-    s.start();record(isPreview?'preview':'played',{id:e.id,color:e.color,voice:e.voice,avatar:e.avatar,chooser:e.chooser,path:assetPath(e.voice,e.color)});resolve(true);
-   });
+   let started=false;const timeout=setTimeout(()=>resolve(false),8000);
+   const handle=window.HORVoiceQueue.enqueueBuffer(buffer,{id:e.id||'trump-preview',owner:'trump',gain:.8,
+    valid:current,onStart:()=>{started=true;clearTimeout(timeout);record(isPreview?'preview':'played',{id:e.id,color:e.color,voice:e.voice,avatar:e.avatar,chooser:e.chooser,path:selectedPath||assetPath(e.voice,e.color)});resolve(true);},
+    onEnd:()=>{if(source===handle)source=null;if(!started){clearTimeout(timeout);resolve(false);}}});
+   source=handle;
   });
  }
  function chosen(g,avatars){

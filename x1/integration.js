@@ -22,7 +22,7 @@ function eligiblePartner(seat,phase="play"){
 function anchorPartnerRoute(seat,legal){
  try{
   const actor=game?.players?.[seat];
-  if(!actor?.isBot||actor.name!=='Anchor'||actor.botStyle!=='partnerFirst')return null;
+  if(!actor?.isBot||!(actor.name==='Anchor'||(actor.name==='Rita'&&actor.avatar==='rita'))||actor.botStyle!=='partnerFirst')return null;
   const partner=eligiblePartner(seat,'play');
   if(partner===null||!Array.isArray(game.hands?.[partner])||game.currentPlayer!==seat||!legal?.length)return null;
   const partnerHand=game.hands[partner],trump=game.trump,myTeam=actor.team;

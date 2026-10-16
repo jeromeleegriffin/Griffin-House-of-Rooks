@@ -29,6 +29,7 @@
   function genderFor(p){
     const preference = p.voice || 'avatar';
     if (preference === 'silent') return null;
+    if (window.HORJeromeVoiceLines?.isJerome(p)) return 'jerome';
     if (preference === 'male' || preference === 'female') return preference;
     const avatar = String((playerAvatars && playerAvatars[p.id]) || p.avatar || '').toLowerCase();
     const voiceId = window.HORTrumpVoice?.voiceFor(avatar) || '';
@@ -45,8 +46,10 @@
     return Number.isInteger(n) && allowedAmounts.has(n) ? String(n) : null;
   }
   function context(){return {game:typeof game==='undefined'?null:game,hand:typeof handHistory==='undefined'?0:handHistory.length};}
-  function current(event){const now=context(),p=seatPlayer(Number(event.player));if(now.game?.shotTheMoon && event.action !== 'shootMoon')return false;return event.originGame===now.game&&event.originHand===now.hand&&p&&p.id===event.originActor&&genderFor(p)!==null&&(!now.game||!['play','score','waiting','lobby','deal','dealing'].includes(now.game.phase));}
+  function current(event){const now=context(),p=seatPlayer(Number(event.player));if(!p||event.originGame!==now.game||event.originHand!==now.hand||p.id!==event.originActor||genderFor(p)!==event.voiceGender)return false;if(event.action==='reaction')return ['score','play'].includes(now.game?.phase);if(now.game?.shotTheMoon&&event.action!=='shootMoon')return false;return !now.game||!['play','score','waiting','lobby','deal','dealing'].includes(now.game.phase);}
+
   function pathFor(gender, clip){
+    if (clip.includes('/')) return clip;
     return 'assets/human-bid-voice801/' + gender + '/' + clip + '.mp3' + (clip.startsWith('moon-') ? '?v=805-ownerreview' : '');
   }
   function load(gender, clip){
@@ -75,39 +78,22 @@
     const event = queue.shift();
     const seat = Number(event.player);
     const p = seatPlayer(seat);
-    const clip = event.action === 'shootMoon'
+    const clip = event.action === 'reaction' ? event.reaction : event.action === 'shootMoon'
       ? (event.clip === 'moon-1' || event.clip === 'moon-2' ? event.clip : null)
       : clipFor(event.action, event.amount);
     const gender = event.voiceGender;
     if (!p || !clip || !gender || !current(event) || !soundAllowed()) { startNext(); return; }
     const token = serial;
     loading = true;
-    load(gender, clip).then(buffer => {
+    const resolved=window.HORJeromeVoiceLines?.resolve(gender,event.action==='reaction'?event.reaction:event.action,event.amount);
+    load(gender, resolved||clip).then(buffer => {
       if (token !== serial) return;
       if (!buffer || !current(event) || !soundAllowed()) { loading = false; startNext(); return; }
-      whenAudioReady(ctx => {
-        if (token !== serial) return;
-        loading = false;
-        if (!current(event) || !soundAllowed()) { startNext(); return; }
-        const source = ctx.createBufferSource();
-        const gain = ctx.createGain();
-        const configured = 1;
-        const volume = Math.max(0, Math.min(1, Number.isFinite(configured) ? configured : 1));
-        source.buffer = buffer;
-        gain.gain.value = 0.9 * volume;
-        source.connect(gain);
-        gain.connect(window.HORAudioMixer.output(ctx,'voices'));
-        activeSource = source;
-        activeGain = gain;
-        source.onended = () => {
-          if (activeSource === source) activeSource = null;
-          if (activeGain === gain) activeGain = null;
-          try { source.disconnect(); gain.disconnect(); } catch (_) {}
-          if (token !== serial) return;
-          startNext();
-        };
-        source.start();
-      });
+      loading=false;
+      const handle=window.HORVoiceQueue.enqueueBuffer(buffer,{id:event.id,owner:'auction',gain:.9,
+        valid:()=>token===serial&&current(event)&&soundAllowed(),
+        onEnd:()=>{if(activeSource===handle)activeSource=null;if(token===serial)startNext();}});
+      activeSource=handle;
     });
   }
   function play(event){
@@ -118,7 +104,7 @@
     const moonAlreadyDeclared = moonContext && moonContext.game === now.game && moonContext.hand === now.hand;
     // A late auction packet must not refill the queue after the Moon flush.
     // Duplicate declarations with a new packet ID are also quiet for this hand.
-    if (moonAlreadyDeclared || (now.game?.shotTheMoon && event.action !== 'shootMoon')) return;
+    if (event.action !== 'reaction' && (moonAlreadyDeclared || (now.game?.shotTheMoon && event.action !== 'shootMoon'))) return;
     if (event.action === 'shootMoon') moonContext = now;
     if(event.action==='shootMoon'){const ctx=moonHandKey();if(moonSpokenContext&&moonSpokenContext.game===ctx.game&&moonSpokenContext.hand===ctx.hand)return;moonSpokenContext=ctx;stop();}
     seen.add(event.id);
@@ -152,15 +138,18 @@
     if (!data || !data.event) return;
     play(data.event);
   }
+  function reaction(seat,kind,id){play({id,player:seat,action:'reaction',reaction:kind});}
   function warmCurrentHuman(){
     try {
       const p = seatPlayer(myIndex);
       if (!p) return;
       const gender = genderFor(p);
-      if (gender) { load(gender, 'pass'); load(gender, '100'); }
+      if (gender==='jerome') {load(gender,'voices/jerome/events/pass-1.mp3');load(gender,'voices/jerome/events/100.mp3');} else if (gender) { load(gender, 'pass'); load(gender, '100'); }
     } catch (_) {}
   }
+  function warmJeromeTable(){try{if(players.some(p=>p&&window.HORJeromeVoiceLines?.isJerome(p)))for(const path of window.HORJeromeVoiceLines.assets())load('jerome',path);}catch(_){}}
   function preloadTable(){
+    warmJeromeTable();
     // Preload both presentation voices before bidding so a bot's first bid
     // never has to wait for a network fetch before it can speak.
     for (const gender of ['male', 'female']) {
@@ -171,6 +160,7 @@
     }
   }
   document.addEventListener('pointerdown', () => { warmCurrentHuman(); preloadTable(); }, {once:true, passive:true});
+  document.addEventListener('click',warmJeromeTable);
   document.addEventListener('visibilitychange', () => { if (document.hidden) stop(); });
-  window.HORBidVoice801 = Object.freeze({announce, receive, stop, genderFor, clipFor, preloadTable});
+  window.HORBidVoice801 = Object.freeze({announce, receive, stop, genderFor, clipFor, preloadTable, reaction});
 })();

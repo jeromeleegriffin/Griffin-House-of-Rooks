@@ -7,7 +7,7 @@
 // It's exchanged during the join handshake so a stale host or joiner (e.g.
 // one still running old cached JS) gets caught and auto-updated instead of
 // silently failing or behaving unpredictably against a mismatched peer.
-const APP_VERSION = '810-moon-bidtext-review';
+const APP_VERSION = '810-rita-jerome-voice-review-20261015';
 window.HOR_SCRIPT_BUILD = APP_VERSION;
 
 function horThisIndex() {
@@ -4467,6 +4467,7 @@ function handleMessage(data, conn) {
         if (data.matchStats) matchStats = data.matchStats;
         if (Array.isArray(data.playerStats)) playerStats = data.playerStats;
         if (data.summary) {
+          try { window.HORJeromeVoiceLines?.result(data.summary); } catch (e) {}
           if(data.summary.careerEvent)horRecordCareerHand(data.summary.careerEvent);
           // Host already held the nest overlay; clients may still be watching it
           const stillNest = document.getElementById('ghNestAnim');
@@ -9679,6 +9680,7 @@ function hostEndHand() {
     summary:{pointsA,pointsB,bid:game.bid,made,trump:game.trump,scores:[...game.scores]}};
   horRecordCareerHand(summary.careerEvent);
   const finishToScore = () => {
+    try { window.HORJeromeVoiceLines?.result(summary); } catch (e) {}
     broadcast({
       type: 'handResult', summary, history: handHistory, matchTricks: matchTricks || [],
       matchStats: { ...matchStats }, playerStats: playerStats.map(s => ({ ...s })),
