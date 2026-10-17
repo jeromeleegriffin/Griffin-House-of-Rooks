@@ -1176,14 +1176,16 @@ setTimeout(function(){
 <script src="room-approved805.js?v=805-ownerreview"></script>
 <script src="menu-approved805.js?v=805-atmosphere1"></script>
 
-<!-- Landscape work-in-progress notice: isolated from portrait gameplay. -->
+<!-- Landscape preview lock: game is intentionally portrait-only during landscape construction. -->
 <style id="landscape-construction-style">
-#landscapeConstruction{display:none;position:fixed;top:50%;left:50%;transform:translate(-50%,-50%);z-index:2147483000;box-sizing:border-box;width:min(92vw,530px);padding:11px 38px 11px 15px;border:1px solid #b99a62;border-radius:10px;background:rgba(12,25,35,.95);box-shadow:0 6px 24px #0009;color:#f3e5c9;text-align:center;font:13px/1.4 system-ui,sans-serif;pointer-events:auto}
-#landscapeConstruction strong{display:block;color:#f0ce87;font-size:14px;margin-bottom:3px}
-#landscapeConstruction button{position:absolute;right:6px;top:50%;transform:translateY(-50%);min-width:44px;min-height:44px;background:transparent;color:#f3e5c9;border:0;font-size:23px;cursor:pointer;padding:2px 6px}
-@media(orientation:landscape){#landscapeConstruction:not([hidden]){display:block}}
+#landscapeConstruction{display:none!important}
+@media(orientation:landscape){html,body{overflow:hidden!important}body>*:not(#landscapePreviewLock){visibility:hidden!important;pointer-events:none!important}#landscapePreviewLock{display:flex!important;visibility:visible!important;pointer-events:auto!important}}
+#landscapePreviewLock{display:none;position:fixed;inset:0;z-index:2147483647;align-items:center;justify-content:center;overflow:hidden;background:#071526;color:#f3e5c9;font-family:system-ui,sans-serif;box-sizing:border-box}
+#landscapePreviewLock .scene{position:absolute;inset:0;background:radial-gradient(ellipse at center,#153d70,#0a1c35 65%,#070d18);opacity:.7}
+#landscapePreviewLock .notice{position:relative;z-index:1;width:min(86vw,530px);max-height:90vh;overflow:auto;box-sizing:border-box;border:2px solid #c6a364;border-radius:15px;padding:20px 26px;text-align:center;background:rgba(9,21,33,.94);box-shadow:0 15px 65px #000b}
+#landscapePreviewLock h2{font-size:clamp(17px,3vw,25px);margin:0 0 10px;color:#f0ce87}#landscapePreviewLock p{font-size:clamp(12px,1.8vw,16px);line-height:1.5;margin:0}
 </style>
-<div id="landscapeConstruction" role="status" aria-label="Landscape mode under construction" hidden><button type="button" aria-label="Dismiss landscape notice">×</button><strong>Landscape Mode Under Construction</strong>We're improving the landscape experience with enhanced graphics, better card layouts, and smoother gameplay. What you're seeing is a work in progress, not the finished design. Thanks for your patience!</div>
-<script id="landscape-construction-script">(function(){var n=document.getElementById('landscapeConstruction');if(!n)return;var dismissed=false;function sync(){n.hidden=dismissed||!matchMedia('(orientation: landscape)').matches;}n.querySelector('button').addEventListener('click',function(){dismissed=true;sync()});if(window.matchMedia){var m=matchMedia('(orientation: landscape)');if(m.addEventListener)m.addEventListener('change',sync);else if(m.addListener)m.addListener(sync);}sync();})();</script>
+<div id="landscapePreviewLock" role="status" aria-label="Landscape mode under construction"><div class="scene"></div><div class="notice"><h2>Landscape Mode Under Construction</h2><p>We're improving the landscape experience with enhanced graphics, better card layouts, and smoother gameplay. What you're seeing is a work in progress, not the finished design. For now, rotate your device to portrait to play.</p></div></div>
+
 </body>
 </html>
