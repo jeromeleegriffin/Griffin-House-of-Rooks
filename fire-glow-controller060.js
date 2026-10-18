@@ -5,16 +5,6 @@
   const active = () => {
     const body = document.body;
     const game = document.getElementById('game');
-    const toggle = document.getElementById('opt-cabin-ambience');
-    const slider = document.getElementById('opt-cabin-volume');
-    let storedEnabled = null, storedVolume = null, muted = false;
-    try {
-      storedEnabled = localStorage.getItem('rookCabinAmbience041');
-      storedVolume = localStorage.getItem('rookCabinVolume041');
-      muted = localStorage.getItem('rookMuted') === '1';
-    } catch (_) {}
-    const enabled = toggle ? toggle.checked : storedEnabled !== '0';
-    const volume = slider ? Number(slider.value) : (storedVolume === null ? 30 : Number(storedVolume));
     const visible = !document.hidden && (!game || !game.classList.contains('hidden'));
     body.classList.toggle('cabin-fire-active041', body.classList.contains('in-game') && visible);
   };

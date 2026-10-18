@@ -1,22 +1,88 @@
 /* Functional selection feedback: live name, checkmark, and persistent clear state. */
-.partner-selection-status833{color:#f7d97f;font:600 14px/1.25 Georgia,serif;margin:6px 0 10px;}
-#landingPartners783>p[hidden]{display:none!important;}
-.partner-photo{position:relative;touch-action:manipulation;}
-.partner-choice-check833{position:absolute;top:5px;right:5px;display:none;width:22px;height:22px;align-items:center;justify-content:center;box-sizing:border-box;border-radius:50%;background:#f2d47b;color:#10221b;font:800 17px/1 system-ui;pointer-events:none;}
-.partner-photo[aria-pressed=true] .partner-choice-check833{display:flex;}
-#landingPartners783 .partner-photo[aria-pressed=true]{border:2px solid #ffe09a!important;outline:2px solid #ffe09a!important;outline-offset:-3px;background:#3b4c32!important;box-shadow:inset 0 0 0 3px #d5b85c44!important;}
-#landingPartners783 .partner-photo:active{background:#40513b!important;}
-#landingPartners783 [data-done]{border:1px solid #ead393!important;background:linear-gradient(#e4cb7b,#b78d34)!important;color:#211907!important;font-weight:700!important;min-width:120px;}
-#landingPartner783:active,#landingPartner783:focus-visible{background:#40513b!important;outline:2px solid #f3d17e;outline-offset:2px;}
-@media(orientation:landscape){
- body #lobby #landingPartner783{position:relative!important;}
- body #lobby #landingPartner783::after{content:'';position:absolute;inset:-7px -4px;}
- #landingPartners783 .partner-photo{padding-right:30px!important;}
- #landingPartners783 .partner-photo-nav{padding-right:150px!important;}
- #landingPartners783 .partner-selection-status833{margin:0!important;}
+.partner-selection-status833 {
+  color: #f7d97f;
+  font:
+    600 14px/1.25 Georgia,
+    serif;
+  margin: 6px 0 10px;
 }
-@media(orientation:landscape) and (max-height:340px){
- #landingPartners783 .partner-photo small{font-size:10px!important;}
- #landingPartners783 .partner-photo strong{font-size:13px!important;}
- #landingPartners783 .partner-photo-nav{padding-right:140px!important;gap:8px!important;}
+#landingPartners783 > p[hidden] {
+  display: none !important;
+}
+.partner-photo {
+  position: relative;
+  touch-action: manipulation;
+}
+.partner-choice-check833 {
+  position: absolute;
+  top: 5px;
+  right: 5px;
+  display: none;
+  width: 22px;
+  height: 22px;
+  align-items: center;
+  justify-content: center;
+  box-sizing: border-box;
+  border-radius: 50%;
+  background: #f2d47b;
+  color: #10221b;
+  font: 800 17px/1 system-ui;
+  pointer-events: none;
+}
+.partner-photo[aria-pressed='true'] .partner-choice-check833 {
+  display: flex;
+}
+#landingPartners783 .partner-photo[aria-pressed='true'] {
+  border: 2px solid #ffe09a !important;
+  outline: 2px solid #ffe09a !important;
+  outline-offset: -3px;
+  background: #3b4c32 !important;
+  box-shadow: inset 0 0 0 3px #d5b85c44 !important;
+}
+#landingPartners783 .partner-photo:active {
+  background: #40513b !important;
+}
+#landingPartners783 [data-done] {
+  border: 1px solid #ead393 !important;
+  background: linear-gradient(#e4cb7b, #b78d34) !important;
+  color: #211907 !important;
+  font-weight: 700 !important;
+  min-width: 120px;
+}
+#landingPartner783:active,
+#landingPartner783:focus-visible {
+  background: #40513b !important;
+  outline: 2px solid #f3d17e;
+  outline-offset: 2px;
+}
+@media (orientation: landscape) {
+  body #lobby #landingPartner783 {
+    position: relative !important;
+  }
+  body #lobby #landingPartner783::after {
+    content: '';
+    position: absolute;
+    inset: -7px -4px;
+  }
+  #landingPartners783 .partner-photo {
+    padding-right: 30px !important;
+  }
+  #landingPartners783 .partner-photo-nav {
+    padding-right: 150px !important;
+  }
+  #landingPartners783 .partner-selection-status833 {
+    margin: 0 !important;
+  }
+}
+@media (orientation: landscape) and (max-height: 340px) {
+  #landingPartners783 .partner-photo small {
+    font-size: 10px !important;
+  }
+  #landingPartners783 .partner-photo strong {
+    font-size: 13px !important;
+  }
+  #landingPartners783 .partner-photo-nav {
+    padding-right: 140px !important;
+    gap: 8px !important;
+  }
 }

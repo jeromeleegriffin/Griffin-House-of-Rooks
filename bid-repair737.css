@@ -2,6 +2,8 @@
 /* 839: menu/fullscreen remain reachable while a human bid is due. */
 /* Keep the existing opaque landscape label cover when Bid is disabled;
    opacity would expose the artwork's baked sample amount beneath it. */
-body.in-game #decisionConsole.decision-mode-bid:not(.approved-bid-portrait) #bidConfirm:disabled{
- opacity:1!important;color:#aea68b!important;text-shadow:none!important;
+body.in-game #decisionConsole.decision-mode-bid:not(.approved-bid-portrait) #bidConfirm:disabled {
+  opacity: 1 !important;
+  color: #aea68b !important;
+  text-shadow: none !important;
 }

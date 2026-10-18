@@ -1,0 +1,82 @@
+{
+  "checks": [
+    {
+      "name": "Valid owned action with current context accepted",
+      "ok": true
+    },
+    {
+      "name": "Spoofed player action rejected",
+      "ok": true
+    },
+    {
+      "name": "Missing action context rejected",
+      "ok": true
+    },
+    {
+      "name": "Prior hand action rejected",
+      "ok": true
+    },
+    {
+      "name": "Prior turn action rejected",
+      "ok": true
+    },
+    {
+      "name": "Approved handoff target accepted",
+      "ok": true
+    },
+    {
+      "name": "Unapproved handoff target rejected",
+      "ok": true
+    },
+    {
+      "name": "Forged join ID rejected",
+      "ok": true
+    },
+    {
+      "name": "Other player leave rejected",
+      "ok": true
+    },
+    {
+      "name": "Other bidder private resync rejected",
+      "ok": true
+    },
+    {
+      "name": "Matching name without token cannot reclaim bot hand",
+      "ok": true
+    },
+    {
+      "name": "Wrong token cannot reclaim bot hand",
+      "ok": true
+    },
+    {
+      "name": "Reconnect holds queued action until resync",
+      "ok": true
+    },
+    {
+      "name": "Resync drops prior-hand/turn queued action",
+      "ok": true
+    },
+    {
+      "name": "Current queued action flushes once with original context",
+      "ok": true
+    },
+    {
+      "name": "Repeated outbox flush does not repeat delivered action",
+      "ok": true
+    },
+    {
+      "name": "Resume token stays scoped to its room",
+      "ok": true
+    },
+    {
+      "name": "Another room cannot read previous resume token",
+      "ok": true
+    },
+    {
+      "name": "Approved host transfer carries resume credential to new room",
+      "ok": true
+    }
+  ],
+  "errors": [],
+  "failed": []
+}

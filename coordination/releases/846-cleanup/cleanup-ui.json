@@ -1,0 +1,99 @@
+{
+  "checks": [
+    {
+      "name": "All human identities remain available at 844x245",
+      "ok": true,
+      "detail": {
+        "count": 66,
+        "expected": 66,
+        "rows": "1 / 11",
+        "search": true
+      }
+    },
+    {
+      "name": "All human identities remain available at 844x390",
+      "ok": true,
+      "detail": {
+        "count": 66,
+        "expected": 66,
+        "rows": "1 / 6",
+        "search": true
+      }
+    },
+    {
+      "name": "All human identities remain available at 390x844",
+      "ok": true,
+      "detail": {
+        "count": 66,
+        "expected": 66,
+        "rows": "1 / 4",
+        "search": true
+      }
+    },
+    {
+      "name": "All human identities remain available at 1280x720",
+      "ok": true,
+      "detail": {
+        "count": 66,
+        "expected": 66,
+        "rows": "1 / 3",
+        "search": true
+      }
+    },
+    {
+      "name": "Empty avatar search has a clear result",
+      "ok": true
+    },
+    {
+      "name": "Public Jerome search resolves one identity",
+      "ok": true
+    },
+    {
+      "name": "Avatar selection reaches existing identity authority",
+      "ok": true
+    },
+    {
+      "name": "Review caption is absent and auction works at 844x245",
+      "ok": true
+    },
+    {
+      "name": "Review caption is absent and auction works at 844x390",
+      "ok": true
+    },
+    {
+      "name": "Review caption is absent and auction works at 390x844",
+      "ok": true
+    },
+    {
+      "name": "Review caption is absent and auction works at 1280x720",
+      "ok": true
+    },
+    {
+      "name": "Extracted art and all generated recording groups are ready",
+      "ok": true,
+      "detail": {
+        "art": true,
+        "cabin": [
+          "fire",
+          "wind",
+          "bird",
+          "wolf",
+          "crickets",
+          "rain",
+          "owl"
+        ],
+        "presentation": [
+          "wash-1x",
+          "wash-3x",
+          "wash-max",
+          "deal-1x",
+          "deal-3x",
+          "deal-max"
+        ],
+        "crowd": "string"
+      }
+    }
+  ],
+  "errors": [],
+  "failed": []
+}

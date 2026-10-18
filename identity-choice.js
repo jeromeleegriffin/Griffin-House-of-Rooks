@@ -1,28 +1,160 @@
 /* Optional entry-page identity choice. Existing art and recordings only. */
-(()=>{
-'use strict';
-const cast=Object.keys(HORCharacterStudio077.characters).filter(id=>id!=="jerome_founder"),panels=[];
-const humanIds=Object.keys(window.HORHumanAvatars||{}),botIds=cast.filter(id=>!humanIds.includes(id));let collection="human",page=0;let pageSize=12;let returnFocus=null;
-function stop(){window.HORTrumpVoice?.stop('identity-preview-end');}
-function label(id){return AVATAR_LABELS[id]||id.charAt(0).toUpperCase()+id.slice(1);}
-function refresh(){for(const p of panels){const id=ensurePreferredAvatar();p._identityRefs836.img.src=avatarSrc(id);p._identityRefs836.current.textContent=label(id);const founder=ensurePreferredAvatar()==='jerome_founder';const sel=p._identityRefs836.select;sel.innerHTML=founder?'<option value="male">Jerome · original recordings</option><option value="silent">Silent</option>':'<option value="avatar">Match avatar</option><option value="male">Male</option><option value="female">Female</option><option value="silent">Silent</option>';sel.value=loadPreferredVoice();}}
-const dialog=document.createElement('dialog');dialog.className='identity-dialog';dialog.setAttribute('aria-labelledby','identity-title');dialog.innerHTML='<div class="identity-dialog-head"><h2 id="identity-title">Choose your avatar</h2><button type="button" data-close aria-label="Close avatar choices">✕</button></div><input type="search" class="choice-search836" placeholder="Search avatars by name" aria-label="Search avatars"><p class="choice-empty836" hidden>No matching avatars. Try another name.</p><div class="identity-grid"></div><div class="identity-pages"><button type="button" data-prev aria-label="Previous avatar page">Previous</button><span data-page role="status" aria-live="polite"></span><button type="button" data-next aria-label="Next avatar page">Next</button></div>';document.body.append(dialog);
-dialog.querySelector('[data-close]').onclick=()=>dialog.close();dialog.addEventListener('close',()=>returnFocus?.focus());dialog.addEventListener('click',e=>{if(e.target===dialog)dialog.close()});
-function renderChoices(){
- const wide=innerWidth>innerHeight;pageSize=Math.max(1,Math.floor((innerHeight-(wide?130:155))/(wide?80:100)))*(wide?6:innerWidth<350?3:4)-(window.HORFounderDev?.enabled?1:0);pageSize=Math.max(1,pageSize);
- const query=dialog.querySelector('input[type=search]').value.trim().toLowerCase(),ids=humanIds.filter(id=>label(id).toLowerCase().includes(query)),max=Math.max(1,Math.ceil(ids.length/pageSize));page=Math.max(0,Math.min(page,max-1));const grid=dialog.querySelector('.identity-grid'),oldScroll839=grid.scrollTop;grid.replaceChildren();
- for(const id of ids){const b=document.createElement('button');b.type='button';b.dataset.id=id;b.innerHTML='<img loading="lazy" width="72" height="72" alt=""><span></span>';b.querySelector('img').src=avatarSrc(id);b.querySelector('span').textContent=label(id);b.setAttribute('aria-pressed',String(id===ensurePreferredAvatar()));b.onclick=()=>{window.HORFounderProfile785.select(id);refresh();dialog.close()};grid.append(b)}
- dialog.querySelector('.choice-empty836').hidden=!!ids.length||(window.HORFounderDev?.enabled&&'jerome'.includes(query));
- if(window.HORFounderDev?.enabled&&'jerome'.includes(query)){const b=document.createElement('button');b.type='button';b.dataset.id='jerome_founder';b.innerHTML='<img width="72" height="72" alt="Jerome"><span>Jerome</span>';b.querySelector('img').src=avatarSrc('jerome_founder');b.setAttribute('aria-pressed',String(ensurePreferredAvatar()==='jerome_founder'));b.onclick=()=>{window.HORFounderProfile785.select('jerome_founder');refresh();dialog.close()};grid.prepend(b);}
- grid.scrollTop=oldScroll839;requestAnimationFrame(scrollStatus839);
-
-}
-for(const b of dialog.querySelectorAll('[data-collection]'))b.onclick=()=>{collection=b.dataset.collection;page=0;renderChoices()};
-function scrollStatus839(){const grid=dialog.querySelector('.identity-grid'),q=HORChoiceRows841.status(grid);dialog.querySelector('[data-page]').textContent=q.current+' / '+q.total;dialog.querySelector('[data-prev]').disabled=!q.previous;dialog.querySelector('[data-next]').disabled=!q.next;}
-dialog.querySelector('.identity-grid').addEventListener('scroll',scrollStatus839,{passive:true});
-dialog.querySelector('[data-prev]').onclick=()=>{const grid=dialog.querySelector('.identity-grid');HORChoiceRows841.move(grid,-1)};dialog.querySelector('[data-next]').onclick=()=>{const grid=dialog.querySelector('.identity-grid');HORChoiceRows841.move(grid,1)};
-dialog.querySelector('input[type=search]').oninput=()=>{page=0;dialog.querySelector('.identity-grid').scrollTop=0;renderChoices()};
-function open(button){dialog.querySelector('input[type=search]').value='';stop();returnFocus=button;const id=ensurePreferredAvatar();collection='human';const ids=humanIds;page=Math.max(0,Math.floor(ids.indexOf(id)/pageSize));renderChoices();dialog.showModal();dialog.querySelector('.identity-grid').scrollTop=0;requestAnimationFrame(scrollStatus839);}
-for(const inputId of ['hor-player-name','welcome-player-name']){const input=document.getElementById(inputId);if(!input)continue;const labelEl=document.createElement('label');labelEl.className='identity-name-label';labelEl.htmlFor=inputId;labelEl.textContent='What shall we call you?';input.before(labelEl);const panel=document.createElement('div');panel.className='identity-choice';panel.innerHTML='<button type="button" class="identity-avatar"><img width="48" height="48" alt=""><span><small>Your avatar</small><strong data-current></strong><small>Change</small></span></button><div class="identity-voice"><label>Voice<select aria-label="Your voice"><option value="male">Male</option><option value="female">Female</option><option value="silent">Silent</option></select></label><button type="button" data-preview>Hear Voice</button><span class="identity-status" role="status"></span></div>';input.after(panel);panel._identityRefs836={img:panel.querySelector('img'),current:panel.querySelector('[data-current]'),select:panel.querySelector('select'),status:panel.querySelector('[role=status]')};panels.push(panel);panel.querySelector('.identity-avatar').onclick=e=>open(e.currentTarget);panel.querySelector('select').onchange=e=>{stop();savePreferredVoice(e.target.value);refresh()};panel.querySelector('[data-preview]').onclick=()=>{stop();const voice=loadPreferredVoice(),status=panel._identityRefs836.status;status.textContent='';if(voice==='silent'){status.textContent='Voice is off.';return}HORTrumpVoice.preview(ensurePreferredAvatar(),voice).then(played=>{if(!played)status.textContent='Voice is muted or unavailable. Check sound settings and connection.'})};}
-refresh();for(const id of ['soloPracticeBtn','friendsToggleBtn','joinConfirmBtn','spectateBtn'])document.getElementById(id)?.addEventListener('click',stop,true);document.querySelectorAll('[data-welcome-seat]').forEach(b=>b.addEventListener('click',stop,true));addEventListener('pagehide',stop);document.addEventListener('visibilitychange',()=>{if(document.hidden)stop()});
+(() => {
+  'use strict';
+  const panels = [];
+  const humanIds = Object.keys(window.HORHumanAvatars || {});
+  let returnFocus = null;
+  function stop() {
+    window.HORTrumpVoice?.stop('identity-preview-end');
+  }
+  function label(id) {
+    return AVATAR_LABELS[id] || id.charAt(0).toUpperCase() + id.slice(1);
+  }
+  function refresh() {
+    for (const p of panels) {
+      const id = ensurePreferredAvatar();
+      p._identityRefs836.img.src = avatarSrc(id);
+      p._identityRefs836.current.textContent = label(id);
+      const founder = ensurePreferredAvatar() === 'jerome_founder';
+      const sel = p._identityRefs836.select;
+      sel.innerHTML = founder
+        ? '<option value="male">Jerome · original recordings</option><option value="silent">Silent</option>'
+        : '<option value="avatar">Match avatar</option><option value="male">Male</option><option value="female">Female</option><option value="silent">Silent</option>';
+      sel.value = loadPreferredVoice();
+    }
+  }
+  const dialog = document.createElement('dialog');
+  dialog.className = 'identity-dialog';
+  dialog.setAttribute('aria-labelledby', 'identity-title');
+  dialog.innerHTML =
+    '<div class="identity-dialog-head"><h2 id="identity-title">Choose your avatar</h2><button type="button" data-close aria-label="Close avatar choices">✕</button></div><input type="search" class="choice-search836" placeholder="Search avatars by name" aria-label="Search avatars"><p class="choice-empty836" hidden>No matching avatars. Try another name.</p><div class="identity-grid"></div><div class="identity-pages"><button type="button" data-prev aria-label="Previous avatar page">Previous</button><span data-page role="status" aria-live="polite"></span><button type="button" data-next aria-label="Next avatar page">Next</button></div>';
+  document.body.append(dialog);
+  dialog.querySelector('[data-close]').onclick = () => dialog.close();
+  dialog.addEventListener('close', () => returnFocus?.focus());
+  dialog.addEventListener('click', (e) => {
+    if (e.target === dialog) dialog.close();
+  });
+  function renderChoices() {
+    const query = dialog.querySelector('input[type=search]').value.trim().toLowerCase(),
+      ids = humanIds.filter((id) => label(id).toLowerCase().includes(query));
+    const grid = dialog.querySelector('.identity-grid'),
+      oldScroll839 = grid.scrollTop;
+    grid.replaceChildren();
+    for (const id of ids) {
+      const b = document.createElement('button');
+      b.type = 'button';
+      b.dataset.id = id;
+      b.innerHTML = '<img loading="lazy" width="72" height="72" alt=""><span></span>';
+      b.querySelector('img').src = avatarSrc(id);
+      b.querySelector('span').textContent = label(id);
+      b.setAttribute('aria-pressed', String(id === ensurePreferredAvatar()));
+      b.onclick = () => {
+        window.HORFounderProfile785.select(id);
+        refresh();
+        dialog.close();
+      };
+      grid.append(b);
+    }
+    dialog.querySelector('.choice-empty836').hidden =
+      !!ids.length || (window.HORFounderDev?.enabled && 'jerome'.includes(query));
+    if (window.HORFounderDev?.enabled && 'jerome'.includes(query)) {
+      const b = document.createElement('button');
+      b.type = 'button';
+      b.dataset.id = 'jerome_founder';
+      b.innerHTML = '<img width="72" height="72" alt="Jerome"><span>Jerome</span>';
+      b.querySelector('img').src = avatarSrc('jerome_founder');
+      b.setAttribute('aria-pressed', String(ensurePreferredAvatar() === 'jerome_founder'));
+      b.onclick = () => {
+        window.HORFounderProfile785.select('jerome_founder');
+        refresh();
+        dialog.close();
+      };
+      grid.prepend(b);
+    }
+    grid.scrollTop = oldScroll839;
+    requestAnimationFrame(scrollStatus839);
+  }
+  function scrollStatus839() {
+    const grid = dialog.querySelector('.identity-grid'),
+      q = HORChoiceRows841.status(grid);
+    dialog.querySelector('[data-page]').textContent = q.current + ' / ' + q.total;
+    dialog.querySelector('[data-prev]').disabled = !q.previous;
+    dialog.querySelector('[data-next]').disabled = !q.next;
+  }
+  dialog
+    .querySelector('.identity-grid')
+    .addEventListener('scroll', scrollStatus839, { passive: true });
+  dialog.querySelector('[data-prev]').onclick = () => {
+    const grid = dialog.querySelector('.identity-grid');
+    HORChoiceRows841.move(grid, -1);
+  };
+  dialog.querySelector('[data-next]').onclick = () => {
+    const grid = dialog.querySelector('.identity-grid');
+    HORChoiceRows841.move(grid, 1);
+  };
+  dialog.querySelector('input[type=search]').oninput = () => {
+    dialog.querySelector('.identity-grid').scrollTop = 0;
+    renderChoices();
+  };
+  function open(button) {
+    dialog.querySelector('input[type=search]').value = '';
+    stop();
+    returnFocus = button;
+    renderChoices();
+    dialog.showModal();
+    dialog.querySelector('.identity-grid').scrollTop = 0;
+    requestAnimationFrame(scrollStatus839);
+  }
+  for (const inputId of ['hor-player-name', 'welcome-player-name']) {
+    const input = document.getElementById(inputId);
+    if (!input) continue;
+    const labelEl = document.createElement('label');
+    labelEl.className = 'identity-name-label';
+    labelEl.htmlFor = inputId;
+    labelEl.textContent = 'What shall we call you?';
+    input.before(labelEl);
+    const panel = document.createElement('div');
+    panel.className = 'identity-choice';
+    panel.innerHTML =
+      '<button type="button" class="identity-avatar"><img width="48" height="48" alt=""><span><small>Your avatar</small><strong data-current></strong><small>Change</small></span></button><div class="identity-voice"><label>Voice<select aria-label="Your voice"><option value="male">Male</option><option value="female">Female</option><option value="silent">Silent</option></select></label><button type="button" data-preview>Hear Voice</button><span class="identity-status" role="status"></span></div>';
+    input.after(panel);
+    panel._identityRefs836 = {
+      img: panel.querySelector('img'),
+      current: panel.querySelector('[data-current]'),
+      select: panel.querySelector('select'),
+      status: panel.querySelector('[role=status]'),
+    };
+    panels.push(panel);
+    panel.querySelector('.identity-avatar').onclick = (e) => open(e.currentTarget);
+    panel.querySelector('select').onchange = (e) => {
+      stop();
+      savePreferredVoice(e.target.value);
+      refresh();
+    };
+    panel.querySelector('[data-preview]').onclick = () => {
+      stop();
+      const voice = loadPreferredVoice(),
+        status = panel._identityRefs836.status;
+      status.textContent = '';
+      if (voice === 'silent') {
+        status.textContent = 'Voice is off.';
+        return;
+      }
+      HORTrumpVoice.preview(ensurePreferredAvatar(), voice).then((played) => {
+        if (!played)
+          status.textContent =
+            'Voice is muted or unavailable. Check sound settings and connection.';
+      });
+    };
+  }
+  refresh();
+  for (const id of ['soloPracticeBtn', 'friendsToggleBtn', 'joinConfirmBtn', 'spectateBtn'])
+    document.getElementById(id)?.addEventListener('click', stop, true);
+  document
+    .querySelectorAll('[data-welcome-seat]')
+    .forEach((b) => b.addEventListener('click', stop, true));
+  addEventListener('pagehide', stop);
+  document.addEventListener('visibilitychange', () => {
+    if (document.hidden) stop();
+  });
 })();

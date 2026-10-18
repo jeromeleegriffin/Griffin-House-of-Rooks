@@ -1,113 +1,200 @@
 /* Frozen native artwork; portrait only. The R706 dock rectangle is inherited.
    No root dimensions, anchor, transforms, seat styles or landscape rules change. */
 @layer approvedPortraitBidAsset {
-@media (orientation: portrait) {
-body #decisionConsole.approved-bid-portrait.decision-mode-bid:not(.hidden) {
-  background: none !important;
-  box-shadow: none !important;
-  pointer-events: none !important;
+  @media (orientation: portrait) {
+    body #decisionConsole.approved-bid-portrait.decision-mode-bid:not(.hidden) {
+      background: none !important;
+      box-shadow: none !important;
+      pointer-events: none !important;
+    }
+    body #decisionConsole.approved-bid-portrait::before,
+    body #decisionConsole.approved-bid-portrait::after,
+    body #decisionConsole.approved-bid-portrait .approved-bid-surface :where(*)::before,
+    body #decisionConsole.approved-bid-portrait .approved-bid-surface :where(*)::after {
+      content: none !important;
+      display: none !important;
+    }
+    body
+      #decisionConsole.approved-bid-portrait
+      :where(.approved-bid-surface, .approved-bid-surface *) {
+      all: unset !important;
+      box-sizing: border-box !important;
+      font-family: Georgia, 'Times New Roman', serif !important;
+    }
+    body #decisionConsole.approved-bid-portrait .approved-bid-surface {
+      display: block !important;
+      position: absolute !important;
+      height: 100% !important;
+      width: auto !important;
+      max-width: 100% !important;
+      aspect-ratio: 701 / 290 !important;
+      left: 50% !important;
+      top: 0 !important;
+      transform: translateX(-50%) !important;
+      container-type: size !important;
+      pointer-events: none !important;
+    }
+    body #decisionConsole.approved-bid-portrait .approved-bid-art {
+      display: block !important;
+      position: absolute !important;
+      inset: 0 !important;
+      width: 100% !important;
+      height: 100% !important;
+      object-fit: contain !important;
+      pointer-events: none !important;
+      user-select: none !important;
+    }
+    body #decisionConsole.approved-bid-portrait .bid-console-title,
+    body #decisionConsole.approved-bid-portrait .felt-bid-name,
+    body #decisionConsole.approved-bid-portrait .bid-meta {
+      display: none !important;
+    }
+    body #decisionConsole.approved-bid-portrait .bid-stepper,
+    body #decisionConsole.approved-bid-portrait .bid-buttons {
+      display: contents !important;
+    }
+    body
+      #decisionConsole.approved-bid-portrait
+      :is(#bidMinus, #bidPlus, #bidValue, #bidConfirm, #bidPassBtn) {
+      display: flex !important;
+      position: absolute !important;
+      align-items: center !important;
+      justify-content: center !important;
+      color: #ffecad !important;
+      font-weight: 900 !important;
+      font-size: 8.8cqw !important;
+      line-height: 1 !important;
+      text-shadow: 0 1px 1px #573009 !important;
+      white-space: nowrap !important;
+      z-index: 1 !important;
+    }
+    body #decisionConsole.approved-bid-portrait :is(#bidMinus, #bidPlus, #bidConfirm, #bidPassBtn) {
+      pointer-events: auto !important;
+      cursor: pointer !important;
+      touch-action: manipulation !important;
+      user-select: none !important;
+    }
+    body #decisionConsole.approved-bid-portrait #bidValue {
+      font-size: 9.4cqw !important;
+      pointer-events: none !important;
+    }
+    body #decisionConsole.approved-bid-portrait :is(#bidConfirm, #bidPassBtn) {
+      font-size: 6.8cqw !important;
+      padding-bottom: 2.853cqw !important;
+      text-transform: uppercase !important;
+    }
+    body #decisionConsole.approved-bid-portrait #bidConfirmVal {
+      display: inline !important;
+      font: inherit !important;
+      margin-left: 0.16em !important;
+    }
+    body #decisionConsole.approved-bid-portrait button:focus-visible {
+      outline: 2px solid #fff0b7 !important;
+      outline-offset: -5px !important;
+    }
+    body #decisionConsole.approved-bid-portrait button:active {
+      color: #ffffff !important;
+    }
+    body #decisionConsole.approved-bid-portrait button:disabled {
+      opacity: 0.55 !important;
+      cursor: default !important;
+    }
+    /* Exact approved crescent/button study pixels, within the unchanged bid hit box. */
+    body #decisionConsole.approved-bid-portrait #bidConfirm.bid-shoot-moon {
+      padding: 0 !important;
+    }
+    body #decisionConsole.approved-bid-portrait #bidConfirm .moon-approved-button795 {
+      display: block !important;
+      width: 100% !important;
+      height: 100% !important;
+      max-width: 100% !important;
+      min-width: 0 !important;
+      object-fit: contain !important;
+      pointer-events: none !important;
+    }
+    body #decisionConsole.approved-bid-portrait :is(#bidMinus, #bidPlus) {
+      touch-action: none !important;
+      user-select: none !important;
+      -webkit-user-select: none !important;
+      -webkit-touch-callout: none !important;
+    }
+    body #decisionConsole.approved-bid-portrait #bidMinus {
+      left: 4.9928673324% !important;
+      top: 25.1724137931% !important;
+      width: 21.2553495007% !important;
+      height: 34.4827586207% !important;
+    }
+    body #decisionConsole.approved-bid-portrait #bidPlus {
+      left: 73.6091298146% !important;
+      top: 25.1724137931% !important;
+      width: 20.970042796% !important;
+      height: 34.4827586207% !important;
+    }
+    body #decisionConsole.approved-bid-portrait #bidValue {
+      left: 38.3737517832% !important;
+      top: 33.7931034483% !important;
+      width: 23.6804564907% !important;
+      height: 18.9655172414% !important;
+    }
+    body #decisionConsole.approved-bid-portrait #bidConfirm {
+      left: 4.9928673324% !important;
+      top: 60.6896551724% !important;
+      width: 45.0784593438% !important;
+      height: 34.4827586207% !important;
+    }
+    body #decisionConsole.approved-bid-portrait #bidPassBtn {
+      left: 53.9229671897% !important;
+      top: 60.6896551724% !important;
+      width: 40.6562054208% !important;
+      height: 34.4827586207% !important;
+    }
+  }
 }
-body #decisionConsole.approved-bid-portrait::before,
-body #decisionConsole.approved-bid-portrait::after,
-body #decisionConsole.approved-bid-portrait .approved-bid-surface :where(*)::before,
-body #decisionConsole.approved-bid-portrait .approved-bid-surface :where(*)::after {
-  content: none !important; display: none !important;
+#bidConfirm .moon-approved-button795 {
+  display: block;
+  width: 100%;
+  height: 100%;
+  max-width: 100%;
+  min-width: 0;
+  object-fit: contain;
+  pointer-events: none;
 }
-body #decisionConsole.approved-bid-portrait :where(.approved-bid-surface, .approved-bid-surface *) {
-  all: unset !important;
-  box-sizing: border-box !important;
-  font-family: Georgia, "Times New Roman", serif !important;
+#bidMinus,
+#bidPlus {
+  touch-action: none;
+  user-select: none;
+  -webkit-user-select: none;
+  -webkit-touch-callout: none;
 }
-body #decisionConsole.approved-bid-portrait .approved-bid-surface {
-  display: block !important;
-  position: absolute !important;
-  height: 100% !important;
-  width: auto !important;
-  max-width: 100% !important;
-  aspect-ratio: 701 / 290 !important;
-  left: 50% !important;
-  top: 0 !important;
-  transform: translateX(-50%) !important;
-  container-type: size !important;
-  pointer-events: none !important;
-}
-body #decisionConsole.approved-bid-portrait .approved-bid-art {
-  display: block !important;
-  position: absolute !important;
-  inset: 0 !important;
-  width: 100% !important;
-  height: 100% !important;
-  object-fit: contain !important;
-  pointer-events: none !important;
-  user-select: none !important;
-}
-body #decisionConsole.approved-bid-portrait .bid-console-title,
-body #decisionConsole.approved-bid-portrait .felt-bid-name,
-body #decisionConsole.approved-bid-portrait .bid-meta {
-  display: none !important;
-}
-body #decisionConsole.approved-bid-portrait .bid-stepper,
-body #decisionConsole.approved-bid-portrait .bid-buttons {
-  display: contents !important;
-}
-body #decisionConsole.approved-bid-portrait :is(#bidMinus,#bidPlus,#bidValue,#bidConfirm,#bidPassBtn) {
-  display: flex !important;
-  position: absolute !important;
-  align-items: center !important;
-  justify-content: center !important;
-  color: #ffecad !important;
-  font-weight: 900 !important;
-  font-size: 8.8cqw !important;
-  line-height: 1 !important;
-  text-shadow: 0 1px 1px #573009 !important;
-  white-space: nowrap !important;
-  z-index: 1 !important;
-}
-body #decisionConsole.approved-bid-portrait :is(#bidMinus,#bidPlus,#bidConfirm,#bidPassBtn) {
-  pointer-events: auto !important;
-  cursor: pointer !important;
-  touch-action: manipulation !important;
-  user-select: none !important;
-}
-body #decisionConsole.approved-bid-portrait #bidValue {
-  font-size: 9.4cqw !important;
-  pointer-events: none !important;
-}
-body #decisionConsole.approved-bid-portrait :is(#bidConfirm,#bidPassBtn) {
-  font-size: 6.8cqw !important;
-  padding-bottom: 2.853cqw !important;
-  text-transform: uppercase !important;
-}
-body #decisionConsole.approved-bid-portrait #bidConfirmVal {
-  display: inline !important;
-  font: inherit !important;
-  margin-left: .16em !important;
-}
-body #decisionConsole.approved-bid-portrait button:focus-visible {
-  outline: 2px solid #fff0b7 !important;
-  outline-offset: -5px !important;
-}
-body #decisionConsole.approved-bid-portrait button:active {
-  color: #ffffff !important;
-}
-body #decisionConsole.approved-bid-portrait button:disabled {
-  opacity: .55 !important;
-  cursor: default !important;
-}
-/* Exact approved crescent/button study pixels, within the unchanged bid hit box. */
-body #decisionConsole.approved-bid-portrait #bidConfirm.bid-shoot-moon {padding:0 !important;}
-body #decisionConsole.approved-bid-portrait #bidConfirm .moon-approved-button795 {display:block!important;width:100%!important;height:100%!important;max-width:100%!important;min-width:0!important;object-fit:contain!important;pointer-events:none!important;}
-body #decisionConsole.approved-bid-portrait :is(#bidMinus,#bidPlus) {touch-action:none!important;user-select:none!important;-webkit-user-select:none!important;-webkit-touch-callout:none!important;}
-body #decisionConsole.approved-bid-portrait #bidMinus { left: 4.9928673324% !important; top: 25.1724137931% !important; width: 21.2553495007% !important; height: 34.4827586207% !important; }
-body #decisionConsole.approved-bid-portrait #bidPlus { left: 73.6091298146% !important; top: 25.1724137931% !important; width: 20.9700427960% !important; height: 34.4827586207% !important; }
-body #decisionConsole.approved-bid-portrait #bidValue { left: 38.3737517832% !important; top: 33.7931034483% !important; width: 23.6804564907% !important; height: 18.9655172414% !important; }
-body #decisionConsole.approved-bid-portrait #bidConfirm { left: 4.9928673324% !important; top: 60.6896551724% !important; width: 45.0784593438% !important; height: 34.4827586207% !important; }
-body #decisionConsole.approved-bid-portrait #bidPassBtn { left: 53.9229671897% !important; top: 60.6896551724% !important; width: 40.6562054208% !important; height: 34.4827586207% !important; }
-}
-}
-#bidConfirm .moon-approved-button795 {display:block;width:100%;height:100%;max-width:100%;min-width:0;object-fit:contain;pointer-events:none;}
-#bidMinus,#bidPlus {touch-action:none;user-select:none;-webkit-user-select:none;-webkit-touch-callout:none;}
 
 /* 808 readability; no geometry changes. */
-@media(orientation:portrait){body #decisionConsole.approved-bid-portrait #bidValue{color:#fff1b9!important;-webkit-text-stroke:.35px rgba(51,25,3,.85)!important;text-shadow:0 1px 1px #170d05,0 2px 3px #170d05,0 0 5px rgba(255,216,113,.55)!important;}body #decisionConsole.approved-bid-portrait :is(#bidMinus,#bidPlus,#bidConfirm,#bidPassBtn){text-shadow:0 1px 2px #1b1007,0 0 3px rgba(255,219,126,.35)!important;}}
-body.in-game .card-face{box-shadow:0 2px 3px rgba(0,0,0,.32),0 6px 11px rgba(0,0,0,.16)}body.in-game .gh-nest-card{filter:drop-shadow(0 4px 5px rgba(0,0,0,.46)) drop-shadow(0 8px 10px rgba(0,0,0,.18))}body.in-game .bid-badge.bid-high{border:2px solid #ffe2a0;box-shadow:0 0 0 1px rgba(76,38,5,.72),0 0 9px rgba(255,207,103,.42);font-weight:900}
+@media (orientation: portrait) {
+  body #decisionConsole.approved-bid-portrait #bidValue {
+    color: #fff1b9 !important;
+    -webkit-text-stroke: 0.35px rgba(51, 25, 3, 0.85) !important;
+    text-shadow:
+      0 1px 1px #170d05,
+      0 2px 3px #170d05,
+      0 0 5px rgba(255, 216, 113, 0.55) !important;
+  }
+  body #decisionConsole.approved-bid-portrait :is(#bidMinus, #bidPlus, #bidConfirm, #bidPassBtn) {
+    text-shadow:
+      0 1px 2px #1b1007,
+      0 0 3px rgba(255, 219, 126, 0.35) !important;
+  }
+}
+body.in-game .card-face {
+  box-shadow:
+    0 2px 3px rgba(0, 0, 0, 0.32),
+    0 6px 11px rgba(0, 0, 0, 0.16);
+}
+body.in-game .gh-nest-card {
+  filter: drop-shadow(0 4px 5px rgba(0, 0, 0, 0.46)) drop-shadow(0 8px 10px rgba(0, 0, 0, 0.18));
+}
+body.in-game .bid-badge.bid-high {
+  border: 2px solid #ffe2a0;
+  box-shadow:
+    0 0 0 1px rgba(76, 38, 5, 0.72),
+    0 0 9px rgba(255, 207, 103, 0.42);
+  font-weight: 900;
+}

@@ -50,7 +50,7 @@ body.gfx-seatPlaques .player-slot .name {
   box-shadow: none !important;
 }
 .player-slot .name {
-  padding: .02rem .10rem !important;
+  padding: 0.02rem 0.1rem !important;
   overflow: visible !important;
   text-overflow: clip !important;
   white-space: nowrap !important;
@@ -76,7 +76,9 @@ body.gfx-seatPlaques .player-slot .name {
   border-radius: 50% !important;
   overflow: hidden !important;
   background: transparent !important;
-  box-shadow: 0 0 0 2px rgba(212,175,55,.72), 0 3px 10px rgba(0,0,0,.52) !important;
+  box-shadow:
+    0 0 0 2px rgba(212, 175, 55, 0.72),
+    0 3px 10px rgba(0, 0, 0, 0.52) !important;
   pointer-events: none !important;
 }
 .seat-avatar-img {
@@ -94,7 +96,10 @@ body.gfx-seatPlaques .player-slot .name {
 }
 .player-slot.is-turn .seat-avatar,
 .player-slot.is-turn .seat-avatar-side {
-  box-shadow: 0 0 0 3px #e6c35a, 0 0 14px rgba(230,195,90,.72), 0 3px 10px rgba(0,0,0,.55) !important;
+  box-shadow:
+    0 0 0 3px #e6c35a,
+    0 0 14px rgba(230, 195, 90, 0.72),
+    0 3px 10px rgba(0, 0, 0, 0.55) !important;
 }
 
 /* Portrait phone: make the players visually substantial. Side players move
@@ -127,15 +132,15 @@ body.gfx-seatPlaques .player-slot .name {
   #slot-partner .seat-avatar {
     width: clamp(4.35rem, 19vmin, 6.5rem) !important;
     height: clamp(4.35rem, 19vmin, 6.5rem) !important;
-    margin: 0 0 .08rem !important;
-    transform: translateY(-.32rem) !important;
+    margin: 0 0 0.08rem !important;
+    transform: translateY(-0.32rem) !important;
   }
   .player-slot.bottom .seat-avatar,
   #slot-me .seat-avatar {
     width: clamp(4.5rem, 19.5vmin, 6.7rem) !important;
     height: clamp(4.5rem, 19.5vmin, 6.7rem) !important;
-    margin: .08rem 0 0 !important;
-    transform: translateY(.30rem) !important;
+    margin: 0.08rem 0 0 !important;
+    transform: translateY(0.3rem) !important;
   }
 
   /* Name and money stay readable and do not inherit portrait dimensions. */
@@ -149,9 +154,13 @@ body.gfx-seatPlaques .player-slot .name {
     z-index: 7 !important;
   }
   .player-slot.left .name,
-  .player-slot.left .seat-bank { transform: translateX(-8%) !important; }
+  .player-slot.left .seat-bank {
+    transform: translateX(-8%) !important;
+  }
   .player-slot.right .name,
-  .player-slot.right .seat-bank { transform: translateX(8%) !important; }
+  .player-slot.right .seat-bank {
+    transform: translateX(8%) !important;
+  }
 
   /* Short-height portrait fallback: still cinematic, but protect hand/bid/trick UI. */
   @media (max-height: 700px) {
@@ -181,13 +190,26 @@ body.gfx-seatPlaques .player-slot .name {
     width: clamp(2.8rem, 9vmin, 4.4rem) !important;
     height: clamp(2.8rem, 9vmin, 4.4rem) !important;
   }
-  .player-slot.left .seat-avatar-side { transform: translateX(-22%) !important; }
-  .player-slot.right .seat-avatar-side { transform: translateX(22%) !important; }
+  .player-slot.left .seat-avatar-side {
+    transform: translateX(-22%) !important;
+  }
+  .player-slot.right .seat-avatar-side {
+    transform: translateX(22%) !important;
+  }
 }
 
-.center-area, .trick, .trick-stack, #trickArea, .table-nest-flip,
-.widow-spread, .message, .action-panel, .hand-area, #myHand,
-#turnBanner, #messageArea {
+.center-area,
+.trick,
+.trick-stack,
+#trickArea,
+.table-nest-flip,
+.widow-spread,
+.message,
+.action-panel,
+.hand-area,
+#myHand,
+#turnBanner,
+#messageArea {
   position: relative;
   z-index: 8;
 }

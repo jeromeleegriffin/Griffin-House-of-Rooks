@@ -45,8 +45,12 @@
     width: clamp(4.35rem, 19vmin, 6.45rem) !important;
     height: clamp(4.35rem, 19vmin, 6.45rem) !important;
   }
-  .player-slot.left .seat-avatar-side { transform: translateX(-42%) !important; }
-  .player-slot.right .seat-avatar-side { transform: translateX(42%) !important; }
+  .player-slot.left .seat-avatar-side {
+    transform: translateX(-42%) !important;
+  }
+  .player-slot.right .seat-avatar-side {
+    transform: translateX(42%) !important;
+  }
 
   .player-slot.top .seat-avatar,
   #slot-partner .seat-avatar,
@@ -56,7 +60,9 @@
     height: clamp(4.65rem, 20vmin, 6.8rem) !important;
   }
 
-  .seat-avatar, .seat-avatar-side, .seat-avatar-img {
+  .seat-avatar,
+  .seat-avatar-side,
+  .seat-avatar-img {
     border-radius: 50% !important;
     overflow: hidden !important;
   }
@@ -83,81 +89,122 @@
   .landscape-theater {
     /* Physical dark-walnut surround with an inset green playing surface. */
     background:
-      linear-gradient(90deg, rgba(43,23,10,.98), rgba(92,51,21,.88) 1.1%, rgba(24,13,8,.96) 2.0%, transparent 2.7%, transparent 97.3%, rgba(24,13,8,.96) 98%, rgba(92,51,21,.88) 98.9%, rgba(43,23,10,.98)),
+      linear-gradient(
+        90deg,
+        rgba(43, 23, 10, 0.98),
+        rgba(92, 51, 21, 0.88) 1.1%,
+        rgba(24, 13, 8, 0.96) 2%,
+        transparent 2.7%,
+        transparent 97.3%,
+        rgba(24, 13, 8, 0.96) 98%,
+        rgba(92, 51, 21, 0.88) 98.9%,
+        rgba(43, 23, 10, 0.98)
+      ),
       radial-gradient(ellipse at 50% 34%, #14532d 0%, #0b3b21 52%, #061d12 100%) !important;
-    box-shadow: inset 0 0 0 2px rgba(190,143,55,.34), inset 0 0 28px rgba(0,0,0,.72) !important;
+    box-shadow:
+      inset 0 0 0 2px rgba(190, 143, 55, 0.34),
+      inset 0 0 28px rgba(0, 0, 0, 0.72) !important;
   }
 
   .landscape-theater::before {
-    content:"";
-    position:absolute;
-    inset:max(.24rem, env(safe-area-inset-top,0px)) max(.35rem, env(safe-area-inset-right,0px))
-          max(.24rem, env(safe-area-inset-bottom,0px)) max(.35rem, env(safe-area-inset-left,0px));
-    border:1px solid rgba(212,175,55,.30);
-    border-radius:18px;
-    box-shadow: inset 0 0 34px rgba(0,0,0,.32), 0 0 0 1px rgba(0,0,0,.65);
-    pointer-events:none;
-    z-index:0;
+    content: '';
+    position: absolute;
+    inset: max(0.24rem, env(safe-area-inset-top, 0px)) max(0.35rem, env(safe-area-inset-right, 0px))
+      max(0.24rem, env(safe-area-inset-bottom, 0px)) max(0.35rem, env(safe-area-inset-left, 0px));
+    border: 1px solid rgba(212, 175, 55, 0.3);
+    border-radius: 18px;
+    box-shadow:
+      inset 0 0 34px rgba(0, 0, 0, 0.32),
+      0 0 0 1px rgba(0, 0, 0, 0.65);
+    pointer-events: none;
+    z-index: 0;
   }
 
   /* Score rail reads as table hardware, not a web header. */
   .lt-scorebar {
-    background: linear-gradient(180deg, rgba(42,27,15,.96), rgba(20,14,10,.94)) !important;
-    border: 1px solid rgba(219,177,69,.72) !important;
-    box-shadow: inset 0 1px 0 rgba(255,229,151,.12), 0 2px 8px rgba(0,0,0,.42) !important;
+    background: linear-gradient(180deg, rgba(42, 27, 15, 0.96), rgba(20, 14, 10, 0.94)) !important;
+    border: 1px solid rgba(219, 177, 69, 0.72) !important;
+    box-shadow:
+      inset 0 1px 0 rgba(255, 229, 151, 0.12),
+      0 2px 8px rgba(0, 0, 0, 0.42) !important;
     border-radius: 10px !important;
   }
 
   /* The current trick remains visually quiet and spacious. */
   .lt-plays {
-    background: radial-gradient(ellipse at center, rgba(42,111,67,.16), rgba(0,0,0,0) 66%) !important;
+    background: radial-gradient(
+      ellipse at center,
+      rgba(42, 111, 67, 0.16),
+      rgba(0, 0, 0, 0) 66%
+    ) !important;
     border-radius: 22px;
   }
   .lt-play.winner {
-    background: radial-gradient(ellipse at center, rgba(226,190,83,.16), rgba(226,190,83,0) 70%);
+    background: radial-gradient(
+      ellipse at center,
+      rgba(226, 190, 83, 0.16),
+      rgba(226, 190, 83, 0) 70%
+    );
     border-radius: 22px;
   }
 
   /* Hand becomes a shallow physical rack without stealing card space. */
   .lt-hand-wrap {
-    background: linear-gradient(180deg, rgba(64,38,18,.94), rgba(24,14,8,.97)) !important;
-    border: 1px solid rgba(205,158,61,.52) !important;
+    background: linear-gradient(180deg, rgba(64, 38, 18, 0.94), rgba(24, 14, 8, 0.97)) !important;
+    border: 1px solid rgba(205, 158, 61, 0.52) !important;
     border-radius: 14px !important;
-    box-shadow: inset 0 2px 0 rgba(255,220,130,.10), inset 0 -4px 8px rgba(0,0,0,.42), 0 3px 9px rgba(0,0,0,.42) !important;
-    padding-left: .30rem !important;
-    padding-right: .30rem !important;
+    box-shadow:
+      inset 0 2px 0 rgba(255, 220, 130, 0.1),
+      inset 0 -4px 8px rgba(0, 0, 0, 0.42),
+      0 3px 9px rgba(0, 0, 0, 0.42) !important;
+    padding-left: 0.3rem !important;
+    padding-right: 0.3rem !important;
   }
 
   /* Last-3 history becomes three recessed felt trays instead of flat boxes. */
   .lt-th-card {
-    background:
-      radial-gradient(ellipse at 50% 30%, rgba(24,88,50,.48), rgba(4,31,19,.82) 72%) !important;
-    border: 1px solid rgba(195,153,58,.38) !important;
-    box-shadow: inset 0 0 18px rgba(0,0,0,.38), 0 2px 7px rgba(0,0,0,.28) !important;
+    background: radial-gradient(
+      ellipse at 50% 30%,
+      rgba(24, 88, 50, 0.48),
+      rgba(4, 31, 19, 0.82) 72%
+    ) !important;
+    border: 1px solid rgba(195, 153, 58, 0.38) !important;
+    box-shadow:
+      inset 0 0 18px rgba(0, 0, 0, 0.38),
+      0 2px 7px rgba(0, 0, 0, 0.28) !important;
     border-radius: 14px !important;
   }
 
   /* Tabs feel like brass-edged table controls while keeping their footprint. */
   .lt-tab {
-    background: rgba(13,27,20,.88) !important;
-    border-color: rgba(201,162,39,.58) !important;
-    box-shadow: inset 0 1px 0 rgba(255,236,174,.08), 0 2px 5px rgba(0,0,0,.28) !important;
+    background: rgba(13, 27, 20, 0.88) !important;
+    border-color: rgba(201, 162, 39, 0.58) !important;
+    box-shadow:
+      inset 0 1px 0 rgba(255, 236, 174, 0.08),
+      0 2px 5px rgba(0, 0, 0, 0.28) !important;
   }
   .lt-tab.active {
-    background: linear-gradient(180deg, rgba(118,87,27,.82), rgba(45,33,13,.92)) !important;
+    background: linear-gradient(180deg, rgba(118, 87, 27, 0.82), rgba(45, 33, 13, 0.92)) !important;
   }
 
   /* Keep cinematic wait/transition art as the atmospheric moment. */
   .lt-wait-banner {
-    box-shadow: 0 10px 30px rgba(0,0,0,.48), inset 0 0 0 1px rgba(212,175,55,.32) !important;
+    box-shadow:
+      0 10px 30px rgba(0, 0, 0, 0.48),
+      inset 0 0 0 1px rgba(212, 175, 55, 0.32) !important;
   }
 }
 
 /* Rook515 — absolute portrait live-seat box guard. */
 @media (orientation: portrait) {
-  #game .player-slot, #game .player-slot.top, #game .player-slot.bottom,
-  #game #slot-me, #game #slot-partner,
-  #game .player-slot .name, #game #slot-me .name, #game #slot-partner .name {
+  #game .player-slot,
+  #game .player-slot.top,
+  #game .player-slot.bottom,
+  #game #slot-me,
+  #game #slot-partner,
+  #game .player-slot .name,
+  #game #slot-me .name,
+  #game #slot-partner .name {
     background: transparent !important;
     background-color: transparent !important;
     background-image: none !important;
@@ -165,8 +212,10 @@
     outline: 0 !important;
     box-shadow: none !important;
   }
-  #game .player-slot::before, #game .player-slot::after,
-  #game .player-slot .name::before, #game .player-slot .name::after {
+  #game .player-slot::before,
+  #game .player-slot::after,
+  #game .player-slot .name::before,
+  #game .player-slot .name::after {
     background: transparent !important;
     background-image: none !important;
     border: 0 !important;
@@ -182,20 +231,29 @@
 
 /* All portraits are still unless that seat is actually thinking/acting. */
 body.in-game .seat-avatar-img,
-body.in-game .wait-seat-av { animation: none !important; }
+body.in-game .wait-seat-av {
+  animation: none !important;
+}
 body.in-game .player-slot.is-turn .seat-avatar-img,
 body.in-game .player-slot.hor-thinking-pulse .seat-avatar-img {
   animation: rook516ActivePortrait 1.85s ease-in-out infinite !important;
   transform-origin: 50% 82%;
 }
 @keyframes rook516ActivePortrait {
-  0%,100% { transform: translateY(0) scale(1); }
-  50% { transform: translateY(-2px) scale(1.018); }
+  0%,
+  100% {
+    transform: translateY(0) scale(1);
+  }
+  50% {
+    transform: translateY(-2px) scale(1.018);
+  }
 }
 body.reduce-motion .player-slot.is-turn .seat-avatar-img,
 body.no-avatar-motion .player-slot.is-turn .seat-avatar-img,
 body.reduce-motion .player-slot.hor-thinking-pulse .seat-avatar-img,
-body.no-avatar-motion .player-slot.hor-thinking-pulse .seat-avatar-img { animation:none !important; }
+body.no-avatar-motion .player-slot.hor-thinking-pulse .seat-avatar-img {
+  animation: none !important;
+}
 
 /* Portrait mode: push the successful portraits a little farther, outward. */
 @media (orientation: portrait) {
@@ -204,8 +262,12 @@ body.no-avatar-motion .player-slot.hor-thinking-pulse .seat-avatar-img { animati
     width: clamp(4.7rem, 20.5vmin, 6.9rem) !important;
     height: clamp(4.7rem, 20.5vmin, 6.9rem) !important;
   }
-  .player-slot.left .seat-avatar-side { transform: translateX(-45%) !important; }
-  .player-slot.right .seat-avatar-side { transform: translateX(45%) !important; }
+  .player-slot.left .seat-avatar-side {
+    transform: translateX(-45%) !important;
+  }
+  .player-slot.right .seat-avatar-side {
+    transform: translateX(45%) !important;
+  }
   .player-slot.top .seat-avatar,
   #slot-partner .seat-avatar,
   .player-slot.bottom .seat-avatar,
@@ -217,49 +279,113 @@ body.no-avatar-motion .player-slot.hor-thinking-pulse .seat-avatar-img { animati
 
 /* Physical hand rack: cards sit a few pixels behind a shallow walnut/brass lip. */
 .hand-area {
-  background:
-    linear-gradient(180deg, rgba(24,14,8,.98) 0 7px, rgba(82,48,22,.98) 8px 18px, rgba(35,20,11,.99) 19px 100%) !important;
-  border-top: 1px solid rgba(223,178,75,.62) !important;
-  box-shadow: inset 0 3px 0 rgba(255,224,145,.08), inset 0 -10px 18px rgba(0,0,0,.38), 0 -5px 18px rgba(0,0,0,.38) !important;
+  background: linear-gradient(
+    180deg,
+    rgba(24, 14, 8, 0.98) 0 7px,
+    rgba(82, 48, 22, 0.98) 8px 18px,
+    rgba(35, 20, 11, 0.99) 19px 100%
+  ) !important;
+  border-top: 1px solid rgba(223, 178, 75, 0.62) !important;
+  box-shadow:
+    inset 0 3px 0 rgba(255, 224, 145, 0.08),
+    inset 0 -10px 18px rgba(0, 0, 0, 0.38),
+    0 -5px 18px rgba(0, 0, 0, 0.38) !important;
 }
 .hand-area::after,
 .lt-hand-wrap::after {
-  content:"";
-  position:absolute;
-  left:1.5%; right:1.5%; bottom:0;
-  height:7px;
-  border-top:1px solid rgba(223,178,75,.48);
-  background:linear-gradient(180deg, rgba(92,54,25,.96), rgba(30,17,9,.99));
-  box-shadow:0 -3px 7px rgba(0,0,0,.28), inset 0 1px 0 rgba(255,225,150,.10);
-  pointer-events:none;
-  z-index:6;
+  content: '';
+  position: absolute;
+  left: 1.5%;
+  right: 1.5%;
+  bottom: 0;
+  height: 7px;
+  border-top: 1px solid rgba(223, 178, 75, 0.48);
+  background: linear-gradient(180deg, rgba(92, 54, 25, 0.96), rgba(30, 17, 9, 0.99));
+  box-shadow:
+    0 -3px 7px rgba(0, 0, 0, 0.28),
+    inset 0 1px 0 rgba(255, 225, 150, 0.1);
+  pointer-events: none;
+  z-index: 6;
 }
-.hand > .card-face { translate:0 3px; }
-.hand > .card-face:nth-child(4n+1) { rotate:-.7deg; translate:0 4px; }
-.hand > .card-face:nth-child(4n+2) { rotate:.45deg; translate:0 2px; }
-.hand > .card-face:nth-child(4n+3) { rotate:-.25deg; translate:0 3px; }
-.hand > .card-face:nth-child(4n) { rotate:.75deg; translate:0 4px; }
+.hand > .card-face {
+  translate: 0 3px;
+}
+.hand > .card-face:nth-child(4n + 1) {
+  rotate: -0.7deg;
+  translate: 0 4px;
+}
+.hand > .card-face:nth-child(4n + 2) {
+  rotate: 0.45deg;
+  translate: 0 2px;
+}
+.hand > .card-face:nth-child(4n + 3) {
+  rotate: -0.25deg;
+  translate: 0 3px;
+}
+.hand > .card-face:nth-child(4n) {
+  rotate: 0.75deg;
+  translate: 0 4px;
+}
 .hand > .card-face.selected,
-.hand > .card-face:active { rotate:0deg; translate:0 0; }
+.hand > .card-face:active {
+  rotate: 0deg;
+  translate: 0 0;
+}
 
 /* The center needs the cards, not a redundant TRICK/status caption. */
-.trick-caption { display:none !important; }
+.trick-caption {
+  display: none !important;
+}
 
 /* Landscape remains the big-card/readability view, but loses the loud flat green. */
 @media (orientation: landscape) {
   .landscape-theater {
     background:
-      linear-gradient(90deg, rgba(38,20,10,.99), rgba(88,49,22,.93) 1.2%, rgba(18,11,7,.98) 2.2%, transparent 3.2%, transparent 96.8%, rgba(18,11,7,.98) 97.8%, rgba(88,49,22,.93) 98.8%, rgba(38,20,10,.99)),
+      linear-gradient(
+        90deg,
+        rgba(38, 20, 10, 0.99),
+        rgba(88, 49, 22, 0.93) 1.2%,
+        rgba(18, 11, 7, 0.98) 2.2%,
+        transparent 3.2%,
+        transparent 96.8%,
+        rgba(18, 11, 7, 0.98) 97.8%,
+        rgba(88, 49, 22, 0.93) 98.8%,
+        rgba(38, 20, 10, 0.99)
+      ),
       radial-gradient(ellipse at 50% 34%, #123d29 0%, #0b2e20 50%, #061a13 100%) !important;
   }
-  .lt-hand-wrap { position:relative; overflow:visible; padding-bottom:.45rem !important; }
-  .lt-hand-wrap .card-face { translate:0 2px; }
-  .lt-hand-wrap .card-face:nth-child(4n+1) { rotate:-.55deg; translate:0 3px; }
-  .lt-hand-wrap .card-face:nth-child(4n+2) { rotate:.35deg; translate:0 1px; }
-  .lt-hand-wrap .card-face:nth-child(4n+3) { rotate:-.2deg; translate:0 2px; }
-  .lt-hand-wrap .card-face:nth-child(4n) { rotate:.6deg; translate:0 3px; }
-  .lt-play .card-face:nth-child(odd), .lt-th-card .card-face:nth-child(odd) { rotate:-.45deg; }
-  .lt-play .card-face:nth-child(even), .lt-th-card .card-face:nth-child(even) { rotate:.45deg; }
+  .lt-hand-wrap {
+    position: relative;
+    overflow: visible;
+    padding-bottom: 0.45rem !important;
+  }
+  .lt-hand-wrap .card-face {
+    translate: 0 2px;
+  }
+  .lt-hand-wrap .card-face:nth-child(4n + 1) {
+    rotate: -0.55deg;
+    translate: 0 3px;
+  }
+  .lt-hand-wrap .card-face:nth-child(4n + 2) {
+    rotate: 0.35deg;
+    translate: 0 1px;
+  }
+  .lt-hand-wrap .card-face:nth-child(4n + 3) {
+    rotate: -0.2deg;
+    translate: 0 2px;
+  }
+  .lt-hand-wrap .card-face:nth-child(4n) {
+    rotate: 0.6deg;
+    translate: 0 3px;
+  }
+  .lt-play .card-face:nth-child(odd),
+  .lt-th-card .card-face:nth-child(odd) {
+    rotate: -0.45deg;
+  }
+  .lt-play .card-face:nth-child(even),
+  .lt-th-card .card-face:nth-child(even) {
+    rotate: 0.45deg;
+  }
 }
 
 /* Game-native popup skin: restrained walnut/black with brass, not webpage white boxes. */
@@ -269,42 +395,82 @@ body.no-avatar-motion .player-slot.hor-thinking-pulse .seat-avatar-img { animati
 .friends-panel,
 .no-service-modal,
 .bot-picker-sheet {
-  background:linear-gradient(165deg, rgba(35,24,16,.985), rgba(13,12,10,.99)) !important;
-  border:1px solid rgba(205,161,65,.58) !important;
-  border-radius:16px !important;
-  box-shadow:inset 0 1px 0 rgba(255,231,171,.08), 0 16px 42px rgba(0,0,0,.58) !important;
+  background: linear-gradient(165deg, rgba(35, 24, 16, 0.985), rgba(13, 12, 10, 0.99)) !important;
+  border: 1px solid rgba(205, 161, 65, 0.58) !important;
+  border-radius: 16px !important;
+  box-shadow:
+    inset 0 1px 0 rgba(255, 231, 171, 0.08),
+    0 16px 42px rgba(0, 0, 0, 0.58) !important;
 }
 .modal-content button,
 .host-options-sheet button,
 .portrait-last3-panel button,
 .friends-panel button {
-  border-radius:10px !important;
-  border-color:rgba(199,157,65,.58) !important;
-  box-shadow:inset 0 1px 0 rgba(255,255,255,.05), 0 2px 5px rgba(0,0,0,.28) !important;
+  border-radius: 10px !important;
+  border-color: rgba(199, 157, 65, 0.58) !important;
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.05),
+    0 2px 5px rgba(0, 0, 0, 0.28) !important;
 }
 
 /* Special captures still feel earned, but stop taking over the entire table. */
-.capture-overlay { background:radial-gradient(ellipse at center, rgba(0,0,0,.26), transparent 62%) !important; }
-.capture-burst { width:min(55vw,210px) !important; height:min(55vw,210px) !important; opacity:.48; }
-.capture-card {
-  padding:.68rem .92rem .75rem !important;
-  max-width:min(82vw,260px) !important;
-  border-width:1px !important;
-  border-radius:14px !important;
-  box-shadow:0 10px 28px rgba(0,0,0,.5),0 0 24px rgba(215,171,61,.18) !important;
+.capture-overlay {
+  background: radial-gradient(ellipse at center, rgba(0, 0, 0, 0.26), transparent 62%) !important;
 }
-.capture-emoji { font-size:1.7rem !important; margin-bottom:.18rem !important; animation:none !important; }
-.capture-title { font-size:clamp(.9rem,3.7vw,1.08rem) !important; letter-spacing:.045em !important; }
-.capture-sub { font-size:.76rem !important; margin-top:.2rem !important; }
-.rook-cele-bird { width:42px; height:42px; object-fit:cover; object-position:64% 38%; border-radius:50%; filter:contrast(1.08) brightness(.86); }
-.rook-ui-bird { width:100%; height:100%; object-fit:cover; object-position:64% 38%; border-radius:inherit; filter:contrast(1.08) brightness(.82); }
+.capture-burst {
+  width: min(55vw, 210px) !important;
+  height: min(55vw, 210px) !important;
+  opacity: 0.48;
+}
+.capture-card {
+  padding: 0.68rem 0.92rem 0.75rem !important;
+  max-width: min(82vw, 260px) !important;
+  border-width: 1px !important;
+  border-radius: 14px !important;
+  box-shadow:
+    0 10px 28px rgba(0, 0, 0, 0.5),
+    0 0 24px rgba(215, 171, 61, 0.18) !important;
+}
+.capture-emoji {
+  font-size: 1.7rem !important;
+  margin-bottom: 0.18rem !important;
+  animation: none !important;
+}
+.capture-title {
+  font-size: clamp(0.9rem, 3.7vw, 1.08rem) !important;
+  letter-spacing: 0.045em !important;
+}
+.capture-sub {
+  font-size: 0.76rem !important;
+  margin-top: 0.2rem !important;
+}
+.rook-cele-bird {
+  width: 42px;
+  height: 42px;
+  object-fit: cover;
+  object-position: 64% 38%;
+  border-radius: 50%;
+  filter: contrast(1.08) brightness(0.86);
+}
+.rook-ui-bird {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: 64% 38%;
+  border-radius: inherit;
+  filter: contrast(1.08) brightness(0.82);
+}
 /* Rook516 critique pass: neutralize older container/idle animations so only the
    active portrait image owns motion. Waiting-room portraits stay still too. */
 .player-slot .seat-avatar,
 .player-slot .seat-avatar-side,
-.wait-seat-av { animation:none !important; }
+.wait-seat-av {
+  animation: none !important;
+}
 body.in-game .player-slot.is-turn .seat-avatar,
-body.in-game .player-slot.hor-thinking-pulse .seat-avatar { animation:none !important; }
+body.in-game .player-slot.hor-thinking-pulse .seat-avatar {
+  animation: none !important;
+}
 
 /* Rook517 cleanup — retire the old table-money presentation without deleting
    its legacy accounting code yet.  This keeps the change surgical while
@@ -313,23 +479,42 @@ body.in-game .seat-bank,
 body.in-game .lt-bank,
 body.in-game .lt-hand-bank,
 body.in-game .table-msg-btn,
-body.in-game [data-open-table-msg="1"] { display:none !important; }
+body.in-game [data-open-table-msg='1'] {
+  display: none !important;
+}
 
 /* The beer/private-message purchases are part of the retired money UI. */
-#opt-buy-beer, #opt-whisper { display:none !important; }
+#opt-buy-beer,
+#opt-whisper {
+  display: none !important;
+}
 label.option-label:has(#opt-buy-beer),
-label.option-label:has(#opt-whisper) { display:none !important; }
+label.option-label:has(#opt-whisper) {
+  display: none !important;
+}
 label.option-label:has(#opt-buy-beer) + .option-hint,
-label.option-label:has(#opt-whisper) + .option-hint { display:none !important; }
+label.option-label:has(#opt-whisper) + .option-hint {
+  display: none !important;
+}
 
 /* Bidding should read as a physical table console, not loose browser controls. */
 body.in-game .felt-bid-dock:not(.hidden) {
-  background:linear-gradient(180deg,rgba(29,19,12,.97),rgba(10,8,6,.98)) !important;
-  border:1px solid rgba(201,162,39,.72) !important;
-  border-radius:18px !important;
-  padding:.62rem .72rem .68rem !important;
-  box-shadow:inset 0 1px 0 rgba(255,255,255,.06),0 8px 20px rgba(0,0,0,.48) !important;
+  background: linear-gradient(180deg, rgba(29, 19, 12, 0.97), rgba(10, 8, 6, 0.98)) !important;
+  border: 1px solid rgba(201, 162, 39, 0.72) !important;
+  border-radius: 18px !important;
+  padding: 0.62rem 0.72rem 0.68rem !important;
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.06),
+    0 8px 20px rgba(0, 0, 0, 0.48) !important;
 }
-body.in-game .felt-bid-dock .felt-bid-name { display:none !important; }
-body.in-game .felt-bid-dock .bid-value { font-weight:900 !important; letter-spacing:.035em; }
-body.in-game .felt-bid-dock button { min-height:42px; border-radius:10px !important; }
+body.in-game .felt-bid-dock .felt-bid-name {
+  display: none !important;
+}
+body.in-game .felt-bid-dock .bid-value {
+  font-weight: 900 !important;
+  letter-spacing: 0.035em;
+}
+body.in-game .felt-bid-dock button {
+  min-height: 42px;
+  border-radius: 10px !important;
+}

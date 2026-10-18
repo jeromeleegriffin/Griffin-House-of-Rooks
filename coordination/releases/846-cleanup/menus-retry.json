@@ -1,0 +1,82 @@
+{
+  "routes": [
+    {
+      "viewport": [
+        844,
+        273
+      ],
+      "id": "profile",
+      "path": [],
+      "title": "My Profile",
+      "page": "Page 1 of 1",
+      "body": {
+        "x": 53,
+        "y": 67,
+        "w": 738,
+        "h": 183
+      },
+      "items": [
+        {
+          "text": "What shall we call you?",
+          "h": 60,
+          "bottom": 127
+        },
+        {
+          "text": "Your avatar\nArthur\nChange",
+          "h": 60,
+          "bottom": 127
+        },
+        {
+          "text": "Voice\nMatch avatar\nMale\nFemale\nSilent\nHear Voice",
+          "h": 50.796875,
+          "bottom": 183.796875
+        },
+        {
+          "text": "Favorite partner\nSave & Back",
+          "h": 50.796875,
+          "bottom": 183.796875
+        }
+      ],
+      "overflow": false
+    },
+    {
+      "viewport": [
+        844,
+        273
+      ],
+      "id": "career",
+      "path": [
+        "Levels & awards guide"
+      ],
+      "title": "Levels & awards guide",
+      "page": "Page 1 of 1",
+      "body": {
+        "x": 53,
+        "y": 67,
+        "w": 738,
+        "h": 183
+      },
+      "items": [
+        {
+          "text": "Career levels\n50 levels · title and required career points",
+          "h": 51.984375,
+          "bottom": 118.984375
+        },
+        {
+          "text": "Tiered awards\n25 families · all five medal requirements together",
+          "h": 51.984375,
+          "bottom": 118.984375
+        },
+        {
+          "text": "Rare feats\n20 special achievements and their requirements",
+          "h": 51.984375,
+          "bottom": 176.96875
+        }
+      ],
+      "overflow": false
+    }
+  ],
+  "errors": [],
+  "pageErrors": [],
+  "failed": []
+}

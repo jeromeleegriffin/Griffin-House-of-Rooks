@@ -1,35 +1,129 @@
 /* Isolated portrait character presentation. TABLE-003 and game geometry are not changed. */
-#characters077 {display:none;position:fixed;inset:0;overflow:hidden;pointer-events:none!important;z-index:2;}
-#characters077 * {pointer-events:none!important;}
-#characters077 svg{position:absolute;overflow:visible;transform-origin:0 0;}
-@media(orientation:portrait){
- body.in-game.cs077-ready #characters077{display:block;}
- body.in-game.cs077-ready .cs077-seat{opacity:1!important;filter:none!important;}
- body.in-game.cs077-ready .cs077-seat .seat-avatar,
- body.in-game.cs077-ready .cs077-seat .seat-avatar-side,
- body.in-game.cs077-ready #slot-me .seat-avatar{visibility:hidden!important;opacity:0!important;pointer-events:none!important;}
- body.in-game.cs077-ready .cs077-seat .seat-identity-copy{visibility:hidden!important;}
- body.in-game.cs077-ready #slot-me .seat-identity-copy{visibility:hidden!important;}
- body.in-game.cs077-ready .cs077-seat::before,
- body.in-game.cs077-ready .cs077-seat::after{display:none!important;}
+#characters077 {
+  display: none;
+  position: fixed;
+  inset: 0;
+  overflow: hidden;
+  pointer-events: none !important;
+  z-index: 2;
+}
+#characters077 * {
+  pointer-events: none !important;
+}
+#characters077 svg {
+  position: absolute;
+  overflow: visible;
+  transform-origin: 0 0;
+}
+@media (orientation: portrait) {
+  body.in-game.cs077-ready #characters077 {
+    display: block;
+  }
+  body.in-game.cs077-ready .cs077-seat {
+    opacity: 1 !important;
+    filter: none !important;
+  }
+  body.in-game.cs077-ready .cs077-seat .seat-avatar,
+  body.in-game.cs077-ready .cs077-seat .seat-avatar-side,
+  body.in-game.cs077-ready #slot-me .seat-avatar {
+    visibility: hidden !important;
+    opacity: 0 !important;
+    pointer-events: none !important;
+  }
+  body.in-game.cs077-ready .cs077-seat .seat-identity-copy {
+    visibility: hidden !important;
+  }
+  body.in-game.cs077-ready #slot-me .seat-identity-copy {
+    visibility: hidden !important;
+  }
+  body.in-game.cs077-ready .cs077-seat::before,
+  body.in-game.cs077-ready .cs077-seat::after {
+    display: none !important;
+  }
 }
 
-#characterLabels077{display:none;position:fixed;inset:0;pointer-events:none;z-index:30;}
-#characterLabels077 .cs077-label{position:absolute;transform:translateX(-50%);width:max-content;color:#fff4dc;font:600 11px/1.1 system-ui,sans-serif;text-shadow:0 1px 3px #000,0 1px 6px #000;pointer-events:auto;text-align:center;}
-#characterLabels077 .hor-career-badge{font-size:8px;}
-@media(orientation:portrait){body.in-game.cs077-ready #characterLabels077{display:block;}}
+#characterLabels077 {
+  display: none;
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+  z-index: 30;
+}
+#characterLabels077 .cs077-label {
+  position: absolute;
+  transform: translateX(-50%);
+  width: max-content;
+  color: #fff4dc;
+  font:
+    600 11px/1.1 system-ui,
+    sans-serif;
+  text-shadow:
+    0 1px 3px #000,
+    0 1px 6px #000;
+  pointer-events: auto;
+  text-align: center;
+}
+#characterLabels077 .hor-career-badge {
+  font-size: 8px;
+}
+@media (orientation: portrait) {
+  body.in-game.cs077-ready #characterLabels077 {
+    display: block;
+  }
+}
 
 /* The legacy badge explicitly forces visibility; hide it with its replaced plaque.
    Keep the interactive marker copied beside the seated character's name. */
-@media(orientation:portrait){
- body.in-game.cs077-ready .cs077-seat .seat-identity-copy .hor-career-badge,
- body.in-game.cs077-ready #slot-me .seat-identity-copy .hor-career-badge{display:none!important;visibility:hidden!important;pointer-events:none!important;}
+@media (orientation: portrait) {
+  body.in-game.cs077-ready .cs077-seat .seat-identity-copy .hor-career-badge,
+  body.in-game.cs077-ready #slot-me .seat-identity-copy .hor-career-badge {
+    display: none !important;
+    visibility: hidden !important;
+    pointer-events: none !important;
+  }
 }
 
 /* 793: fixed above-head identity line; reserved LEAD space avoids label movement. */
-#characterLabels077 .cs077-label{display:flex;align-items:center;gap:4px;max-width:136px;font-size:10px;line-height:14px;white-space:nowrap;}
-#characterLabels077 .cs077-identity793{display:inline-flex;align-items:center;gap:3px;min-width:0;}
-#characterLabels077 .player-name-text{overflow:hidden;text-overflow:ellipsis;white-space:nowrap;min-width:0;}
-#characterLabels077 .hor-career-badge{flex:none;white-space:nowrap;}
-#characterLabels077 .cs077-lead793{flex:none;font:700 7px/12px Arial,sans-serif;letter-spacing:.25px;color:#ffe5a0;border:1px solid #957443;border-radius:3px;padding:0 3px;background:#201b14;pointer-events:none;}
-@media(orientation:portrait){body.in-game.cs077-ready .cs077-seat>.seat-lead-tag{display:none!important;}}
+#characterLabels077 .cs077-label {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  max-width: 136px;
+  font-size: 10px;
+  line-height: 14px;
+  white-space: nowrap;
+}
+#characterLabels077 .cs077-identity793 {
+  display: inline-flex;
+  align-items: center;
+  gap: 3px;
+  min-width: 0;
+}
+#characterLabels077 .player-name-text {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  min-width: 0;
+}
+#characterLabels077 .hor-career-badge {
+  flex: none;
+  white-space: nowrap;
+}
+#characterLabels077 .cs077-lead793 {
+  flex: none;
+  font:
+    700 7px/12px Arial,
+    sans-serif;
+  letter-spacing: 0.25px;
+  color: #ffe5a0;
+  border: 1px solid #957443;
+  border-radius: 3px;
+  padding: 0 3px;
+  background: #201b14;
+  pointer-events: none;
+}
+@media (orientation: portrait) {
+  body.in-game.cs077-ready .cs077-seat > .seat-lead-tag {
+    display: none !important;
+  }
+}

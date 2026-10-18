@@ -1,55 +1,86 @@
 /* 004: approved raster furniture layers; fixed original tray and Bid Box. */
-@media (orientation:portrait) {
+@media (orientation: portrait) {
   body.in-game .game-room > .hand-area {
-    overflow:visible !important;
+    overflow: visible !important;
     /* Keep the table and seat anchors fixed while the live hand changes size. */
-    display:flex !important;
-    flex-direction:column !important;
-    justify-content:flex-end !important;
-    box-sizing:border-box !important;
-    height:72px !important;
-    min-height:72px !important;
-    max-height:72px !important;
-    flex:0 0 72px !important;
+    display: flex !important;
+    flex-direction: column !important;
+    justify-content: flex-end !important;
+    box-sizing: border-box !important;
+    height: 72px !important;
+    min-height: 72px !important;
+    max-height: 72px !important;
+    flex: 0 0 72px !important;
   }
-  body.in-game .game-room > .hand-area > #myHand { scale:none !important; overflow:visible !important; flex:0 0 auto !important; }
-  .holder004-backrest { display:none; }
+  body.in-game .game-room > .hand-area > #myHand {
+    scale: none !important;
+    overflow: visible !important;
+    flex: 0 0 auto !important;
+  }
+  .holder004-backrest {
+    display: none;
+  }
   body.in-game .game-room > .hand-area > .holder004-backrest {
-    display:block; position:absolute; left:7.7%; width:84.6%;
-    bottom:calc(var(--holder049-height) - 4px);
-    height:clamp(20px, 6.77vw, 30px);
-    background:url("assets/cardholder/backrest004.png") center / 100% 100% no-repeat;
-    pointer-events:none; z-index:1;
+    display: block;
+    position: absolute;
+    left: 7.7%;
+    width: 84.6%;
+    bottom: calc(var(--holder049-height) - 4px);
+    height: clamp(20px, 6.77vw, 30px);
+    background: url('assets/cardholder/backrest004.png') center / 100% 100% no-repeat;
+    pointer-events: none;
+    z-index: 1;
   }
-  body.in-game .game-room > .hand-area::before { content:none !important; display:none !important; }
-  body.in-game:has(#decisionConsole.approved-bid-portrait.decision-mode-bid:not(.hidden)) .game-room > .hand-area::before {
-    content:"" !important; display:block !important; position:absolute !important;
-    left:var(--holder004-left, 7.7%) !important;
-    width:var(--holder004-width, 84.6%) !important;
-    top:var(--holder004-top, 0px) !important; bottom:auto !important;
-    height:var(--holder004-height, 0px) !important;
-    background:url("assets/cardholder/bridge004.png") center / 100% 100% no-repeat !important;
-    clip-path:polygon(1% 0,99% 0,100% 100%,0 100%);
-    pointer-events:none !important; z-index:2 !important;
+  body.in-game .game-room > .hand-area::before {
+    content: none !important;
+    display: none !important;
   }
-
+  body.in-game:has(#decisionConsole.approved-bid-portrait.decision-mode-bid:not(.hidden))
+    .game-room
+    > .hand-area::before {
+    content: '' !important;
+    display: block !important;
+    position: absolute !important;
+    left: var(--holder004-left, 7.7%) !important;
+    width: var(--holder004-width, 84.6%) !important;
+    top: var(--holder004-top, 0px) !important;
+    bottom: auto !important;
+    height: var(--holder004-height, 0px) !important;
+    background: url('assets/cardholder/bridge004.png') center / 100% 100% no-repeat !important;
+    clip-path: polygon(1% 0, 99% 0, 100% 100%, 0 100%);
+    pointer-events: none !important;
+    z-index: 2 !important;
+  }
 }
 @layer approvedPortraitBidAsset {
- @media (orientation:portrait) {
-  body.in-game #decisionConsole.approved-bid-portrait.decision-mode-bid:not(.hidden) {
-    translate:0 clamp(22px, 7.5vw, 32px) !important;
+  @media (orientation: portrait) {
+    body.in-game #decisionConsole.approved-bid-portrait.decision-mode-bid:not(.hidden) {
+      translate: 0 clamp(22px, 7.5vw, 32px) !important;
+    }
   }
- }
 }
 
-@media (orientation:landscape) { .holder004-backrest { display:none; } }
+@media (orientation: landscape) {
+  .holder004-backrest {
+    display: none;
+  }
+}
 
 /* 005: remove only the tiny center pendant below the solid lower rim.
    Native art and all control/layout rectangles remain unchanged. */
 @layer approvedPortraitBidAsset {
- @media (orientation:portrait) {
-  body #decisionConsole.approved-bid-portrait .approved-bid-art {
-   clip-path:polygon(0 0,100% 0,100% 100%,55.92% 100%,55.92% 93.10%,44.22% 93.10%,44.22% 100%,0 100%) !important;
+  @media (orientation: portrait) {
+    body #decisionConsole.approved-bid-portrait .approved-bid-art {
+      clip-path: polygon(
+        0 0,
+        100% 0,
+        100% 100%,
+        55.92% 100%,
+        55.92% 93.1%,
+        44.22% 93.1%,
+        44.22% 100%,
+        0 100%
+      ) !important;
+    }
   }
- }
 }

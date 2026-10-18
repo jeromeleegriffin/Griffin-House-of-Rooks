@@ -1,13 +1,73 @@
 /* Readable identities beneath undecoded images; approved image pixels win on load. */
-.card-face .numbered-card-fallback {inset:0!important;background:#f6edda;color:inherit;border-radius:inherit;z-index:0;}
-.card-face .numbered-card-img {z-index:1;}
-.card-face .asset-bird-fallback772 {position:absolute;inset:0;display:flex;align-items:center;justify-content:center;text-align:center;background:#f6edda;color:#0B0B0B;font:bold 16px Georgia,serif;border-radius:inherit;}
-.card-face .red2-stack .asset-bird-fallback772 {color:#E11D2E;}
-.card-face .rook-bird-img,.card-face .red2-img {z-index:1;}
-#assetLoadingNotice772 {font:13px/1.4 system-ui,sans-serif;color:#e5d6b1;text-align:center;margin:8px 12px;}
-.card-face .numbered-card-fallback .asset-fallback-rank772 {position:static!important;transform:none!important;font:700 clamp(16px,4vw,32px)/1 Georgia,serif!important;color:inherit!important;text-shadow:none!important;background:none!important;}
-.card-face .numbered-card-fallback .asset-fallback-color772 {display:block!important;position:static!important;transform:none!important;opacity:1!important;font:700 8px/1.2 system-ui,sans-serif!important;color:inherit!important;text-shadow:none!important;}
-.card-face.red .numbered-card-fallback {color:#E11D2E!important;}
-.card-face.green .numbered-card-fallback {color:#0E8F3E!important;}
-.card-face.yellow .numbered-card-fallback {color:#B88B18!important;}
-.card-face.black .numbered-card-fallback {color:#0B0B0B!important;}
+.card-face .numbered-card-fallback {
+  inset: 0 !important;
+  background: #f6edda;
+  color: inherit;
+  border-radius: inherit;
+  z-index: 0;
+}
+.card-face .numbered-card-img {
+  z-index: 1;
+}
+.card-face .asset-bird-fallback772 {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  background: #f6edda;
+  color: #0b0b0b;
+  font:
+    bold 16px Georgia,
+    serif;
+  border-radius: inherit;
+}
+.card-face .red2-stack .asset-bird-fallback772 {
+  color: #e11d2e;
+}
+.card-face .rook-bird-img,
+.card-face .red2-img {
+  z-index: 1;
+}
+#assetLoadingNotice772 {
+  font:
+    13px/1.4 system-ui,
+    sans-serif;
+  color: #e5d6b1;
+  text-align: center;
+  margin: 8px 12px;
+}
+.card-face .numbered-card-fallback .asset-fallback-rank772 {
+  position: static !important;
+  transform: none !important;
+  font:
+    700 clamp(16px, 4vw, 32px) / 1 Georgia,
+    serif !important;
+  color: inherit !important;
+  text-shadow: none !important;
+  background: none !important;
+}
+.card-face .numbered-card-fallback .asset-fallback-color772 {
+  display: block !important;
+  position: static !important;
+  transform: none !important;
+  opacity: 1 !important;
+  font:
+    700 8px/1.2 system-ui,
+    sans-serif !important;
+  color: inherit !important;
+  text-shadow: none !important;
+}
+.card-face.red .numbered-card-fallback {
+  color: #e11d2e !important;
+}
+.card-face.green .numbered-card-fallback {
+  color: #0e8f3e !important;
+}
+.card-face.yellow .numbered-card-fallback {
+  color: #b88b18 !important;
+}
+.card-face.black .numbered-card-fallback {
+  color: #0b0b0b !important;
+}

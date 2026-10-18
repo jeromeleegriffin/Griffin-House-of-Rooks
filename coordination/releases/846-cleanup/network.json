@@ -1,0 +1,178 @@
+{
+  "checks": [
+    {
+      "name": "Two isolated browsers join through controlled ordered messages",
+      "ok": true,
+      "detail": [
+        {
+          "id": "audit-host",
+          "seat": 0
+        },
+        {
+          "id": "audit-client",
+          "seat": 2
+        }
+      ]
+    },
+    {
+      "name": "Guest receives its own 10-card private hand",
+      "ok": true,
+      "detail": {
+        "count": 4
+      }
+    },
+    {
+      "name": "Public state does not contain hidden hands or deck",
+      "ok": true,
+      "detail": [
+        [],
+        [],
+        [],
+        []
+      ]
+    },
+    {
+      "name": "Disconnect holds the original seat",
+      "ok": true
+    },
+    {
+      "name": "Same-identity reconnect restores exact hand, seat and scores",
+      "ok": true,
+      "detail": {
+        "before": {
+          "ids": [
+            "black-1",
+            "green-1",
+            "green-10",
+            "green-11",
+            "green-7",
+            "green-8",
+            "green-9",
+            "red-13",
+            "yellow-1",
+            "yellow-11"
+          ],
+          "seat": 2,
+          "scores": [
+            0,
+            0
+          ]
+        },
+        "after": {
+          "ids": [
+            "black-1",
+            "green-1",
+            "green-10",
+            "green-11",
+            "green-7",
+            "green-8",
+            "green-9",
+            "red-13",
+            "yellow-1",
+            "yellow-11"
+          ],
+          "seat": 2,
+          "scores": [
+            0,
+            0
+          ]
+        }
+      }
+    },
+    {
+      "name": "Disconnected human becomes a temporary bot",
+      "ok": true
+    },
+    {
+      "name": "New connection reclaims the original hand and player index",
+      "ok": true,
+      "detail": {
+        "rows": [
+          {
+            "id": "audit-host",
+            "seat": 0,
+            "team": 0
+          },
+          {
+            "id": "bot-1792354330210-yxv1",
+            "seat": 1,
+            "team": 1
+          },
+          {
+            "id": "audit-client-new",
+            "seat": 2,
+            "team": 0
+          },
+          {
+            "id": "bot-1792354330225-o8jn",
+            "seat": 3,
+            "team": 1
+          }
+        ],
+        "guest": 2
+      }
+    },
+    {
+      "name": "Reclaimed human retains waiting-room seat assignment",
+      "ok": true,
+      "detail": [
+        {
+          "id": "audit-host",
+          "seat": 0,
+          "team": 0
+        },
+        {
+          "id": "bot-1792354330210-yxv1",
+          "seat": 1,
+          "team": 1
+        },
+        {
+          "id": "audit-client-new",
+          "seat": 2,
+          "team": 0
+        },
+        {
+          "id": "bot-1792354330225-o8jn",
+          "seat": 3,
+          "team": 1
+        }
+      ]
+    },
+    {
+      "name": "Resume credentials are absent from public roster/state messages",
+      "ok": true
+    },
+    {
+      "name": "Host binds incoming bid seat to connection identity",
+      "ok": true,
+      "detail": {
+        "remote": "audit-client-new",
+        "claimedPlayer": 0,
+        "forwarded": false
+      }
+    },
+    {
+      "name": "Native bidding rejects another connection acting as host seat",
+      "ok": true,
+      "detail": {
+        "bidder": -1,
+        "highest": 95,
+        "remote": "audit-client-new",
+        "hostId": "audit-host"
+      }
+    },
+    {
+      "name": "Discard resync refuses another player private hand request",
+      "ok": true,
+      "detail": {
+        "packets": 0,
+        "leakedHostHand": false
+      }
+    }
+  ],
+  "findings": [],
+  "limits": [
+    "Independent browser contexts exchange ordered JSON through a controlled audit relay into production setupConn/handleMessage handlers. Local WebRTC could not connect in this environment; public PeerJS broker/TURN and physical mobile network handoff remain unverified."
+  ],
+  "errors": []
+}

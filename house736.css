@@ -1,30 +1,188 @@
 /* Portrait house art only. Existing table, cards, players and landscape retained. */
-#houseLantern736{display:none;pointer-events:none;}
-@media(orientation:portrait){
- body.in-game #houseLantern736{display:block;position:fixed;width:110px;height:165px;z-index:1;transform-origin:0 0;pointer-events:none;}
- #houseLantern736 .lamp-wall736{position:absolute;left:12px;top:25px;width:92px;height:132px;background:url('assets/table003/room-table-perspective.png') -268px -348px/875px 1797px no-repeat;background-size:3500px 1797px;background-position:-1072px -348px;mask-image:linear-gradient(to right,transparent,#000 8%,#000 92%,transparent),linear-gradient(to bottom,transparent,#000 6%,#000 94%,transparent);mask-composite:intersect;}
- #houseLantern736>img{position:absolute;left:0;top:0;width:110px;height:165px;object-fit:contain;filter:drop-shadow(0 2px 2px #130804);}
- #houseLantern736 .lantern-flame736{position:absolute;left:51.6px;top:76.3px;width:8.1px;height:24.7px;background:url('assets/house736/lantern-approved.png') -51.6px -76.3px/110px 165px;mask-image:radial-gradient(ellipse 48% 48% at 50% 55%,#000 45%,transparent 100%);transform-origin:50% 95%;opacity:.35;mix-blend-mode:screen;}
- body.in-game.cabin-fire-active041 .lantern-flame736{animation:lantern-wick736 3.7s ease-in-out infinite alternate;}
- body.in-game #quietFire034 .quiet-fire-sample034{animation:none!important;filter:brightness(.72) saturate(.9)!important;transform:none!important;}
- body.in-game #fireGlow059 .fire-glow-pulse059{animation:none!important;opacity:.48!important;transform:none!important;}
- .hearth-tongues736{position:absolute;inset:0;overflow:hidden;pointer-events:none;}
- .hearth-tongue736{position:absolute;inset:0;background:url('assets/table003/room-table-perspective.png') -610px -390px/875px 1797px no-repeat;mix-blend-mode:screen;opacity:.3;transform-origin:50% 80%;mask-image:radial-gradient(ellipse 12% 35% at var(--flame-x) 53%,#000 28%,transparent 100%);}
- .tongue-a736{--flame-x:33%;transform-origin:33% 80%;}
- .tongue-b736{--flame-x:49%;transform-origin:49% 80%;}
- .tongue-c736{--flame-x:64%;transform-origin:64% 80%;}
- body.in-game.cabin-fire-active041 .tongue-a736{animation:hearth-curl736 3.1s -.9s ease-in-out infinite alternate;}
- body.in-game.cabin-fire-active041 .tongue-b736{animation:hearth-curl736 4.3s -2.3s ease-in-out infinite alternate-reverse;}
- body.in-game.cabin-fire-active041 .tongue-c736{animation:hearth-curl736 5.7s -4.1s ease-in-out infinite alternate;}
- .hearth-ember736{position:absolute;left:58%;top:76%;width:1px;height:1px;border-radius:50%;background:#e2a35c;opacity:0;}
- body.in-game.cabin-fire-active041 .hearth-ember736{animation:hearth-ember736 11.3s -3s linear infinite;}
- body:not(.cabin-fire-active041) .hearth-tongues736{visibility:hidden;}
- body.reduce-motion :is(.hearth-tongue736,.lantern-flame736,.hearth-ember736){animation:none!important;}
- /* Settle the arriving hand card gently, with no size overshoot or upward hop. */
- body.in-game #myHand .card-face.deal-in{animation:deal-settle736 .22s ease-out both!important;}
+#houseLantern736 {
+  display: none;
+  pointer-events: none;
 }
-@keyframes hearth-curl736{0%{transform:translate(0,1px) scaleY(.97) skewX(-1.5deg);}37%{transform:translate(1px,-1px) scaleY(1.035) skewX(2deg);}73%{transform:translate(-1px,0) scaleY(1.01) skewX(-.6deg);}100%{transform:translate(1.5px,-1px) scaleY(1.055) skewX(1deg);}}
-@keyframes lantern-wick736{0%{transform:scale(.98,1) skewX(-1deg);}45%{transform:scale(1,1.025) skewX(1.5deg);}100%{transform:scale(.99,.985) skewX(-.5deg);}}
-@keyframes hearth-ember736{0%,87%,100%{opacity:0;transform:translate(0,0);}89%{opacity:.32;transform:translate(0,-2px);}95%{opacity:.16;transform:translate(2px,-17px);}98%{opacity:0;transform:translate(4px,-24px);}}
-@keyframes deal-settle736{from{opacity:.6;transform:translateY(-12px);}to{opacity:1;transform:translateY(0);}}
-@media(prefers-reduced-motion:reduce){:is(.hearth-tongue736,.lantern-flame736,.hearth-ember736){animation:none!important;}body.in-game #myHand .card-face.deal-in{animation:none!important;}}
+@media (orientation: portrait) {
+  body.in-game #houseLantern736 {
+    display: block;
+    position: fixed;
+    width: 110px;
+    height: 165px;
+    z-index: 1;
+    transform-origin: 0 0;
+    pointer-events: none;
+  }
+  #houseLantern736 .lamp-wall736 {
+    position: absolute;
+    left: 12px;
+    top: 25px;
+    width: 92px;
+    height: 132px;
+    background: url('assets/table003/room-table-perspective.png') -268px -348px/875px 1797px
+      no-repeat;
+    background-size: 3500px 1797px;
+    background-position: -1072px -348px;
+    mask-image:
+      linear-gradient(to right, transparent, #000 8%, #000 92%, transparent),
+      linear-gradient(to bottom, transparent, #000 6%, #000 94%, transparent);
+    mask-composite: intersect;
+  }
+  #houseLantern736 > img {
+    position: absolute;
+    left: 0;
+    top: 0;
+    width: 110px;
+    height: 165px;
+    object-fit: contain;
+    filter: drop-shadow(0 2px 2px #130804);
+  }
+  #houseLantern736 .lantern-flame736 {
+    position: absolute;
+    left: 51.6px;
+    top: 76.3px;
+    width: 8.1px;
+    height: 24.7px;
+    background: url('assets/house736/lantern-approved.png') -51.6px -76.3px/110px 165px;
+    mask-image: radial-gradient(ellipse 48% 48% at 50% 55%, #000 45%, transparent 100%);
+    transform-origin: 50% 95%;
+    opacity: 0.35;
+    mix-blend-mode: screen;
+  }
+  body.in-game.cabin-fire-active041 .lantern-flame736 {
+    animation: lantern-wick736 3.7s ease-in-out infinite alternate;
+  }
+  body.in-game #quietFire034 .quiet-fire-sample034 {
+    animation: none !important;
+    filter: brightness(0.72) saturate(0.9) !important;
+    transform: none !important;
+  }
+  body.in-game #fireGlow059 .fire-glow-pulse059 {
+    animation: none !important;
+    opacity: 0.48 !important;
+    transform: none !important;
+  }
+  .hearth-tongues736 {
+    position: absolute;
+    inset: 0;
+    overflow: hidden;
+    pointer-events: none;
+  }
+  .hearth-tongue736 {
+    position: absolute;
+    inset: 0;
+    background: url('assets/table003/room-table-perspective.png') -610px -390px/875px 1797px
+      no-repeat;
+    mix-blend-mode: screen;
+    opacity: 0.3;
+    transform-origin: 50% 80%;
+    mask-image: radial-gradient(ellipse 12% 35% at var(--flame-x) 53%, #000 28%, transparent 100%);
+  }
+  .tongue-a736 {
+    --flame-x: 33%;
+    transform-origin: 33% 80%;
+  }
+  .tongue-b736 {
+    --flame-x: 49%;
+    transform-origin: 49% 80%;
+  }
+  .tongue-c736 {
+    --flame-x: 64%;
+    transform-origin: 64% 80%;
+  }
+  body.in-game.cabin-fire-active041 .tongue-a736 {
+    animation: hearth-curl736 3.1s -0.9s ease-in-out infinite alternate;
+  }
+  body.in-game.cabin-fire-active041 .tongue-b736 {
+    animation: hearth-curl736 4.3s -2.3s ease-in-out infinite alternate-reverse;
+  }
+  body.in-game.cabin-fire-active041 .tongue-c736 {
+    animation: hearth-curl736 5.7s -4.1s ease-in-out infinite alternate;
+  }
+  .hearth-ember736 {
+    position: absolute;
+    left: 58%;
+    top: 76%;
+    width: 1px;
+    height: 1px;
+    border-radius: 50%;
+    background: #e2a35c;
+    opacity: 0;
+  }
+  body.in-game.cabin-fire-active041 .hearth-ember736 {
+    animation: hearth-ember736 11.3s -3s linear infinite;
+  }
+  body:not(.cabin-fire-active041) .hearth-tongues736 {
+    visibility: hidden;
+  }
+  body.reduce-motion :is(.hearth-tongue736, .lantern-flame736, .hearth-ember736) {
+    animation: none !important;
+  }
+  /* Settle the arriving hand card gently, with no size overshoot or upward hop. */
+  body.in-game #myHand .card-face.deal-in {
+    animation: deal-settle736 0.22s ease-out both !important;
+  }
+}
+@keyframes hearth-curl736 {
+  0% {
+    transform: translate(0, 1px) scaleY(0.97) skewX(-1.5deg);
+  }
+  37% {
+    transform: translate(1px, -1px) scaleY(1.035) skewX(2deg);
+  }
+  73% {
+    transform: translate(-1px, 0) scaleY(1.01) skewX(-0.6deg);
+  }
+  100% {
+    transform: translate(1.5px, -1px) scaleY(1.055) skewX(1deg);
+  }
+}
+@keyframes lantern-wick736 {
+  0% {
+    transform: scale(0.98, 1) skewX(-1deg);
+  }
+  45% {
+    transform: scale(1, 1.025) skewX(1.5deg);
+  }
+  100% {
+    transform: scale(0.99, 0.985) skewX(-0.5deg);
+  }
+}
+@keyframes hearth-ember736 {
+  0%,
+  87%,
+  100% {
+    opacity: 0;
+    transform: translate(0, 0);
+  }
+  89% {
+    opacity: 0.32;
+    transform: translate(0, -2px);
+  }
+  95% {
+    opacity: 0.16;
+    transform: translate(2px, -17px);
+  }
+  98% {
+    opacity: 0;
+    transform: translate(4px, -24px);
+  }
+}
+@keyframes deal-settle736 {
+  from {
+    opacity: 0.6;
+    transform: translateY(-12px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  :is(.hearth-tongue736, .lantern-flame736, .hearth-ember736) {
+    animation: none !important;
+  }
+  body.in-game #myHand .card-face.deal-in {
+    animation: none !important;
+  }
+}

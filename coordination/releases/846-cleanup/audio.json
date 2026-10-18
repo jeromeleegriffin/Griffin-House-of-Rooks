@@ -1,0 +1,106 @@
+{
+  "checks": [
+    {
+      "name": "All result/award samples decode",
+      "ok": true
+    },
+    {
+      "name": "Result sound starts one recorded sample",
+      "ok": true
+    },
+    {
+      "name": "Global mute suppresses result source",
+      "ok": true
+    },
+    {
+      "name": "Card/effects switch suppresses result source",
+      "ok": true
+    },
+    {
+      "name": "Game-effects volume reaches zero",
+      "ok": true
+    },
+    {
+      "name": "Master mute reaches zero",
+      "ok": true
+    },
+    {
+      "name": "Voice mute blocks voices",
+      "ok": true
+    },
+    {
+      "name": "Guest match finish repeats for a new match ending at the same score",
+      "ok": true,
+      "detail": {
+        "expected": 2,
+        "actual": 2,
+        "calls": [
+          "applause",
+          "applause"
+        ]
+      }
+    },
+    {
+      "name": "Support display label identifies current build",
+      "ok": true,
+      "detail": {
+        "runtime": "846-source-cleanup",
+        "display": "846 Source cleanup"
+      }
+    }
+  ],
+  "limits": [
+    "Signal decoding, routing and suppression checks; physical Android speaker/headphone listening is not certified."
+  ],
+  "decode": [
+    {
+      "name": "clink",
+      "loaded": true,
+      "seconds": 0.82,
+      "channels": 1
+    },
+    {
+      "name": "applause",
+      "loaded": true,
+      "seconds": 3,
+      "channels": 1
+    },
+    {
+      "name": "gather",
+      "loaded": true,
+      "seconds": 1,
+      "channels": 1
+    },
+    {
+      "name": "wood",
+      "loaded": true,
+      "seconds": 0.30997732426303853,
+      "channels": 1
+    }
+  ],
+  "cues": {
+    "calls": [
+      "clink-01"
+    ],
+    "normal": 1,
+    "muted": 1,
+    "effectsOff": 1,
+    "gameplay": 0,
+    "master": 0,
+    "voices": false
+  },
+  "repeat": {
+    "expected": 2,
+    "actual": 2,
+    "calls": [
+      "applause",
+      "applause"
+    ]
+  },
+  "version": {
+    "runtime": "846-source-cleanup",
+    "display": "846 Source cleanup"
+  },
+  "errors": [],
+  "failed": []
+}

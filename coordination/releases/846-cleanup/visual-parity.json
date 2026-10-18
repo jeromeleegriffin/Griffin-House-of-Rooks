@@ -1,0 +1,50 @@
+{
+  "cases": [
+    {
+      "name": "landscape-landing",
+      "viewport": {
+        "width": 844,
+        "height": 390
+      },
+      "visibleElements": 33,
+      "differences": []
+    },
+    {
+      "name": "portrait-landing",
+      "viewport": {
+        "width": 390,
+        "height": 844
+      },
+      "visibleElements": 61,
+      "differences": []
+    },
+    {
+      "name": "portrait-auction",
+      "viewport": {
+        "width": 390,
+        "height": 844
+      },
+      "visibleElements": 147,
+      "differences": []
+    },
+    {
+      "name": "landscape-auction",
+      "viewport": {
+        "width": 844,
+        "height": 390
+      },
+      "visibleElements": 116,
+      "differences": []
+    },
+    {
+      "name": "short-landscape-auction",
+      "viewport": {
+        "width": 844,
+        "height": 245
+      },
+      "visibleElements": 116,
+      "differences": []
+    }
+  ],
+  "errors": []
+}

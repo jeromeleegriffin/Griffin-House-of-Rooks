@@ -1,0 +1,2205 @@
+{
+  "routes": [
+    {
+      "viewport": [
+        844,
+        273
+      ],
+      "id": "career",
+      "path": [
+        "Levels & awards guide",
+        "Career levels"
+      ],
+      "title": "Career levels",
+      "page": "Page 1 of 9",
+      "body": {
+        "x": 53,
+        "y": 67,
+        "w": 738,
+        "h": 138
+      },
+      "items": [
+        {
+          "text": "Level 1 · Rookling\n\n0 pts",
+          "h": 30.25,
+          "bottom": 97.25
+        },
+        {
+          "text": "Level 2 · New Hand\n\n500 pts",
+          "h": 30.25,
+          "bottom": 97.25
+        },
+        {
+          "text": "Level 3 · Trick Taker\n\n1,250 pts",
+          "h": 30.25,
+          "bottom": 133.5
+        },
+        {
+          "text": "Level 4 · Nest Hunter\n\n2,500 pts",
+          "h": 30.25,
+          "bottom": 133.5
+        },
+        {
+          "text": "Level 5 · Table Regular\n\n4,000 pts",
+          "h": 30.25,
+          "bottom": 169.75
+        },
+        {
+          "text": "Level 6 · Card Sharp\n\n6,000 pts",
+          "h": 30.25,
+          "bottom": 169.75
+        }
+      ],
+      "overflow": false
+    },
+    {
+      "viewport": [
+        844,
+        273
+      ],
+      "id": "career",
+      "path": [
+        "Levels & awards guide",
+        "Tiered awards"
+      ],
+      "title": "Tiered awards",
+      "page": "Page 1 of 7",
+      "body": {
+        "x": 53,
+        "y": 67,
+        "w": 738,
+        "h": 138
+      },
+      "items": [
+        {
+          "text": "Point Collector\nBronze\n1,000\nSilver\n10,000\nGold\n50,000\nPlatinum\n250,000\nGriffin\n1,000,000",
+          "h": 61.09375,
+          "bottom": 128.09375
+        },
+        {
+          "text": "Old Hand\nBronze\n25\nSilver\n100\nGold\n500\nPlatinum\n2,500\nGriffin\n10,000",
+          "h": 61.09375,
+          "bottom": 128.09375
+        },
+        {
+          "text": "Game Night\nBronze\n10\nSilver\n50\nGold\n250\nPlatinum\n1,000\nGriffin\n5,000",
+          "h": 61.09375,
+          "bottom": 195.1875
+        },
+        {
+          "text": "Winner\nBronze\n5\nSilver\n25\nGold\n100\nPlatinum\n500\nGriffin\n2,500",
+          "h": 61.09375,
+          "bottom": 195.1875
+        }
+      ],
+      "overflow": false
+    },
+    {
+      "viewport": [
+        844,
+        273
+      ],
+      "id": "career",
+      "path": [
+        "Levels & awards guide",
+        "Rare feats"
+      ],
+      "title": "Rare feats",
+      "page": "Page 1 of 5",
+      "body": {
+        "x": 53,
+        "y": 67,
+        "w": 738,
+        "h": 138
+      },
+      "items": [
+        {
+          "text": "First Trick\n\nWin your first trick · Requirement: 1",
+          "h": 47.6875,
+          "bottom": 114.6875
+        },
+        {
+          "text": "First Victory\n\nWin your first game · Requirement: 1",
+          "h": 47.6875,
+          "bottom": 114.6875
+        },
+        {
+          "text": "Perfect Contract\n\nMake three contracts for exactly the required bid · Requirement: 3",
+          "h": 63.875,
+          "bottom": 184.5625
+        },
+        {
+          "text": "Seeing Red\n\nCapture the Red 2 · Requirement: 1",
+          "h": 63.875,
+          "bottom": 184.5625
+        }
+      ],
+      "overflow": false
+    },
+    {
+      "viewport": [
+        844,
+        273
+      ],
+      "id": "sound",
+      "path": [
+        "Volume Controls"
+      ],
+      "title": "Volume Controls",
+      "page": "Page 1 of 2",
+      "body": {
+        "x": 53,
+        "y": 67,
+        "w": 738,
+        "h": 138
+      },
+      "items": [
+        {
+          "text": "🔊 Sound on",
+          "h": 52,
+          "bottom": 119
+        },
+        {
+          "text": "Master\n100%",
+          "h": 52,
+          "bottom": 119
+        },
+        {
+          "text": "Voices\n70%",
+          "h": 47.25,
+          "bottom": 172.25
+        },
+        {
+          "text": "Game effects\n100%",
+          "h": 47.25,
+          "bottom": 172.25
+        }
+      ],
+      "overflow": false
+    },
+    {
+      "viewport": [
+        844,
+        273
+      ],
+      "id": "sound",
+      "path": [
+        "Room Ambience"
+      ],
+      "title": "Room Ambience",
+      "page": "Page 1 of 3",
+      "body": {
+        "x": 53,
+        "y": 67,
+        "w": 738,
+        "h": 138
+      },
+      "items": [
+        {
+          "text": "Cabin ambience",
+          "h": 48.5,
+          "bottom": 115.5
+        },
+        {
+          "text": "Ambience volume 6% ",
+          "h": 48.5,
+          "bottom": 115.5
+        },
+        {
+          "text": "Fireplace volume 10%",
+          "h": 48.5,
+          "bottom": 170
+        },
+        {
+          "text": "Rare owl calls",
+          "h": 48.5,
+          "bottom": 170
+        }
+      ],
+      "overflow": false
+    },
+    {
+      "viewport": [
+        844,
+        273
+      ],
+      "id": "sound",
+      "path": [
+        "Room Ambience",
+        "Thunderstorms"
+      ],
+      "title": "Thunderstorms",
+      "page": "Page 1 of 1",
+      "body": {
+        "x": 53,
+        "y": 67,
+        "w": 738,
+        "h": 183
+      },
+      "items": [
+        {
+          "text": "Thunderstorms volume \n65%\n\nSet volume to 0% to turn this sound off. Your choice saves automatically.",
+          "h": 110.375,
+          "bottom": 177.375
+        },
+        {
+          "text": "Time between storms\nEvery 6 minutes\nEvery 12 minutes (default)\nEvery 24 minutes\nEvery hour\n\nA short rain shower with distant thunder. Rain volume is controlled separately. Timers r",
+          "h": 110.375,
+          "bottom": 177.375
+        }
+      ],
+      "overflow": false
+    },
+    {
+      "viewport": [
+        844,
+        273
+      ],
+      "id": "sound",
+      "path": [
+        "Room Ambience",
+        "Crickets"
+      ],
+      "title": "Crickets",
+      "page": "Page 1 of 1",
+      "body": {
+        "x": 53,
+        "y": 67,
+        "w": 738,
+        "h": 183
+      },
+      "items": [
+        {
+          "text": "Crickets volume \n100%\n\nSet volume to 0% to turn this sound off. Your choice saves automatically.",
+          "h": 94.78125,
+          "bottom": 161.78125
+        },
+        {
+          "text": "Cricket frequency\nOccasional: every 4–8 minutes\nRegular: every 2–4 minutes (default)\nFrequent: every 1–2 minutes\n\nOutdoor sounds pause while the game is hidden. Wildlife waits unti",
+          "h": 94.78125,
+          "bottom": 161.78125
+        }
+      ],
+      "overflow": false
+    },
+    {
+      "viewport": [
+        844,
+        273
+      ],
+      "id": "sound",
+      "path": [
+        "Game & Character Effects"
+      ],
+      "title": "Game & Character Effects",
+      "page": "Page 1 of 2",
+      "body": {
+        "x": 53,
+        "y": 67,
+        "w": 738,
+        "h": 138
+      },
+      "items": [
+        {
+          "text": "Cards",
+          "h": 34,
+          "bottom": 101
+        },
+        {
+          "text": "Turn",
+          "h": 34,
+          "bottom": 101
+        },
+        {
+          "text": "Turn & win vibration",
+          "h": 34,
+          "bottom": 141
+        },
+        {
+          "text": "My turn tone\nNatural wood tap (recorded)\n1. Soft wood\n2. Warm tap\n3. Soft chime\n4. Low knock\n5. Light bell\n6. Deep tap\n7. Tiny glass\n8. Muted wood\n9. Soft ping\n10. Felt tap\n11. War",
+          "h": 40,
+          "bottom": 187
+        }
+      ],
+      "overflow": false
+    },
+    {
+      "viewport": [
+        844,
+        273
+      ],
+      "id": "setup",
+      "path": [],
+      "title": "Game Setup",
+      "page": "Page 1 of 2",
+      "body": {
+        "x": 53,
+        "y": 67,
+        "w": 738,
+        "h": 138
+      },
+      "items": [
+        {
+          "text": "Play to:\n100\n500\n1000\nCustom…",
+          "h": 60,
+          "bottom": 127
+        }
+      ],
+      "overflow": false
+    },
+    {
+      "viewport": [
+        844,
+        273
+      ],
+      "id": "setup",
+      "path": [
+        "More table rules"
+      ],
+      "title": "More table rules",
+      "page": "Page 1 of 7",
+      "body": {
+        "x": 53,
+        "y": 67,
+        "w": 738,
+        "h": 138
+      },
+      "items": [
+        {
+          "text": "Ruleset:\nGriffin House",
+          "h": 34,
+          "bottom": 101
+        },
+        {
+          "text": "Include 1s (high in suit, 15 pts)",
+          "h": 34,
+          "bottom": 101
+        },
+        {
+          "text": "Red 2 points:\n20\n30",
+          "h": 89.78125,
+          "bottom": 196.78125
+        },
+        {
+          "text": "Include special Red 1 (highest trump, 30 pts)",
+          "h": 89.78125,
+          "bottom": 196.78125
+        }
+      ],
+      "overflow": false
+    },
+    {
+      "viewport": [
+        844,
+        245
+      ],
+      "id": "profile",
+      "path": [],
+      "title": "My Profile",
+      "page": "Page 1 of 1",
+      "body": {
+        "x": 53,
+        "y": 67,
+        "w": 738,
+        "h": 155
+      },
+      "items": [
+        {
+          "text": "What shall we call you?",
+          "h": 60,
+          "bottom": 127
+        },
+        {
+          "text": "Your avatar\nAudrey\nChange",
+          "h": 60,
+          "bottom": 127
+        },
+        {
+          "text": "Voice\nMatch avatar\nMale\nFemale\nSilent\nHear Voice",
+          "h": 50.796875,
+          "bottom": 183.796875
+        },
+        {
+          "text": "Favorite partner\nSave & Back",
+          "h": 50.796875,
+          "bottom": 183.796875
+        }
+      ],
+      "overflow": false
+    },
+    {
+      "viewport": [
+        844,
+        245
+      ],
+      "id": "career",
+      "path": [
+        "Levels & awards guide"
+      ],
+      "title": "Levels & awards guide",
+      "page": "Page 1 of 1",
+      "body": {
+        "x": 53,
+        "y": 67,
+        "w": 738,
+        "h": 155
+      },
+      "items": [
+        {
+          "text": "Career levels\n50 levels · title and required career points",
+          "h": 51.984375,
+          "bottom": 118.984375
+        },
+        {
+          "text": "Tiered awards\n25 families · all five medal requirements together",
+          "h": 51.984375,
+          "bottom": 118.984375
+        },
+        {
+          "text": "Rare feats\n20 special achievements and their requirements",
+          "h": 51.984375,
+          "bottom": 176.96875
+        }
+      ],
+      "overflow": false
+    },
+    {
+      "viewport": [
+        844,
+        245
+      ],
+      "id": "career",
+      "path": [
+        "Levels & awards guide",
+        "Career levels"
+      ],
+      "title": "Career levels",
+      "page": "Page 1 of 13",
+      "body": {
+        "x": 53,
+        "y": 67,
+        "w": 738,
+        "h": 110
+      },
+      "items": [
+        {
+          "text": "Level 1 · Rookling\n\n0 pts",
+          "h": 30.25,
+          "bottom": 97.25
+        },
+        {
+          "text": "Level 2 · New Hand\n\n500 pts",
+          "h": 30.25,
+          "bottom": 97.25
+        },
+        {
+          "text": "Level 3 · Trick Taker\n\n1,250 pts",
+          "h": 30.25,
+          "bottom": 133.5
+        },
+        {
+          "text": "Level 4 · Nest Hunter\n\n2,500 pts",
+          "h": 30.25,
+          "bottom": 133.5
+        }
+      ],
+      "overflow": false
+    },
+    {
+      "viewport": [
+        844,
+        245
+      ],
+      "id": "career",
+      "path": [
+        "Levels & awards guide",
+        "Tiered awards"
+      ],
+      "title": "Tiered awards",
+      "page": "Page 1 of 13",
+      "body": {
+        "x": 53,
+        "y": 67,
+        "w": 738,
+        "h": 110
+      },
+      "items": [
+        {
+          "text": "Point Collector\nBronze\n1,000\nSilver\n10,000\nGold\n50,000\nPlatinum\n250,000\nGriffin\n1,000,000",
+          "h": 61.09375,
+          "bottom": 128.09375
+        },
+        {
+          "text": "Old Hand\nBronze\n25\nSilver\n100\nGold\n500\nPlatinum\n2,500\nGriffin\n10,000",
+          "h": 61.09375,
+          "bottom": 128.09375
+        }
+      ],
+      "overflow": false
+    },
+    {
+      "viewport": [
+        844,
+        245
+      ],
+      "id": "career",
+      "path": [
+        "Levels & awards guide",
+        "Rare feats"
+      ],
+      "title": "Rare feats",
+      "page": "Page 1 of 7",
+      "body": {
+        "x": 53,
+        "y": 67,
+        "w": 738,
+        "h": 110
+      },
+      "items": [
+        {
+          "text": "First Trick\n\nWin your first trick · Requirement: 1",
+          "h": 47.6875,
+          "bottom": 114.6875
+        },
+        {
+          "text": "First Victory\n\nWin your first game · Requirement: 1",
+          "h": 47.6875,
+          "bottom": 114.6875
+        }
+      ],
+      "overflow": false
+    },
+    {
+      "viewport": [
+        844,
+        245
+      ],
+      "id": "sound",
+      "path": [
+        "Volume Controls"
+      ],
+      "title": "Volume Controls",
+      "page": "Page 1 of 3",
+      "body": {
+        "x": 53,
+        "y": 67,
+        "w": 738,
+        "h": 110
+      },
+      "items": [
+        {
+          "text": "🔊 Sound on",
+          "h": 52,
+          "bottom": 119
+        },
+        {
+          "text": "Master\n100%",
+          "h": 52,
+          "bottom": 119
+        }
+      ],
+      "overflow": false
+    },
+    {
+      "viewport": [
+        844,
+        245
+      ],
+      "id": "sound",
+      "path": [
+        "Room Ambience"
+      ],
+      "title": "Room Ambience",
+      "page": "Page 1 of 6",
+      "body": {
+        "x": 53,
+        "y": 67,
+        "w": 738,
+        "h": 110
+      },
+      "items": [
+        {
+          "text": "Cabin ambience",
+          "h": 48.5,
+          "bottom": 115.5
+        },
+        {
+          "text": "Ambience volume 6% ",
+          "h": 48.5,
+          "bottom": 115.5
+        }
+      ],
+      "overflow": false
+    },
+    {
+      "viewport": [
+        844,
+        245
+      ],
+      "id": "sound",
+      "path": [
+        "Room Ambience",
+        "Thunderstorms"
+      ],
+      "title": "Thunderstorms",
+      "page": "Page 1 of 1",
+      "body": {
+        "x": 53,
+        "y": 67,
+        "w": 738,
+        "h": 155
+      },
+      "items": [
+        {
+          "text": "Thunderstorms volume \n65%\n\nSet volume to 0% to turn this sound off. Your choice saves automatically.",
+          "h": 110.375,
+          "bottom": 177.375
+        },
+        {
+          "text": "Time between storms\nEvery 6 minutes\nEvery 12 minutes (default)\nEvery 24 minutes\nEvery hour\n\nA short rain shower with distant thunder. Rain volume is controlled separately. Timers r",
+          "h": 110.375,
+          "bottom": 177.375
+        }
+      ],
+      "overflow": false
+    },
+    {
+      "viewport": [
+        844,
+        245
+      ],
+      "id": "sound",
+      "path": [
+        "Room Ambience",
+        "Crickets"
+      ],
+      "title": "Crickets",
+      "page": "Page 1 of 1",
+      "body": {
+        "x": 53,
+        "y": 67,
+        "w": 738,
+        "h": 155
+      },
+      "items": [
+        {
+          "text": "Crickets volume \n100%\n\nSet volume to 0% to turn this sound off. Your choice saves automatically.",
+          "h": 94.78125,
+          "bottom": 161.78125
+        },
+        {
+          "text": "Cricket frequency\nOccasional: every 4–8 minutes\nRegular: every 2–4 minutes (default)\nFrequent: every 1–2 minutes\n\nOutdoor sounds pause while the game is hidden. Wildlife waits unti",
+          "h": 94.78125,
+          "bottom": 161.78125
+        }
+      ],
+      "overflow": false
+    },
+    {
+      "viewport": [
+        844,
+        245
+      ],
+      "id": "sound",
+      "path": [
+        "Game & Character Effects"
+      ],
+      "title": "Game & Character Effects",
+      "page": "Page 1 of 3",
+      "body": {
+        "x": 53,
+        "y": 67,
+        "w": 738,
+        "h": 110
+      },
+      "items": [
+        {
+          "text": "Cards",
+          "h": 34,
+          "bottom": 101
+        },
+        {
+          "text": "Turn",
+          "h": 34,
+          "bottom": 101
+        },
+        {
+          "text": "Turn & win vibration",
+          "h": 34,
+          "bottom": 141
+        }
+      ],
+      "overflow": false
+    },
+    {
+      "viewport": [
+        844,
+        245
+      ],
+      "id": "setup",
+      "path": [],
+      "title": "Game Setup",
+      "page": "Page 1 of 3",
+      "body": {
+        "x": 53,
+        "y": 67,
+        "w": 738,
+        "h": 110
+      },
+      "items": [
+        {
+          "text": "Play to:\n100\n500\n1000\nCustom…",
+          "h": 60,
+          "bottom": 127
+        }
+      ],
+      "overflow": false
+    },
+    {
+      "viewport": [
+        844,
+        245
+      ],
+      "id": "setup",
+      "path": [
+        "More table rules"
+      ],
+      "title": "More table rules",
+      "page": "Page 1 of 9",
+      "body": {
+        "x": 53,
+        "y": 67,
+        "w": 738,
+        "h": 110
+      },
+      "items": [
+        {
+          "text": "Ruleset:\nGriffin House",
+          "h": 34,
+          "bottom": 101
+        },
+        {
+          "text": "Include 1s (high in suit, 15 pts)",
+          "h": 34,
+          "bottom": 101
+        }
+      ],
+      "overflow": false
+    },
+    {
+      "viewport": [
+        390,
+        844
+      ],
+      "id": "profile",
+      "path": [],
+      "title": "My Profile",
+      "page": "Page 1 of 1",
+      "body": {
+        "x": 44,
+        "y": 71,
+        "w": 318,
+        "h": 235.796875
+      },
+      "items": [
+        {
+          "text": "What shall we call you?",
+          "h": 60,
+          "bottom": 131
+        },
+        {
+          "text": "Your avatar\nAudrey\nChange",
+          "h": 60,
+          "bottom": 198
+        },
+        {
+          "text": "Voice\nMatch avatar\nMale\nFemale\nSilent\nHear Voice",
+          "h": 50.796875,
+          "bottom": 255.796875
+        },
+        {
+          "text": "Favorite partner\nSave & Back",
+          "h": 44,
+          "bottom": 306.796875
+        }
+      ],
+      "overflow": false
+    },
+    {
+      "viewport": [
+        390,
+        844
+      ],
+      "id": "career",
+      "path": [
+        "Levels & awards guide"
+      ],
+      "title": "Levels & awards guide",
+      "page": "Page 1 of 1",
+      "body": {
+        "x": 44,
+        "y": 71,
+        "w": 318,
+        "h": 545
+      },
+      "items": [
+        {
+          "text": "Career levels\n50 levels · title and required career points",
+          "h": 59.984375,
+          "bottom": 137.984375
+        },
+        {
+          "text": "Tiered awards\n25 families · all five medal requirements together",
+          "h": 59.984375,
+          "bottom": 218.96875
+        },
+        {
+          "text": "Rare feats\n20 special achievements and their requirements",
+          "h": 59.984375,
+          "bottom": 299.953125
+        }
+      ],
+      "overflow": false
+    },
+    {
+      "viewport": [
+        390,
+        844
+      ],
+      "id": "career",
+      "path": [
+        "Levels & awards guide",
+        "Career levels"
+      ],
+      "title": "Career levels",
+      "page": "Page 1 of 8",
+      "body": {
+        "x": 44,
+        "y": 71,
+        "w": 318,
+        "h": 485
+      },
+      "items": [
+        {
+          "text": "Level 1 · Rookling\n\n0 pts",
+          "h": 53.6875,
+          "bottom": 124.6875
+        },
+        {
+          "text": "Level 2 · New Hand\n\n500 pts",
+          "h": 53.6875,
+          "bottom": 185.375
+        },
+        {
+          "text": "Level 3 · Trick Taker\n\n1,250 pts",
+          "h": 53.6875,
+          "bottom": 246.0625
+        },
+        {
+          "text": "Level 4 · Nest Hunter\n\n2,500 pts",
+          "h": 53.6875,
+          "bottom": 306.75
+        },
+        {
+          "text": "Level 5 · Table Regular\n\n4,000 pts",
+          "h": 53.6875,
+          "bottom": 367.4375
+        },
+        {
+          "text": "Level 6 · Card Sharp\n\n6,000 pts",
+          "h": 53.6875,
+          "bottom": 428.125
+        },
+        {
+          "text": "Level 7 · Rook Chaser\n\n8,500 pts",
+          "h": 53.6875,
+          "bottom": 488.8125
+        }
+      ],
+      "overflow": false
+    },
+    {
+      "viewport": [
+        390,
+        844
+      ],
+      "id": "career",
+      "path": [
+        "Levels & awards guide",
+        "Tiered awards"
+      ],
+      "title": "Tiered awards",
+      "page": "Page 1 of 5",
+      "body": {
+        "x": 44,
+        "y": 71,
+        "w": 318,
+        "h": 485
+      },
+      "items": [
+        {
+          "text": "Point Collector\nBronze\n1,000\nSilver\n10,000\nGold\n50,000\nPlatinum\n250,000\nGriffin\n1,000,000",
+          "h": 67.09375,
+          "bottom": 138.09375
+        },
+        {
+          "text": "Old Hand\nBronze\n25\nSilver\n100\nGold\n500\nPlatinum\n2,500\nGriffin\n10,000",
+          "h": 67.09375,
+          "bottom": 212.1875
+        },
+        {
+          "text": "Game Night\nBronze\n10\nSilver\n50\nGold\n250\nPlatinum\n1,000\nGriffin\n5,000",
+          "h": 67.09375,
+          "bottom": 286.28125
+        },
+        {
+          "text": "Winner\nBronze\n5\nSilver\n25\nGold\n100\nPlatinum\n500\nGriffin\n2,500",
+          "h": 67.09375,
+          "bottom": 360.375
+        },
+        {
+          "text": "Trick Taker\nBronze\n50\nSilver\n250\nGold\n1,000\nPlatinum\n5,000\nGriffin\n20,000",
+          "h": 67.09375,
+          "bottom": 434.46875
+        },
+        {
+          "text": "High Roller\nBronze\n1\nSilver\n5\nGold\n25\nPlatinum\n100\nGriffin\n500",
+          "h": 67.09375,
+          "bottom": 508.5625
+        }
+      ],
+      "overflow": false
+    },
+    {
+      "viewport": [
+        390,
+        844
+      ],
+      "id": "career",
+      "path": [
+        "Levels & awards guide",
+        "Rare feats"
+      ],
+      "title": "Rare feats",
+      "page": "Page 1 of 3",
+      "body": {
+        "x": 44,
+        "y": 71,
+        "w": 318,
+        "h": 485
+      },
+      "items": [
+        {
+          "text": "First Trick\n\nWin your first trick · Requirement: 1",
+          "h": 53.6875,
+          "bottom": 124.6875
+        },
+        {
+          "text": "First Victory\n\nWin your first game · Requirement: 1",
+          "h": 53.6875,
+          "bottom": 185.375
+        },
+        {
+          "text": "Perfect Contract\n\nMake three contracts for exactly the required bid · Requirement: 3",
+          "h": 69.875,
+          "bottom": 262.25
+        },
+        {
+          "text": "Seeing Red\n\nCapture the Red 2 · Requirement: 1",
+          "h": 53.6875,
+          "bottom": 322.9375
+        },
+        {
+          "text": "Nest Egg\n\nWin your first nest · Requirement: 1",
+          "h": 53.6875,
+          "bottom": 383.625
+        },
+        {
+          "text": "I’ll Take It\n\nWin your first bid · Requirement: 1",
+          "h": 53.6875,
+          "bottom": 444.3125
+        },
+        {
+          "text": "Made It\n\nMake your first contract · Requirement: 1",
+          "h": 53.6875,
+          "bottom": 505
+        }
+      ],
+      "overflow": false
+    },
+    {
+      "viewport": [
+        390,
+        844
+      ],
+      "id": "sound",
+      "path": [
+        "Volume Controls"
+      ],
+      "title": "Volume Controls",
+      "page": "Page 1 of 1",
+      "body": {
+        "x": 44,
+        "y": 71,
+        "w": 318,
+        "h": 545
+      },
+      "items": [
+        {
+          "text": "🔊 Sound on",
+          "h": 52,
+          "bottom": 123
+        },
+        {
+          "text": "Master\n100%",
+          "h": 50.5,
+          "bottom": 180.5
+        },
+        {
+          "text": "Voices\n70%",
+          "h": 50.5,
+          "bottom": 238
+        },
+        {
+          "text": "Game effects\n100%",
+          "h": 50.5,
+          "bottom": 295.5
+        },
+        {
+          "text": "Character effects\n100%",
+          "h": 50.5,
+          "bottom": 353
+        },
+        {
+          "text": "Ambience\n100%",
+          "h": 50.5,
+          "bottom": 410.5
+        },
+        {
+          "text": "Mute voices",
+          "h": 36,
+          "bottom": 453.5
+        }
+      ],
+      "overflow": false
+    },
+    {
+      "viewport": [
+        390,
+        844
+      ],
+      "id": "sound",
+      "path": [
+        "Room Ambience"
+      ],
+      "title": "Room Ambience",
+      "page": "Page 1 of 2",
+      "body": {
+        "x": 44,
+        "y": 71,
+        "w": 318,
+        "h": 485
+      },
+      "items": [
+        {
+          "text": "Cabin ambience",
+          "h": 34,
+          "bottom": 105
+        },
+        {
+          "text": "Ambience volume 6% ",
+          "h": 53,
+          "bottom": 165
+        },
+        {
+          "text": "Fireplace volume 10%",
+          "h": 53,
+          "bottom": 225
+        },
+        {
+          "text": "Rare owl calls",
+          "h": 34,
+          "bottom": 266
+        },
+        {
+          "text": "Crickets\nVolume and frequency",
+          "h": 59.984375,
+          "bottom": 332.984375
+        },
+        {
+          "text": "Thunderstorms\nVolume and frequency",
+          "h": 59.984375,
+          "bottom": 399.96875
+        },
+        {
+          "text": "Rain\nVolume",
+          "h": 59.984375,
+          "bottom": 466.953125
+        },
+        {
+          "text": "Distant wolf howl\nVolume",
+          "h": 59.984375,
+          "bottom": 533.9375
+        }
+      ],
+      "overflow": false
+    },
+    {
+      "viewport": [
+        390,
+        844
+      ],
+      "id": "sound",
+      "path": [
+        "Room Ambience",
+        "Thunderstorms"
+      ],
+      "title": "Thunderstorms",
+      "page": "Page 1 of 1",
+      "body": {
+        "x": 44,
+        "y": 71,
+        "w": 318,
+        "h": 545
+      },
+      "items": [
+        {
+          "text": "Thunderstorms volume \n65%\n\nSet volume to 0% to turn this sound off. Your choice saves automatically.",
+          "h": 90.1875,
+          "bottom": 161.1875
+        },
+        {
+          "text": "Time between storms\nEvery 6 minutes\nEvery 12 minutes (default)\nEvery 24 minutes\nEvery hour\n\nA short rain shower with distant thunder. Rain volume is controlled separately. Timers r",
+          "h": 116.375,
+          "bottom": 284.5625
+        }
+      ],
+      "overflow": false
+    },
+    {
+      "viewport": [
+        390,
+        844
+      ],
+      "id": "sound",
+      "path": [
+        "Room Ambience",
+        "Crickets"
+      ],
+      "title": "Crickets",
+      "page": "Page 1 of 1",
+      "body": {
+        "x": 44,
+        "y": 71,
+        "w": 318,
+        "h": 545
+      },
+      "items": [
+        {
+          "text": "Crickets volume \n100%\n\nSet volume to 0% to turn this sound off. Your choice saves automatically.",
+          "h": 90.1875,
+          "bottom": 161.1875
+        },
+        {
+          "text": "Cricket frequency\nOccasional: every 4–8 minutes\nRegular: every 2–4 minutes (default)\nFrequent: every 1–2 minutes\n\nOutdoor sounds pause while the game is hidden. Wildlife waits unti",
+          "h": 100.78125,
+          "bottom": 268.96875
+        }
+      ],
+      "overflow": false
+    },
+    {
+      "viewport": [
+        390,
+        844
+      ],
+      "id": "sound",
+      "path": [
+        "Game & Character Effects"
+      ],
+      "title": "Game & Character Effects",
+      "page": "Page 1 of 1",
+      "body": {
+        "x": 44,
+        "y": 85.1875,
+        "w": 318,
+        "h": 530.8125
+      },
+      "items": [
+        {
+          "text": "Cards",
+          "h": 34,
+          "bottom": 119.1875
+        },
+        {
+          "text": "Turn",
+          "h": 34,
+          "bottom": 160.1875
+        },
+        {
+          "text": "Turn & win vibration",
+          "h": 34,
+          "bottom": 201.1875
+        },
+        {
+          "text": "My turn tone\nNatural wood tap (recorded)\n1. Soft wood\n2. Warm tap\n3. Soft chime\n4. Low knock\n5. Light bell\n6. Deep tap\n7. Tiny glass\n8. Muted wood\n9. Soft ping\n10. Felt tap\n11. War",
+          "h": 64.25,
+          "bottom": 272.4375
+        },
+        {
+          "text": "Rook caw",
+          "h": 34,
+          "bottom": 313.4375
+        },
+        {
+          "text": "Timer tick",
+          "h": 34,
+          "bottom": 354.4375
+        },
+        {
+          "text": "Shoot the Moon wolf howl \n100%",
+          "h": 53,
+          "bottom": 414.4375
+        },
+        {
+          "text": "Sound variations & previews\nIndividual effect volumes and recordings",
+          "h": 59.984375,
+          "bottom": 481.421875
+        }
+      ],
+      "overflow": false
+    },
+    {
+      "viewport": [
+        390,
+        844
+      ],
+      "id": "setup",
+      "path": [],
+      "title": "Game Setup",
+      "page": "Page 1 of 1",
+      "body": {
+        "x": 44,
+        "y": 71,
+        "w": 318,
+        "h": 545
+      },
+      "items": [
+        {
+          "text": "Play to:\n100\n500\n1000\nCustom…",
+          "h": 60,
+          "bottom": 131
+        },
+        {
+          "text": "Include Red Two (special trump)",
+          "h": 34,
+          "bottom": 172
+        },
+        {
+          "text": "Reveal top nest card\n\nRed Two and Show Top Nest Card are on by default. Changes apply to the next game.",
+          "h": 71.1875,
+          "bottom": 250.1875
+        },
+        {
+          "text": "More table rules\nOther existing game variations",
+          "h": 59.984375,
+          "bottom": 317.171875
+        },
+        {
+          "text": "View selected rules\nHow this table will play",
+          "h": 59.984375,
+          "bottom": 384.15625
+        }
+      ],
+      "overflow": false
+    },
+    {
+      "viewport": [
+        390,
+        844
+      ],
+      "id": "setup",
+      "path": [
+        "More table rules"
+      ],
+      "title": "More table rules",
+      "page": "Page 1 of 3",
+      "body": {
+        "x": 44,
+        "y": 71,
+        "w": 318,
+        "h": 485
+      },
+      "items": [
+        {
+          "text": "Ruleset:\nGriffin House",
+          "h": 33.59375,
+          "bottom": 104.59375
+        },
+        {
+          "text": "Include 1s (high in suit, 15 pts)",
+          "h": 34,
+          "bottom": 145.59375
+        },
+        {
+          "text": "Red 2 points:\n20\n30",
+          "h": 89.78125,
+          "bottom": 242.375
+        },
+        {
+          "text": "Include special Red 1 (highest trump, 30 pts)",
+          "h": 34,
+          "bottom": 283.375
+        },
+        {
+          "text": "Include Rook bird",
+          "h": 34,
+          "bottom": 324.375
+        },
+        {
+          "text": "Rook is lowest trump",
+          "h": 34,
+          "bottom": 365.375
+        },
+        {
+          "text": "Min bid:\n50\n70\n80\n100\n120",
+          "h": 52,
+          "bottom": 424.375
+        },
+        {
+          "text": "Rook / Red 2 anytime\n\nIf off, specials must follow suit rules like other cards.",
+          "h": 55.59375,
+          "bottom": 486.96875
+        }
+      ],
+      "overflow": false
+    },
+    {
+      "viewport": [
+        1280,
+        720
+      ],
+      "id": "profile",
+      "path": [],
+      "title": "My Profile",
+      "page": "Page 1 of 1",
+      "body": {
+        "x": 271,
+        "y": 104,
+        "w": 738,
+        "h": 555
+      },
+      "items": [
+        {
+          "text": "What shall we call you?",
+          "h": 60,
+          "bottom": 164
+        },
+        {
+          "text": "Your avatar\nAudrey\nChange",
+          "h": 60,
+          "bottom": 164
+        },
+        {
+          "text": "Voice\nMatch avatar\nMale\nFemale\nSilent\nHear Voice",
+          "h": 50.796875,
+          "bottom": 220.796875
+        },
+        {
+          "text": "Favorite partner\nSave & Back",
+          "h": 50.796875,
+          "bottom": 220.796875
+        }
+      ],
+      "overflow": false
+    },
+    {
+      "viewport": [
+        1280,
+        720
+      ],
+      "id": "career",
+      "path": [
+        "Levels & awards guide"
+      ],
+      "title": "Levels & awards guide",
+      "page": "Page 1 of 1",
+      "body": {
+        "x": 271,
+        "y": 104,
+        "w": 738,
+        "h": 555
+      },
+      "items": [
+        {
+          "text": "Career levels\n50 levels · title and required career points",
+          "h": 51.984375,
+          "bottom": 155.984375
+        },
+        {
+          "text": "Tiered awards\n25 families · all five medal requirements together",
+          "h": 51.984375,
+          "bottom": 155.984375
+        },
+        {
+          "text": "Rare feats\n20 special achievements and their requirements",
+          "h": 51.984375,
+          "bottom": 213.96875
+        }
+      ],
+      "overflow": false
+    },
+    {
+      "viewport": [
+        1280,
+        720
+      ],
+      "id": "career",
+      "path": [
+        "Levels & awards guide",
+        "Career levels"
+      ],
+      "title": "Career levels",
+      "page": "Page 1 of 2",
+      "body": {
+        "x": 271,
+        "y": 104,
+        "w": 738,
+        "h": 510
+      },
+      "items": [
+        {
+          "text": "Level 1 · Rookling\n\n0 pts",
+          "h": 30.25,
+          "bottom": 134.25
+        },
+        {
+          "text": "Level 2 · New Hand\n\n500 pts",
+          "h": 30.25,
+          "bottom": 134.25
+        },
+        {
+          "text": "Level 3 · Trick Taker\n\n1,250 pts",
+          "h": 30.25,
+          "bottom": 170.5
+        },
+        {
+          "text": "Level 4 · Nest Hunter\n\n2,500 pts",
+          "h": 30.25,
+          "bottom": 170.5
+        },
+        {
+          "text": "Level 5 · Table Regular\n\n4,000 pts",
+          "h": 30.25,
+          "bottom": 206.75
+        },
+        {
+          "text": "Level 6 · Card Sharp\n\n6,000 pts",
+          "h": 30.25,
+          "bottom": 206.75
+        },
+        {
+          "text": "Level 7 · Rook Chaser\n\n8,500 pts",
+          "h": 30.25,
+          "bottom": 243
+        },
+        {
+          "text": "Level 8 · Bidder\n\n11,500 pts",
+          "h": 30.25,
+          "bottom": 243
+        },
+        {
+          "text": "Level 9 · Trump Tactician\n\n15,000 pts",
+          "h": 30.25,
+          "bottom": 279.25
+        },
+        {
+          "text": "Level 10 · Rook Veteran\n\n20,000 pts",
+          "h": 30.25,
+          "bottom": 279.25
+        },
+        {
+          "text": "Level 11 · Rook Veteran I\n\n25,000 pts",
+          "h": 30.25,
+          "bottom": 315.5
+        },
+        {
+          "text": "Level 12 · Rook Veteran II\n\n30,500 pts",
+          "h": 30.25,
+          "bottom": 315.5
+        },
+        {
+          "text": "Level 13 · Rook Veteran III\n\n36,500 pts",
+          "h": 30.25,
+          "bottom": 351.75
+        },
+        {
+          "text": "Level 14 · Rook Veteran IV\n\n43,000 pts",
+          "h": 30.25,
+          "bottom": 351.75
+        },
+        {
+          "text": "Level 15 · Seasoned Player\n\n50,000 pts",
+          "h": 30.25,
+          "bottom": 388
+        },
+        {
+          "text": "Level 16 · Seasoned Player I\n\n59,000 pts",
+          "h": 30.25,
+          "bottom": 388
+        },
+        {
+          "text": "Level 17 · Seasoned Player II\n\n68,500 pts",
+          "h": 30.25,
+          "bottom": 424.25
+        },
+        {
+          "text": "Level 18 · Seasoned Player III\n\n78,500 pts",
+          "h": 30.25,
+          "bottom": 424.25
+        },
+        {
+          "text": "Level 19 · Seasoned Player IV\n\n89,000 pts",
+          "h": 30.25,
+          "bottom": 460.5
+        },
+        {
+          "text": "Level 20 · Rook Expert\n\n100,000 pts",
+          "h": 30.25,
+          "bottom": 460.5
+        },
+        {
+          "text": "Level 21 · Rook Expert I\n\n113,000 pts",
+          "h": 30.25,
+          "bottom": 496.75
+        },
+        {
+          "text": "Level 22 · Rook Expert II\n\n127,000 pts",
+          "h": 30.25,
+          "bottom": 496.75
+        },
+        {
+          "text": "Level 23 · Rook Expert III\n\n142,000 pts",
+          "h": 30.25,
+          "bottom": 533
+        },
+        {
+          "text": "Level 24 · Rook Expert IV\n\n158,000 pts",
+          "h": 30.25,
+          "bottom": 533
+        },
+        {
+          "text": "Level 25 · Master Bidder\n\n175,000 pts",
+          "h": 30.25,
+          "bottom": 569.25
+        },
+        {
+          "text": "Level 26 · Master Bidder I\n\n193,000 pts",
+          "h": 30.25,
+          "bottom": 569.25
+        }
+      ],
+      "overflow": false
+    },
+    {
+      "viewport": [
+        1280,
+        720
+      ],
+      "id": "career",
+      "path": [
+        "Levels & awards guide",
+        "Tiered awards"
+      ],
+      "title": "Tiered awards",
+      "page": "Page 1 of 3",
+      "body": {
+        "x": 271,
+        "y": 104,
+        "w": 738,
+        "h": 510
+      },
+      "items": [
+        {
+          "text": "Point Collector\nBronze\n1,000\nSilver\n10,000\nGold\n50,000\nPlatinum\n250,000\nGriffin\n1,000,000",
+          "h": 67.09375,
+          "bottom": 171.09375
+        },
+        {
+          "text": "Old Hand\nBronze\n25\nSilver\n100\nGold\n500\nPlatinum\n2,500\nGriffin\n10,000",
+          "h": 67.09375,
+          "bottom": 171.09375
+        },
+        {
+          "text": "Game Night\nBronze\n10\nSilver\n50\nGold\n250\nPlatinum\n1,000\nGriffin\n5,000",
+          "h": 67.09375,
+          "bottom": 244.1875
+        },
+        {
+          "text": "Winner\nBronze\n5\nSilver\n25\nGold\n100\nPlatinum\n500\nGriffin\n2,500",
+          "h": 67.09375,
+          "bottom": 244.1875
+        },
+        {
+          "text": "Trick Taker\nBronze\n50\nSilver\n250\nGold\n1,000\nPlatinum\n5,000\nGriffin\n20,000",
+          "h": 67.09375,
+          "bottom": 317.28125
+        },
+        {
+          "text": "High Roller\nBronze\n1\nSilver\n5\nGold\n25\nPlatinum\n100\nGriffin\n500",
+          "h": 67.09375,
+          "bottom": 317.28125
+        },
+        {
+          "text": "Red 2 Hunter\nBronze\n10\nSilver\n50\nGold\n250\nPlatinum\n1,000\nGriffin\n5,000",
+          "h": 67.09375,
+          "bottom": 390.375
+        },
+        {
+          "text": "Heavy Hitter\nBronze\n10\nSilver\n50\nGold\n250\nPlatinum\n1,000\nGriffin\n5,000",
+          "h": 67.09375,
+          "bottom": 390.375
+        },
+        {
+          "text": "Nest Raider\nBronze\n10\nSilver\n50\nGold\n250\nPlatinum\n1,000\nGriffin\n5,000",
+          "h": 67.09375,
+          "bottom": 463.46875
+        },
+        {
+          "text": "Nest Fortune\nBronze\n250\nSilver\n2,500\nGold\n12,500\nPlatinum\n50,000\nGriffin\n250,000",
+          "h": 67.09375,
+          "bottom": 463.46875
+        },
+        {
+          "text": "Bid Winner\nBronze\n10\nSilver\n50\nGold\n250\nPlatinum\n1,000\nGriffin\n5,000",
+          "h": 67.09375,
+          "bottom": 536.5625
+        },
+        {
+          "text": "Contract Keeper\nBronze\n10\nSilver\n50\nGold\n250\nPlatinum\n1,000\nGriffin\n5,000",
+          "h": 67.09375,
+          "bottom": 536.5625
+        }
+      ],
+      "overflow": false
+    },
+    {
+      "viewport": [
+        1280,
+        720
+      ],
+      "id": "career",
+      "path": [
+        "Levels & awards guide",
+        "Rare feats"
+      ],
+      "title": "Rare feats",
+      "page": "Page 1 of 2",
+      "body": {
+        "x": 271,
+        "y": 104,
+        "w": 738,
+        "h": 510
+      },
+      "items": [
+        {
+          "text": "First Trick\n\nWin your first trick · Requirement: 1",
+          "h": 53.6875,
+          "bottom": 157.6875
+        },
+        {
+          "text": "First Victory\n\nWin your first game · Requirement: 1",
+          "h": 53.6875,
+          "bottom": 157.6875
+        },
+        {
+          "text": "Perfect Contract\n\nMake three contracts for exactly the required bid · Requirement: 3",
+          "h": 69.875,
+          "bottom": 233.5625
+        },
+        {
+          "text": "Seeing Red\n\nCapture the Red 2 · Requirement: 1",
+          "h": 69.875,
+          "bottom": 233.5625
+        },
+        {
+          "text": "Nest Egg\n\nWin your first nest · Requirement: 1",
+          "h": 53.6875,
+          "bottom": 293.25
+        },
+        {
+          "text": "I’ll Take It\n\nWin your first bid · Requirement: 1",
+          "h": 53.6875,
+          "bottom": 293.25
+        },
+        {
+          "text": "Made It\n\nMake your first contract · Requirement: 1",
+          "h": 53.6875,
+          "bottom": 352.9375
+        },
+        {
+          "text": "Shooting Star\n\nSuccessfully Shoot the Moon · Requirement: 1",
+          "h": 53.6875,
+          "bottom": 352.9375
+        },
+        {
+          "text": "Bold Bid\n\nWin a bid of 150 or higher · Requirement: 150",
+          "h": 53.6875,
+          "bottom": 412.625
+        },
+        {
+          "text": "Fearless\n\nWin a bid of 180 or higher · Requirement: 180",
+          "h": 53.6875,
+          "bottom": 412.625
+        },
+        {
+          "text": "No Fear\n\nWin a bid of 200 or higher · Requirement: 200",
+          "h": 53.6875,
+          "bottom": 472.3125
+        },
+        {
+          "text": "Big Haul\n\nCapture 150+ points in one hand · Requirement: 150",
+          "h": 53.6875,
+          "bottom": 472.3125
+        },
+        {
+          "text": "Monster Hand\n\nCapture 200+ points in one hand · Requirement: 200",
+          "h": 53.6875,
+          "bottom": 532
+        },
+        {
+          "text": "Monster Trick\n\nTake a 50+ point trick · Requirement: 50",
+          "h": 53.6875,
+          "bottom": 532
+        },
+        {
+          "text": "Called It\n\nMake a contract exactly · Requirement: 1",
+          "h": 53.6875,
+          "bottom": 591.6875
+        },
+        {
+          "text": "Too Close\n\nWin a game by 5 points or less · Requirement: 1",
+          "h": 53.6875,
+          "bottom": 591.6875
+        }
+      ],
+      "overflow": false
+    },
+    {
+      "viewport": [
+        1280,
+        720
+      ],
+      "id": "sound",
+      "path": [
+        "Volume Controls"
+      ],
+      "title": "Volume Controls",
+      "page": "Page 1 of 1",
+      "body": {
+        "x": 271,
+        "y": 104,
+        "w": 738,
+        "h": 555
+      },
+      "items": [
+        {
+          "text": "🔊 Sound on",
+          "h": 52,
+          "bottom": 156
+        },
+        {
+          "text": "Master\n100%",
+          "h": 52,
+          "bottom": 156
+        },
+        {
+          "text": "Voices\n70%",
+          "h": 47.25,
+          "bottom": 209.25
+        },
+        {
+          "text": "Game effects\n100%",
+          "h": 47.25,
+          "bottom": 209.25
+        },
+        {
+          "text": "Character effects\n100%",
+          "h": 47.25,
+          "bottom": 262.5
+        },
+        {
+          "text": "Ambience\n100%",
+          "h": 47.25,
+          "bottom": 262.5
+        },
+        {
+          "text": "Mute voices",
+          "h": 36,
+          "bottom": 304.5
+        }
+      ],
+      "overflow": false
+    },
+    {
+      "viewport": [
+        1280,
+        720
+      ],
+      "id": "sound",
+      "path": [
+        "Room Ambience"
+      ],
+      "title": "Room Ambience",
+      "page": "Page 1 of 1",
+      "body": {
+        "x": 271,
+        "y": 104,
+        "w": 738,
+        "h": 555
+      },
+      "items": [
+        {
+          "text": "Cabin ambience",
+          "h": 48.5,
+          "bottom": 152.5
+        },
+        {
+          "text": "Ambience volume 6% ",
+          "h": 48.5,
+          "bottom": 152.5
+        },
+        {
+          "text": "Fireplace volume 10%",
+          "h": 48.5,
+          "bottom": 207
+        },
+        {
+          "text": "Rare owl calls",
+          "h": 48.5,
+          "bottom": 207
+        },
+        {
+          "text": "Crickets\nVolume and frequency",
+          "h": 51.984375,
+          "bottom": 264.984375
+        },
+        {
+          "text": "Thunderstorms\nVolume and frequency",
+          "h": 51.984375,
+          "bottom": 264.984375
+        },
+        {
+          "text": "Rain\nVolume",
+          "h": 51.984375,
+          "bottom": 322.96875
+        },
+        {
+          "text": "Distant wolf howl\nVolume",
+          "h": 51.984375,
+          "bottom": 322.96875
+        },
+        {
+          "text": "Outdoor birds\nVolume",
+          "h": 51.984375,
+          "bottom": 380.953125
+        },
+        {
+          "text": "Owls\nVolume",
+          "h": 51.984375,
+          "bottom": 380.953125
+        },
+        {
+          "text": "Wind\nVolume",
+          "h": 51.984375,
+          "bottom": 438.9375
+        }
+      ],
+      "overflow": false
+    },
+    {
+      "viewport": [
+        1280,
+        720
+      ],
+      "id": "sound",
+      "path": [
+        "Room Ambience",
+        "Thunderstorms"
+      ],
+      "title": "Thunderstorms",
+      "page": "Page 1 of 1",
+      "body": {
+        "x": 271,
+        "y": 104,
+        "w": 738,
+        "h": 555
+      },
+      "items": [
+        {
+          "text": "Thunderstorms volume \n65%\n\nSet volume to 0% to turn this sound off. Your choice saves automatically.",
+          "h": 110.375,
+          "bottom": 214.375
+        },
+        {
+          "text": "Time between storms\nEvery 6 minutes\nEvery 12 minutes (default)\nEvery 24 minutes\nEvery hour\n\nA short rain shower with distant thunder. Rain volume is controlled separately. Timers r",
+          "h": 110.375,
+          "bottom": 214.375
+        }
+      ],
+      "overflow": false
+    },
+    {
+      "viewport": [
+        1280,
+        720
+      ],
+      "id": "sound",
+      "path": [
+        "Room Ambience",
+        "Crickets"
+      ],
+      "title": "Crickets",
+      "page": "Page 1 of 1",
+      "body": {
+        "x": 271,
+        "y": 104,
+        "w": 738,
+        "h": 555
+      },
+      "items": [
+        {
+          "text": "Crickets volume \n100%\n\nSet volume to 0% to turn this sound off. Your choice saves automatically.",
+          "h": 94.78125,
+          "bottom": 198.78125
+        },
+        {
+          "text": "Cricket frequency\nOccasional: every 4–8 minutes\nRegular: every 2–4 minutes (default)\nFrequent: every 1–2 minutes\n\nOutdoor sounds pause while the game is hidden. Wildlife waits unti",
+          "h": 94.78125,
+          "bottom": 198.78125
+        }
+      ],
+      "overflow": false
+    },
+    {
+      "viewport": [
+        1280,
+        720
+      ],
+      "id": "sound",
+      "path": [
+        "Game & Character Effects"
+      ],
+      "title": "Game & Character Effects",
+      "page": "Page 1 of 1",
+      "body": {
+        "x": 271,
+        "y": 104,
+        "w": 738,
+        "h": 555
+      },
+      "items": [
+        {
+          "text": "Cards",
+          "h": 34,
+          "bottom": 138
+        },
+        {
+          "text": "Turn",
+          "h": 34,
+          "bottom": 138
+        },
+        {
+          "text": "Turn & win vibration",
+          "h": 34,
+          "bottom": 178
+        },
+        {
+          "text": "My turn tone\nNatural wood tap (recorded)\n1. Soft wood\n2. Warm tap\n3. Soft chime\n4. Low knock\n5. Light bell\n6. Deep tap\n7. Tiny glass\n8. Muted wood\n9. Soft ping\n10. Felt tap\n11. War",
+          "h": 40,
+          "bottom": 224
+        },
+        {
+          "text": "Rook caw",
+          "h": 34,
+          "bottom": 264
+        },
+        {
+          "text": "Timer tick",
+          "h": 34,
+          "bottom": 264
+        },
+        {
+          "text": "Shoot the Moon wolf howl \n100%",
+          "h": 51.984375,
+          "bottom": 321.984375
+        },
+        {
+          "text": "Sound variations & previews\nIndividual effect volumes and recordings",
+          "h": 51.984375,
+          "bottom": 321.984375
+        }
+      ],
+      "overflow": false
+    },
+    {
+      "viewport": [
+        1280,
+        720
+      ],
+      "id": "setup",
+      "path": [],
+      "title": "Game Setup",
+      "page": "Page 1 of 1",
+      "body": {
+        "x": 271,
+        "y": 104,
+        "w": 738,
+        "h": 555
+      },
+      "items": [
+        {
+          "text": "Play to:\n100\n500\n1000\nCustom…",
+          "h": 60,
+          "bottom": 164
+        },
+        {
+          "text": "Include Red Two (special trump)",
+          "h": 71.1875,
+          "bottom": 241.1875
+        },
+        {
+          "text": "Reveal top nest card\n\nRed Two and Show Top Nest Card are on by default. Changes apply to the next game.",
+          "h": 71.1875,
+          "bottom": 241.1875
+        },
+        {
+          "text": "More table rules\nOther existing game variations",
+          "h": 51.984375,
+          "bottom": 299.171875
+        },
+        {
+          "text": "View selected rules\nHow this table will play",
+          "h": 51.984375,
+          "bottom": 299.171875
+        }
+      ],
+      "overflow": false
+    },
+    {
+      "viewport": [
+        1280,
+        720
+      ],
+      "id": "setup",
+      "path": [
+        "More table rules"
+      ],
+      "title": "More table rules",
+      "page": "Page 1 of 2",
+      "body": {
+        "x": 271,
+        "y": 104,
+        "w": 738,
+        "h": 510
+      },
+      "items": [
+        {
+          "text": "Ruleset:\nGriffin House",
+          "h": 34,
+          "bottom": 138
+        },
+        {
+          "text": "Include 1s (high in suit, 15 pts)",
+          "h": 34,
+          "bottom": 138
+        },
+        {
+          "text": "Red 2 points:\n20\n30",
+          "h": 89.78125,
+          "bottom": 233.78125
+        },
+        {
+          "text": "Include special Red 1 (highest trump, 30 pts)",
+          "h": 89.78125,
+          "bottom": 233.78125
+        },
+        {
+          "text": "Include Rook bird",
+          "h": 34,
+          "bottom": 273.78125
+        },
+        {
+          "text": "Rook is lowest trump",
+          "h": 34,
+          "bottom": 273.78125
+        },
+        {
+          "text": "Min bid:\n50\n70\n80\n100\n120",
+          "h": 55.59375,
+          "bottom": 335.375
+        },
+        {
+          "text": "Rook / Red 2 anytime\n\nIf off, specials must follow suit rules like other cards.",
+          "h": 55.59375,
+          "bottom": 335.375
+        },
+        {
+          "text": "Must trump when void\n\nWhen you can’t follow suit you must play a trump if you have one.",
+          "h": 71.1875,
+          "bottom": 412.5625
+        },
+        {
+          "text": "Bid-only scoring (CrowsNest-style)\n\nIf made: score the bid amount only. Set still costs −bid.",
+          "h": 71.1875,
+          "bottom": 412.5625
+        },
+        {
+          "text": "Nest counters go to:\nLast-trick winner\nBidding team",
+          "h": 52,
+          "bottom": 470.5625
+        },
+        {
+          "text": "First lead of the hand:\nPlayer to the left of the bid winner\nBid winner leads\nPlayer to the right of the bid winner",
+          "h": 52,
+          "bottom": 470.5625
+        },
+        {
+          "text": "Screw the dealer\n\nOff by default. If everyone passes, the dealer is forced to bid the minimum instead of the hand being redealt.",
+          "h": 71.1875,
+          "bottom": 547.75
+        },
+        {
+          "text": "Misdeal on a counter-less hand\n\nOn by default. If any hand has zero point cards (no 5/10/14/one/Rook/Red 1/Red 2), redeal automatically.",
+          "h": 71.1875,
+          "bottom": 547.75
+        }
+      ],
+      "overflow": false
+    }
+  ],
+  "errors": [
+    {
+      "viewport": [
+        844,
+        273
+      ],
+      "id": "profile",
+      "path": [],
+      "error": "locator.click: Timeout 3000ms exceeded.\nCall log:\n\u001b[2m  - waiting for locator('#landingMenuButton783')\u001b[22m\n\u001b[2m    - locator resolved to <button type=\"button\" aria-label=\"Menu\" aria-expanded=\"false\" aria-haspopup=\"dialog\" id=\"landingMenuButton783\" aria-controls=\"houseMenu805\">☰</button>\u001b[22m\n\u001b[2m  - attempting click action\u001b[22m\n\u001b[2m    2 × waiting for element to be visible, enabled and stable\u001b[22m\n\u001b[2m      - element is not visible\u001b[22m\n\u001b[2m    - retrying click action\u001b[22m\n\u001b[2m    - waiting 20ms\u001b[22m\n\u001b[2m    2 × waiting for element to be visible, enabled and stable\u001b[22m\n\u001b[2m      - element is not visible\u001b[22m\n\u001b[2m    - retrying click action\u001b[22m\n\u001b[2m      - waiting 100ms\u001b[22m\n\u001b[2m    2 × waiting for element to be visible, enabled and stable\u001b[22m\n\u001b[2m      - element is not visible\u001b[22m\n\u001b[2m    - retrying click action\u001b[22m\n\u001b[2m      - waiting 500ms\u001b[22m\n"
+    },
+    {
+      "viewport": [
+        844,
+        273
+      ],
+      "id": "career",
+      "path": [
+        "Levels & awards guide"
+      ],
+      "error": "locator.click: Timeout 3000ms exceeded.\nCall log:\n\u001b[2m  - waiting for locator('#landingMenuButton783')\u001b[22m\n\u001b[2m    - locator resolved to <button type=\"button\" aria-label=\"Menu\" aria-expanded=\"false\" aria-haspopup=\"dialog\" id=\"landingMenuButton783\" aria-controls=\"houseMenu805\">☰</button>\u001b[22m\n\u001b[2m  - attempting click action\u001b[22m\n\u001b[2m    2 × waiting for element to be visible, enabled and stable\u001b[22m\n\u001b[2m      - element is not visible\u001b[22m\n\u001b[2m    - retrying click action\u001b[22m\n\u001b[2m    - waiting 20ms\u001b[22m\n\u001b[2m    2 × waiting for element to be visible, enabled and stable\u001b[22m\n\u001b[2m      - element is not visible\u001b[22m\n\u001b[2m    - retrying click action\u001b[22m\n\u001b[2m      - waiting 100ms\u001b[22m\n\u001b[2m    3 × waiting for element to be visible, enabled and stable\u001b[22m\n\u001b[2m      - element is not visible\u001b[22m\n\u001b[2m    - retrying click action\u001b[22m\n\u001b[2m      - waiting 500ms\u001b[22m\n\u001b[2m    - waiting for element to be visible, enabled and stable\u001b[22m\n\u001b[2m    - element is visible, enabled and stable\u001b[22m\n\u001b[2m    - scrolling into view if needed\u001b[22m\n\u001b[2m    - done scrolling\u001b[22m\n\u001b[2m    - performing click action\u001b[22m\n\u001b[2m    - click action done\u001b[22m\n\u001b[2m    - waiting for scheduled navigations to finish\u001b[22m\n"
+    }
+  ],
+  "pageErrors": [],
+  "failed": []
+}

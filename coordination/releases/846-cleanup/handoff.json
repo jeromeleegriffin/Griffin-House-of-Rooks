@@ -1,0 +1,30 @@
+{
+  "checks": [
+    {
+      "name": "Handoff snapshot retains match and hand identity",
+      "ok": true
+    },
+    {
+      "name": "Every human has private resume credential in trusted handoff",
+      "ok": true
+    },
+    {
+      "name": "Current host retains its own resume credential before following",
+      "ok": true
+    },
+    {
+      "name": "Public players still omit resume credentials",
+      "ok": true
+    },
+    {
+      "name": "New host preserves original seat and match identity",
+      "ok": true
+    },
+    {
+      "name": "Previous host temporary bot retains reclaim credential",
+      "ok": true
+    }
+  ],
+  "errors": [],
+  "failed": []
+}

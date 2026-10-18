@@ -89,7 +89,9 @@ body.gfx-seatPlaques #slot-partner .name,
   grid-template-rows: minmax(3.2rem, 20%) minmax(0, 1fr) minmax(3.4rem, 22%);
 }
 .player-slot.top,
-.player-slot.bottom { z-index: 5; }
+.player-slot.bottom {
+  z-index: 5;
+}
 .center-area,
 .trick,
 .trick-stack,

@@ -1,60 +1,214 @@
 /* R714 portrait presentation. All furniture is independent raster artwork. */
-#trumpCase714, #trumpInk714 { display:none; }
-@media (orientation:portrait) {
- #trumpCase714 {
-  display:block; position:fixed; z-index:12000; box-sizing:border-box;
-  width:min(92vw,400px); aspect-ratio:2.86; left:50%; transform:translateX(-50%);
-  pointer-events:none; perspective:700px; isolation:isolate;
- }
- #trumpCase714[hidden], #trumpInk714[hidden] { display:none!important; }
- #trumpCase714 .tc-art {position:absolute;pointer-events:none;}
- #trumpCase714 svg {display:block;width:100%;height:100%;overflow:hidden;pointer-events:none;}
- #trumpCase714 .tc-base {left:0;bottom:0;width:100%;aspect-ratio:1980/481;z-index:2;}
- #trumpCase714 .tc-lid {left:.4%;top:0;width:84.3%;aspect-ratio:2081/412;z-index:1;transform-origin:50% 100%;}
- #trumpCase714 .tc-closed {left:.2%;top:42%;width:85%;aspect-ratio:2095/392;z-index:5;opacity:0;transform-origin:50% 0;}
- #trumpCase714 .tc-stamp {left:84.5%;bottom:9%;width:14.8%;aspect-ratio:677/1027;z-index:7;transform-origin:50% 84.518%;filter:drop-shadow(1px 3px 2px rgba(0,0,0,.35));}
- #trumpCase714 .tc-pad {
-  all:unset;position:absolute;box-sizing:border-box;top:48%;width:17.4%;height:43%;
-  pointer-events:auto;cursor:pointer;z-index:4;touch-action:manipulation;
-  font:700 9px Georgia,serif;color:#f4dfb2;text-align:center;border-radius:5px;
- }
- #trumpCase714 .tc-pad:nth-of-type(1){left:5.8%;}
- #trumpCase714 .tc-pad:nth-of-type(2){left:24.6%;}
- #trumpCase714 .tc-pad:nth-of-type(3){left:43.4%;}
- #trumpCase714 .tc-pad:nth-of-type(4){left:62.2%;}
- #trumpCase714 .tc-pad span {position:absolute;left:0;right:0;bottom:1px;text-shadow:0 1px 2px #130b04;letter-spacing:.025em;}
- #trumpCase714 .tc-pad:focus-visible {outline:2px solid #ffdf85;outline-offset:1px;}
- #trumpCase714 .tc-pad[data-selected] {box-shadow:inset 0 0 0 1px #ffdf85,0 0 8px rgba(240,190,85,.3);}
- #trumpCase714 .tc-pad:disabled {pointer-events:none;cursor:default;}
- #trumpCase714 .tc-access {position:absolute;width:1px;height:1px;overflow:hidden;clip-path:inset(50%);}
- body.in-game #decisionConsole.trump714-owned {display:none!important;visibility:hidden!important;pointer-events:none!important;}
- body.trump714-avatar #slot-me {opacity:0!important;pointer-events:none!important;}
- #trumpInk714 {display:block;position:fixed;inset:0;pointer-events:none;z-index:2;}
+#trumpCase714,
+#trumpInk714 {
+  display: none;
 }
-@media (prefers-reduced-motion:reduce) {#trumpCase714 {scroll-behavior:auto;}}
+@media (orientation: portrait) {
+  #trumpCase714 {
+    display: block;
+    position: fixed;
+    z-index: 12000;
+    box-sizing: border-box;
+    width: min(92vw, 400px);
+    aspect-ratio: 2.86;
+    left: 50%;
+    transform: translateX(-50%);
+    pointer-events: none;
+    perspective: 700px;
+    isolation: isolate;
+  }
+  #trumpCase714[hidden],
+  #trumpInk714[hidden] {
+    display: none !important;
+  }
+  #trumpCase714 .tc-art {
+    position: absolute;
+    pointer-events: none;
+  }
+  #trumpCase714 svg {
+    display: block;
+    width: 100%;
+    height: 100%;
+    overflow: hidden;
+    pointer-events: none;
+  }
+  #trumpCase714 .tc-base {
+    left: 0;
+    bottom: 0;
+    width: 100%;
+    aspect-ratio: 1980/481;
+    z-index: 2;
+  }
+  #trumpCase714 .tc-lid {
+    left: 0.4%;
+    top: 0;
+    width: 84.3%;
+    aspect-ratio: 2081/412;
+    z-index: 1;
+    transform-origin: 50% 100%;
+  }
+  #trumpCase714 .tc-closed {
+    left: 0.2%;
+    top: 42%;
+    width: 85%;
+    aspect-ratio: 2095/392;
+    z-index: 5;
+    opacity: 0;
+    transform-origin: 50% 0;
+  }
+  #trumpCase714 .tc-stamp {
+    left: 84.5%;
+    bottom: 9%;
+    width: 14.8%;
+    aspect-ratio: 677/1027;
+    z-index: 7;
+    transform-origin: 50% 84.518%;
+    filter: drop-shadow(1px 3px 2px rgba(0, 0, 0, 0.35));
+  }
+  #trumpCase714 .tc-pad {
+    all: unset;
+    position: absolute;
+    box-sizing: border-box;
+    top: 48%;
+    width: 17.4%;
+    height: 43%;
+    pointer-events: auto;
+    cursor: pointer;
+    z-index: 4;
+    touch-action: manipulation;
+    font:
+      700 9px Georgia,
+      serif;
+    color: #f4dfb2;
+    text-align: center;
+    border-radius: 5px;
+  }
+  #trumpCase714 .tc-pad:nth-of-type(1) {
+    left: 5.8%;
+  }
+  #trumpCase714 .tc-pad:nth-of-type(2) {
+    left: 24.6%;
+  }
+  #trumpCase714 .tc-pad:nth-of-type(3) {
+    left: 43.4%;
+  }
+  #trumpCase714 .tc-pad:nth-of-type(4) {
+    left: 62.2%;
+  }
+  #trumpCase714 .tc-pad span {
+    position: absolute;
+    left: 0;
+    right: 0;
+    bottom: 1px;
+    text-shadow: 0 1px 2px #130b04;
+    letter-spacing: 0.025em;
+  }
+  #trumpCase714 .tc-pad:focus-visible {
+    outline: 2px solid #ffdf85;
+    outline-offset: 1px;
+  }
+  #trumpCase714 .tc-pad[data-selected] {
+    box-shadow:
+      inset 0 0 0 1px #ffdf85,
+      0 0 8px rgba(240, 190, 85, 0.3);
+  }
+  #trumpCase714 .tc-pad:disabled {
+    pointer-events: none;
+    cursor: default;
+  }
+  #trumpCase714 .tc-access {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    overflow: hidden;
+    clip-path: inset(50%);
+  }
+  body.in-game #decisionConsole.trump714-owned {
+    display: none !important;
+    visibility: hidden !important;
+    pointer-events: none !important;
+  }
+  body.trump714-avatar #slot-me {
+    opacity: 0 !important;
+    pointer-events: none !important;
+  }
+  #trumpInk714 {
+    display: block;
+    position: fixed;
+    inset: 0;
+    pointer-events: none;
+    z-index: 2;
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  #trumpCase714 {
+    scroll-behavior: auto;
+  }
+}
 
 /* R742: remote chooser's stamp flies from its seat; no bottom case props. */
-@media (orientation:portrait) {
- #trumpCase714.tc-directional .tc-base,
- #trumpCase714.tc-directional .tc-lid,
- #trumpCase714.tc-directional .tc-closed,
- #trumpCase714.tc-directional .tc-pads {visibility:hidden;}
+@media (orientation: portrait) {
+  #trumpCase714.tc-directional .tc-base,
+  #trumpCase714.tc-directional .tc-lid,
+  #trumpCase714.tc-directional .tc-closed,
+  #trumpCase714.tc-directional .tc-pads {
+    visibility: hidden;
+  }
 }
 
 /* R746: approved pixels, projected working face and local contact shadow. */
-@media (orientation:portrait){
- body.in-game.trump746-faint #hor-room-bg::after{background-image:url("assets/trump746/table-faint.png")!important}
- #trumpCase714 .tc-stamp canvas{display:block;width:100%;height:100%;pointer-events:none}
- #trumpCase714 .tc-stamp{filter:none}
- .tc-contact-shadow746{position:fixed;z-index:11999;border-radius:50%;background:#000;filter:blur(2px);transform:translate(-50%,-50%);pointer-events:none}
- .tc-contact-shadow746[hidden]{display:none!important}
+@media (orientation: portrait) {
+  body.in-game.trump746-faint #hor-room-bg::after {
+    background-image: url('assets/trump746/table-faint.png') !important;
+  }
+  #trumpCase714 .tc-stamp canvas {
+    display: block;
+    width: 100%;
+    height: 100%;
+    pointer-events: none;
+  }
+  #trumpCase714 .tc-stamp {
+    filter: none;
+  }
+  .tc-contact-shadow746 {
+    position: fixed;
+    z-index: 11999;
+    border-radius: 50%;
+    background: #000;
+    filter: blur(2px);
+    transform: translate(-50%, -50%);
+    pointer-events: none;
+  }
+  .tc-contact-shadow746[hidden] {
+    display: none !important;
+  }
 }
 
 /* 795: authored brass pixels in the lid SVG. CSS owns interaction only. */
-#trumpCase714 .tc-confirm {pointer-events:auto;cursor:pointer;touch-action:manipulation;}
-#trumpCase714 .tc-confirm[aria-disabled="true"] {pointer-events:none;cursor:default;}
-#trumpCase714 .tc-confirm:focus-visible {outline:none;}
-#trumpCase714 .tc-confirm:focus-visible .tc-confirm-hit {stroke:#ffedb1;stroke-width:7;}
-.tc-fallback-confirm {touch-action:manipulation;}
-.tc-fallback-confirm svg {display:block;width:100%;height:auto;}
-.tc-fallback-confirm:focus-visible {outline:2px solid #ffedb1;}
+#trumpCase714 .tc-confirm {
+  pointer-events: auto;
+  cursor: pointer;
+  touch-action: manipulation;
+}
+#trumpCase714 .tc-confirm[aria-disabled='true'] {
+  pointer-events: none;
+  cursor: default;
+}
+#trumpCase714 .tc-confirm:focus-visible {
+  outline: none;
+}
+#trumpCase714 .tc-confirm:focus-visible .tc-confirm-hit {
+  stroke: #ffedb1;
+  stroke-width: 7;
+}
+.tc-fallback-confirm {
+  touch-action: manipulation;
+}
+.tc-fallback-confirm svg {
+  display: block;
+  width: 100%;
+  height: auto;
+}
+.tc-fallback-confirm:focus-visible {
+  outline: 2px solid #ffedb1;
+}

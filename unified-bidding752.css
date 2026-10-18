@@ -1,4 +1,10 @@
 /* The original .bot-thinking rules own status appearance and placement.
    The rejected 104 x 30 panels and their duplicate layer have been removed. */
-@media(orientation:landscape){.auction-status{display:none!important;}}
-body:not(.in-game) .auction-status{display:none!important;}
+@media (orientation: landscape) {
+  .auction-status {
+    display: none !important;
+  }
+}
+body:not(.in-game) .auction-status {
+  display: none !important;
+}

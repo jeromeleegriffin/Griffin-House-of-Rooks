@@ -1,0 +1,15 @@
+node_modules/
+vendor/
+x1/
+bots.js
+rules.js
+qrcode845.js
+assets/
+voices/
+brain/
+builds/
+coordination/
+experiments/
+player/
+HANDOFF/
+PACKAGE-MANIFEST.json

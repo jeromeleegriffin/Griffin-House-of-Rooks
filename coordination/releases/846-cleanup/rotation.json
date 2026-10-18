@@ -1,0 +1,376 @@
+{
+  "checks": [
+    {
+      "name": "Rotations during initial presentation reach a usable auction",
+      "ok": true
+    },
+    {
+      "name": "Selected bid survives resize plus orientationchange 390x844",
+      "ok": true
+    },
+    {
+      "name": "Selected bid survives resize plus orientationchange 844x245",
+      "ok": true
+    },
+    {
+      "name": "Selected bid survives resize plus orientationchange 844x390",
+      "ok": true
+    },
+    {
+      "name": "Kitty Received survives orientation 390",
+      "ok": true
+    },
+    {
+      "name": "Kitty Received survives orientation 844",
+      "ok": true
+    },
+    {
+      "name": "Rotation mid-drag cancels ghost without discarding a card",
+      "ok": true
+    },
+    {
+      "name": "Five selected discards survive orientation 390x844",
+      "ok": true
+    },
+    {
+      "name": "Five selected discards survive orientation 844x245",
+      "ok": true
+    },
+    {
+      "name": "Five selected discards survive orientation 844x390",
+      "ok": true
+    },
+    {
+      "name": "Trump chooser selection survives rotation",
+      "ok": true
+    },
+    {
+      "name": "Rotation during trump stamp releases play barrier",
+      "ok": true
+    },
+    {
+      "name": "Native hand completes through real scoring",
+      "ok": true,
+      "detail": {
+        "phase": "score",
+        "scores": [
+          -195,
+          75
+        ],
+        "handHistory": 1
+      }
+    }
+  ],
+  "states": [
+    {
+      "phase": "dealing",
+      "ids": [],
+      "selected": [],
+      "ghosts": 0
+    },
+    {
+      "phase": "dealing",
+      "ids": [],
+      "selected": [],
+      "ghosts": 0
+    },
+    {
+      "phase": "dealing",
+      "ids": [],
+      "selected": [],
+      "ghosts": 0
+    },
+    {
+      "phase": "dealing",
+      "ids": [],
+      "selected": [],
+      "ghosts": 0
+    },
+    {
+      "phase": "bidding",
+      "ids": [
+        "rook",
+        "green-14",
+        "green-9",
+        "green-8",
+        "green-7",
+        "black-1",
+        "black-9",
+        "black-8",
+        "red-10",
+        "yellow-5"
+      ],
+      "selected": [],
+      "bid": "130",
+      "ghosts": 0
+    },
+    {
+      "phase": "bidding",
+      "ids": [
+        "rook",
+        "green-14",
+        "green-9",
+        "green-8",
+        "green-7",
+        "black-1",
+        "black-9",
+        "black-8",
+        "red-10",
+        "yellow-5"
+      ],
+      "selected": [],
+      "bid": "130",
+      "ghosts": 0
+    },
+    {
+      "phase": "bidding",
+      "ids": [
+        "rook",
+        "green-14",
+        "green-9",
+        "green-8",
+        "green-7",
+        "black-1",
+        "black-9",
+        "black-8",
+        "red-10",
+        "yellow-5"
+      ],
+      "selected": [],
+      "bid": "130",
+      "ghosts": 0
+    },
+    {
+      "phase": "discard",
+      "ids": [
+        "rook",
+        "green-14",
+        "green-12",
+        "green-9",
+        "green-8",
+        "green-7",
+        "black-1",
+        "black-13",
+        "black-9",
+        "black-8",
+        "red-14",
+        "red-10",
+        "red-5",
+        "yellow-12",
+        "yellow-8",
+        "yellow-5"
+      ],
+      "selected": [],
+      "ghosts": 0
+    },
+    {
+      "phase": "discard",
+      "ids": [
+        "rook",
+        "green-14",
+        "green-12",
+        "green-9",
+        "green-8",
+        "green-7",
+        "black-1",
+        "black-13",
+        "black-9",
+        "black-8",
+        "red-14",
+        "red-10",
+        "red-5",
+        "yellow-12",
+        "yellow-8",
+        "yellow-5"
+      ],
+      "selected": [],
+      "ghosts": 0
+    },
+    {
+      "phase": "discard",
+      "ids": [
+        "rook",
+        "green-14",
+        "green-12",
+        "green-9",
+        "green-8",
+        "green-7",
+        "black-1",
+        "black-13",
+        "black-9",
+        "black-8",
+        "red-14",
+        "red-10",
+        "red-5",
+        "yellow-12",
+        "yellow-8",
+        "yellow-5"
+      ],
+      "selected": [],
+      "ghosts": 0
+    },
+    {
+      "phase": "discard",
+      "ids": [
+        "rook",
+        "green-14",
+        "green-12",
+        "green-9",
+        "green-8",
+        "green-7",
+        "black-1",
+        "black-13",
+        "black-9",
+        "black-8",
+        "red-14",
+        "red-10",
+        "red-5",
+        "yellow-12",
+        "yellow-8",
+        "yellow-5"
+      ],
+      "selected": [],
+      "ghosts": 0
+    },
+    {
+      "phase": "discard",
+      "ids": [
+        "rook",
+        "green-14",
+        "green-12",
+        "green-9",
+        "green-8",
+        "green-7",
+        "black-1",
+        "black-13",
+        "black-9",
+        "black-8",
+        "red-14",
+        "red-10",
+        "red-5",
+        "yellow-12",
+        "yellow-8",
+        "yellow-5"
+      ],
+      "selected": [
+        "yellow-5",
+        "yellow-8",
+        "yellow-12",
+        "red-5",
+        "red-10"
+      ],
+      "ghosts": 0
+    },
+    {
+      "phase": "discard",
+      "ids": [
+        "rook",
+        "green-14",
+        "green-12",
+        "green-9",
+        "green-8",
+        "green-7",
+        "black-1",
+        "black-13",
+        "black-9",
+        "black-8",
+        "red-14",
+        "red-10",
+        "red-5",
+        "yellow-12",
+        "yellow-8",
+        "yellow-5"
+      ],
+      "selected": [
+        "yellow-5",
+        "yellow-8",
+        "yellow-12",
+        "red-5",
+        "red-10"
+      ],
+      "ghosts": 0
+    },
+    {
+      "phase": "discard",
+      "ids": [
+        "rook",
+        "green-14",
+        "green-12",
+        "green-9",
+        "green-8",
+        "green-7",
+        "black-1",
+        "black-13",
+        "black-9",
+        "black-8",
+        "red-14",
+        "red-10",
+        "red-5",
+        "yellow-12",
+        "yellow-8",
+        "yellow-5"
+      ],
+      "selected": [
+        "yellow-5",
+        "yellow-8",
+        "yellow-12",
+        "red-5",
+        "red-10"
+      ],
+      "ghosts": 0
+    },
+    {
+      "phase": "trump",
+      "ids": [
+        "rook",
+        "green-14",
+        "green-12",
+        "green-9",
+        "green-8",
+        "green-7",
+        "black-1",
+        "black-13",
+        "black-9",
+        "black-8"
+      ],
+      "selected": [],
+      "ghosts": 0
+    },
+    {
+      "phase": "play",
+      "ids": [
+        "rook",
+        "green-14",
+        "green-12",
+        "green-9",
+        "green-8",
+        "green-7",
+        "black-1",
+        "black-13",
+        "black-9",
+        "black-8"
+      ],
+      "selected": [],
+      "ghosts": 0
+    },
+    {
+      "phase": "play",
+      "ids": [
+        "rook",
+        "green-14",
+        "green-12",
+        "green-9",
+        "green-8",
+        "green-7",
+        "black-1",
+        "black-13",
+        "black-9",
+        "black-8"
+      ],
+      "selected": [],
+      "ghosts": 0
+    }
+  ],
+  "errors": [],
+  "failed": []
+}

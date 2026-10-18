@@ -1,0 +1,356 @@
+{
+  "checks": [
+    {
+      "n": "Every settings page reachable 844x245 ",
+      "ok": true
+    },
+    {
+      "n": "Every settings page reachable 844x245 Volume Controls",
+      "ok": true
+    },
+    {
+      "n": "Every settings page reachable 844x245 Room Ambience",
+      "ok": true
+    },
+    {
+      "n": "Every settings page reachable 844x245 Room Ambience/Thunderstorms",
+      "ok": true
+    },
+    {
+      "n": "Every settings page reachable 844x245 Room Ambience/Crickets",
+      "ok": true
+    },
+    {
+      "n": "Every settings page reachable 844x245 Game & Character Effects",
+      "ok": true
+    },
+    {
+      "n": "Every settings page reachable 844x245 More table rules",
+      "ok": true
+    },
+    {
+      "n": "Every settings page reachable 844x245 House rules",
+      "ok": true
+    },
+    {
+      "n": "Every settings page reachable 390x844 ",
+      "ok": true
+    },
+    {
+      "n": "Every settings page reachable 390x844 Volume Controls",
+      "ok": true
+    },
+    {
+      "n": "Every settings page reachable 390x844 Room Ambience",
+      "ok": true
+    },
+    {
+      "n": "Every settings page reachable 390x844 Room Ambience/Thunderstorms",
+      "ok": true
+    },
+    {
+      "n": "Every settings page reachable 390x844 Room Ambience/Crickets",
+      "ok": true
+    },
+    {
+      "n": "Every settings page reachable 390x844 Game & Character Effects",
+      "ok": true
+    },
+    {
+      "n": "Every settings page reachable 390x844 More table rules",
+      "ok": true
+    },
+    {
+      "n": "Every settings page reachable 390x844 House rules",
+      "ok": true
+    }
+  ],
+  "coverage": [
+    {
+      "viewport": [
+        844,
+        245
+      ],
+      "id": "profile",
+      "path": [],
+      "pages": 1,
+      "controls": [
+        "hor-player-name",
+        "Your voice"
+      ]
+    },
+    {
+      "viewport": [
+        844,
+        245
+      ],
+      "id": "sound",
+      "path": [
+        "Volume Controls"
+      ],
+      "pages": 3,
+      "controls": [
+        "hor-audio-master",
+        "hor-audio-voices",
+        "hor-audio-gameplay",
+        "hor-audio-character",
+        "hor-audio-atmosphere",
+        "<input type=\"checkbox\" data-audio-mute=\"\">"
+      ]
+    },
+    {
+      "viewport": [
+        844,
+        245
+      ],
+      "id": "sound",
+      "path": [
+        "Room Ambience"
+      ],
+      "pages": 6,
+      "controls": [
+        "opt-cabin-ambience",
+        "opt-cabin-volume",
+        "opt-fire-volume",
+        "opt-owl-ambience"
+      ]
+    },
+    {
+      "viewport": [
+        844,
+        245
+      ],
+      "id": "sound",
+      "path": [
+        "Room Ambience",
+        "Thunderstorms"
+      ],
+      "pages": 1,
+      "controls": [
+        "Thunderstorms volume",
+        "Time between storms"
+      ]
+    },
+    {
+      "viewport": [
+        844,
+        245
+      ],
+      "id": "sound",
+      "path": [
+        "Room Ambience",
+        "Crickets"
+      ],
+      "pages": 1,
+      "controls": [
+        "Crickets volume",
+        "Cricket frequency"
+      ]
+    },
+    {
+      "viewport": [
+        844,
+        245
+      ],
+      "id": "sound",
+      "path": [
+        "Game & Character Effects"
+      ],
+      "pages": 3,
+      "controls": [
+        "opt-sound-card",
+        "opt-sound-turn",
+        "opt-holder-vibration789",
+        "opt-turn-sound-choice",
+        "opt-sound-rook",
+        "opt-sound-tick",
+        "Shoot the Moon wolf howl"
+      ]
+    },
+    {
+      "viewport": [
+        844,
+        245
+      ],
+      "id": "setup",
+      "path": [
+        "More table rules"
+      ],
+      "pages": 9,
+      "controls": [
+        "opt-include-ones",
+        "red2pts",
+        "opt-include-red1",
+        "opt-include-rook",
+        "opt-rook-lowest",
+        "opt-min-bid",
+        "opt-specials-anytime",
+        "opt-must-trump",
+        "opt-bid-only",
+        "opt-nest-goes-to",
+        "opt-lead-order",
+        "opt-screw-dealer",
+        "opt-misdeal-no-counters",
+        "opt-comeback-special-chance",
+        "opt-open-widow",
+        "opt-shoot-moon"
+      ]
+    },
+    {
+      "viewport": [
+        844,
+        245
+      ],
+      "id": "rules",
+      "path": [
+        "House rules"
+      ],
+      "pages": 11,
+      "controls": []
+    },
+    {
+      "viewport": [
+        390,
+        844
+      ],
+      "id": "profile",
+      "path": [],
+      "pages": 1,
+      "controls": [
+        "hor-player-name",
+        "Your voice"
+      ]
+    },
+    {
+      "viewport": [
+        390,
+        844
+      ],
+      "id": "sound",
+      "path": [
+        "Volume Controls"
+      ],
+      "pages": 1,
+      "controls": [
+        "hor-audio-master",
+        "hor-audio-voices",
+        "hor-audio-gameplay",
+        "hor-audio-character",
+        "hor-audio-atmosphere",
+        "<input type=\"checkbox\" data-audio-mute=\"\">"
+      ]
+    },
+    {
+      "viewport": [
+        390,
+        844
+      ],
+      "id": "sound",
+      "path": [
+        "Room Ambience"
+      ],
+      "pages": 2,
+      "controls": [
+        "opt-cabin-ambience",
+        "opt-cabin-volume",
+        "opt-fire-volume",
+        "opt-owl-ambience"
+      ]
+    },
+    {
+      "viewport": [
+        390,
+        844
+      ],
+      "id": "sound",
+      "path": [
+        "Room Ambience",
+        "Thunderstorms"
+      ],
+      "pages": 1,
+      "controls": [
+        "Thunderstorms volume",
+        "Time between storms"
+      ]
+    },
+    {
+      "viewport": [
+        390,
+        844
+      ],
+      "id": "sound",
+      "path": [
+        "Room Ambience",
+        "Crickets"
+      ],
+      "pages": 1,
+      "controls": [
+        "Crickets volume",
+        "Cricket frequency"
+      ]
+    },
+    {
+      "viewport": [
+        390,
+        844
+      ],
+      "id": "sound",
+      "path": [
+        "Game & Character Effects"
+      ],
+      "pages": 1,
+      "controls": [
+        "opt-sound-card",
+        "opt-sound-turn",
+        "opt-holder-vibration789",
+        "opt-turn-sound-choice",
+        "opt-sound-rook",
+        "opt-sound-tick",
+        "Shoot the Moon wolf howl"
+      ]
+    },
+    {
+      "viewport": [
+        390,
+        844
+      ],
+      "id": "setup",
+      "path": [
+        "More table rules"
+      ],
+      "pages": 3,
+      "controls": [
+        "opt-include-ones",
+        "red2pts",
+        "opt-include-red1",
+        "opt-include-rook",
+        "opt-rook-lowest",
+        "opt-min-bid",
+        "opt-specials-anytime",
+        "opt-must-trump",
+        "opt-bid-only",
+        "opt-nest-goes-to",
+        "opt-lead-order",
+        "opt-screw-dealer",
+        "opt-misdeal-no-counters",
+        "opt-comeback-special-chance",
+        "opt-open-widow",
+        "opt-shoot-moon"
+      ]
+    },
+    {
+      "viewport": [
+        390,
+        844
+      ],
+      "id": "rules",
+      "path": [
+        "House rules"
+      ],
+      "pages": 4,
+      "controls": []
+    }
+  ],
+  "errors": [],
+  "failed": []
+}

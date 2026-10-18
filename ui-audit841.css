@@ -1,36 +1,144 @@
 /* 841 layout repair: preserve approved physical artwork and gameplay geometry. */
-@media(orientation:landscape){
- body #waiting.friends803 .wait-seat.friends-person[data-position=top]{left:calc(50% - 40px)!important;max-width:144px!important;width:144px!important;}
- body #waiting .waiting-remove-bot[data-position=top]{top:36%!important;left:calc(50% + 80px)!important;width:74px!important;}
- body #waiting.friends803 #friendsCenter804{top:calc(36% + 38px)!important;bottom:auto!important;}
+@media (orientation: landscape) {
+  body #waiting.friends803 .wait-seat.friends-person[data-position='top'] {
+    left: calc(50% - 40px) !important;
+    max-width: 144px !important;
+    width: 144px !important;
+  }
+  body #waiting .waiting-remove-bot[data-position='top'] {
+    top: 36% !important;
+    left: calc(50% + 80px) !important;
+    width: 74px !important;
+  }
+  body #waiting.friends803 #friendsCenter804 {
+    top: calc(36% + 38px) !important;
+    bottom: auto !important;
+  }
 }
-@media(orientation:landscape) and (max-height:340px){
- body #waiting.friends803 #friendsCenter804{top:calc(36% + 34px)!important;}
+@media (orientation: landscape) and (max-height: 340px) {
+  body #waiting.friends803 #friendsCenter804 {
+    top: calc(36% + 34px) !important;
+  }
 }
-@media(orientation:portrait){
- body #houseDetails805[data-route="My Profile"][open]{height:auto!important;min-height:0!important;max-height:calc(100dvh - 24px)!important;}
- body #houseDetails805[data-route="My Profile"]>.house-content{flex:0 1 auto!important;}
- body #celePage .cele-inner{height:auto!important;min-height:0!important;gap:10px!important;align-self:center!important;}
- body #celePage .cele-stage{flex:0 0 auto!important;min-height:0!important;height:auto!important;display:block!important;}
- body #celePage .cele-trick{margin:0!important;}
- body #celePage .cele-actions{margin-top:4px!important;}
+@media (orientation: portrait) {
+  body #houseDetails805[data-route='My Profile'][open] {
+    height: auto !important;
+    min-height: 0 !important;
+    max-height: calc(100dvh - 24px) !important;
+  }
+  body #houseDetails805[data-route='My Profile'] > .house-content {
+    flex: 0 1 auto !important;
+  }
+  body #celePage .cele-inner {
+    height: auto !important;
+    min-height: 0 !important;
+    gap: 10px !important;
+    align-self: center !important;
+  }
+  body #celePage .cele-stage {
+    flex: 0 0 auto !important;
+    min-height: 0 !important;
+    height: auto !important;
+    display: block !important;
+  }
+  body #celePage .cele-trick {
+    margin: 0 !important;
+  }
+  body #celePage .cele-actions {
+    margin-top: 4px !important;
+  }
 }
-body #celePage .cele-crown img{display:block;width:100%;height:100%;object-fit:contain;}
-body #celePage .cele-crown{width:28px;height:18px;margin:0 auto 3px;}
-@media(orientation:landscape){body #celePage .cele-crown{width:22px!important;height:14px!important;}}
-#hor-room-code[aria-invalid="true"]{outline:2px solid #e6b95c;outline-offset:2px;}
+body #celePage .cele-crown img {
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+}
+body #celePage .cele-crown {
+  width: 28px;
+  height: 18px;
+  margin: 0 auto 3px;
+}
+@media (orientation: landscape) {
+  body #celePage .cele-crown {
+    width: 22px !important;
+    height: 14px !important;
+  }
+}
+#hor-room-code[aria-invalid='true'] {
+  outline: 2px solid #e6b95c;
+  outline-offset: 2px;
+}
 
-#joinFeedback841{grid-column:1/-1;color:#ffe2a1;font:13px/1.3 system-ui;margin:2px 0;}
-#joinFeedback841[hidden]{display:none!important;}
-@media(orientation:landscape) and (max-height:340px){
- body #botPickerModal .bot-picker-sheet{display:grid!important;grid-template-columns:140px minmax(0,1fr) 120px!important;grid-template-rows:32px minmax(76px,1fr) 34px!important;gap:5px 8px!important;padding:8px!important;height:calc(100dvh - 16px)!important;max-height:calc(100dvh - 16px)!important;}
- body #botPickerModal .bot-picker-sheet>h2{grid-area:1/1;font-size:18px!important;align-self:center;}
- body #botPickerModal .bot-picker-sheet>p.option-hint{display:none!important;}
- body #botPickerModal .choice-search836{grid-area:1/2;margin:0!important;height:32px;min-height:0!important;width:100%;box-sizing:border-box;}
- body #botPickerModal #botPickerRemove830{grid-area:1/3;margin:0!important;min-height:32px!important;height:32px!important;font-size:12px!important;}
- body #botPickerModal #botPickerGrid{grid-area:2/1/3/-1;margin:0!important;max-height:none!important;height:100%!important;box-sizing:border-box;grid-auto-rows:76px!important;}
- body #botPickerModal .house-legacy-nav{grid-area:3/1/4/3;margin:0!important;padding:0!important;}
- body #botPickerModal .house-legacy-nav button{height:34px!important;min-height:34px!important;padding:3px 10px!important;}
- body #botPickerModal #botPickerClose{grid-area:3/3;height:34px!important;min-height:34px!important;max-height:34px!important;}
- body #botPickerModal .choice-empty836:not([hidden]){grid-area:2/1/3/-1;z-index:1;align-self:start;}
+#joinFeedback841 {
+  grid-column: 1/-1;
+  color: #ffe2a1;
+  font: 13px/1.3 system-ui;
+  margin: 2px 0;
+}
+#joinFeedback841[hidden] {
+  display: none !important;
+}
+@media (orientation: landscape) and (max-height: 340px) {
+  body #botPickerModal .bot-picker-sheet {
+    display: grid !important;
+    grid-template-columns: 140px minmax(0, 1fr) 120px !important;
+    grid-template-rows: 32px minmax(76px, 1fr) 34px !important;
+    gap: 5px 8px !important;
+    padding: 8px !important;
+    height: calc(100dvh - 16px) !important;
+    max-height: calc(100dvh - 16px) !important;
+  }
+  body #botPickerModal .bot-picker-sheet > h2 {
+    grid-area: 1/1;
+    font-size: 18px !important;
+    align-self: center;
+  }
+  body #botPickerModal .bot-picker-sheet > p.option-hint {
+    display: none !important;
+  }
+  body #botPickerModal .choice-search836 {
+    grid-area: 1/2;
+    margin: 0 !important;
+    height: 32px;
+    min-height: 0 !important;
+    width: 100%;
+    box-sizing: border-box;
+  }
+  body #botPickerModal #botPickerRemove830 {
+    grid-area: 1/3;
+    margin: 0 !important;
+    min-height: 32px !important;
+    height: 32px !important;
+    font-size: 12px !important;
+  }
+  body #botPickerModal #botPickerGrid {
+    grid-area: 2/1/3/-1;
+    margin: 0 !important;
+    max-height: none !important;
+    height: 100% !important;
+    box-sizing: border-box;
+    grid-auto-rows: 76px !important;
+  }
+  body #botPickerModal .house-legacy-nav {
+    grid-area: 3/1/4/3;
+    margin: 0 !important;
+    padding: 0 !important;
+  }
+  body #botPickerModal .house-legacy-nav button {
+    height: 34px !important;
+    min-height: 34px !important;
+    padding: 3px 10px !important;
+  }
+  body #botPickerModal #botPickerClose {
+    grid-area: 3/3;
+    height: 34px !important;
+    min-height: 34px !important;
+    max-height: 34px !important;
+  }
+  body #botPickerModal .choice-empty836:not([hidden]) {
+    grid-area: 2/1/3/-1;
+    z-index: 1;
+    align-self: start;
+  }
 }

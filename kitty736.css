@@ -14,7 +14,7 @@
     overscroll-behavior: none !important;
     touch-action: manipulation !important;
     backdrop-filter: none !important;
-    background: rgba(7, 8, 6, .22) !important;
+    background: rgba(7, 8, 6, 0.22) !important;
   }
 
   body.in-game #discardOverlay.portrait-discard-overlay.hidden {
@@ -32,16 +32,22 @@
     min-width: 0 !important;
     margin: 0 auto !important;
     color: #f2e7cc !important;
-    border: 1px solid rgba(176, 139, 70, .76) !important;
+    border: 1px solid rgba(176, 139, 70, 0.76) !important;
     border-radius: 10px !important;
     background:
-      linear-gradient(90deg, rgba(8, 5, 3, .34), transparent 9%, transparent 91%, rgba(8, 5, 3, .32)),
-      repeating-linear-gradient(0deg, rgba(240, 201, 132, .018) 0 1px, transparent 1px 14px),
+      linear-gradient(
+        90deg,
+        rgba(8, 5, 3, 0.34),
+        transparent 9%,
+        transparent 91%,
+        rgba(8, 5, 3, 0.32)
+      ),
+      repeating-linear-gradient(0deg, rgba(240, 201, 132, 0.018) 0 1px, transparent 1px 14px),
       linear-gradient(155deg, #422616 0%, #28170f 42%, #351e12 74%, #21130c 100%) !important;
     box-shadow:
-      inset 0 1px 0 rgba(255, 230, 177, .18),
-      inset 0 -1px 0 rgba(0, 0, 0, .54),
-      0 4px 14px rgba(0, 0, 0, .5) !important;
+      inset 0 1px 0 rgba(255, 230, 177, 0.18),
+      inset 0 -1px 0 rgba(0, 0, 0, 0.54),
+      0 4px 14px rgba(0, 0, 0, 0.5) !important;
     overflow: visible !important;
   }
 
@@ -78,14 +84,19 @@
   .gh-kitty-head h2 {
     margin: 0 0 3px !important;
     color: #f3e8cf !important;
-    font: 700 clamp(18px, 5.3vw, 22px)/1.06 Georgia, "Times New Roman", serif !important;
-    letter-spacing: .035em !important;
+    font:
+      700 clamp(18px, 5.3vw, 22px) / 1.06 Georgia,
+      'Times New Roman',
+      serif !important;
+    letter-spacing: 0.035em !important;
   }
 
   .gh-kitty-head p {
     margin: 0 !important;
-    color: rgba(243, 232, 207, .88) !important;
-    font: 500 13px/1.2 system-ui, sans-serif !important;
+    color: rgba(243, 232, 207, 0.88) !important;
+    font:
+      500 13px/1.2 system-ui,
+      sans-serif !important;
   }
 
   .gh-kitty-cards {
@@ -110,7 +121,7 @@
     margin: 0 !important;
     box-sizing: border-box !important;
     overflow: hidden !important;
-    box-shadow: 0 2px 5px rgba(0, 0, 0, .4) !important;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.4) !important;
     animation: none !important;
   }
 
@@ -118,18 +129,20 @@
     flex: 0 0 auto;
     margin: 0 0 9px;
     padding: 6px 3px 7px;
-    border: 1px solid rgba(174, 139, 75, .36);
+    border: 1px solid rgba(174, 139, 75, 0.36);
     border-radius: 5px;
-    background: linear-gradient(180deg, rgba(6, 26, 18, .48), rgba(7, 18, 13, .38));
-    box-shadow: inset 0 1px 4px rgba(0, 0, 0, .35);
+    background: linear-gradient(180deg, rgba(6, 26, 18, 0.48), rgba(7, 18, 13, 0.38));
+    box-shadow: inset 0 1px 4px rgba(0, 0, 0, 0.35);
   }
 
   .gh-hand-preview-block h3 {
     margin: 0 0 5px !important;
     color: #e8d9b9 !important;
     text-align: center !important;
-    font: 700 12px/1.1 system-ui, sans-serif !important;
-    letter-spacing: .075em !important;
+    font:
+      700 12px/1.1 system-ui,
+      sans-serif !important;
+    letter-spacing: 0.075em !important;
   }
 
   .gh-hand-preview {
@@ -183,7 +196,9 @@
     transform: none !important;
     display: block !important;
   }
-  #discardOverlay :is(.gh-kitty-card, .gh-hand-preview-card, .discard-card-art) :is(.numbered-card-img, .rook-bird-img, .red2-img) {
+  #discardOverlay
+    :is(.gh-kitty-card, .gh-hand-preview-card, .discard-card-art)
+    :is(.numbered-card-img, .rook-bird-img, .red2-img) {
     position: absolute !important;
     inset: 0 !important;
     width: 100% !important;
@@ -207,12 +222,17 @@
     min-height: 44px !important;
     margin: 0 auto !important;
     padding: 8px 18px !important;
-    border: 1px solid rgba(206, 174, 105, .8) !important;
+    border: 1px solid rgba(206, 174, 105, 0.8) !important;
     border-radius: 6px !important;
     background: linear-gradient(180deg, #173b2a, #0c291c) !important;
     color: #f4e8ce !important;
-    box-shadow: inset 0 1px 0 rgba(255, 239, 196, .15), 0 2px 5px rgba(0, 0, 0, .34) !important;
-    font: 700 17px/1.1 Georgia, "Times New Roman", serif !important;
+    box-shadow:
+      inset 0 1px 0 rgba(255, 239, 196, 0.15),
+      0 2px 5px rgba(0, 0, 0, 0.34) !important;
+    font:
+      700 17px/1.1 Georgia,
+      'Times New Roman',
+      serif !important;
     cursor: pointer !important;
     touch-action: manipulation !important;
   }
@@ -254,8 +274,11 @@
     text-shadow: none !important;
     text-align: left !important;
     white-space: nowrap !important;
-    font: 700 clamp(15px, 4.75vw, 19px)/1.08 Georgia, "Times New Roman", serif !important;
-    letter-spacing: .025em !important;
+    font:
+      700 clamp(15px, 4.75vw, 19px) / 1.08 Georgia,
+      'Times New Roman',
+      serif !important;
+    letter-spacing: 0.025em !important;
   }
 
   #discardOverlay.gh-discard-page .gh-discard-count {
@@ -271,15 +294,19 @@
     color: #ebd8ae !important;
     text-align: right !important;
     white-space: nowrap !important;
-    font: 700 11px/1.1 system-ui, sans-serif !important;
+    font:
+      700 11px/1.1 system-ui,
+      sans-serif !important;
   }
 
   #discardOverlay.gh-discard-page .gh-discard-head .gh-discard-instruction {
     grid-column: 1 / -1 !important;
     grid-row: 2 !important;
     margin: 2px 0 0 !important;
-    color: rgba(241, 232, 213, .84) !important;
-    font: 500 12px/1.1 system-ui, sans-serif !important;
+    color: rgba(241, 232, 213, 0.84) !important;
+    font:
+      500 12px/1.1 system-ui,
+      sans-serif !important;
   }
 
   @media (max-width: 380px) {
@@ -288,7 +315,7 @@
     }
     #discardOverlay.gh-discard-page .gh-discard-head .discard-title {
       font-size: clamp(12px, 4.1vw, 14px) !important;
-      letter-spacing: .015em !important;
+      letter-spacing: 0.015em !important;
     }
     #discardOverlay.gh-discard-page .gh-discard-count {
       grid-column: 1 / -1 !important;
@@ -306,13 +333,15 @@
     height: auto !important;
     box-sizing: border-box !important;
     padding: 2px 2px 1px !important;
-    border: 1px solid rgba(174, 143, 83, .65) !important;
+    border: 1px solid rgba(174, 143, 83, 0.65) !important;
     border-radius: 6px !important;
     background:
-      repeating-linear-gradient(0deg, rgba(233, 225, 195, .012) 0 1px, transparent 1px 3px),
-      radial-gradient(ellipse at 50% 0%, rgba(47, 91, 63, .32), transparent 70%),
+      repeating-linear-gradient(0deg, rgba(233, 225, 195, 0.012) 0 1px, transparent 1px 3px),
+      radial-gradient(ellipse at 50% 0%, rgba(47, 91, 63, 0.32), transparent 70%),
       linear-gradient(160deg, #103320, #092519 72%, #0b281b) !important;
-    box-shadow: inset 0 1px 5px rgba(0, 0, 0, .5), 0 1px 0 rgba(245, 219, 161, .06) !important;
+    box-shadow:
+      inset 0 1px 5px rgba(0, 0, 0, 0.5),
+      0 1px 0 rgba(245, 219, 161, 0.06) !important;
     overflow: visible !important;
   }
 
@@ -357,24 +386,36 @@
     padding: 0 1px !important;
     border: 0 !important;
     color: #e9ddc4 !important;
-    font: 700 8px/7px system-ui, sans-serif !important;
-    letter-spacing: .075em !important;
+    font:
+      700 8px/7px system-ui,
+      sans-serif !important;
+    letter-spacing: 0.075em !important;
     white-space: nowrap !important;
   }
 
   #discardOverlay.gh-discard-page .discard-color-label::after {
-    content: "";
+    content: '';
     display: block;
     flex: 1 1 auto;
     height: 1px;
-    background: linear-gradient(90deg, rgba(196, 160, 90, .5), rgba(196, 160, 90, .08));
+    background: linear-gradient(90deg, rgba(196, 160, 90, 0.5), rgba(196, 160, 90, 0.08));
   }
 
-  #discardOverlay.gh-discard-page .discard-color-green .discard-color-label { color: #b7cfb3 !important; }
-  #discardOverlay.gh-discard-page .discard-color-red .discard-color-label { color: #d7aaa3 !important; }
-  #discardOverlay.gh-discard-page .discard-color-yellow .discard-color-label { color: #e3ce8d !important; }
-  #discardOverlay.gh-discard-page .discard-color-black .discard-color-label { color: #cec9bc !important; }
-  #discardOverlay.gh-discard-page .discard-color-birds .discard-color-label { color: #dfd3b8 !important; }
+  #discardOverlay.gh-discard-page .discard-color-green .discard-color-label {
+    color: #b7cfb3 !important;
+  }
+  #discardOverlay.gh-discard-page .discard-color-red .discard-color-label {
+    color: #d7aaa3 !important;
+  }
+  #discardOverlay.gh-discard-page .discard-color-yellow .discard-color-label {
+    color: #e3ce8d !important;
+  }
+  #discardOverlay.gh-discard-page .discard-color-black .discard-color-label {
+    color: #cec9bc !important;
+  }
+  #discardOverlay.gh-discard-page .discard-color-birds .discard-color-label {
+    color: #dfd3b8 !important;
+  }
 
   #discardOverlay.gh-discard-page .discard-color-cards {
     display: grid !important;
@@ -430,7 +471,7 @@
     box-sizing: border-box !important;
     overflow: hidden !important;
     pointer-events: none !important;
-    box-shadow: 0 2px 5px rgba(0, 0, 0, .36) !important;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.36) !important;
   }
 
   #discardOverlay.gh-discard-page .discard-slot.selected {
@@ -440,13 +481,17 @@
 
   /* Keep the button hit target fixed; only its noninteractive artwork lifts. */
   #discardOverlay.gh-discard-page .discard-slot .discard-card-art {
-    transition: transform .12s ease, filter .12s ease !important;
+    transition:
+      transform 0.12s ease,
+      filter 0.12s ease !important;
   }
   #discardOverlay.gh-discard-page .discard-slot.selected .discard-card-art {
     transform: translateY(-2px) !important;
-    outline: 1.5px solid rgba(226, 190, 104, .95) !important;
+    outline: 1.5px solid rgba(226, 190, 104, 0.95) !important;
     outline-offset: 1px !important;
-    box-shadow: 0 4px 8px rgba(0, 0, 0, .48), 0 0 10px rgba(218, 176, 83, .18) !important;
+    box-shadow:
+      0 4px 8px rgba(0, 0, 0, 0.48),
+      0 0 10px rgba(218, 176, 83, 0.18) !important;
   }
 
   .gh-card-check {
@@ -464,20 +509,25 @@
     border-radius: 50%;
     background: #2d2112;
     color: #f1d27d;
-    font: 900 5px/6px system-ui, sans-serif;
+    font:
+      900 5px/6px system-ui,
+      sans-serif;
     text-shadow: 0 1px 2px #080705;
     pointer-events: none;
   }
 
-  #discardOverlay.gh-discard-page .discard-slot.selected .gh-card-check { display: flex; transform: translateY(-2px); }
+  #discardOverlay.gh-discard-page .discard-slot.selected .gh-card-check {
+    display: flex;
+    transform: translateY(-2px);
+  }
 
   #discardOverlay.gh-discard-page .discard-card-art .c-num {
-    font-size: calc(var(--discard-card-h, 63.7px) * .34) !important;
-    line-height: .92 !important;
+    font-size: calc(var(--discard-card-h, 63.7px) * 0.34) !important;
+    line-height: 0.92 !important;
   }
 
   #discardOverlay.gh-discard-page .discard-card-art .c-color {
-    font-size: calc(var(--discard-card-h, 63.7px) * .105) !important;
+    font-size: calc(var(--discard-card-h, 63.7px) * 0.105) !important;
     line-height: 1 !important;
   }
 
@@ -511,121 +561,166 @@
     min-height: 42px !important;
     margin: 0 auto !important;
     padding: 7px 16px !important;
-    border: 1px solid rgba(204, 170, 96, .8) !important;
+    border: 1px solid rgba(204, 170, 96, 0.8) !important;
     border-radius: 5px !important;
     background: linear-gradient(180deg, #183b29, #0c291c) !important;
     color: #f2e7ce !important;
-    box-shadow: inset 0 1px 0 rgba(255, 237, 194, .12), 0 2px 5px rgba(0, 0, 0, .38) !important;
-    font: 700 16px/1.1 Georgia, "Times New Roman", serif !important;
-    letter-spacing: .01em !important;
+    box-shadow:
+      inset 0 1px 0 rgba(255, 237, 194, 0.12),
+      0 2px 5px rgba(0, 0, 0, 0.38) !important;
+    font:
+      700 16px/1.1 Georgia,
+      'Times New Roman',
+      serif !important;
+    letter-spacing: 0.01em !important;
     cursor: pointer !important;
     touch-action: manipulation !important;
   }
 
   #discardOverlay.gh-discard-page #confirmDiscard:disabled {
-    border-color: rgba(153, 132, 91, .42) !important;
+    border-color: rgba(153, 132, 91, 0.42) !important;
     background: linear-gradient(180deg, #19271f, #101b15) !important;
-    color: rgba(220, 214, 199, .42) !important;
-    box-shadow: inset 0 1px 2px rgba(0, 0, 0, .28) !important;
+    color: rgba(220, 214, 199, 0.42) !important;
+    box-shadow: inset 0 1px 2px rgba(0, 0, 0, 0.28) !important;
     cursor: default !important;
   }
 
   @media (max-width: 380px) {
-    #discardOverlay.gh-discard-page .discard-groups { gap: 3px !important; }
-    #discardOverlay.gh-discard-page .discard-color-label { margin-bottom: 3px !important; }
+    #discardOverlay.gh-discard-page .discard-groups {
+      gap: 3px !important;
+    }
+    #discardOverlay.gh-discard-page .discard-color-label {
+      margin-bottom: 3px !important;
+    }
   }
 
   @media (prefers-reduced-motion: reduce) {
-    body.in-game #discardOverlay.gh-discard-page .discard-slot.discard-pick { transition: none !important; }
+    body.in-game #discardOverlay.gh-discard-page .discard-slot.discard-pick {
+      transition: none !important;
+    }
   }
 }
 
 @media (prefers-reduced-motion: reduce) {
-  #discardOverlay.gh-discard-page .discard-slot .discard-card-art { transition: none !important; }
+  #discardOverlay.gh-discard-page .discard-slot .discard-card-art {
+    transition: none !important;
+  }
 }
 
 /* 749: Kitty reveal only. Selection and landscape retain their approved styles. */
-@media screen and (orientation:portrait) {
- body.in-game #discardOverlay.gh-kitty-page:not(.hidden) {
-  align-items:flex-end!important;
-  padding-bottom:var(--kitty-hand-clearance749,120px)!important;
- }
- body.in-game #discardOverlay.gh-kitty-page .discard-sheet.gh-kitty-page {
-  align-self:flex-end!important;
-  padding:14px 16px 12px!important;
-  background:
-   radial-gradient(ellipse at 20% 0%,#24405a55,transparent 65%),
-   repeating-linear-gradient(0deg,#ffffff03 0 1px,transparent 1px 3px),
-   linear-gradient(155deg,#10283b,#081624 58%,#0d2233)!important;
-  border:1px solid #b59a60!important;
-  box-shadow:inset 0 0 0 5px #24170f,inset 0 0 0 6px #a78a4b66,
-   inset 0 7px 0 #e5c58a16,0 3px 7px #0009!important;
- }
- #discardOverlay.gh-kitty-page .gh-kitty-head h2 {
-  color:#f5ead2!important;text-shadow:0 1px 2px #0008!important;
- }
- #discardOverlay.gh-kitty-page .gh-kitty-head p {color:#e2dbc9!important;}
- #discardOverlay.gh-kitty-page .gh-kitty-continue {
-  width:min(156px,65%)!important;min-height:44px!important;
-  padding:8px 16px!important;font-size:16px!important;
-  background:linear-gradient(180deg,#203449,#102234)!important;
-  border:1px solid #b99b5e!important;color:#f3e6c8!important;
-  box-shadow:inset 0 1px 0 #ead4a52b,0 2px 3px #0007!important;
- }
- #discardOverlay.gh-kitty-page .gh-kitty-continue:focus-visible {
-  outline:2px solid #e0c78b!important;outline-offset:3px!important;
- }
+@media screen and (orientation: portrait) {
+  body.in-game #discardOverlay.gh-kitty-page:not(.hidden) {
+    align-items: flex-end !important;
+    padding-bottom: var(--kitty-hand-clearance749, 120px) !important;
+  }
+  body.in-game #discardOverlay.gh-kitty-page .discard-sheet.gh-kitty-page {
+    align-self: flex-end !important;
+    padding: 14px 16px 12px !important;
+    background:
+      radial-gradient(ellipse at 20% 0%, #24405a55, transparent 65%),
+      repeating-linear-gradient(0deg, #ffffff03 0 1px, transparent 1px 3px),
+      linear-gradient(155deg, #10283b, #081624 58%, #0d2233) !important;
+    border: 1px solid #b59a60 !important;
+    box-shadow:
+      inset 0 0 0 5px #24170f,
+      inset 0 0 0 6px #a78a4b66,
+      inset 0 7px 0 #e5c58a16,
+      0 3px 7px #0009 !important;
+  }
+  #discardOverlay.gh-kitty-page .gh-kitty-head h2 {
+    color: #f5ead2 !important;
+    text-shadow: 0 1px 2px #0008 !important;
+  }
+  #discardOverlay.gh-kitty-page .gh-kitty-head p {
+    color: #e2dbc9 !important;
+  }
+  #discardOverlay.gh-kitty-page .gh-kitty-continue {
+    width: min(156px, 65%) !important;
+    min-height: 44px !important;
+    padding: 8px 16px !important;
+    font-size: 16px !important;
+    background: linear-gradient(180deg, #203449, #102234) !important;
+    border: 1px solid #b99b5e !important;
+    color: #f3e6c8 !important;
+    box-shadow:
+      inset 0 1px 0 #ead4a52b,
+      0 2px 3px #0007 !important;
+  }
+  #discardOverlay.gh-kitty-page .gh-kitty-continue:focus-visible {
+    outline: 2px solid #e0c78b !important;
+    outline-offset: 3px !important;
+  }
 }
 
 /* 750: Discard materials only; retain fixed card geometry and selection cues. */
-@media screen and (orientation:portrait) {
- body.in-game #discardOverlay .discard-sheet.gh-discard-page {
-  background:
-   radial-gradient(ellipse at 20% 0%,#24405a55,transparent 65%),
-   repeating-linear-gradient(0deg,#ffffff03 0 1px,transparent 1px 3px),
-   linear-gradient(155deg,#10283b,#081624 58%,#0d2233)!important;
-  border-color:#b59a60!important;
-  box-shadow:inset 0 0 0 4px #24170f,inset 0 0 0 5px #a78a4b66,
-   inset 0 6px 0 #e5c58a16,0 4px 10px #0009!important;
- }
- #discardOverlay.gh-discard-page .gh-discard-felt {
-  background:
-   repeating-linear-gradient(0deg,#edf3ff03 0 1px,transparent 1px 3px),
-   radial-gradient(ellipse at 45% 0%,#23456345,transparent 75%),
-   linear-gradient(155deg,#102b40,#091c2c 72%,#0d2639)!important;
-  border-color:#ae935b99!important;
-  box-shadow:inset 0 1px 6px #0007,0 1px 0 #dcc28e19!important;
- }
- #discardOverlay.gh-discard-page .gh-discard-head .discard-title {
-  color:#f5ead2!important;text-shadow:0 1px 2px #0008!important;
- }
- #discardOverlay.gh-discard-page .gh-discard-head .gh-discard-instruction {
-  color:#dedbcc!important;
- }
- #discardOverlay.gh-discard-page .gh-discard-count {color:#dfc58c!important;}
- #discardOverlay.gh-discard-page .discard-color-row .discard-color-label {
-  color:#dfdbc9!important;
- }
- #discardOverlay.gh-discard-page .discard-color-label::after {
-  background:linear-gradient(90deg,#c1a26a80,#c1a26a12)!important;
- }
- #discardOverlay.gh-discard-page #confirmDiscard {
-  width:min(220px,84%)!important;
-  background:linear-gradient(180deg,#263f55,#11283c)!important;
-  border-color:#b99b5e!important;color:#f3e6c8!important;
-  box-shadow:inset 0 1px 0 #ead4a52b,0 2px 4px #0007!important;
- }
- #discardOverlay.gh-discard-page #confirmDiscard:disabled {
-  background:linear-gradient(180deg,#162938,#10202d)!important;
-  border-color:#8c805f80!important;color:#a4acae!important;
-  box-shadow:inset 0 1px 2px #0005!important;
- }
+@media screen and (orientation: portrait) {
+  body.in-game #discardOverlay .discard-sheet.gh-discard-page {
+    background:
+      radial-gradient(ellipse at 20% 0%, #24405a55, transparent 65%),
+      repeating-linear-gradient(0deg, #ffffff03 0 1px, transparent 1px 3px),
+      linear-gradient(155deg, #10283b, #081624 58%, #0d2233) !important;
+    border-color: #b59a60 !important;
+    box-shadow:
+      inset 0 0 0 4px #24170f,
+      inset 0 0 0 5px #a78a4b66,
+      inset 0 6px 0 #e5c58a16,
+      0 4px 10px #0009 !important;
+  }
+  #discardOverlay.gh-discard-page .gh-discard-felt {
+    background:
+      repeating-linear-gradient(0deg, #edf3ff03 0 1px, transparent 1px 3px),
+      radial-gradient(ellipse at 45% 0%, #23456345, transparent 75%),
+      linear-gradient(155deg, #102b40, #091c2c 72%, #0d2639) !important;
+    border-color: #ae935b99 !important;
+    box-shadow:
+      inset 0 1px 6px #0007,
+      0 1px 0 #dcc28e19 !important;
+  }
+  #discardOverlay.gh-discard-page .gh-discard-head .discard-title {
+    color: #f5ead2 !important;
+    text-shadow: 0 1px 2px #0008 !important;
+  }
+  #discardOverlay.gh-discard-page .gh-discard-head .gh-discard-instruction {
+    color: #dedbcc !important;
+  }
+  #discardOverlay.gh-discard-page .gh-discard-count {
+    color: #dfc58c !important;
+  }
+  #discardOverlay.gh-discard-page .discard-color-row .discard-color-label {
+    color: #dfdbc9 !important;
+  }
+  #discardOverlay.gh-discard-page .discard-color-label::after {
+    background: linear-gradient(90deg, #c1a26a80, #c1a26a12) !important;
+  }
+  #discardOverlay.gh-discard-page #confirmDiscard {
+    width: min(220px, 84%) !important;
+    background: linear-gradient(180deg, #263f55, #11283c) !important;
+    border-color: #b99b5e !important;
+    color: #f3e6c8 !important;
+    box-shadow:
+      inset 0 1px 0 #ead4a52b,
+      0 2px 4px #0007 !important;
+  }
+  #discardOverlay.gh-discard-page #confirmDiscard:disabled {
+    background: linear-gradient(180deg, #162938, #10202d) !important;
+    border-color: #8c805f80 !important;
+    color: #a4acae !important;
+    box-shadow: inset 0 1px 2px #0005 !important;
+  }
 }
 /* Keep the existing 56px touch targets and full card faces on short phones.
    Recover only header/group spacing; retain wrapped-row selection clearance. */
-@media screen and (orientation:portrait) and (max-height:560px) {
- body.in-game #discardOverlay .discard-sheet.gh-discard-page {padding-bottom:2px!important;}
- #discardOverlay.gh-discard-page .discard-groups {gap:1px!important;}
- #discardOverlay.gh-discard-page .gh-discard-head {margin-bottom:0!important;}
- #discardOverlay.gh-discard-page .gh-discard-head .gh-discard-instruction {margin-top:0!important;}
+@media screen and (orientation: portrait) and (max-height: 560px) {
+  body.in-game #discardOverlay .discard-sheet.gh-discard-page {
+    padding-bottom: 2px !important;
+  }
+  #discardOverlay.gh-discard-page .discard-groups {
+    gap: 1px !important;
+  }
+  #discardOverlay.gh-discard-page .gh-discard-head {
+    margin-bottom: 0 !important;
+  }
+  #discardOverlay.gh-discard-page .gh-discard-head .gh-discard-instruction {
+    margin-top: 0 !important;
+  }
 }

@@ -1,152 +1,674 @@
 /* 836: organize live controls; retain the approved menu materials. */
-[data-search-hidden]{display:none!important;}
-.choice-search836{box-sizing:border-box;display:block;width:100%;min-height:34px;flex:none;padding:5px 10px;margin:0;border:1px solid #ac945c;border-radius:7px;background:#0d2235;color:#fff0cd;font:14px system-ui;}
-.choice-search836::placeholder{color:#c2c9cb;opacity:1;}
-.choice-empty836{margin:4px 0;font:13px/1.3 system-ui;color:#efd59d;}
-.choice-empty836[hidden]{display:none!important;}
-#houseDetails805 .house-content,#houseSound805 .house-content{display:grid;grid-template-columns:minmax(0,1fr);gap:7px;align-content:start;}
-#houseDetails805 .house-control836{min-width:0;box-sizing:border-box;}
-#houseDetails805 .house-control836>*,#houseDetails805 .house-field836>*{max-width:100%;box-sizing:border-box;}
-#houseDetails805 .house-control836 .house-action{margin:0;}
-#houseDetails805 .house-control836 .option-hint,#houseDetails805 .house-control836 .house-note{font:12px/1.3 system-ui;margin:3px 0;color:#d6dce0;}
-#houseDetails805 .house-field836 input{width:100%;height:38px;background:#10263b;color:#fff1d0;border:1px solid #ad945f;border-radius:7px;padding:4px 8px;font:15px system-ui;}
-#houseDetails805 .identity-name-label{font-size:13px;margin:0 0 3px;}
-#houseDetails805 .identity-avatar{width:100%;min-height:62px;box-sizing:border-box;padding:4px 8px;}
-#houseDetails805 .identity-avatar img{width:42px;height:42px;}
-#houseDetails805 .identity-voice{display:grid;grid-template-columns:minmax(0,1fr) auto;gap:4px 8px;align-items:end;}
-#houseDetails805 .identity-voice button{margin:0;min-height:38px;}
-#houseDetails805 .identity-status{grid-column:1/-1;max-width:none;}
-#houseDetails805 .identity-status:empty{display:none;}
-#houseDetails805 .house-sound-control{margin:0;}
-#houseDetails805 .house-control836 .option-block{display:flex;flex-wrap:wrap;align-items:center;justify-content:space-between;gap:6px;}
-#houseDetails805 .house-control836 .option-block>select{flex:1;min-width:120px;}
-#houseDetails805 .house-control836 .option-label{margin:0;min-height:34px;line-height:1.25;}
-#houseDetails805 .house-control836 input[type=checkbox],#houseDetails805 .house-control836 input[type=radio]{flex:none;width:18px;height:18px;}
-#houseDetails805 .house-control836 .hor-audio-row{grid-template-columns:minmax(0,1fr) 34px!important;padding:0!important;}
-#houseDetails805 .house-control836 label:has(input[type=range]){margin:0!important;}
-#houseDetails805 .house-control836 .house-sound-control select{margin-top:4px;}
-#houseDetails805 .guide-entry836{box-sizing:border-box;min-width:0;border:1px solid #a98e5366;border-radius:8px;padding:7px 9px;background:#0d2235;}
-#houseDetails805 .guide-entry836 h3{font:600 14px/1.25 Georgia;margin:0 0 4px;color:#f3db9c;}
-#houseDetails805 .guide-entry836 p{font:12px/1.35 system-ui;margin:0;color:#eee7d6;}
-#houseDetails805 .guide-entry836 dl{display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:3px;margin:0;}
-#houseDetails805 .guide-entry836 dt{font:10px/1.2 system-ui;color:#d9c395;}
-#houseDetails805 .guide-entry836 dd{font:600 12px/1.3 system-ui;margin:2px 0 0;color:#fff0d0;}
-#customScoreFeedback836{width:100%;font:12px/1.3 system-ui;color:#f5d598;margin:5px 0 0;}
-#opt-target-score-custom[aria-invalid=true]{border-color:#efb193!important;}
-#opt-target-score-custom-confirm:disabled{opacity:.45;cursor:not-allowed;}
+[data-search-hidden] {
+  display: none !important;
+}
+.choice-search836 {
+  box-sizing: border-box;
+  display: block;
+  width: 100%;
+  min-height: 34px;
+  flex: none;
+  padding: 5px 10px;
+  margin: 0;
+  border: 1px solid #ac945c;
+  border-radius: 7px;
+  background: #0d2235;
+  color: #fff0cd;
+  font: 14px system-ui;
+}
+.choice-search836::placeholder {
+  color: #c2c9cb;
+  opacity: 1;
+}
+.choice-empty836 {
+  margin: 4px 0;
+  font: 13px/1.3 system-ui;
+  color: #efd59d;
+}
+.choice-empty836[hidden] {
+  display: none !important;
+}
+#houseDetails805 .house-content,
+#houseSound805 .house-content {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  gap: 7px;
+  align-content: start;
+}
+#houseDetails805 .house-control836 {
+  min-width: 0;
+  box-sizing: border-box;
+}
+#houseDetails805 .house-control836 > *,
+#houseDetails805 .house-field836 > * {
+  max-width: 100%;
+  box-sizing: border-box;
+}
+#houseDetails805 .house-control836 .house-action {
+  margin: 0;
+}
+#houseDetails805 .house-control836 .option-hint,
+#houseDetails805 .house-control836 .house-note {
+  font: 12px/1.3 system-ui;
+  margin: 3px 0;
+  color: #d6dce0;
+}
+#houseDetails805 .house-field836 input {
+  width: 100%;
+  height: 38px;
+  background: #10263b;
+  color: #fff1d0;
+  border: 1px solid #ad945f;
+  border-radius: 7px;
+  padding: 4px 8px;
+  font: 15px system-ui;
+}
+#houseDetails805 .identity-name-label {
+  font-size: 13px;
+  margin: 0 0 3px;
+}
+#houseDetails805 .identity-avatar {
+  width: 100%;
+  min-height: 62px;
+  box-sizing: border-box;
+  padding: 4px 8px;
+}
+#houseDetails805 .identity-avatar img {
+  width: 42px;
+  height: 42px;
+}
+#houseDetails805 .identity-voice {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  gap: 4px 8px;
+  align-items: end;
+}
+#houseDetails805 .identity-voice button {
+  margin: 0;
+  min-height: 38px;
+}
+#houseDetails805 .identity-status {
+  grid-column: 1/-1;
+  max-width: none;
+}
+#houseDetails805 .identity-status:empty {
+  display: none;
+}
+#houseDetails805 .house-sound-control {
+  margin: 0;
+}
+#houseDetails805 .house-control836 .option-block {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 6px;
+}
+#houseDetails805 .house-control836 .option-block > select {
+  flex: 1;
+  min-width: 120px;
+}
+#houseDetails805 .house-control836 .option-label {
+  margin: 0;
+  min-height: 34px;
+  line-height: 1.25;
+}
+#houseDetails805 .house-control836 input[type='checkbox'],
+#houseDetails805 .house-control836 input[type='radio'] {
+  flex: none;
+  width: 18px;
+  height: 18px;
+}
+#houseDetails805 .house-control836 .hor-audio-row {
+  grid-template-columns: minmax(0, 1fr) 34px !important;
+  padding: 0 !important;
+}
+#houseDetails805 .house-control836 label:has(input[type='range']) {
+  margin: 0 !important;
+}
+#houseDetails805 .house-control836 .house-sound-control select {
+  margin-top: 4px;
+}
+#houseDetails805 .guide-entry836 {
+  box-sizing: border-box;
+  min-width: 0;
+  border: 1px solid #a98e5366;
+  border-radius: 8px;
+  padding: 7px 9px;
+  background: #0d2235;
+}
+#houseDetails805 .guide-entry836 h3 {
+  font: 600 14px/1.25 Georgia;
+  margin: 0 0 4px;
+  color: #f3db9c;
+}
+#houseDetails805 .guide-entry836 p {
+  font: 12px/1.35 system-ui;
+  margin: 0;
+  color: #eee7d6;
+}
+#houseDetails805 .guide-entry836 dl {
+  display: grid;
+  grid-template-columns: repeat(5, minmax(0, 1fr));
+  gap: 3px;
+  margin: 0;
+}
+#houseDetails805 .guide-entry836 dt {
+  font: 10px/1.2 system-ui;
+  color: #d9c395;
+}
+#houseDetails805 .guide-entry836 dd {
+  font: 600 12px/1.3 system-ui;
+  margin: 2px 0 0;
+  color: #fff0d0;
+}
+#customScoreFeedback836 {
+  width: 100%;
+  font: 12px/1.3 system-ui;
+  color: #f5d598;
+  margin: 5px 0 0;
+}
+#opt-target-score-custom[aria-invalid='true'] {
+  border-color: #efb193 !important;
+}
+#opt-target-score-custom-confirm:disabled {
+  opacity: 0.45;
+  cursor: not-allowed;
+}
 /* Both choosers offer photos, search, exact selection feedback and bounded pages. */
-body .identity-dialog[aria-labelledby=identity-title]{width:min(760px,calc(100vw - 24px))!important;height:auto!important;max-height:calc(100dvh - 20px)!important;padding:10px!important;overflow:hidden!important;}
-body .identity-dialog[aria-labelledby=identity-title] .identity-dialog-head h2{font-size:20px;margin:0;}
-body .identity-dialog[aria-labelledby=identity-title] .choice-search836{margin:7px 0;}
-body .identity-dialog[aria-labelledby=identity-title] .identity-pages{margin:7px 0 0;}
-body #landingPartners783{box-sizing:border-box!important;width:min(760px,calc(100vw - 24px))!important;height:min(440px,calc(100dvh - 20px))!important;max-height:calc(100dvh - 20px)!important;padding:10px!important;inset:0!important;margin:auto!important;gap:6px!important;grid-template-rows:auto auto auto minmax(0,1fr) auto!important;}
-body #landingPartners783[open]{display:grid!important;}
-body #landingPartners783 [data-partner-control]{display:none!important;}
-body #landingPartners783 .identity-dialog-head h2{font-size:20px!important;margin:0!important;}
-body #landingPartners783 .identity-dialog-head button{min-height:28px!important;height:28px!important;width:28px!important;}
-body #landingPartners783 .partner-photo-grid{display:grid!important;grid-template-columns:repeat(3,minmax(0,1fr));grid-auto-rows:minmax(0,1fr);gap:6px;min-height:0;}
-body #landingPartners783 .partner-photo{display:flex;align-items:center;min-width:0;min-height:0;gap:7px;padding:6px!important;text-align:left;}
-body #landingPartners783 .partner-photo img,body #landingPartners783 .partner-random{width:38px;height:44px;object-fit:cover;border-radius:5px;flex:none;}
-body #landingPartners783 .partner-photo strong{display:block;font:600 14px/1.2 Georgia;}
-body #landingPartners783 .partner-photo small{display:block;font:11px/1.2 system-ui;margin-top:3px;}
-body #landingPartners783 .partner-photo-nav{display:flex!important;align-items:center;justify-content:flex-start;padding-right:140px;gap:8px;height:34px;min-height:34px;font:12px system-ui;}
-body #landingPartners783 .partner-photo-nav button{height:34px!important;min-height:34px!important;padding:3px 8px!important;font-size:12px!important;}
-body #landingPartners783>[data-done]{position:absolute!important;right:10px!important;bottom:10px!important;height:34px!important;min-height:34px!important;padding:4px 9px!important;font-size:13px!important;max-width:155px;}
-@media(orientation:landscape){
- body #houseDetails805,body #houseSound805{width:min(760px,calc(100vw - 24px))!important;height:min(620px,calc(100dvh - 20px))!important;inset:10px!important;margin:auto!important;padding:10px!important;}
- body #houseDetails805 .house-content,body #houseSound805 .house-content{grid-template-columns:repeat(2,minmax(0,1fr));gap:6px 14px;}
- body #houseDetails805 .house-content.guide-entries836{gap:6px 10px;}
- body #houseDetails805 .house-action,body #houseSound805 .house-action{min-height:44px;padding:6px 9px;margin:0;}
- body #houseDetails805 .house-control836 .house-note{margin:3px 0;}
- body #houseDetails805 .house-control836 label:has(input[type=range]){font-size:13px!important;line-height:1.25!important;}
- body #houseDetails805 .house-sound-control select{height:34px;min-height:34px;font-size:13px;}
- body #houseDetails805 .house-page-nav,body #houseSound805 .house-page-nav{margin-top:5px;padding-top:5px;}
- body #houseDetails805 .house-page-nav button,body #houseSound805 .house-page-nav button{height:34px;min-height:34px;}
- body .identity-dialog[aria-labelledby=identity-title] .identity-grid{grid-template-columns:repeat(6,minmax(0,1fr));gap:6px;}
- body .identity-dialog[aria-labelledby=identity-title] .identity-grid button{height:74px;padding:3px;}
- body .identity-dialog[aria-labelledby=identity-title] .identity-grid img{width:44px!important;height:44px!important;}
- body .identity-dialog[aria-labelledby=identity-title] .identity-pages button{height:32px;min-height:32px;}
- body #landingPartners783{height:min(350px,calc(100dvh - 20px))!important;}
- body #botPickerModal #botPickerGrid{grid-auto-rows:76px!important;}
- body #botPickerModal #botPickerGrid .bot-pick{height:76px!important;}
+body .identity-dialog[aria-labelledby='identity-title'] {
+  width: min(760px, calc(100vw - 24px)) !important;
+  height: auto !important;
+  max-height: calc(100dvh - 20px) !important;
+  padding: 10px !important;
+  overflow: hidden !important;
 }
-@media(orientation:portrait){
- body #landingPartners783{height:min(650px,calc(100dvh - 24px))!important;}
- body #landingPartners783 .partner-photo-grid{grid-template-columns:repeat(2,minmax(0,1fr));}
- body #landingPartners783 .partner-photo-nav{padding-right:0;height:74px!important;align-items:flex-start;}
- body #landingPartners783>[data-done]{left:10px!important;max-width:none!important;width:calc(100% - 20px);}
- body #landingPartners783 .partner-photo{flex-direction:column;align-items:flex-start;gap:4px;}
- body #landingPartners783 .partner-photo img{width:44px;height:48px;}
- /* Short, ordered results story rather than stretching rows across the screen. */
- body.in-game .modal#scoreModal:not(.showing-remaining) .scoreboard-modal{display:flex!important;flex-direction:column!important;height:auto!important;max-height:calc(100dvh - 24px)!important;padding:14px!important;gap:10px!important;}
- body.in-game .modal#scoreModal:not(.showing-remaining) #scoreModalBody{flex:0 1 auto!important;min-height:0!important;overflow:hidden!important;}
- body.in-game .modal#scoreModal:not(.showing-remaining) .gh-approved-scoreboard{display:grid!important;grid-template-columns:minmax(0,1fr)!important;height:auto!important;align-content:start!important;gap:9px!important;}
- body.in-game .modal#scoreModal:not(.showing-remaining) .ghsb-matchup{grid-row:auto!important;grid-column:auto!important;}
- body.in-game .modal#scoreModal:not(.showing-remaining) .ghsb-goal{font-size:14px!important;padding:0!important;}
- body.in-game .modal#scoreModal:not(.showing-remaining) .ghsb-contract{font-size:21px!important;padding:4px!important;}
- body.in-game .modal#scoreModal:not(.showing-remaining) .ghsb-team-icon{width:40px!important;height:40px!important;}
- body.in-game .modal#scoreModal:not(.showing-remaining) .ghsb-team{gap:4px!important;padding:4px!important;}
- body.in-game .modal#scoreModal:not(.showing-remaining) .ghsb-team .sb-total{font-size:42px!important;}
- body.in-game .modal#scoreModal:not(.showing-remaining) .score-modal-actions{margin:0!important;flex:none!important;}
+body .identity-dialog[aria-labelledby='identity-title'] .identity-dialog-head h2 {
+  font-size: 20px;
+  margin: 0;
 }
-body.in-game .modal#scoreModal:not(.showing-remaining) .ghsb-team .sb-delta{color:#ffe6a0!important;opacity:1!important;text-shadow:0 1px 1px #000;}
-body #celePage .cele-recap .recap-grid>div{min-width:0!important;display:flex!important;flex-direction:column!important;align-items:flex-start!important;gap:2px!important;padding:5px 8px!important;border-radius:8px!important;}
-body #celePage .cele-recap .recap-grid b{display:block!important;white-space:normal!important;text-overflow:clip!important;overflow:visible!important;font:600 14px/1.2 system-ui!important;overflow-wrap:anywhere;}
-body #celePage .cele-recap .recap-grid span{white-space:normal!important;font:11px/1.2 system-ui!important;}
-@media(orientation:landscape){body #celePage .cele-recap .recap-grid{grid-template-columns:1.6fr 1fr 1.1fr 1fr!important;}}
-body #houseDetails805 .identity-avatar{height:60px!important;min-height:60px!important;background:var(--house-menu-button)!important;border:1px solid #ad945f;border-radius:8px;color:#fff0d0!important;font:13px Georgia;}
-body #houseDetails805 .profile-actions836{display:flex;gap:6px;align-items:stretch;}
-body #houseDetails805 .profile-actions836 .house-action{flex:1;min-width:0;padding:6px!important;}
-body #houseDetails805 .profile-actions836 .house-action small{display:none;}
-body #houseDetails805 .house-field836{height:60px;}
-body #houseDetails805 .house-field836 input{margin:0!important;}
-body #houseDetails805 .house-control836 .identity-voice select{min-height:34px;height:34px;font-size:13px;}
-body #houseDetails805 .house-control836 .identity-voice button{min-height:34px;height:34px;}
-@media(orientation:landscape){
- body #houseEffects064 .he064-shell{width:min(760px,calc(100vw - 24px))!important;}
- body #houseEffects064 [data-he-pane=sounds]{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:6px 10px;align-content:start;}
- body #houseEffects064 .he064-row{margin:0!important;min-width:0;}
+body .identity-dialog[aria-labelledby='identity-title'] .choice-search836 {
+  margin: 7px 0;
 }
-@media(orientation:landscape) and (max-height:340px){
- body #houseDetails805 .guide-entry836{padding:5px 8px;}
- body #houseDetails805 .guide-entry836 h3{margin-bottom:2px;}
- body #houseDetails805 .house-control836 .house-action{min-height:40px;}
+body .identity-dialog[aria-labelledby='identity-title'] .identity-pages {
+  margin: 7px 0 0;
 }
-body #houseDetails805 .identity-voice button{background:var(--house-menu-button)!important;color:#fff0d0!important;border:1px solid #ad945f;border-radius:7px;}
-body #botPickerModal .bot-picker-sheet>.choice-empty836:not([hidden]){display:block!important;}
-body .choice-search836{height:34px!important;min-height:34px!important;max-height:34px!important;font:14px system-ui!important;}
+body #landingPartners783 {
+  box-sizing: border-box !important;
+  width: min(760px, calc(100vw - 24px)) !important;
+  height: min(440px, calc(100dvh - 20px)) !important;
+  max-height: calc(100dvh - 20px) !important;
+  padding: 10px !important;
+  inset: 0 !important;
+  margin: auto !important;
+  gap: 6px !important;
+  grid-template-rows: auto auto auto minmax(0, 1fr) auto !important;
+}
+body #landingPartners783[open] {
+  display: grid !important;
+}
+body #landingPartners783 [data-partner-control] {
+  display: none !important;
+}
+body #landingPartners783 .identity-dialog-head h2 {
+  font-size: 20px !important;
+  margin: 0 !important;
+}
+body #landingPartners783 .identity-dialog-head button {
+  min-height: 28px !important;
+  height: 28px !important;
+  width: 28px !important;
+}
+body #landingPartners783 .partner-photo-grid {
+  display: grid !important;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  grid-auto-rows: minmax(0, 1fr);
+  gap: 6px;
+  min-height: 0;
+}
+body #landingPartners783 .partner-photo {
+  display: flex;
+  align-items: center;
+  min-width: 0;
+  min-height: 0;
+  gap: 7px;
+  padding: 6px !important;
+  text-align: left;
+}
+body #landingPartners783 .partner-photo img,
+body #landingPartners783 .partner-random {
+  width: 38px;
+  height: 44px;
+  object-fit: cover;
+  border-radius: 5px;
+  flex: none;
+}
+body #landingPartners783 .partner-photo strong {
+  display: block;
+  font: 600 14px/1.2 Georgia;
+}
+body #landingPartners783 .partner-photo small {
+  display: block;
+  font: 11px/1.2 system-ui;
+  margin-top: 3px;
+}
+body #landingPartners783 .partner-photo-nav {
+  display: flex !important;
+  align-items: center;
+  justify-content: flex-start;
+  padding-right: 140px;
+  gap: 8px;
+  height: 34px;
+  min-height: 34px;
+  font: 12px system-ui;
+}
+body #landingPartners783 .partner-photo-nav button {
+  height: 34px !important;
+  min-height: 34px !important;
+  padding: 3px 8px !important;
+  font-size: 12px !important;
+}
+body #landingPartners783 > [data-done] {
+  position: absolute !important;
+  right: 10px !important;
+  bottom: 10px !important;
+  height: 34px !important;
+  min-height: 34px !important;
+  padding: 4px 9px !important;
+  font-size: 13px !important;
+  max-width: 155px;
+}
+@media (orientation: landscape) {
+  body #houseDetails805,
+  body #houseSound805 {
+    width: min(760px, calc(100vw - 24px)) !important;
+    height: min(620px, calc(100dvh - 20px)) !important;
+    inset: 10px !important;
+    margin: auto !important;
+    padding: 10px !important;
+  }
+  body #houseDetails805 .house-content,
+  body #houseSound805 .house-content {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 6px 14px;
+  }
+  body #houseDetails805 .house-content.guide-entries836 {
+    gap: 6px 10px;
+  }
+  body #houseDetails805 .house-action,
+  body #houseSound805 .house-action {
+    min-height: 44px;
+    padding: 6px 9px;
+    margin: 0;
+  }
+  body #houseDetails805 .house-control836 .house-note {
+    margin: 3px 0;
+  }
+  body #houseDetails805 .house-control836 label:has(input[type='range']) {
+    font-size: 13px !important;
+    line-height: 1.25 !important;
+  }
+  body #houseDetails805 .house-sound-control select {
+    height: 34px;
+    min-height: 34px;
+    font-size: 13px;
+  }
+  body #houseDetails805 .house-page-nav,
+  body #houseSound805 .house-page-nav {
+    margin-top: 5px;
+    padding-top: 5px;
+  }
+  body #houseDetails805 .house-page-nav button,
+  body #houseSound805 .house-page-nav button {
+    height: 34px;
+    min-height: 34px;
+  }
+  body .identity-dialog[aria-labelledby='identity-title'] .identity-grid {
+    grid-template-columns: repeat(6, minmax(0, 1fr));
+    gap: 6px;
+  }
+  body .identity-dialog[aria-labelledby='identity-title'] .identity-grid button {
+    height: 74px;
+    padding: 3px;
+  }
+  body .identity-dialog[aria-labelledby='identity-title'] .identity-grid img {
+    width: 44px !important;
+    height: 44px !important;
+  }
+  body .identity-dialog[aria-labelledby='identity-title'] .identity-pages button {
+    height: 32px;
+    min-height: 32px;
+  }
+  body #landingPartners783 {
+    height: min(350px, calc(100dvh - 20px)) !important;
+  }
+  body #botPickerModal #botPickerGrid {
+    grid-auto-rows: 76px !important;
+  }
+  body #botPickerModal #botPickerGrid .bot-pick {
+    height: 76px !important;
+  }
+}
+@media (orientation: portrait) {
+  body #landingPartners783 {
+    height: min(650px, calc(100dvh - 24px)) !important;
+  }
+  body #landingPartners783 .partner-photo-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+  body #landingPartners783 .partner-photo-nav {
+    padding-right: 0;
+    height: 74px !important;
+    align-items: flex-start;
+  }
+  body #landingPartners783 > [data-done] {
+    left: 10px !important;
+    max-width: none !important;
+    width: calc(100% - 20px);
+  }
+  body #landingPartners783 .partner-photo {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 4px;
+  }
+  body #landingPartners783 .partner-photo img {
+    width: 44px;
+    height: 48px;
+  }
+  /* Short, ordered results story rather than stretching rows across the screen. */
+  body.in-game .modal#scoreModal:not(.showing-remaining) .scoreboard-modal {
+    display: flex !important;
+    flex-direction: column !important;
+    height: auto !important;
+    max-height: calc(100dvh - 24px) !important;
+    padding: 14px !important;
+    gap: 10px !important;
+  }
+  body.in-game .modal#scoreModal:not(.showing-remaining) #scoreModalBody {
+    flex: 0 1 auto !important;
+    min-height: 0 !important;
+    overflow: hidden !important;
+  }
+  body.in-game .modal#scoreModal:not(.showing-remaining) .gh-approved-scoreboard {
+    display: grid !important;
+    grid-template-columns: minmax(0, 1fr) !important;
+    height: auto !important;
+    align-content: start !important;
+    gap: 9px !important;
+  }
+  body.in-game .modal#scoreModal:not(.showing-remaining) .ghsb-matchup {
+    grid-row: auto !important;
+    grid-column: auto !important;
+  }
+  body.in-game .modal#scoreModal:not(.showing-remaining) .ghsb-goal {
+    font-size: 14px !important;
+    padding: 0 !important;
+  }
+  body.in-game .modal#scoreModal:not(.showing-remaining) .ghsb-contract {
+    font-size: 21px !important;
+    padding: 4px !important;
+  }
+  body.in-game .modal#scoreModal:not(.showing-remaining) .ghsb-team-icon {
+    width: 40px !important;
+    height: 40px !important;
+  }
+  body.in-game .modal#scoreModal:not(.showing-remaining) .ghsb-team {
+    gap: 4px !important;
+    padding: 4px !important;
+  }
+  body.in-game .modal#scoreModal:not(.showing-remaining) .ghsb-team .sb-total {
+    font-size: 42px !important;
+  }
+  body.in-game .modal#scoreModal:not(.showing-remaining) .score-modal-actions {
+    margin: 0 !important;
+    flex: none !important;
+  }
+}
+body.in-game .modal#scoreModal:not(.showing-remaining) .ghsb-team .sb-delta {
+  color: #ffe6a0 !important;
+  opacity: 1 !important;
+  text-shadow: 0 1px 1px #000;
+}
+body #celePage .cele-recap .recap-grid > div {
+  min-width: 0 !important;
+  display: flex !important;
+  flex-direction: column !important;
+  align-items: flex-start !important;
+  gap: 2px !important;
+  padding: 5px 8px !important;
+  border-radius: 8px !important;
+}
+body #celePage .cele-recap .recap-grid b {
+  display: block !important;
+  white-space: normal !important;
+  text-overflow: clip !important;
+  overflow: visible !important;
+  font: 600 14px/1.2 system-ui !important;
+  overflow-wrap: anywhere;
+}
+body #celePage .cele-recap .recap-grid span {
+  white-space: normal !important;
+  font: 11px/1.2 system-ui !important;
+}
+@media (orientation: landscape) {
+  body #celePage .cele-recap .recap-grid {
+    grid-template-columns: 1.6fr 1fr 1.1fr 1fr !important;
+  }
+}
+body #houseDetails805 .identity-avatar {
+  height: 60px !important;
+  min-height: 60px !important;
+  background: var(--house-menu-button) !important;
+  border: 1px solid #ad945f;
+  border-radius: 8px;
+  color: #fff0d0 !important;
+  font: 13px Georgia;
+}
+body #houseDetails805 .profile-actions836 {
+  display: flex;
+  gap: 6px;
+  align-items: stretch;
+}
+body #houseDetails805 .profile-actions836 .house-action {
+  flex: 1;
+  min-width: 0;
+  padding: 6px !important;
+}
+body #houseDetails805 .profile-actions836 .house-action small {
+  display: none;
+}
+body #houseDetails805 .house-field836 {
+  height: 60px;
+}
+body #houseDetails805 .house-field836 input {
+  margin: 0 !important;
+}
+body #houseDetails805 .house-control836 .identity-voice select {
+  min-height: 34px;
+  height: 34px;
+  font-size: 13px;
+}
+body #houseDetails805 .house-control836 .identity-voice button {
+  min-height: 34px;
+  height: 34px;
+}
+@media (orientation: landscape) {
+  body #houseEffects064 .he064-shell {
+    width: min(760px, calc(100vw - 24px)) !important;
+  }
+  body #houseEffects064 [data-he-pane='sounds'] {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 6px 10px;
+    align-content: start;
+  }
+  body #houseEffects064 .he064-row {
+    margin: 0 !important;
+    min-width: 0;
+  }
+}
+@media (orientation: landscape) and (max-height: 340px) {
+  body #houseDetails805 .guide-entry836 {
+    padding: 5px 8px;
+  }
+  body #houseDetails805 .guide-entry836 h3 {
+    margin-bottom: 2px;
+  }
+  body #houseDetails805 .house-control836 .house-action {
+    min-height: 40px;
+  }
+}
+body #houseDetails805 .identity-voice button {
+  background: var(--house-menu-button) !important;
+  color: #fff0d0 !important;
+  border: 1px solid #ad945f;
+  border-radius: 7px;
+}
+body #botPickerModal .bot-picker-sheet > .choice-empty836:not([hidden]) {
+  display: block !important;
+}
+body .choice-search836 {
+  height: 34px !important;
+  min-height: 34px !important;
+  max-height: 34px !important;
+  font: 14px system-ui !important;
+}
 
-@media(orientation:landscape){body #houseDetails805 .guide-entries836[data-guide-kind="Career levels"] .guide-entry836{display:grid;grid-template-columns:minmax(0,1fr) auto;align-items:center;gap:6px;padding:6px 8px;}body #houseDetails805 .guide-entries836[data-guide-kind="Career levels"] h3{margin:0;font-size:13px;}}
-@media(orientation:landscape){
- body #celePage.cele-page{padding:10px!important;box-sizing:border-box!important;}
- body #celePage .cele-inner{box-sizing:border-box!important;max-width:none!important;margin:0!important;width:100%!important;height:100%!important;max-height:100%!important;}
+@media (orientation: landscape) {
+  body #houseDetails805 .guide-entries836[data-guide-kind='Career levels'] .guide-entry836 {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) auto;
+    align-items: center;
+    gap: 6px;
+    padding: 6px 8px;
+  }
+  body #houseDetails805 .guide-entries836[data-guide-kind='Career levels'] h3 {
+    margin: 0;
+    font-size: 13px;
+  }
 }
-@media(orientation:landscape) and (max-height:340px){
- body #celePage .cele-trick{display:grid!important;grid-template-columns:minmax(180px,.9fr) minmax(0,1.6fr);align-items:center;gap:10px;padding:6px 8px!important;}
- body #celePage .cele-trick-head{display:flex;flex-direction:column;align-items:flex-start;justify-content:center;gap:3px;margin:0!important;min-width:0;}
- body #celePage .cele-trick-label{font-size:11px;}
- body #celePage .cele-trick-taker{font-size:13px;}
- body #celePage .cele-trick-meta{font-size:11px;}
- body #celePage .cele-plays{height:100%;min-height:0;align-items:center;}
- body #celePage .cele-play .card-face{width:min(5vw,14svh)!important;height:min(20svh,60px)!important;}
- body #celePage .cele-crown{font-size:10px;line-height:10px;height:10px;margin:0;}
- body #celePage .cele-play-name{font-size:11px;line-height:12px;margin-top:2px;}
+@media (orientation: landscape) {
+  body #celePage.cele-page {
+    padding: 10px !important;
+    box-sizing: border-box !important;
+  }
+  body #celePage .cele-inner {
+    box-sizing: border-box !important;
+    max-width: none !important;
+    margin: 0 !important;
+    width: 100% !important;
+    height: 100% !important;
+    max-height: 100% !important;
+  }
 }
-body #houseDetails805 #targetScoreBlock{display:grid!important;grid-template-columns:auto minmax(0,1fr);align-items:center;gap:4px 8px;padding:6px!important;}
-body #houseDetails805 #targetScoreBlock>select{height:34px;min-height:34px;font-size:13px;}
-body #houseDetails805 #targetScoreBlock:has(.target-score-custom-wrap:not(.hidden)){grid-template-columns:minmax(85px,1fr) minmax(0,2fr);}
-body #houseDetails805 #targetScoreBlock:has(.target-score-custom-wrap:not(.hidden))>select{grid-column:1;grid-row:2;}
-body #houseDetails805 #targetScoreBlock .target-score-custom-wrap{grid-column:2;grid-row:1/3;margin:0;min-width:0;}
-body #houseDetails805 #targetScoreBlock .target-score-custom-wrap>.option-hint{display:none;}
-body #houseDetails805 #targetScoreBlock .target-score-custom-row input,body #houseDetails805 #targetScoreBlock .target-score-confirm{height:34px!important;min-height:34px!important;font-size:13px;}
-body #houseDetails805 #customScoreFeedback836{font-size:11px;line-height:1.25;margin:3px 0 0;}
-@media(orientation:landscape){
- body #houseDetails805 .house-wide836{grid-column:1/-1;}
- body #houseDetails805[data-route="House Rules"] .house-content{grid-template-columns:minmax(0,1fr);}
- body #houseDetails805[data-route="House Rules"] .house-note{margin:4px 0;font-size:13px;line-height:1.4;}
+@media (orientation: landscape) and (max-height: 340px) {
+  body #celePage .cele-trick {
+    display: grid !important;
+    grid-template-columns: minmax(180px, 0.9fr) minmax(0, 1.6fr);
+    align-items: center;
+    gap: 10px;
+    padding: 6px 8px !important;
+  }
+  body #celePage .cele-trick-head {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    justify-content: center;
+    gap: 3px;
+    margin: 0 !important;
+    min-width: 0;
+  }
+  body #celePage .cele-trick-label {
+    font-size: 11px;
+  }
+  body #celePage .cele-trick-taker {
+    font-size: 13px;
+  }
+  body #celePage .cele-trick-meta {
+    font-size: 11px;
+  }
+  body #celePage .cele-plays {
+    height: 100%;
+    min-height: 0;
+    align-items: center;
+  }
+  body #celePage .cele-play .card-face {
+    width: min(5vw, 14svh) !important;
+    height: min(20svh, 60px) !important;
+  }
+  body #celePage .cele-crown {
+    font-size: 10px;
+    line-height: 10px;
+    height: 10px;
+    margin: 0;
+  }
+  body #celePage .cele-play-name {
+    font-size: 11px;
+    line-height: 12px;
+    margin-top: 2px;
+  }
+}
+body #houseDetails805 #targetScoreBlock {
+  display: grid !important;
+  grid-template-columns: auto minmax(0, 1fr);
+  align-items: center;
+  gap: 4px 8px;
+  padding: 6px !important;
+}
+body #houseDetails805 #targetScoreBlock > select {
+  height: 34px;
+  min-height: 34px;
+  font-size: 13px;
+}
+body #houseDetails805 #targetScoreBlock:has(.target-score-custom-wrap:not(.hidden)) {
+  grid-template-columns: minmax(85px, 1fr) minmax(0, 2fr);
+}
+body #houseDetails805 #targetScoreBlock:has(.target-score-custom-wrap:not(.hidden)) > select {
+  grid-column: 1;
+  grid-row: 2;
+}
+body #houseDetails805 #targetScoreBlock .target-score-custom-wrap {
+  grid-column: 2;
+  grid-row: 1/3;
+  margin: 0;
+  min-width: 0;
+}
+body #houseDetails805 #targetScoreBlock .target-score-custom-wrap > .option-hint {
+  display: none;
+}
+body #houseDetails805 #targetScoreBlock .target-score-custom-row input,
+body #houseDetails805 #targetScoreBlock .target-score-confirm {
+  height: 34px !important;
+  min-height: 34px !important;
+  font-size: 13px;
+}
+body #houseDetails805 #customScoreFeedback836 {
+  font-size: 11px;
+  line-height: 1.25;
+  margin: 3px 0 0;
+}
+@media (orientation: landscape) {
+  body #houseDetails805 .house-wide836 {
+    grid-column: 1/-1;
+  }
+  body #houseDetails805[data-route='House Rules'] .house-content {
+    grid-template-columns: minmax(0, 1fr);
+  }
+  body #houseDetails805[data-route='House Rules'] .house-note {
+    margin: 4px 0;
+    font-size: 13px;
+    line-height: 1.4;
+  }
 }
 /* Results own their score display; outrank the live in-game HUD rule. */
 body.in-game:has(#winOverlay:not(.hidden)) #matchHeader706,
 body.in-game:has(#celePage:not(.hidden)) #matchHeader706,
-body:has(#celePage:not(.hidden)) #matchHeader706{display:none!important;}
-body #celePage .cele-play-name{white-space:normal!important;text-overflow:clip!important;overflow:visible!important;overflow-wrap:anywhere;}
+body:has(#celePage:not(.hidden)) #matchHeader706 {
+  display: none !important;
+}
+body #celePage .cele-play-name {
+  white-space: normal !important;
+  text-overflow: clip !important;
+  overflow: visible !important;
+  overflow-wrap: anywhere;
+}

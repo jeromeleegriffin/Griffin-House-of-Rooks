@@ -3,7 +3,7 @@
    Kept separate from portrait and from scene/character/holder rendering. */
 @media (orientation: landscape) {
   body.in-game.angle-c-runtime #discardOverlay:not(.hidden) {
-    background: rgba(4, 10, 19, .96) !important;
+    background: rgba(4, 10, 19, 0.96) !important;
     display: flex !important;
     align-items: center !important;
     justify-content: center !important;
@@ -11,7 +11,7 @@
   }
   body.in-game.angle-c-runtime #discardOverlay .discard-sheet.gh-landscape-discard {
     --hor-discard-face-h: clamp(68px, calc((100dvh - 210px) / 2), 118px);
-    --hor-discard-face-w: calc(var(--hor-discard-face-h) * .690476);
+    --hor-discard-face-w: calc(var(--hor-discard-face-h) * 0.690476);
     position: relative !important;
     display: grid !important;
     grid-template-columns: minmax(0, 1fr) !important;
@@ -27,9 +27,14 @@
     border: 2px solid #bb9957 !important;
     border-radius: 12px !important;
     background: linear-gradient(155deg, #142635, #0a1b29 52%, #131e27) !important;
-    box-shadow: 0 0 0 2px #292016, inset 0 0 0 1px #624d2a, 0 15px 45px #000b !important;
+    box-shadow:
+      0 0 0 2px #292016,
+      inset 0 0 0 1px #624d2a,
+      0 15px 45px #000b !important;
   }
-  body.in-game.angle-c-runtime #discardOverlay .discard-sheet.gh-landscape-discard:not(:has(.discard-kitty)) {
+  body.in-game.angle-c-runtime
+    #discardOverlay
+    .discard-sheet.gh-landscape-discard:not(:has(.discard-kitty)) {
     grid-template-rows: 44px minmax(0, 1fr) 48px !important;
   }
   body.in-game.angle-c-runtime #discardOverlay .gh-landscape-discard .discard-kitty {
@@ -40,15 +45,17 @@
     padding: 2px 7px !important;
     margin: 0 !important;
     gap: 8px !important;
-    background: rgba(10, 31, 44, .85) !important;
-    border: 1px solid rgba(190, 156, 88, .48) !important;
+    background: rgba(10, 31, 44, 0.85) !important;
+    border: 1px solid rgba(190, 156, 88, 0.48) !important;
     border-radius: 5px !important;
     overflow: hidden !important;
     box-shadow: inset 0 1px 4px #0008 !important;
   }
   body.in-game.angle-c-runtime #discardOverlay .gh-landscape-discard .kitty-label {
     color: #e2c88b !important;
-    font: 700 12px/1.1 Georgia, serif !important;
+    font:
+      700 12px/1.1 Georgia,
+      serif !important;
     white-space: nowrap !important;
   }
   body.in-game.angle-c-runtime #discardOverlay .gh-landscape-discard .kitty-cards {
@@ -85,15 +92,19 @@
   }
   body.in-game.angle-c-runtime #discardOverlay .gh-landscape-discard .discard-title {
     margin: 0 !important;
-    font: 700 clamp(16px, 2.5vw, 22px)/1.1 Georgia, serif !important;
+    font:
+      700 clamp(16px, 2.5vw, 22px) / 1.1 Georgia,
+      serif !important;
     color: #f2db9c !important;
-    letter-spacing: .045em !important;
+    letter-spacing: 0.045em !important;
     text-shadow: 0 2px 2px #000 !important;
     white-space: nowrap !important;
   }
   body.in-game.angle-c-runtime #discardOverlay .gh-landscape-discard .gh-discard-instruction {
     margin: 3px 0 0 !important;
-    font: 500 clamp(10px, 1.35vw, 13px)/1.15 system-ui, sans-serif !important;
+    font:
+      500 clamp(10px, 1.35vw, 13px) / 1.15 system-ui,
+      sans-serif !important;
     color: #d5d1c5 !important;
     white-space: nowrap !important;
   }
@@ -102,12 +113,14 @@
     flex: none !important;
     min-width: 115px !important;
     padding: 5px 9px !important;
-    border: 1px solid rgba(192, 154, 76, .8) !important;
+    border: 1px solid rgba(192, 154, 76, 0.8) !important;
     border-radius: 7px !important;
-    background: rgba(8, 17, 25, .88) !important;
+    background: rgba(8, 17, 25, 0.88) !important;
     color: #f4db9d !important;
     box-shadow: inset 0 0 7px #000a !important;
-    font: 700 clamp(11px, 1.5vw, 15px)/1.2 Georgia, serif !important;
+    font:
+      700 clamp(11px, 1.5vw, 15px) / 1.2 Georgia,
+      serif !important;
     text-align: center !important;
     white-space: nowrap !important;
   }
@@ -122,8 +135,15 @@
     padding: 6px 10px !important;
     border: 1px solid #a9874d !important;
     border-radius: 7px !important;
-    background: radial-gradient(ellipse at 52% 40%, #153f72 0%, #102e55 58%, #081b35 100%) !important;
-    box-shadow: inset 0 0 21px #000b, 0 1px 0 #e8c98544 !important;
+    background: radial-gradient(
+      ellipse at 52% 40%,
+      #153f72 0%,
+      #102e55 58%,
+      #081b35 100%
+    ) !important;
+    box-shadow:
+      inset 0 0 21px #000b,
+      0 1px 0 #e8c98544 !important;
   }
   body.in-game.angle-c-runtime #discardOverlay .gh-landscape-discard .discard-groups {
     display: grid !important;
@@ -141,7 +161,10 @@
     padding: 0 !important;
     margin: 0 auto !important;
   }
-  body.in-game.angle-c-runtime #discardOverlay .gh-landscape-discard :is(.discard-color-row, .discard-color-cards) {
+  body.in-game.angle-c-runtime
+    #discardOverlay
+    .gh-landscape-discard
+    :is(.discard-color-row, .discard-color-cards) {
     display: contents !important;
   }
   body.in-game.angle-c-runtime #discardOverlay .gh-landscape-discard .discard-color-label {
@@ -170,7 +193,11 @@
     touch-action: manipulation !important;
     -webkit-tap-highlight-color: transparent !important;
   }
-  body.in-game.angle-c-runtime #discardOverlay .gh-landscape-discard .discard-slot .discard-card-art {
+  body.in-game.angle-c-runtime
+    #discardOverlay
+    .gh-landscape-discard
+    .discard-slot
+    .discard-card-art {
     position: relative !important;
     box-sizing: border-box !important;
     width: var(--hor-discard-face-w) !important;
@@ -190,12 +217,20 @@
     background-color: #fff8e8 !important;
     box-shadow: 0 2px 8px #0008 !important;
     transform: none !important;
-    transition: transform .12s ease, box-shadow .12s ease !important;
+    transition:
+      transform 0.12s ease,
+      box-shadow 0.12s ease !important;
   }
-  body.in-game.angle-c-runtime #discardOverlay .gh-landscape-discard .discard-slot.selected .discard-card-art {
+  body.in-game.angle-c-runtime
+    #discardOverlay
+    .gh-landscape-discard
+    .discard-slot.selected
+    .discard-card-art {
     outline: 3px solid #f5cf65 !important;
     outline-offset: 1px !important;
-    box-shadow: 0 0 0 3px #38220b, 0 0 12px 3px #e7ad40 !important;
+    box-shadow:
+      0 0 0 3px #38220b,
+      0 0 12px 3px #e7ad40 !important;
     transform: translateY(-2px) !important;
   }
   body.in-game.angle-c-runtime #discardOverlay .gh-landscape-discard .discard-slot .gh-card-check {
@@ -214,11 +249,17 @@
     justify-content: center !important;
     background: #172f23 !important;
     color: #ffe6a2 !important;
-    font: 900 14px/1 system-ui, sans-serif !important;
+    font:
+      900 14px/1 system-ui,
+      sans-serif !important;
     text-shadow: 0 1px 2px #000 !important;
     pointer-events: none !important;
   }
-  body.in-game.angle-c-runtime #discardOverlay .gh-landscape-discard .discard-slot.selected .gh-card-check {
+  body.in-game.angle-c-runtime
+    #discardOverlay
+    .gh-landscape-discard
+    .discard-slot.selected
+    .gh-card-check {
     display: flex !important;
   }
   body.in-game.angle-c-runtime #discardOverlay .gh-landscape-discard .discard-slot:focus-visible {
@@ -248,8 +289,12 @@
     background: linear-gradient(#1f503a, #0b2e22) !important;
     color: #ffebbc !important;
     text-align: center !important;
-    font: 700 16px/1.1 Georgia, serif !important;
-    box-shadow: inset 0 1px 0 #fff2, 0 2px 8px #0007 !important;
+    font:
+      700 16px/1.1 Georgia,
+      serif !important;
+    box-shadow:
+      inset 0 1px 0 #fff2,
+      0 2px 8px #0007 !important;
     touch-action: manipulation !important;
     cursor: pointer !important;
   }
@@ -268,7 +313,9 @@
     gap: 2px !important;
     padding: 6px 9px !important;
   }
-  body.in-game.angle-c-runtime #discardOverlay .discard-sheet.gh-landscape-discard:not(:has(.discard-kitty)) {
+  body.in-game.angle-c-runtime
+    #discardOverlay
+    .discard-sheet.gh-landscape-discard:not(:has(.discard-kitty)) {
     grid-template-rows: 34px minmax(0, 1fr) 38px !important;
   }
   body.in-game.angle-c-runtime #discardOverlay .gh-landscape-discard .discard-kitty {
@@ -277,18 +324,40 @@
     padding: 1px 7px !important;
     min-height: 0 !important;
   }
-  body.in-game.angle-c-runtime #discardOverlay .gh-landscape-discard .kitty-cards {display:none !important;}
+  body.in-game.angle-c-runtime #discardOverlay .gh-landscape-discard .kitty-cards {
+    display: none !important;
+  }
   body.in-game.angle-c-runtime #discardOverlay .gh-landscape-discard .gh-discard-head {
     height: 34px !important;
     padding: 0 3px !important;
   }
-  body.in-game.angle-c-runtime #discardOverlay .gh-landscape-discard .discard-title {font-size: 16px !important;}
-  body.in-game.angle-c-runtime #discardOverlay .gh-landscape-discard .gh-discard-instruction {font-size: 10px !important;}
-  body.in-game.angle-c-runtime #discardOverlay .gh-landscape-discard .gh-discard-count {padding: 3px 5px !important;font-size: 11px !important;}
-  body.in-game.angle-c-runtime #discardOverlay .gh-landscape-discard-felt {padding:3px 6px !important;}
-  body.in-game.angle-c-runtime #discardOverlay .gh-landscape-discard .discard-groups {gap:5px 2px !important;}
-  body.in-game.angle-c-runtime #discardOverlay .gh-landscape-discard #confirmDiscard {height:35px !important;font-size:14px !important;}
+  body.in-game.angle-c-runtime #discardOverlay .gh-landscape-discard .discard-title {
+    font-size: 16px !important;
+  }
+  body.in-game.angle-c-runtime #discardOverlay .gh-landscape-discard .gh-discard-instruction {
+    font-size: 10px !important;
+  }
+  body.in-game.angle-c-runtime #discardOverlay .gh-landscape-discard .gh-discard-count {
+    padding: 3px 5px !important;
+    font-size: 11px !important;
+  }
+  body.in-game.angle-c-runtime #discardOverlay .gh-landscape-discard-felt {
+    padding: 3px 6px !important;
+  }
+  body.in-game.angle-c-runtime #discardOverlay .gh-landscape-discard .discard-groups {
+    gap: 5px 2px !important;
+  }
+  body.in-game.angle-c-runtime #discardOverlay .gh-landscape-discard #confirmDiscard {
+    height: 35px !important;
+    font-size: 14px !important;
+  }
 }
 @media (prefers-reduced-motion: reduce) {
-  body.in-game.angle-c-runtime #discardOverlay .gh-landscape-discard .discard-slot .discard-card-art {transition:none!important;}
+  body.in-game.angle-c-runtime
+    #discardOverlay
+    .gh-landscape-discard
+    .discard-slot
+    .discard-card-art {
+    transition: none !important;
+  }
 }

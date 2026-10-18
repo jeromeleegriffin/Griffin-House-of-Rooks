@@ -1,0 +1,129 @@
+{
+  "build": "846-source-cleanup",
+  "status": "LOCALLY_TESTED_NOT_DEPLOYED",
+  "ownerRequestedCleanup": true,
+  "sourceBuild": "845-share-shuffle",
+  "sourceCommit": "26cf989cedfc6e7bde269f1b22690afeaa558a45",
+  "sourcePath": "builds/845",
+  "baselineTestHead": "e6ae19538a91ec5d12ffa10e2dc3e85abd6ba719",
+  "baselineProductionHead": "be2054a9d730162fbeae20ad8b8511438e9d6cfc",
+  "sourceFiles": 1650,
+  "changed": 109,
+  "new": 40,
+  "unchanged": 1501,
+  "deletedPaths": [
+    "814_CARD_FRAME_FIX.txt",
+    "815_REPAIR_NOTE.txt",
+    "QA_BASELINE_811.json",
+    "QA_BASELINE_812.json",
+    "QA_RESULT.json",
+    "READ-FIRST-LOWER-CAMERA.txt",
+    "README-829.txt",
+    "README-830.txt",
+    "README-831.txt",
+    "README-832.txt",
+    "README-833.txt",
+    "README-834.txt",
+    "README-835.txt",
+    "README-836.txt",
+    "README-837.txt",
+    "README-838.txt",
+    "README-839.txt",
+    "README-840.txt",
+    "README-841.txt",
+    "README-842.txt",
+    "README-843.txt",
+    "README-844.txt",
+    "README-845.txt",
+    "REPAIR_812_SOURCE.json",
+    "REPAIR_813_SOURCE.json",
+    "REVIEW-CHECKS.json",
+    "REVIEW-MANIFEST.json",
+    "REVIEW_MANIFEST.json",
+    "REVIEW_README.md",
+    "angle-c-hands.js",
+    "shuffle732.css",
+    "shuffle732.js"
+  ],
+  "originalApprovedAssetsUnchanged": 1464,
+  "protectedFiles": [
+    {
+      "path": "rules.js",
+      "sha256": "880e17e2290f307a5029681f293f1bdd6db034cf93a80d0bf2d1f2ba5da74286"
+    },
+    {
+      "path": "bots.js",
+      "sha256": "c0a7fd0940d30c95f02ec364d04220db1326c7d016a1b36e69483156de84702b"
+    },
+    {
+      "path": "qrcode845.js",
+      "sha256": "3ee72de9f69c668f9567363a9358df955960bae9000d9ebd66414670f88e8735"
+    },
+    {
+      "path": "x1/integration.js",
+      "sha256": "6d3ba9427f42ee4b2312cfea51686597010307286ac8c6761766d2d3a609f473"
+    },
+    {
+      "path": "x1/core.js",
+      "sha256": "54295f5da5c3011050c739b4528dc798cb4ba06d09d76ac9305c78d9430edd20"
+    },
+    {
+      "path": "x1/sha256.js",
+      "sha256": "2dc5b474cae25050759e51ea4b9fb2edf08fdfd71d86ffa5b03813221b17cfd9"
+    },
+    {
+      "path": "x1/worker.js",
+      "sha256": "725934cfdb1ce9c19c4b29cfae148878923b9555d760ccb3acef84af242806ae"
+    },
+    {
+      "path": "x1/bidding.js",
+      "sha256": "c2b56d03a1505de5e2f508b05d6c2872ee0bee46ac77712b80ec11fe1adffb0b"
+    }
+  ],
+  "checks": {
+    "rotation": 13,
+    "settings": 16,
+    "audio": 9,
+    "scoring": 36,
+    "guards": 19,
+    "network": 12,
+    "network-hand": 10,
+    "handoff": 6,
+    "retired": 7,
+    "cleanup-ui": 12,
+    "upgrade": 9,
+    "menuRoutes": 48,
+    "visibleLayoutComparisons": 5,
+    "freshOfflineScenario": 1,
+    "fullMatches": 2
+  },
+  "totalRecordedChecksAndScenarios": 205,
+  "matchResults": [
+    {
+      "orientation": "landscape",
+      "scores": [
+        -215,
+        580
+      ],
+      "completedHands": 4
+    },
+    {
+      "orientation": "portrait",
+      "scores": [
+        270,
+        530
+      ],
+      "completedHands": 4
+    }
+  ],
+  "menuHarnessCorrection": "Initial two menu clicks used an insufficient fixed startup delay while 10 disposable browsers ran concurrently. Both passed after waiting for the actual loading screen to close; all 48 routes fit. Original evidence is retained.",
+  "testHarnessCorrections": [
+    "Avatar coverage uses the actual 66 human identities rather than an outdated 65-identity assumption. The established orientation handler closes menus, so each orientation opens its own chooser.",
+    "Visual comparison freezes Web Animations at time zero and compares painted visibility; hidden-layout used margins are not a pixel-equivalence measure."
+  ],
+  "physicalAndroidNewlyVerified": false,
+  "realWANMultiplayerNewlyVerified": false,
+  "noUserDataCleared": true,
+  "gameZipCreated": false,
+  "notes": "Final code differs from the main gameplay tests only by removal of one empty IIFE and equivalent formatter normalization. Exact current source-check, focused UI checks and fresh visual comparisons pass."
+}

@@ -1,0 +1,66 @@
+{
+  "truth": {
+    "page": "846-source-cleanup",
+    "script": "846-source-cleanup",
+    "marker": "846-source-cleanup",
+    "worker": {
+      "build": "846-source-cleanup",
+      "cache": "house-of-rooks-846-source-cleanup"
+    },
+    "controller": "http://127.0.0.1:9018/sw060.js?v=846-source-cleanup",
+    "coherent": true
+  },
+  "review": true,
+  "manifest": {
+    "name": "House of Rooks",
+    "short_name": "House of Rooks",
+    "description": "Four-player partnership trick-taking by Jerome Griffin. Host a table from your phone.",
+    "id": "./",
+    "start_url": "./",
+    "scope": "./",
+    "display": "fullscreen",
+    "background_color": "#0e1610",
+    "theme_color": "#1a120b",
+    "orientation": "any",
+    "icons": [
+      {
+        "src": "assets/images/house-of-rooks-192.png?v=805-ownerreview",
+        "sizes": "192x192",
+        "type": "image/png",
+        "purpose": "any"
+      },
+      {
+        "src": "assets/images/house-of-rooks-512.png?v=805-ownerreview",
+        "sizes": "512x512",
+        "type": "image/png",
+        "purpose": "any"
+      },
+      {
+        "src": "assets/images/house-of-rooks-192-maskable.png?v=805-ownerreview",
+        "sizes": "192x192",
+        "type": "image/png",
+        "purpose": "maskable"
+      },
+      {
+        "src": "assets/images/house-of-rooks-512-maskable.png?v=805-ownerreview",
+        "sizes": "512x512",
+        "type": "image/png",
+        "purpose": "maskable"
+      }
+    ],
+    "display_override": [
+      "fullscreen",
+      "standalone"
+    ]
+  },
+  "newCSS": true,
+  "landscapeAssets": true,
+  "manual": true,
+  "heads": true,
+  "qr": {
+    "canvas": true,
+    "vendor": "function",
+    "remote": false
+  },
+  "errors": []
+}

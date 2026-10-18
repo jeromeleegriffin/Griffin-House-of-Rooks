@@ -1,0 +1,608 @@
+[
+  {
+    "file": "angle-c-characters.js",
+    "before": 18653,
+    "after": 18653,
+    "javascriptASTUnchanged": true
+  },
+  {
+    "file": "angle-c-runtime.css",
+    "before": 54480,
+    "after": 54480
+  },
+  {
+    "file": "angle-c-runtime.js",
+    "before": 8140,
+    "after": 8140,
+    "javascriptASTUnchanged": true
+  },
+  {
+    "file": "approved-bid-portrait.css",
+    "before": 7144,
+    "after": 7144
+  },
+  {
+    "file": "approved-bid-portrait.js",
+    "before": 2464,
+    "after": 2464,
+    "javascriptASTUnchanged": true
+  },
+  {
+    "file": "asset-loading772.css",
+    "before": 1706,
+    "after": 1706
+  },
+  {
+    "file": "asset-loading772.js",
+    "before": 13042,
+    "after": 13042,
+    "javascriptASTUnchanged": true
+  },
+  {
+    "file": "audio-mixer.css",
+    "before": 755,
+    "after": 755
+  },
+  {
+    "file": "audio-mixer.js",
+    "before": 5263,
+    "after": 5263,
+    "javascriptASTUnchanged": true
+  },
+  {
+    "file": "bid-hold795.js",
+    "before": 2969,
+    "after": 2969,
+    "javascriptASTUnchanged": true
+  },
+  {
+    "file": "bid-repair737.css",
+    "before": 493,
+    "after": 493
+  },
+  {
+    "file": "bid-repair737.js",
+    "before": 1951,
+    "after": 1951,
+    "javascriptASTUnchanged": true
+  },
+  {
+    "file": "cabin-ambience041.js",
+    "before": 12571,
+    "after": 12571,
+    "javascriptASTUnchanged": true
+  },
+  {
+    "file": "career-core.js",
+    "before": 41836,
+    "after": 41836,
+    "javascriptASTUnchanged": true
+  },
+  {
+    "file": "character-library774.js",
+    "before": 1114,
+    "after": 1114,
+    "javascriptASTUnchanged": true
+  },
+  {
+    "file": "characters077.css",
+    "before": 3164,
+    "after": 3164
+  },
+  {
+    "file": "characters077.js",
+    "before": 24418,
+    "after": 24418,
+    "javascriptASTUnchanged": true
+  },
+  {
+    "file": "fire-glow-controller060.js",
+    "before": 1170,
+    "after": 1170,
+    "javascriptASTUnchanged": true
+  },
+  {
+    "file": "founder-dev.js",
+    "before": 227,
+    "after": 227,
+    "javascriptASTUnchanged": true
+  },
+  {
+    "file": "founder-profile785.js",
+    "before": 1975,
+    "after": 1975,
+    "javascriptASTUnchanged": true
+  },
+  {
+    "file": "friends803.css",
+    "before": 18477,
+    "after": 18477
+  },
+  {
+    "file": "friends803.js",
+    "before": 7124,
+    "after": 7124,
+    "javascriptASTUnchanged": true
+  },
+  {
+    "file": "game060.js",
+    "before": 644919,
+    "after": 644919,
+    "javascriptASTUnchanged": true
+  },
+  {
+    "file": "hand-order838.js",
+    "before": 2795,
+    "after": 2795,
+    "javascriptASTUnchanged": true
+  },
+  {
+    "file": "header-bid805.css",
+    "before": 2654,
+    "after": 2654
+  },
+  {
+    "file": "holder-cues789.css",
+    "before": 5848,
+    "after": 5848
+  },
+  {
+    "file": "holder-cues789.js",
+    "before": 10155,
+    "after": 10155,
+    "javascriptASTUnchanged": true
+  },
+  {
+    "file": "holder-identity784.css",
+    "before": 4754,
+    "after": 4754
+  },
+  {
+    "file": "holder-identity784.js",
+    "before": 5209,
+    "after": 5209,
+    "javascriptASTUnchanged": true
+  },
+  {
+    "file": "holder004.css",
+    "before": 2693,
+    "after": 2693
+  },
+  {
+    "file": "holder004.js",
+    "before": 2313,
+    "after": 2313,
+    "javascriptASTUnchanged": true
+  },
+  {
+    "file": "hor-version.js",
+    "before": 1249,
+    "after": 1249,
+    "javascriptASTUnchanged": true
+  },
+  {
+    "file": "house736.css",
+    "before": 4904,
+    "after": 4904
+  },
+  {
+    "file": "house736.js",
+    "before": 2212,
+    "after": 2212,
+    "javascriptASTUnchanged": true
+  },
+  {
+    "file": "house738.css",
+    "before": 2581,
+    "after": 2581
+  },
+  {
+    "file": "human-avatars.js",
+    "before": 16235,
+    "after": 16235,
+    "javascriptASTUnchanged": true
+  },
+  {
+    "file": "human-bid-voices801.js",
+    "before": 9403,
+    "after": 9403,
+    "javascriptASTUnchanged": true
+  },
+  {
+    "file": "identity-choice.css",
+    "before": 3182,
+    "after": 3182
+  },
+  {
+    "file": "identity-choice.js",
+    "before": 7441,
+    "after": 7441,
+    "javascriptASTUnchanged": true
+  },
+  {
+    "file": "index.html",
+    "before": 106832,
+    "after": 106838
+  },
+  {
+    "file": "jerome-voice-lines.js",
+    "before": 3451,
+    "after": 3451,
+    "javascriptASTUnchanged": true
+  },
+  {
+    "file": "kitty736.css",
+    "before": 23987,
+    "after": 23987
+  },
+  {
+    "file": "laid-down-refinement.css",
+    "before": 4177,
+    "after": 4177
+  },
+  {
+    "file": "landing783.css",
+    "before": 17093,
+    "after": 17093
+  },
+  {
+    "file": "landing783.js",
+    "before": 10278,
+    "after": 10278,
+    "javascriptASTUnchanged": true
+  },
+  {
+    "file": "landscape-discard812.css",
+    "before": 13044,
+    "after": 13044
+  },
+  {
+    "file": "landscape-nest813.css",
+    "before": 28406,
+    "after": 28406
+  },
+  {
+    "file": "landscape-polish.css",
+    "before": 8972,
+    "after": 8972
+  },
+  {
+    "file": "landscape-polish.js",
+    "before": 9527,
+    "after": 9527,
+    "javascriptASTUnchanged": true
+  },
+  {
+    "file": "menu-approved805.css",
+    "before": 25784,
+    "after": 25784
+  },
+  {
+    "file": "menu-approved805.js",
+    "before": 43486,
+    "after": 43486,
+    "javascriptASTUnchanged": true
+  },
+  {
+    "file": "moon-howl.js",
+    "before": 3312,
+    "after": 3312,
+    "javascriptASTUnchanged": true
+  },
+  {
+    "file": "moon-plaque.css",
+    "before": 4237,
+    "after": 4237
+  },
+  {
+    "file": "nest-manual838.css",
+    "before": 9931,
+    "after": 9931
+  },
+  {
+    "file": "nest-manual838.js",
+    "before": 14924,
+    "after": 14924,
+    "javascriptASTUnchanged": true
+  },
+  {
+    "file": "nest-reveal838.css",
+    "before": 1174,
+    "after": 1174
+  },
+  {
+    "file": "nest-reveal838.js",
+    "before": 4310,
+    "after": 4310,
+    "javascriptASTUnchanged": true
+  },
+  {
+    "file": "owner-review805.css",
+    "before": 6481,
+    "after": 6481
+  },
+  {
+    "file": "partner833.css",
+    "before": 2236,
+    "after": 2236
+  },
+  {
+    "file": "polish.js",
+    "before": 66016,
+    "after": 66016,
+    "javascriptASTUnchanged": true
+  },
+  {
+    "file": "privacy.html",
+    "before": 1582,
+    "after": 1582
+  },
+  {
+    "file": "progression.js",
+    "before": 44079,
+    "after": 44079,
+    "javascriptASTUnchanged": true
+  },
+  {
+    "file": "raven-audio761.js",
+    "before": 5094,
+    "after": 5094,
+    "javascriptASTUnchanged": true
+  },
+  {
+    "file": "raven-fight741.css",
+    "before": 1404,
+    "after": 1404
+  },
+  {
+    "file": "raven-fight741.js",
+    "before": 16065,
+    "after": 16065,
+    "javascriptASTUnchanged": true
+  },
+  {
+    "file": "raven-landscape837.js",
+    "before": 7719,
+    "after": 7719,
+    "javascriptASTUnchanged": true
+  },
+  {
+    "file": "raven-timeline741.js",
+    "before": 3063,
+    "after": 3063,
+    "javascriptASTUnchanged": true
+  },
+  {
+    "file": "responsive-review.css",
+    "before": 1769,
+    "after": 1769
+  },
+  {
+    "file": "responsive-review.js",
+    "before": 1967,
+    "after": 1967,
+    "javascriptASTUnchanged": true
+  },
+  {
+    "file": "review835.css",
+    "before": 10822,
+    "after": 10822
+  },
+  {
+    "file": "review835.js",
+    "before": 2454,
+    "after": 2454,
+    "javascriptASTUnchanged": true
+  },
+  {
+    "file": "review836.css",
+    "before": 17955,
+    "after": 17955
+  },
+  {
+    "file": "review836.js",
+    "before": 865,
+    "after": 865,
+    "javascriptASTUnchanged": true
+  },
+  {
+    "file": "review839.css",
+    "before": 11061,
+    "after": 11061
+  },
+  {
+    "file": "review839.js",
+    "before": 1720,
+    "after": 1720,
+    "javascriptASTUnchanged": true
+  },
+  {
+    "file": "rita-avatar.js",
+    "before": 500,
+    "after": 500,
+    "javascriptASTUnchanged": true
+  },
+  {
+    "file": "rita-bot.js",
+    "before": 311,
+    "after": 311,
+    "javascriptASTUnchanged": true
+  },
+  {
+    "file": "rook510-avatars.js",
+    "before": 3811,
+    "after": 3811,
+    "javascriptASTUnchanged": true
+  },
+  {
+    "file": "rook510.css",
+    "before": 3402,
+    "after": 3402
+  },
+  {
+    "file": "rook512-room.js",
+    "before": 3764,
+    "after": 3764,
+    "javascriptASTUnchanged": true
+  },
+  {
+    "file": "rook513.css",
+    "before": 6278,
+    "after": 6278
+  },
+  {
+    "file": "rook513.js",
+    "before": 1224,
+    "after": 1224,
+    "javascriptASTUnchanged": true
+  },
+  {
+    "file": "rook514.css",
+    "before": 15797,
+    "after": 15797
+  },
+  {
+    "file": "rook518-trump.css",
+    "before": 13949,
+    "after": 13949
+  },
+  {
+    "file": "room-approved805.css",
+    "before": 6297,
+    "after": 6297
+  },
+  {
+    "file": "room-approved805.js",
+    "before": 3831,
+    "after": 3831,
+    "javascriptASTUnchanged": true
+  },
+  {
+    "file": "room830.css",
+    "before": 16742,
+    "after": 16742
+  },
+  {
+    "file": "room830.js",
+    "before": 4692,
+    "after": 4692,
+    "javascriptASTUnchanged": true
+  },
+  {
+    "file": "room831.css",
+    "before": 5851,
+    "after": 5851
+  },
+  {
+    "file": "room831.js",
+    "before": 3846,
+    "after": 3846,
+    "javascriptASTUnchanged": true
+  },
+  {
+    "file": "room832.css",
+    "before": 5420,
+    "after": 5420
+  },
+  {
+    "file": "room832.js",
+    "before": 1618,
+    "after": 1618,
+    "javascriptASTUnchanged": true
+  },
+  {
+    "file": "shuffle-asset.js",
+    "before": 4182,
+    "after": 4182,
+    "javascriptASTUnchanged": true
+  },
+  {
+    "file": "signature-shuffle.css",
+    "before": 566,
+    "after": 566
+  },
+  {
+    "file": "signature-shuffle.js",
+    "before": 11143,
+    "after": 11143,
+    "javascriptASTUnchanged": true
+  },
+  {
+    "file": "style057.css",
+    "before": 663045,
+    "after": 663047
+  },
+  {
+    "file": "sw060.js",
+    "before": 69312,
+    "after": 69312,
+    "javascriptASTUnchanged": true
+  },
+  {
+    "file": "tablet-scoreboard805.css",
+    "before": 1490,
+    "after": 1490
+  },
+  {
+    "file": "trump-hand739.css",
+    "before": 978,
+    "after": 978
+  },
+  {
+    "file": "trump-hand739.js",
+    "before": 2270,
+    "after": 2270,
+    "javascriptASTUnchanged": true
+  },
+  {
+    "file": "trump-voice.js",
+    "before": 7878,
+    "after": 7878,
+    "javascriptASTUnchanged": true
+  },
+  {
+    "file": "trump-voices790.js",
+    "before": 42856,
+    "after": 42856,
+    "javascriptASTUnchanged": true
+  },
+  {
+    "file": "trump714.css",
+    "before": 4727,
+    "after": 4727
+  },
+  {
+    "file": "trump714.js",
+    "before": 28971,
+    "after": 28971,
+    "javascriptASTUnchanged": true
+  },
+  {
+    "file": "ui-audit841.css",
+    "before": 3837,
+    "after": 3837
+  },
+  {
+    "file": "ui-audit841.js",
+    "before": 2719,
+    "after": 2719,
+    "javascriptASTUnchanged": true
+  },
+  {
+    "file": "unified-bidding752.css",
+    "before": 310,
+    "after": 310
+  },
+  {
+    "file": "unified-bidding752.js",
+    "before": 5062,
+    "after": 5062,
+    "javascriptASTUnchanged": true
+  },
+  {
+    "file": "voice-queue.js",
+    "before": 2995,
+    "after": 2995,
+    "javascriptASTUnchanged": true
+  }
+]

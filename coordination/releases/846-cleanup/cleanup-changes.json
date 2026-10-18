@@ -1,0 +1,742 @@
+{
+  "removedFiles": [
+    "shuffle732.js",
+    "shuffle732.css",
+    "angle-c-hands.js"
+  ],
+  "removedFunctions": [
+    {
+      "file": "game060.js",
+      "name": "coachBidAdvice",
+      "line": 12506
+    },
+    {
+      "file": "game060.js",
+      "name": "updateLandscapeBidHint",
+      "line": 12508
+    },
+    {
+      "file": "polish.js",
+      "name": "shouldShowCoach",
+      "line": 866
+    },
+    {
+      "file": "progression.js",
+      "name": "safeParse",
+      "line": 104
+    },
+    {
+      "file": "trump-voice.js",
+      "name": "volume",
+      "line": 20
+    }
+  ],
+  "removedBindings": [
+    {
+      "file": "angle-c-characters.js",
+      "name": "side",
+      "line": 79
+    },
+    {
+      "file": "angle-c-characters.js",
+      "name": "signature",
+      "line": 109
+    },
+    {
+      "file": "bid-repair737.js",
+      "name": "previousDisabled",
+      "line": 3
+    },
+    {
+      "file": "friends803.js",
+      "name": "stage",
+      "line": 4
+    },
+    {
+      "file": "game060.js",
+      "name": "p",
+      "line": 480
+    },
+    {
+      "file": "game060.js",
+      "name": "custom",
+      "line": 740
+    },
+    {
+      "file": "game060.js",
+      "name": "hasRook",
+      "line": 1704
+    },
+    {
+      "file": "game060.js",
+      "name": "auctionLive",
+      "line": 4999
+    },
+    {
+      "file": "game060.js",
+      "name": "need",
+      "line": 5434
+    },
+    {
+      "file": "game060.js",
+      "name": "landscape",
+      "line": 6045
+    },
+    {
+      "file": "game060.js",
+      "name": "high",
+      "line": 6053
+    },
+    {
+      "file": "game060.js",
+      "name": "aw",
+      "line": 6199
+    },
+    {
+      "file": "game060.js",
+      "name": "activeLeft",
+      "line": 6298
+    },
+    {
+      "file": "game060.js",
+      "name": "hasTricks",
+      "line": 9222
+    },
+    {
+      "file": "game060.js",
+      "name": "teamName",
+      "line": 9266
+    },
+    {
+      "file": "game060.js",
+      "name": "team",
+      "line": 10271
+    },
+    {
+      "file": "game060.js",
+      "name": "lastName",
+      "line": 10405
+    },
+    {
+      "file": "game060.js",
+      "name": "winnerName",
+      "line": 10408
+    },
+    {
+      "file": "game060.js",
+      "name": "minW",
+      "line": 10846
+    },
+    {
+      "file": "game060.js",
+      "name": "actor",
+      "line": 11394
+    },
+    {
+      "file": "game060.js",
+      "name": "bird",
+      "line": 11591
+    },
+    {
+      "file": "game060.js",
+      "name": "myTeam",
+      "line": 12630
+    },
+    {
+      "file": "game060.js",
+      "name": "surface",
+      "line": 13282
+    },
+    {
+      "file": "game060.js",
+      "name": "center",
+      "line": 13435
+    },
+    {
+      "file": "nest-manual838.js",
+      "name": "quiet",
+      "line": 2
+    },
+    {
+      "file": "polish.js",
+      "name": "origEnsure",
+      "line": 1459
+    },
+    {
+      "file": "polish.js",
+      "name": "special",
+      "line": 475
+    },
+    {
+      "file": "polish.js",
+      "name": "panel",
+      "line": 919
+    },
+    {
+      "file": "progression.js",
+      "name": "MIGRATION_KEY",
+      "line": 56
+    },
+    {
+      "file": "progression.js",
+      "name": "MIGRATION_KEY",
+      "line": 101
+    },
+    {
+      "file": "progression.js",
+      "name": "PLAYER_NAME_KEY",
+      "line": 102
+    },
+    {
+      "file": "progression.js",
+      "name": "BOT_REL_PREFIX",
+      "line": 103
+    },
+    {
+      "file": "review839.js",
+      "name": "nav",
+      "line": 3
+    },
+    {
+      "file": "trump714.js",
+      "name": "destroyed",
+      "line": 19
+    },
+    {
+      "file": "game060.js",
+      "name": "highNum",
+      "line": 6052
+    },
+    {
+      "file": "game060.js",
+      "name": "last",
+      "line": 10404
+    }
+  ],
+  "media": [
+    {
+      "file": "assets/audio/cabin041/pcm-data.js",
+      "global": "HORCabinSamples",
+      "samples": [
+        {
+          "name": "fire",
+          "bytes": 276000,
+          "sha256": "116f508e1514899f81496a3bb360fb4090de1fb35164b8a863d86693b3933224"
+        },
+        {
+          "name": "wind",
+          "bytes": 420000,
+          "sha256": "6469e7acb77cde665ee66a3dadf67f5bcfab3a0a6de596886507312a50582e93"
+        },
+        {
+          "name": "bird",
+          "bytes": 20272,
+          "sha256": "34a9223d199a0af88c2e4e32ff24a8e44a2380f2a5cdb5c9f00673f25b8c0036"
+        },
+        {
+          "name": "wolf",
+          "bytes": 276000,
+          "sha256": "681dc48ccd3084196ca193f9a747ea245915fd643a16dc0f13eaa74848b33c6b"
+        },
+        {
+          "name": "crickets",
+          "bytes": 324000,
+          "sha256": "371e1e2999171e43d931f6ccdbb55abfc12b8b5801774939bbe7a9468f55ebb7"
+        },
+        {
+          "name": "rain",
+          "bytes": 468000,
+          "sha256": "b72cdb57eca14c81c9bece7c504a053164f6ad66627af696cf77bae50e5e29cc"
+        },
+        {
+          "name": "owl",
+          "bytes": 105444,
+          "sha256": "12c38cf9fd92450f1fa96e06d672775eed07e7c99a4a45a1733e801f3dd15a85"
+        }
+      ]
+    },
+    {
+      "file": "assets/audio/presentation-pcm.js",
+      "global": "HORAudioSamples",
+      "samples": [
+        {
+          "name": "presentation.wash-1x",
+          "bytes": 70560,
+          "sha256": "3ba2bccde2cbe8b9669c6b9d600bc594dca55c2b2b28b160cfbcac607254f2b0"
+        },
+        {
+          "name": "presentation.wash-3x",
+          "bytes": 23506,
+          "sha256": "0bc1c6c94514dc93bc64c1d2420a3d8bddf87462e3c7007695cd44d61a3ab3b6"
+        },
+        {
+          "name": "presentation.wash-max",
+          "bytes": 3528,
+          "sha256": "b1ec18de81e9133cb870f34c46c97a9cd8362a5592452c91b33599ae45288d19"
+        },
+        {
+          "name": "presentation.deal-1x",
+          "bytes": 8820,
+          "sha256": "e7ec26af18ed466a57766695efe7922f389248549cd226d089c44004f121f995"
+        },
+        {
+          "name": "presentation.deal-3x",
+          "bytes": 2954,
+          "sha256": "52651d59905ae51bae2edf12c526d9119c84b7292452ffd20cfc666e8ff83042"
+        },
+        {
+          "name": "presentation.deal-max",
+          "bytes": 794,
+          "sha256": "ac452e071110a2a97434dcbce9a60ff3b9da0eb08d3bb977169774918143134e"
+        },
+        {
+          "name": "awardCrowd",
+          "bytes": 112456,
+          "sha256": "e7f6adb5827f01ea521713372fedb6af7b25fff47ad3b8a0c19d68b04ae0eb4a"
+        }
+      ]
+    },
+    {
+      "deduplicatedDataUrl": "assets/images/bid-dock-transparent-r684.png",
+      "bytes": 1210550,
+      "sha256": "74bab7a258e78f4611f9f3a10519735739dae8f100e7cc8089b0173d768eb7dd",
+      "sourceCharacters": 1614090
+    }
+  ],
+  "css": [
+    {
+      "file": "angle-c-runtime.css",
+      "rules": 1,
+      "declarations": 0,
+      "bytes": 158
+    },
+    {
+      "file": "approved-bid-portrait.css",
+      "rules": 0,
+      "declarations": 0,
+      "bytes": 0
+    },
+    {
+      "file": "asset-loading772.css",
+      "rules": 0,
+      "declarations": 0,
+      "bytes": 0
+    },
+    {
+      "file": "audio-mixer.css",
+      "rules": 0,
+      "declarations": 0,
+      "bytes": 0
+    },
+    {
+      "file": "bid-repair737.css",
+      "rules": 0,
+      "declarations": 0,
+      "bytes": 0
+    },
+    {
+      "file": "characters077.css",
+      "rules": 0,
+      "declarations": 0,
+      "bytes": 0
+    },
+    {
+      "file": "friends803.css",
+      "rules": 0,
+      "declarations": 0,
+      "bytes": 0
+    },
+    {
+      "file": "header-bid805.css",
+      "rules": 0,
+      "declarations": 0,
+      "bytes": 0
+    },
+    {
+      "file": "holder-cues789.css",
+      "rules": 0,
+      "declarations": 0,
+      "bytes": 0
+    },
+    {
+      "file": "holder-identity784.css",
+      "rules": 0,
+      "declarations": 0,
+      "bytes": 0
+    },
+    {
+      "file": "holder004.css",
+      "rules": 0,
+      "declarations": 0,
+      "bytes": 0
+    },
+    {
+      "file": "house736.css",
+      "rules": 0,
+      "declarations": 0,
+      "bytes": 0
+    },
+    {
+      "file": "house738.css",
+      "rules": 0,
+      "declarations": 0,
+      "bytes": 0
+    },
+    {
+      "file": "identity-choice.css",
+      "rules": 0,
+      "declarations": 0,
+      "bytes": 0
+    },
+    {
+      "file": "kitty736.css",
+      "rules": 0,
+      "declarations": 0,
+      "bytes": 0
+    },
+    {
+      "file": "laid-down-refinement.css",
+      "rules": 0,
+      "declarations": 0,
+      "bytes": 0
+    },
+    {
+      "file": "landing783.css",
+      "rules": 0,
+      "declarations": 0,
+      "bytes": 0
+    },
+    {
+      "file": "landscape-discard812.css",
+      "rules": 0,
+      "declarations": 0,
+      "bytes": 0
+    },
+    {
+      "file": "landscape-nest813.css",
+      "rules": 0,
+      "declarations": 0,
+      "bytes": 0
+    },
+    {
+      "file": "landscape-polish.css",
+      "rules": 0,
+      "declarations": 0,
+      "bytes": 0
+    },
+    {
+      "file": "menu-approved805.css",
+      "rules": 0,
+      "declarations": 0,
+      "bytes": 0
+    },
+    {
+      "file": "moon-plaque.css",
+      "rules": 0,
+      "declarations": 0,
+      "bytes": 0
+    },
+    {
+      "file": "nest-manual838.css",
+      "rules": 0,
+      "declarations": 0,
+      "bytes": 0
+    },
+    {
+      "file": "nest-reveal838.css",
+      "rules": 0,
+      "declarations": 0,
+      "bytes": 0
+    },
+    {
+      "file": "owner-review805.css",
+      "rules": 0,
+      "declarations": 0,
+      "bytes": 0
+    },
+    {
+      "file": "partner833.css",
+      "rules": 0,
+      "declarations": 0,
+      "bytes": 0
+    },
+    {
+      "file": "raven-fight741.css",
+      "rules": 0,
+      "declarations": 0,
+      "bytes": 0
+    },
+    {
+      "file": "responsive-review.css",
+      "rules": 0,
+      "declarations": 0,
+      "bytes": 0
+    },
+    {
+      "file": "review835.css",
+      "rules": 0,
+      "declarations": 0,
+      "bytes": 0
+    },
+    {
+      "file": "review836.css",
+      "rules": 0,
+      "declarations": 0,
+      "bytes": 0
+    },
+    {
+      "file": "review839.css",
+      "rules": 0,
+      "declarations": 0,
+      "bytes": 0
+    },
+    {
+      "file": "rook510.css",
+      "rules": 0,
+      "declarations": 0,
+      "bytes": 0
+    },
+    {
+      "file": "rook513.css",
+      "rules": 0,
+      "declarations": 0,
+      "bytes": 0
+    },
+    {
+      "file": "rook514.css",
+      "rules": 0,
+      "declarations": 0,
+      "bytes": 0
+    },
+    {
+      "file": "rook518-trump.css",
+      "rules": 0,
+      "declarations": 0,
+      "bytes": 0
+    },
+    {
+      "file": "room-approved805.css",
+      "rules": 0,
+      "declarations": 0,
+      "bytes": 0
+    },
+    {
+      "file": "room830.css",
+      "rules": 0,
+      "declarations": 0,
+      "bytes": 0
+    },
+    {
+      "file": "room831.css",
+      "rules": 0,
+      "declarations": 0,
+      "bytes": 0
+    },
+    {
+      "file": "room832.css",
+      "rules": 0,
+      "declarations": 0,
+      "bytes": 0
+    },
+    {
+      "file": "signature-shuffle.css",
+      "rules": 0,
+      "declarations": 0,
+      "bytes": 0
+    },
+    {
+      "file": "style057.css",
+      "rules": 18,
+      "declarations": 2,
+      "bytes": 1874
+    },
+    {
+      "file": "tablet-scoreboard805.css",
+      "rules": 0,
+      "declarations": 0,
+      "bytes": 0
+    },
+    {
+      "file": "trump-hand739.css",
+      "rules": 0,
+      "declarations": 0,
+      "bytes": 0
+    },
+    {
+      "file": "trump714.css",
+      "rules": 0,
+      "declarations": 0,
+      "bytes": 0
+    },
+    {
+      "file": "ui-audit841.css",
+      "rules": 0,
+      "declarations": 0,
+      "bytes": 0
+    },
+    {
+      "file": "unified-bidding752.css",
+      "rules": 0,
+      "declarations": 0,
+      "bytes": 0
+    }
+  ],
+  "precache": {
+    "before": 1469,
+    "after": 1449,
+    "removedDuplicateAliases": 22
+  },
+  "historicalNotesMovedUnchanged": [
+    {
+      "from": "814_CARD_FRAME_FIX.txt",
+      "to": "docs/history/build-845-inherited/814_CARD_FRAME_FIX.txt",
+      "sha256": "0645192620e3ab3b8b10eca658f1fd9fddce7248079f87bed63674e5d764391d"
+    },
+    {
+      "from": "815_REPAIR_NOTE.txt",
+      "to": "docs/history/build-845-inherited/815_REPAIR_NOTE.txt",
+      "sha256": "1c3e1449282afddff02d249ce3685e53b0a269e8770663c5ec8e86694ea6a51c"
+    },
+    {
+      "from": "QA_BASELINE_811.json",
+      "to": "docs/history/build-845-inherited/QA_BASELINE_811.json",
+      "sha256": "dcd6055492990f16fc33f24dc56f78b4e19f7c2accc7dbe7669cc47b852a518c"
+    },
+    {
+      "from": "QA_BASELINE_812.json",
+      "to": "docs/history/build-845-inherited/QA_BASELINE_812.json",
+      "sha256": "130eb7c8dc8c9d338725c612b4f363bbf1b307988de940c3dd170abeca0d0ccc"
+    },
+    {
+      "from": "QA_RESULT.json",
+      "to": "docs/history/build-845-inherited/QA_RESULT.json",
+      "sha256": "b73844aa2de02d3cb0b5248d9bf578f657a6bd74bafbb6ffda41beb2a9b628cc"
+    },
+    {
+      "from": "READ-FIRST-LOWER-CAMERA.txt",
+      "to": "docs/history/build-845-inherited/READ-FIRST-LOWER-CAMERA.txt",
+      "sha256": "160e1e32c3fade85e5d16e26ad6a80ed09c95b89387f29f1b52a1b6d368da693"
+    },
+    {
+      "from": "README-829.txt",
+      "to": "docs/history/build-845-inherited/README-829.txt",
+      "sha256": "850258fb6548a24dc54b594f86ff5e85984d1685a5fd22c36a4888ce9dd2ad44"
+    },
+    {
+      "from": "README-830.txt",
+      "to": "docs/history/build-845-inherited/README-830.txt",
+      "sha256": "abbd20b2b003506ac6a360094fc0daf77d78851f7dbdd50c6789a27c11470cca"
+    },
+    {
+      "from": "README-831.txt",
+      "to": "docs/history/build-845-inherited/README-831.txt",
+      "sha256": "b0f1e47ee40ffc78f978f58b48b0194b0ba75bc4726828a3961e781d1663f20a"
+    },
+    {
+      "from": "README-832.txt",
+      "to": "docs/history/build-845-inherited/README-832.txt",
+      "sha256": "d2270c1c0784fc92253d22f8fda7dfd3069e24df425c05c2da70fea22952901b"
+    },
+    {
+      "from": "README-833.txt",
+      "to": "docs/history/build-845-inherited/README-833.txt",
+      "sha256": "c2c4430aa6ed47425a2c64a10a90905b1349a06a23b8d5af08db282759e66524"
+    },
+    {
+      "from": "README-834.txt",
+      "to": "docs/history/build-845-inherited/README-834.txt",
+      "sha256": "7b59f43640eb8ddf5b982535f434d0c0fc705b9276f4425fca45354ec714e2e6"
+    },
+    {
+      "from": "README-835.txt",
+      "to": "docs/history/build-845-inherited/README-835.txt",
+      "sha256": "94a3c8a82d0934a3284b7fbfc9cfb1fbc0049524c40360777630817e0ebb1e7a"
+    },
+    {
+      "from": "README-836.txt",
+      "to": "docs/history/build-845-inherited/README-836.txt",
+      "sha256": "1b33d07757136affdebf854b6723a80a6086023170215c2001ebc8f1ae6ee87f"
+    },
+    {
+      "from": "README-837.txt",
+      "to": "docs/history/build-845-inherited/README-837.txt",
+      "sha256": "0ada22df37616acf95c93b1bf05f74f4e0c2172720c1d498f8a4451e394cde18"
+    },
+    {
+      "from": "README-838.txt",
+      "to": "docs/history/build-845-inherited/README-838.txt",
+      "sha256": "c59c2870ef11c98b68907fe2f8a3ad715cd1d39ee16bee82aa6fed5c5c9b0ef9"
+    },
+    {
+      "from": "README-839.txt",
+      "to": "docs/history/build-845-inherited/README-839.txt",
+      "sha256": "1d71fbc3047b1657026db2549b447d13b1687fac3ceda969de0792092cf71641"
+    },
+    {
+      "from": "README-840.txt",
+      "to": "docs/history/build-845-inherited/README-840.txt",
+      "sha256": "c3097fdd2adf7678a0ea760eb914899239d6eb09fc8188049d7c7a69c706d44b"
+    },
+    {
+      "from": "README-841.txt",
+      "to": "docs/history/build-845-inherited/README-841.txt",
+      "sha256": "37dc16afd2eb7d78a6abc9433e4b366c51476b2a520f344f592f05ebd37375cc"
+    },
+    {
+      "from": "README-842.txt",
+      "to": "docs/history/build-845-inherited/README-842.txt",
+      "sha256": "c07db1a59f5959f35104fe50abde714eb3032e7b6490d0367ba4a4f8566dd2ad"
+    },
+    {
+      "from": "README-843.txt",
+      "to": "docs/history/build-845-inherited/README-843.txt",
+      "sha256": "3a9696e1b4d50659b689ca5c083e8b7b66f0874f1703b04a85304762a0f9159d"
+    },
+    {
+      "from": "README-844.txt",
+      "to": "docs/history/build-845-inherited/README-844.txt",
+      "sha256": "23a62bd022186117205713b02a2698aa06de5c5dfbc2440690f41bca9c0a78a5"
+    },
+    {
+      "from": "README-845.txt",
+      "to": "docs/history/build-845-inherited/README-845.txt",
+      "sha256": "879758bc9e03783ba69cae1f5cc710f23ca4a1ce9ecd7805178fac4b53217a35"
+    },
+    {
+      "from": "REPAIR_812_SOURCE.json",
+      "to": "docs/history/build-845-inherited/REPAIR_812_SOURCE.json",
+      "sha256": "8ff51afc696babf6d653d9d5d5542e18d89e6773386b98b9e0de3c66a276be68"
+    },
+    {
+      "from": "REPAIR_813_SOURCE.json",
+      "to": "docs/history/build-845-inherited/REPAIR_813_SOURCE.json",
+      "sha256": "73ee455c9cc866521c9968cfb756a20287e2d06fde1945dc256938838812da44"
+    },
+    {
+      "from": "REVIEW-CHECKS.json",
+      "to": "docs/history/build-845-inherited/REVIEW-CHECKS.json",
+      "sha256": "fd50253ab03da3d625a60925c5d7398615f786172e97b383370911d84fce79ec"
+    },
+    {
+      "from": "REVIEW-MANIFEST.json",
+      "to": "docs/history/build-845-inherited/REVIEW-MANIFEST.json",
+      "sha256": "76df68f2b3d8a08338b9def73fdbaac05319330e8abc4b6f0ff1ac49b512d789"
+    },
+    {
+      "from": "REVIEW_MANIFEST.json",
+      "to": "docs/history/build-845-inherited/REVIEW_MANIFEST.json",
+      "sha256": "d3fbc21ecc2ca1f101bbdfa3e11326fa6cb728b969ed99531ea785c2fe40cd45"
+    },
+    {
+      "from": "REVIEW_README.md",
+      "to": "docs/history/build-845-inherited/REVIEW_README.md",
+      "sha256": "f73aa91f58194740c6c0bc397eea561eeacb655e44ab25db79c849604a19154a"
+    }
+  ],
+  "emptyIIFEsRemoved": [
+    {
+      "file": "polish.js",
+      "name": "horLobbyHero"
+    }
+  ]
+}

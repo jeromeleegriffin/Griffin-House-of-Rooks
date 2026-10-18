@@ -1,17 +1,417 @@
 /* Physical card artwork is unchanged. Scoped interface chrome replaces the old landscape two-row picker. */
-body #discardOverlay.manual-nest838{position:fixed!important;inset:0!important;display:flex!important;align-items:stretch!important;justify-content:center!important;padding:8px!important;width:auto!important;height:auto!important;max-height:none!important;z-index:2147483510!important;background:#050e19eF!important;overflow:hidden!important;box-sizing:border-box!important;}
-body #discardOverlay.manual-nest838.hidden{display:none!important}
-body #discardOverlay.manual-nest838 .nest838-sheet{box-sizing:border-box!important;width:100%!important;max-width:1840px!important;height:100%!important;display:flex!important;flex-direction:column!important;gap:10px!important;padding:16px!important;background:#0a1e30!important;border:2px solid #c3a262!important;border-radius:18px!important;color:#f5e4b6!important;overflow:hidden!important;box-shadow:inset 0 0 0 3px #71562b55!important;font-family:Arial,sans-serif!important}
-.nest838-sheet *{box-sizing:border-box}.nest838-sheet header{display:flex;align-items:center;justify-content:space-between;gap:15px}.nest838-sheet header small{font-size:11px;letter-spacing:1.5px;color:#bea875}.nest838-sheet h2{font:bold clamp(20px,2.8vw,34px)/1.1 Georgia,serif;margin:4px 0}.nest838-sheet header p{font:13px/1.3 Arial,sans-serif;color:#becad1;margin:4px 0 0}.nest838-sheet header>strong{font:bold 30px Georgia,serif;padding:8px 22px;border:1px solid #9b814c;border-radius:10px;white-space:nowrap}.nest838-board{display:grid;grid-template-areas:'hand' 'nest';grid-template-columns:minmax(0,1fr);grid-template-rows:minmax(0,1.35fr) minmax(0,1fr);gap:10px;flex:1;min-height:0}.nest838-board.staged{grid-template-areas:'hand hand' 'kitty nest';grid-template-columns:minmax(0,1fr) minmax(0,1fr)}.nest838-board>section{display:flex;flex-direction:column;min-width:0;min-height:0;border:1px solid #ae9155;border-radius:10px;overflow:hidden;background:#0e304b}.nest838-keep{grid-area:hand}.nest838-nest{grid-area:nest;background:#101c28!important}.nest838-kitty{grid-area:kitty;background:#15372f!important}.nest838-sheet h3{margin:0;padding:7px 12px;font:bold 18px Georgia,serif;border-bottom:1px solid #b798514d;background:#112536}.nest838-sheet h3 span{font:12px Arial,sans-serif;color:#c6cdd1;margin-left:7px}.nest838-zone{display:grid;grid-template-columns:repeat(var(--n,6),minmax(0,1fr));gap:3px;align-items:center;justify-items:center;min-height:0;min-width:0;flex:1;padding:5px 10px;overflow:hidden}.nest838-sheet .nest838-card{box-sizing:border-box!important;width:var(--w,70px)!important;height:var(--h,100px)!important;max-width:100%!important;max-height:100%!important;min-width:0!important;min-height:0!important;margin:0!important;padding:0!important;display:block!important;flex:none!important;border:0!important;border-radius:7px!important;background:transparent!important;box-shadow:none!important;position:relative!important;transform:none!important;touch-action:none;user-select:none;-webkit-user-select:none;-webkit-touch-callout:none;cursor:grab}.nest838-card img,.nest838-ghost img{display:block!important;width:100%!important;height:100%!important;object-fit:contain!important;pointer-events:none!important;filter:drop-shadow(0 2px 2px #0008)}.nest838-card:focus-visible{outline:3px solid #fff!important;outline-offset:2px}.nest838-slot{box-sizing:border-box;display:flex;align-items:center;justify-content:center;width:var(--w,55px);height:var(--h,80px);max-width:100%;max-height:100%;border:1px dashed #a58e5355;border-radius:6px;color:#bba56b;font:22px Georgia,serif;background:#0002}.nest838-sheet footer{display:flex;align-items:center;justify-content:space-between;gap:12px;min-height:44px}.nest838-sheet footer p{font:13px/1.3 Arial,sans-serif;color:#d3dbe0;margin:0}.nest838-sheet footer button{flex:none;min-height:40px;padding:8px 20px;border:1px solid #b99a58;border-radius:8px;background:#132c40;color:#f2dfad;font:17px Georgia,serif;touch-action:manipulation}.nest838-sheet footer #confirmDiscard{background:linear-gradient(#f2d991,#b68b2d)!important;color:#211604!important;font-weight:bold!important;min-width:225px}.nest838-sheet footer #confirmDiscard:disabled{background:#2c3b46!important;color:#b7c1c8!important;border-color:#66737c!important;opacity:1!important}.nest838-target{box-shadow:inset 0 0 0 2px #f6d778;background:#c9b15815}.nest838-drag-source{opacity:.15!important}.nest838-ghost{position:fixed!important;z-index:2147483620!important;pointer-events:none!important;padding:0!important;border:0!important;margin:0!important;background:transparent!important;transform:rotate(-3deg);filter:drop-shadow(0 12px 9px #0008)}.nest838-marker{position:fixed;pointer-events:none;z-index:2147483619;width:4px;border-radius:2px;background:#ffe39a;box-shadow:0 0 9px #e8c866}body #btnSort{display:none!important}
-@media(orientation:landscape) and (max-height:450px){body #discardOverlay.manual-nest838{padding:5px!important}body #discardOverlay.manual-nest838 .nest838-sheet{padding:8px 10px!important;gap:6px!important;border-radius:12px!important}.nest838-sheet header small{display:none}.nest838-sheet h2{font-size:22px;margin:0}.nest838-sheet header p{font-size:11px;margin-top:2px}.nest838-sheet header>strong{font-size:24px;padding:3px 14px}.nest838-sheet h3{font-size:14px;padding:5px 9px}.nest838-sheet h3 span{font-size:10px}.nest838-board{gap:6px}.nest838-sheet footer{gap:9px;min-height:34px}.nest838-sheet footer p{font-size:11px}.nest838-sheet footer button{font-size:14px;min-height:32px;padding:5px 13px}.nest838-sheet footer #confirmDiscard{min-width:185px}.nest838-zone{padding:3px 6px}}
-@media(orientation:landscape) and (max-height:290px){body #discardOverlay.manual-nest838 .nest838-sheet{gap:4px!important;padding:5px 8px!important}.nest838-sheet header p{display:none}.nest838-sheet h2{font-size:18px}.nest838-sheet header>strong{font-size:21px;padding:1px 12px}.nest838-sheet h3{font-size:12px;padding:3px 7px}.nest838-sheet h3 span{font-size:10px}.nest838-sheet footer p{font-size:10px;max-width:48%}.nest838-sheet footer{min-height:29px}.nest838-sheet footer button{min-height:28px;font-size:13px;padding:4px 11px}.nest838-sheet footer #confirmDiscard{min-width:175px}}
-body #discardOverlay.manual-nest838 .nest838-sheet footer #confirmDiscard{width:auto!important;max-width:46vw!important;min-width:225px!important;height:auto!important;min-height:40px!important;padding:8px 20px!important}
-@media(orientation:landscape) and (max-height:450px){body #discardOverlay.manual-nest838 .nest838-sheet footer #confirmDiscard{min-width:185px!important;min-height:32px!important;height:34px!important;padding:4px 13px!important}}
-@media(orientation:landscape) and (max-height:290px){body #discardOverlay.manual-nest838 .nest838-sheet footer #confirmDiscard{min-width:175px!important;min-height:28px!important;height:30px!important;padding:3px 11px!important}}
+body #discardOverlay.manual-nest838 {
+  position: fixed !important;
+  inset: 0 !important;
+  display: flex !important;
+  align-items: stretch !important;
+  justify-content: center !important;
+  padding: 8px !important;
+  width: auto !important;
+  height: auto !important;
+  max-height: none !important;
+  z-index: 2147483510 !important;
+  background: #050e19ef !important;
+  overflow: hidden !important;
+  box-sizing: border-box !important;
+}
+body #discardOverlay.manual-nest838.hidden {
+  display: none !important;
+}
+body #discardOverlay.manual-nest838 .nest838-sheet {
+  box-sizing: border-box !important;
+  width: 100% !important;
+  max-width: 1840px !important;
+  height: 100% !important;
+  display: flex !important;
+  flex-direction: column !important;
+  gap: 10px !important;
+  padding: 16px !important;
+  background: #0a1e30 !important;
+  border: 2px solid #c3a262 !important;
+  border-radius: 18px !important;
+  color: #f5e4b6 !important;
+  overflow: hidden !important;
+  box-shadow: inset 0 0 0 3px #71562b55 !important;
+  font-family: Arial, sans-serif !important;
+}
+.nest838-sheet * {
+  box-sizing: border-box;
+}
+.nest838-sheet header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 15px;
+}
+.nest838-sheet header small {
+  font-size: 11px;
+  letter-spacing: 1.5px;
+  color: #bea875;
+}
+.nest838-sheet h2 {
+  font:
+    bold clamp(20px, 2.8vw, 34px) / 1.1 Georgia,
+    serif;
+  margin: 4px 0;
+}
+.nest838-sheet header p {
+  font:
+    13px/1.3 Arial,
+    sans-serif;
+  color: #becad1;
+  margin: 4px 0 0;
+}
+.nest838-sheet header > strong {
+  font:
+    bold 30px Georgia,
+    serif;
+  padding: 8px 22px;
+  border: 1px solid #9b814c;
+  border-radius: 10px;
+  white-space: nowrap;
+}
+.nest838-board {
+  display: grid;
+  grid-template-areas: 'hand' 'nest';
+  grid-template-columns: minmax(0, 1fr);
+  grid-template-rows: minmax(0, 1.35fr) minmax(0, 1fr);
+  gap: 10px;
+  flex: 1;
+  min-height: 0;
+}
+.nest838-board.staged {
+  grid-template-areas: 'hand hand' 'kitty nest';
+  grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+}
+.nest838-board > section {
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+  min-height: 0;
+  border: 1px solid #ae9155;
+  border-radius: 10px;
+  overflow: hidden;
+  background: #0e304b;
+}
+.nest838-keep {
+  grid-area: hand;
+}
+.nest838-nest {
+  grid-area: nest;
+  background: #101c28 !important;
+}
+.nest838-kitty {
+  grid-area: kitty;
+  background: #15372f !important;
+}
+.nest838-sheet h3 {
+  margin: 0;
+  padding: 7px 12px;
+  font:
+    bold 18px Georgia,
+    serif;
+  border-bottom: 1px solid #b798514d;
+  background: #112536;
+}
+.nest838-sheet h3 span {
+  font:
+    12px Arial,
+    sans-serif;
+  color: #c6cdd1;
+  margin-left: 7px;
+}
+.nest838-zone {
+  display: grid;
+  grid-template-columns: repeat(var(--n, 6), minmax(0, 1fr));
+  gap: 3px;
+  align-items: center;
+  justify-items: center;
+  min-height: 0;
+  min-width: 0;
+  flex: 1;
+  padding: 5px 10px;
+  overflow: hidden;
+}
+.nest838-sheet .nest838-card {
+  box-sizing: border-box !important;
+  width: var(--w, 70px) !important;
+  height: var(--h, 100px) !important;
+  max-width: 100% !important;
+  max-height: 100% !important;
+  min-width: 0 !important;
+  min-height: 0 !important;
+  margin: 0 !important;
+  padding: 0 !important;
+  display: block !important;
+  flex: none !important;
+  border: 0 !important;
+  border-radius: 7px !important;
+  background: transparent !important;
+  box-shadow: none !important;
+  position: relative !important;
+  transform: none !important;
+  touch-action: none;
+  user-select: none;
+  -webkit-user-select: none;
+  -webkit-touch-callout: none;
+  cursor: grab;
+}
+.nest838-card img,
+.nest838-ghost img {
+  display: block !important;
+  width: 100% !important;
+  height: 100% !important;
+  object-fit: contain !important;
+  pointer-events: none !important;
+  filter: drop-shadow(0 2px 2px #0008);
+}
+.nest838-card:focus-visible {
+  outline: 3px solid #fff !important;
+  outline-offset: 2px;
+}
+.nest838-slot {
+  box-sizing: border-box;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: var(--w, 55px);
+  height: var(--h, 80px);
+  max-width: 100%;
+  max-height: 100%;
+  border: 1px dashed #a58e5355;
+  border-radius: 6px;
+  color: #bba56b;
+  font:
+    22px Georgia,
+    serif;
+  background: #0002;
+}
+.nest838-sheet footer {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  min-height: 44px;
+}
+.nest838-sheet footer p {
+  font:
+    13px/1.3 Arial,
+    sans-serif;
+  color: #d3dbe0;
+  margin: 0;
+}
+.nest838-sheet footer button {
+  flex: none;
+  min-height: 40px;
+  padding: 8px 20px;
+  border: 1px solid #b99a58;
+  border-radius: 8px;
+  background: #132c40;
+  color: #f2dfad;
+  font:
+    17px Georgia,
+    serif;
+  touch-action: manipulation;
+}
+.nest838-sheet footer #confirmDiscard {
+  background: linear-gradient(#f2d991, #b68b2d) !important;
+  color: #211604 !important;
+  font-weight: bold !important;
+  min-width: 225px;
+}
+.nest838-sheet footer #confirmDiscard:disabled {
+  background: #2c3b46 !important;
+  color: #b7c1c8 !important;
+  border-color: #66737c !important;
+  opacity: 1 !important;
+}
+.nest838-target {
+  box-shadow: inset 0 0 0 2px #f6d778;
+  background: #c9b15815;
+}
+.nest838-drag-source {
+  opacity: 0.15 !important;
+}
+.nest838-ghost {
+  position: fixed !important;
+  z-index: 2147483620 !important;
+  pointer-events: none !important;
+  padding: 0 !important;
+  border: 0 !important;
+  margin: 0 !important;
+  background: transparent !important;
+  transform: rotate(-3deg);
+  filter: drop-shadow(0 12px 9px #0008);
+}
+.nest838-marker {
+  position: fixed;
+  pointer-events: none;
+  z-index: 2147483619;
+  width: 4px;
+  border-radius: 2px;
+  background: #ffe39a;
+  box-shadow: 0 0 9px #e8c866;
+}
+body #btnSort {
+  display: none !important;
+}
+@media (orientation: landscape) and (max-height: 450px) {
+  body #discardOverlay.manual-nest838 {
+    padding: 5px !important;
+  }
+  body #discardOverlay.manual-nest838 .nest838-sheet {
+    padding: 8px 10px !important;
+    gap: 6px !important;
+    border-radius: 12px !important;
+  }
+  .nest838-sheet header small {
+    display: none;
+  }
+  .nest838-sheet h2 {
+    font-size: 22px;
+    margin: 0;
+  }
+  .nest838-sheet header p {
+    font-size: 11px;
+    margin-top: 2px;
+  }
+  .nest838-sheet header > strong {
+    font-size: 24px;
+    padding: 3px 14px;
+  }
+  .nest838-sheet h3 {
+    font-size: 14px;
+    padding: 5px 9px;
+  }
+  .nest838-sheet h3 span {
+    font-size: 10px;
+  }
+  .nest838-board {
+    gap: 6px;
+  }
+  .nest838-sheet footer {
+    gap: 9px;
+    min-height: 34px;
+  }
+  .nest838-sheet footer p {
+    font-size: 11px;
+  }
+  .nest838-sheet footer button {
+    font-size: 14px;
+    min-height: 32px;
+    padding: 5px 13px;
+  }
+  .nest838-sheet footer #confirmDiscard {
+    min-width: 185px;
+  }
+  .nest838-zone {
+    padding: 3px 6px;
+  }
+}
+@media (orientation: landscape) and (max-height: 290px) {
+  body #discardOverlay.manual-nest838 .nest838-sheet {
+    gap: 4px !important;
+    padding: 5px 8px !important;
+  }
+  .nest838-sheet header p {
+    display: none;
+  }
+  .nest838-sheet h2 {
+    font-size: 18px;
+  }
+  .nest838-sheet header > strong {
+    font-size: 21px;
+    padding: 1px 12px;
+  }
+  .nest838-sheet h3 {
+    font-size: 12px;
+    padding: 3px 7px;
+  }
+  .nest838-sheet h3 span {
+    font-size: 10px;
+  }
+  .nest838-sheet footer p {
+    font-size: 10px;
+    max-width: 48%;
+  }
+  .nest838-sheet footer {
+    min-height: 29px;
+  }
+  .nest838-sheet footer button {
+    min-height: 28px;
+    font-size: 13px;
+    padding: 4px 11px;
+  }
+  .nest838-sheet footer #confirmDiscard {
+    min-width: 175px;
+  }
+}
+body #discardOverlay.manual-nest838 .nest838-sheet footer #confirmDiscard {
+  width: auto !important;
+  max-width: 46vw !important;
+  min-width: 225px !important;
+  height: auto !important;
+  min-height: 40px !important;
+  padding: 8px 20px !important;
+}
+@media (orientation: landscape) and (max-height: 450px) {
+  body #discardOverlay.manual-nest838 .nest838-sheet footer #confirmDiscard {
+    min-width: 185px !important;
+    min-height: 32px !important;
+    height: 34px !important;
+    padding: 4px 13px !important;
+  }
+}
+@media (orientation: landscape) and (max-height: 290px) {
+  body #discardOverlay.manual-nest838 .nest838-sheet footer #confirmDiscard {
+    min-width: 175px !important;
+    min-height: 28px !important;
+    height: 30px !important;
+    padding: 3px 11px !important;
+  }
+}
 /* Override the old picker pan gesture: touch must belong to card arrangement. */
-body #discardOverlay.manual-nest838 .nest838-sheet .nest838-card,body #discardOverlay.manual-nest838 .nest838-zone{touch-action:none!important}
+body #discardOverlay.manual-nest838 .nest838-sheet .nest838-card,
+body #discardOverlay.manual-nest838 .nest838-zone {
+  touch-action: none !important;
+}
 /* Old picker sheets imposed a global 46x66 cap; this layout measures its own slots. */
-html body.in-game #discardOverlay.manual-nest838 .nest838-sheet .nest838-zone > button.nest838-card.discard-pick{width:var(--w)!important;height:var(--h)!important;max-width:100%!important;max-height:100%!important;min-width:0!important;min-height:0!important;margin:0!important;padding:0!important;aspect-ratio:580/840!important;flex:none!important;position:relative!important}
-html body.in-game #discardOverlay.manual-nest838 .nest838-sheet .nest838-card > img{width:100%!important;height:100%!important;max-width:none!important;max-height:none!important;min-width:0!important;min-height:0!important;object-fit:contain!important;position:static!important;transform:none!important}
+html
+  body.in-game
+  #discardOverlay.manual-nest838
+  .nest838-sheet
+  .nest838-zone
+  > button.nest838-card.discard-pick {
+  width: var(--w) !important;
+  height: var(--h) !important;
+  max-width: 100% !important;
+  max-height: 100% !important;
+  min-width: 0 !important;
+  min-height: 0 !important;
+  margin: 0 !important;
+  padding: 0 !important;
+  aspect-ratio: 580/840 !important;
+  flex: none !important;
+  position: relative !important;
+}
+html body.in-game #discardOverlay.manual-nest838 .nest838-sheet .nest838-card > img {
+  width: 100% !important;
+  height: 100% !important;
+  max-width: none !important;
+  max-height: none !important;
+  min-width: 0 !important;
+  min-height: 0 !important;
+  object-fit: contain !important;
+  position: static !important;
+  transform: none !important;
+}
 /* Keep a finger-sized hit area even when short browser chrome limits artwork height. */
-html body.in-game #discardOverlay.manual-nest838 .nest838-sheet .nest838-zone > button.nest838-card.discard-pick{min-width:min(44px,100%)!important;min-height:min(44px,100%)!important}
+html
+  body.in-game
+  #discardOverlay.manual-nest838
+  .nest838-sheet
+  .nest838-zone
+  > button.nest838-card.discard-pick {
+  min-width: min(44px, 100%) !important;
+  min-height: min(44px, 100%) !important;
+}

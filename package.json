@@ -1,0 +1,19 @@
+{
+  "name": "griffin-house-of-rooks",
+  "version": "0.0.0",
+  "private": true,
+  "description": "Static browser game; dependencies below are developer tools only.",
+  "scripts": {
+    "check": "node tools/check-source.cjs && npm run format:check",
+    "check:source": "node tools/check-source.cjs",
+    "format": "prettier --write \"*.js\" \"*.css\" index.html privacy.html tools/check-source.cjs",
+    "format:check": "prettier --check \"*.js\" \"*.css\" index.html privacy.html tools/check-source.cjs",
+    "serve": "python3 -m http.server 8080 --bind 127.0.0.1"
+  },
+  "devDependencies": {
+    "acorn": "8.15.0",
+    "acorn-walk": "8.3.4",
+    "eslint-scope": "8.4.0",
+    "prettier": "3.6.2"
+  }
+}

@@ -9,13 +9,20 @@
       if (updating) return;
       updating = true;
       try {
-        const active = (portrait.matches || window.HORAngleC?.active()) && dock.classList.contains('decision-mode-bid') && !dock.classList.contains('hidden');
-        let surface = Array.from(dock.children).find(el => el.classList.contains('approved-bid-surface'));
+        const active =
+          (portrait.matches || window.HORAngleC?.active()) &&
+          dock.classList.contains('decision-mode-bid') &&
+          !dock.classList.contains('hidden');
+        let surface = Array.from(dock.children).find((el) =>
+          el.classList.contains('approved-bid-surface')
+        );
         if (!active) {
-          if (dock.classList.contains('approved-bid-portrait')) dock.classList.remove('approved-bid-portrait');
+          if (dock.classList.contains('approved-bid-portrait'))
+            dock.classList.remove('approved-bid-portrait');
           if (surface) {
-            Array.from(surface.childNodes).forEach(node => {
-              if (!(node.nodeType === 1 && node.classList.contains('approved-bid-art'))) dock.insertBefore(node, surface);
+            Array.from(surface.childNodes).forEach((node) => {
+              if (!(node.nodeType === 1 && node.classList.contains('approved-bid-art')))
+                dock.insertBefore(node, surface);
             });
             surface.remove();
           }
@@ -37,13 +44,21 @@
           while (dock.firstChild) surface.appendChild(dock.firstChild);
           dock.appendChild(surface);
         }
-        if (!dock.classList.contains('approved-bid-portrait')) dock.classList.add('approved-bid-portrait');
-      } finally { updating = false; }
+        if (!dock.classList.contains('approved-bid-portrait'))
+          dock.classList.add('approved-bid-portrait');
+      } finally {
+        updating = false;
+      }
     }
-    new MutationObserver(update).observe(dock, { childList: true, attributes: true, attributeFilter: ['class'] });
+    new MutationObserver(update).observe(dock, {
+      childList: true,
+      attributes: true,
+      attributeFilter: ['class'],
+    });
     portrait.addEventListener('change', update);
     update();
   }
-  if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', init, { once: true });
+  if (document.readyState === 'loading')
+    document.addEventListener('DOMContentLoaded', init, { once: true });
   else init();
 })();

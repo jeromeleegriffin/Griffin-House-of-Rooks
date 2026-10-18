@@ -1,11 +1,34 @@
 /* New effect only. Never styles game cards, table, dock or normal hand. */
-#ravenFight741 { pointer-events:none !important; background:transparent; }
-#he064Stage .raven-preview741 { position:absolute; top:55%; width:64px; height:92.7px; transform:translate(-50%,-50%); }
-#he064Stage .raven-preview741.black { left:43%; }
-#he064Stage .raven-preview741.red { left:57%; }
-#he064Stage.raven-swap741 .raven-preview741.black { left:57%; }
-#he064Stage.raven-swap741 .raven-preview741.red { left:43%; }
-#he064Stage .raven-preview741>.card-face { width:100%!important;height:100%!important;margin:0!important;transform:none!important;animation:none!important; }
+#ravenFight741 {
+  pointer-events: none !important;
+  background: transparent;
+}
+#he064Stage .raven-preview741 {
+  position: absolute;
+  top: 55%;
+  width: 64px;
+  height: 92.7px;
+  transform: translate(-50%, -50%);
+}
+#he064Stage .raven-preview741.black {
+  left: 43%;
+}
+#he064Stage .raven-preview741.red {
+  left: 57%;
+}
+#he064Stage.raven-swap741 .raven-preview741.black {
+  left: 57%;
+}
+#he064Stage.raven-swap741 .raven-preview741.red {
+  left: 43%;
+}
+#he064Stage .raven-preview741 > .card-face {
+  width: 100% !important;
+  height: 100% !important;
+  margin: 0 !important;
+  transform: none !important;
+  animation: none !important;
+}
 
 /* Pause only overlapping announcement surfaces, never game controls. */
 body.raven-fight-active741 #horProgressToastHost,
@@ -14,8 +37,15 @@ body.raven-fight-active741 #bigTrickOverlay,
 body.raven-fight-active741 #horNetworkToast,
 body.raven-fight-active741 #bottomTrickWinnerNotice,
 body.raven-fight-active741 #tableMsgPopup,
-body.raven-fight-active741 #messageArea {visibility:hidden!important;pointer-events:none!important;}
+body.raven-fight-active741 #messageArea {
+  visibility: hidden !important;
+  pointer-events: none !important;
+}
 
 /* Verified preview tabs must remain accessible above the fixed game header. */
-body.he064-open #houseEffects064 {z-index:2147483640!important;}
-body.he064-previewing #he064Stage {z-index:2147483642!important;}
+body.he064-open #houseEffects064 {
+  z-index: 2147483640 !important;
+}
+body.he064-previewing #he064Stage {
+  z-index: 2147483642 !important;
+}

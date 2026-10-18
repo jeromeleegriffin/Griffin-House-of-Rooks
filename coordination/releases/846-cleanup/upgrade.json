@@ -1,0 +1,217 @@
+{
+  "checks": [
+    {
+      "name": "845 active worker upgrades to stable coherent 846",
+      "ok": true,
+      "truth": {
+        "page": "846-source-cleanup",
+        "script": "846-source-cleanup",
+        "marker": "846-source-cleanup",
+        "worker": {
+          "build": "846-source-cleanup",
+          "cache": "house-of-rooks-846-source-cleanup"
+        },
+        "controller": "http://127.0.0.1:8995/sw060.js?v=845-share-shuffle",
+        "coherent": true
+      }
+    },
+    {
+      "name": "Preserved horCareerStateV2",
+      "ok": true
+    },
+    {
+      "name": "Preserved horLocalCareerActorV1",
+      "ok": true
+    },
+    {
+      "name": "Preserved rookSoundTurn",
+      "ok": true
+    },
+    {
+      "name": "Preserved horGamePace",
+      "ok": true
+    },
+    {
+      "name": "Preserved horFavoritePartner042",
+      "ok": true
+    },
+    {
+      "name": "Preserved horAudioMixerV1",
+      "ok": true
+    },
+    {
+      "name": "Upgraded build reloads offline with coherent runtime",
+      "ok": true,
+      "truth": {
+        "page": "846-source-cleanup",
+        "script": "846-source-cleanup",
+        "marker": "846-source-cleanup",
+        "worker": {
+          "build": "846-source-cleanup",
+          "cache": "house-of-rooks-846-source-cleanup"
+        },
+        "controller": "http://127.0.0.1:8995/sw060.js?v=845-share-shuffle",
+        "coherent": true
+      }
+    },
+    {
+      "name": "Old cache retained",
+      "ok": true
+    }
+  ],
+  "before": {
+    "keys": [
+      "horCareerStateV2",
+      "horLocalCareerActorV1",
+      "rookSoundTurn",
+      "horGamePace",
+      "horFavoritePartner042",
+      "horAudioMixerV1"
+    ],
+    "storage": {
+      "horCareerStateV2": "{\"schemaVersion\":2,\"migrationVersion\":2,\"identity\":{\"id\":\"local-adee3569-0f4d-483f-b1cf-1b4133de8c8e\",\"displayName\":\"You\",\"aliases\":[\"You\"]},\"revision\":1,\"updatedAt\":\"2026-10-18T20:15:02.694Z\",\"records\":{\"human\":{\"displayName\":\"You\",\"isBot\":false,\"stats\":{\"points\":1234,\"gamesPlayed\":7,\"gamesWon\":3},\"achievements\":{},\"retiredAchievements\":{},\"rewardReceipts\":{},\"partners\":{},\"trumpWins\":{\"black\":0,\"red\":0,\"green\":0,\"yellow\":0},\"avatar\":null}},\"receipts\":{},\"matches\":{},\"sources\":{},\"conflicts\":[],\"migration\":{\"completed\":true,\"at\":\"2026-10-18T20:15:02.695Z\",\"policy\":\"whole-snapshot-baseline; ambiguous increments quarantined; no sums\"},\"restores\":{}}",
+      "horLocalCareerActorV1": "local-adee3569-0f4d-483f-b1cf-1b4133de8c8e",
+      "rookSoundTurn": "0",
+      "horGamePace": "3",
+      "horFavoritePartner042": "Anchor",
+      "horAudioMixerV1": "{\"master\":0.8,\"voices\":0.4,\"gameplay\":0.6,\"character\":0.7,\"atmosphere\":0.3,\"voicesMuted\":false}"
+    },
+    "identity": {
+      "id": "local-adee3569-0f4d-483f-b1cf-1b4133de8c8e",
+      "displayName": "You",
+      "aliases": [
+        "You"
+      ]
+    },
+    "points": 1234
+  },
+  "transient": {
+    "page": "846-source-cleanup",
+    "script": "846-source-cleanup",
+    "marker": "846-source-cleanup",
+    "worker": {
+      "build": "845-share-shuffle",
+      "cache": "house-of-rooks-845-share-shuffle"
+    },
+    "controller": "http://127.0.0.1:8995/sw060.js?v=845-share-shuffle",
+    "coherent": false
+  },
+  "upgradeSamples": [
+    {
+      "page": "846-source-cleanup",
+      "script": "846-source-cleanup",
+      "marker": "846-source-cleanup",
+      "worker": {
+        "build": "845-share-shuffle",
+        "cache": "house-of-rooks-845-share-shuffle"
+      },
+      "controller": "http://127.0.0.1:8995/sw060.js?v=845-share-shuffle",
+      "coherent": false
+    },
+    {
+      "page": "846-source-cleanup",
+      "script": "846-source-cleanup",
+      "marker": "846-source-cleanup",
+      "worker": {
+        "build": "845-share-shuffle",
+        "cache": "house-of-rooks-845-share-shuffle"
+      },
+      "controller": "http://127.0.0.1:8995/sw060.js?v=845-share-shuffle",
+      "coherent": false
+    },
+    {
+      "page": "846-source-cleanup",
+      "script": "846-source-cleanup",
+      "marker": "846-source-cleanup",
+      "worker": {
+        "build": "846-source-cleanup",
+        "cache": "house-of-rooks-846-source-cleanup"
+      },
+      "controller": "http://127.0.0.1:8995/sw060.js?v=845-share-shuffle",
+      "coherent": true
+    },
+    {
+      "page": "846-source-cleanup",
+      "script": "846-source-cleanup",
+      "marker": "846-source-cleanup",
+      "worker": {
+        "build": "846-source-cleanup",
+        "cache": "house-of-rooks-846-source-cleanup"
+      },
+      "controller": "http://127.0.0.1:8995/sw060.js?v=845-share-shuffle",
+      "coherent": true
+    },
+    {
+      "page": "846-source-cleanup",
+      "script": "846-source-cleanup",
+      "marker": "846-source-cleanup",
+      "worker": {
+        "build": "846-source-cleanup",
+        "cache": "house-of-rooks-846-source-cleanup"
+      },
+      "controller": "http://127.0.0.1:8995/sw060.js?v=845-share-shuffle",
+      "coherent": true
+    }
+  ],
+  "after": {
+    "storage": {
+      "horCareerStateV2": "{\"schemaVersion\":2,\"migrationVersion\":2,\"identity\":{\"id\":\"local-adee3569-0f4d-483f-b1cf-1b4133de8c8e\",\"displayName\":\"You\",\"aliases\":[\"You\"]},\"revision\":1,\"updatedAt\":\"2026-10-18T20:15:02.694Z\",\"records\":{\"human\":{\"displayName\":\"You\",\"isBot\":false,\"stats\":{\"points\":1234,\"gamesPlayed\":7,\"gamesWon\":3},\"achievements\":{},\"retiredAchievements\":{},\"rewardReceipts\":{},\"partners\":{},\"trumpWins\":{\"black\":0,\"red\":0,\"green\":0,\"yellow\":0},\"avatar\":null}},\"receipts\":{},\"matches\":{},\"sources\":{},\"conflicts\":[],\"migration\":{\"completed\":true,\"at\":\"2026-10-18T20:15:02.695Z\",\"policy\":\"whole-snapshot-baseline; ambiguous increments quarantined; no sums\"},\"restores\":{}}",
+      "horLocalCareerActorV1": "local-adee3569-0f4d-483f-b1cf-1b4133de8c8e",
+      "rookSoundTurn": "0",
+      "horGamePace": "3",
+      "horFavoritePartner042": "Anchor",
+      "horAudioMixerV1": "{\"master\":0.8,\"voices\":0.4,\"gameplay\":0.6,\"character\":0.7,\"atmosphere\":0.3,\"voicesMuted\":false}"
+    },
+    "state": {
+      "schemaVersion": 2,
+      "migrationVersion": 2,
+      "identity": {
+        "id": "local-adee3569-0f4d-483f-b1cf-1b4133de8c8e",
+        "displayName": "You",
+        "aliases": [
+          "You"
+        ]
+      },
+      "revision": 1,
+      "updatedAt": "2026-10-18T20:15:02.694Z",
+      "records": {
+        "human": {
+          "displayName": "You",
+          "isBot": false,
+          "stats": {
+            "points": 1234,
+            "gamesPlayed": 7,
+            "gamesWon": 3
+          },
+          "achievements": {},
+          "retiredAchievements": {},
+          "rewardReceipts": {},
+          "partners": {},
+          "trumpWins": {
+            "black": 0,
+            "red": 0,
+            "green": 0,
+            "yellow": 0
+          },
+          "avatar": null
+        }
+      },
+      "receipts": {},
+      "matches": {},
+      "sources": {},
+      "conflicts": [],
+      "migration": {
+        "completed": true,
+        "at": "2026-10-18T20:15:02.695Z",
+        "policy": "whole-snapshot-baseline; ambiguous increments quarantined; no sums"
+      },
+      "restores": {}
+    }
+  },
+  "caches": [
+    "house-of-rooks-845-share-shuffle",
+    "house-of-rooks-844-network-guard",
+    "house-of-rooks-846-source-cleanup"
+  ],
+  "errors": []
+}

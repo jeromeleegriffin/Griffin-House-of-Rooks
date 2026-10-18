@@ -1,17 +1,16 @@
-# Griffin Rook Installer
+# Griffin House of Rooks
 
-Tiny private-purpose Android helper for Jerome's Griffin House of Rooks phone workflow.
+A four-player partnership Rook game by Jerome Griffin, built for phones and tablets.
 
-## What it does
-- No ads, account, analytics, tracking, or network permission.
-- Lets the user select a storage folder using Android's system picker.
-- Accepts a full Rook ZIP.
-- Validates that the ZIP contains `index.html` and `game.js` before replacing anything.
-- Extracts to a temporary `Rook_NEW` folder and verifies extraction before replacing `Rook`.
-- Keeps the original ZIP in `RookZips`.
+Open `index.html` through a local server or the existing ZIP loader. The published application needs no production npm packages or build step.
 
-## Build APK on GitHub
-Open **Actions → Build Griffin Rook Installer APK → Run workflow**.
-When it succeeds, download the **GriffinRookInstaller-APK** artifact. It contains `GriffinRookInstaller.apk`.
+For developers, start with [DEVELOPING.md](DEVELOPING.md). It explains module ownership, script and stylesheet ordering, approved assets, frozen intelligence, saved-data compatibility and validation. Run `npm ci` followed by `npm run check` before changing the source.
 
-The workflow also runs automatically on pushes to `main`.
+Current runtime: **846-source-cleanup**. Runtime identity is available to support tools through `HORRuntimeTruth()`; the experimental landscape corner caption has been removed.
+
+Historical review notes inherited from the exact Build 845 source are preserved unchanged under [docs/history/build-845-inherited](docs/history/build-845-inherited/). They describe earlier checkpoints and are not current test receipts. Current source hashes, regression results and release status are in `coordination/releases/846-cleanup/` in the Test repository. The current Master Brain pointer is `brain/current.json`.
+
+Live sites:
+
+- https://jeromeleegriffin.github.io/Test/
+- https://jeromeleegriffin.github.io/Griffin-House-of-Rooks/
