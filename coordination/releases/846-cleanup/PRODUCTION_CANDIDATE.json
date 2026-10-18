@@ -1,12 +1,9 @@
 {
   "build": "846-source-cleanup",
-  "status": "APPLICATION_STAGED_CI_WORKFLOW_PENDING_NOT_DEPLOYED",
+  "status": "STAGED_ALL_SOURCE_FILES_AWAITING_INDEPENDENT_VERIFY",
   "sourceCommit": "71dee12ecdeb41d8edc91a9b02adc4e5716b5d9b",
-  "verifiedSourceFiles": 1650,
-  "importedFiles": 1649,
-  "pendingFile": ".github/workflows/source-check.yml",
-  "previousProductionCommit": "be2054a9d730162fbeae20ad8b8511438e9d6cfc",
-  "rollbackBranch": "rollback/pre-846-20261018",
-  "ownerRequestedCleanup": true,
+  "sourceFiles": 1650,
+  "importRun": 39164538214,
+  "workflowInstalledBy": "Connected GitHub integration",
   "mainModified": false
 }

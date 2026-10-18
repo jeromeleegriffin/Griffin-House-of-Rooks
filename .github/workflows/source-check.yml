@@ -1,0 +1,35 @@
+name: Source checks
+on:
+  push:
+    paths:
+      - '*.js'
+      - '*.css'
+      - 'index.html'
+      - 'privacy.html'
+      - 'package*.json'
+      - '.prettier*'
+      - 'tools/check-source.cjs'
+      - '.github/workflows/source-check.yml'
+  pull_request:
+    paths:
+      - '*.js'
+      - '*.css'
+      - 'index.html'
+      - 'privacy.html'
+      - 'package*.json'
+      - '.prettier*'
+      - 'tools/check-source.cjs'
+      - '.github/workflows/source-check.yml'
+permissions:
+  contents: read
+jobs:
+  source:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+      - run: npm ci --ignore-scripts --no-audit --no-fund
+      - run: npm run check
