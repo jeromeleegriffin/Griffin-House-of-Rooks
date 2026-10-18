@@ -1,0 +1,67 @@
+name: Stage verified Build 846 cleanup
+on:
+  push:
+    branches: [release/846-20261018]
+    paths: ['.github/workflows/stage-approved-846.yml']
+permissions:
+  contents: write
+concurrency:
+  group: stage-approved-846
+  cancel-in-progress: false
+jobs:
+  stage:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/checkout@v4
+        with:
+          repository: jeromeleegriffin/Test
+          ref: 71dee12ecdeb41d8edc91a9b02adc4e5716b5d9b
+          path: _846_source
+          sparse-checkout: |
+            assets
+            voices
+            x1
+            tools
+            docs/history/build-845-inherited
+            .github/workflows
+            coordination/releases/846-cleanup
+      - name: Verify all source bytes and stage candidate only
+        env:
+          CANDIDATE_BRANCH: release/846-20261018
+        run: |
+          python3 - <<'PY'
+          import json,hashlib,pathlib,subprocess,os,shutil
+          root=pathlib.Path('.')
+          source=root/'_846_source'
+          evidence=source/'coordination/releases/846-cleanup'
+          inventory=json.loads((evidence/'SOURCE_MANIFEST.json').read_text())
+          receipt=json.loads((evidence/'CANDIDATE_RECEIPT.json').read_text())
+          assert len(inventory)==1650
+          head=subprocess.check_output(['git','ls-remote','origin','refs/heads/'+os.environ['CANDIDATE_BRANCH']],text=True).split()[0]
+          assert head==os.environ['GITHUB_SHA'],'Candidate advanced; refusing stale import'
+          names=[]
+          for item in inventory:
+              p=pathlib.PurePosixPath(item['path'])
+              assert not p.is_absolute() and '..' not in p.parts
+              data=(source/p).read_bytes()
+              assert len(data)==item['size'],str(p)
+              assert hashlib.sha256(data).hexdigest()==item['sha256'],str(p)
+              assert hashlib.sha1(b'blob '+str(len(data)).encode()+b'\0'+data).hexdigest()==item['sha'],str(p)
+              target=root/p;target.parent.mkdir(parents=True,exist_ok=True);target.write_bytes(data)
+              names.append(str(p))
+          removed=receipt['deletedPaths']
+          for name in removed:
+              p=root/name
+              if p.exists():p.unlink()
+          target=root/'coordination/releases/846-cleanup';target.mkdir(parents=True,exist_ok=True)
+          for p in evidence.iterdir():
+              if p.is_file():shutil.copyfile(p,target/p.name)
+          (target/'PRODUCTION_CANDIDATE.json').write_text(json.dumps({'build':'846-source-cleanup','status':'STAGED_NOT_DEPLOYED','sourceCommit':'71dee12ecdeb41d8edc91a9b02adc4e5716b5d9b','verifiedFiles':1650,'previousProductionCommit':'be2054a9d730162fbeae20ad8b8511438e9d6cfc','rollbackBranch':'rollback/pre-846-20261018','ownerRequestedCleanup':True,'mainModified':False},indent=2)+'\n')
+          subprocess.run(['git','add','--',*names,*removed,str(target)],check=True)
+          shutil.rmtree(source)
+          subprocess.run(['git','config','user.name','github-actions[bot]'],check=True)
+          subprocess.run(['git','config','user.email','41898282+github-actions[bot]@users.noreply.github.com'],check=True)
+          subprocess.run(['git','commit','-m','Stage verified Build 846 cleanup; preserve live main'],check=True)
+          subprocess.run(['git','push','origin','HEAD:refs/heads/'+os.environ['CANDIDATE_BRANCH']],check=True)
+          PY
