@@ -21,6 +21,8 @@ jobs:
           sparse-checkout: |
             assets
             voices
+            vendor
+            review-continuity
             x1
             tools
             docs/history/build-845-inherited
