@@ -1,0 +1,62 @@
+name: Stage exact approved Build 845
+on:
+  push:
+    branches: [release/845-20261018]
+    paths: ['.github/workflows/stage-approved-845.yml']
+permissions:
+  contents: write
+concurrency:
+  group: stage-approved-845
+  cancel-in-progress: false
+jobs:
+  stage:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 1
+      - uses: actions/checkout@v4
+        with:
+          repository: jeromeleegriffin/Test
+          ref: e7cfed3915c8759e7084de8222eb89fe73f5972b
+          path: _845_source
+          sparse-checkout: |
+            builds/845
+            coordination/recovery845/FILE_INVENTORY_845.json
+      - name: Verify exact immutable source and stage candidate only
+        env:
+          CANDIDATE_BRANCH: release/845-20261018
+        run: |
+          python3 - <<'PY'
+          import json,hashlib,pathlib,subprocess,os,shutil
+          root=pathlib.Path('.')
+          source=root/'_845_source'
+          inventory=json.loads((source/'coordination/recovery845/FILE_INVENTORY_845.json').read_text())
+          assert len(inventory)==1642
+          head=subprocess.check_output(['git','ls-remote','origin','refs/heads/'+os.environ['CANDIDATE_BRANCH']],text=True).split()[0]
+          assert head==os.environ['GITHUB_SHA'],'Candidate advanced; refusing stale import'
+          names=[]
+          for item in inventory:
+              p=pathlib.PurePosixPath(item['path'])
+              assert not p.is_absolute() and '..' not in p.parts
+              data=(source/'builds/845'/p).read_bytes()
+              assert len(data)==item['size'],str(p)
+              assert hashlib.sha256(data).hexdigest()==item['sha256'],str(p)
+              assert hashlib.sha1(b'blob '+str(len(data)).encode()+b'\0'+data).hexdigest()==item['sha'],str(p)
+              target=root/p;target.parent.mkdir(parents=True,exist_ok=True);target.write_bytes(data)
+              names.append(str(p))
+          removed=['JEROME.html','career-phone-test.js','game.js','hor-430-patch.js','human-bid-voices798.js','jerome-griffin.html','progression-worker.js','rail-trick752.css','rail-trick752.js','shuffle-preview.html','shuffle-statistics.html','sol-diagnostics.js','stats-worker.js','style.css','sw.js','voice-review.html']
+          for name in removed:
+              if pathlib.Path(name).exists():pathlib.Path(name).unlink()
+          # Preserve original ZIP player and all hosting/repository-only files.
+          target=root/'coordination/releases/845-approved';target.mkdir(parents=True,exist_ok=True)
+          (target/'runtime-sha256.json').write_text(json.dumps({x['path']:x['sha256'] for x in inventory},indent=2)+'\n')
+          receipt={'build':'845-share-shuffle','status':'EXACT_CANDIDATE_STAGED_NOT_DEPLOYED','sourceRepository':'JeromeLeeGriffin/Test','sourceCommit':'26cf989cedfc6e7bde269f1b22690afeaa558a45','sourcePath':'builds/845','sourceRuntimeTree':'9e0ee5871c17b33c7a70367759d67194c25b32fc','runtimeFiles':1642,'archiveSha256':'6dfd28b2d8dadbb0390b051bcaffa4c7138698045f992c8388af1a2eb45b9d2f','rollbackBranch':'rollback/pre-845-20261018','previousProductionCommit':'555e1163a826687dccf9cb2e4d60af09119669b9','ownerAuthorizedRelease':True,'deletedObsoletePaths':removed,'originalZipPlayerPreserved':True,'deployed':False}
+          (target/'CANDIDATE_RECEIPT.json').write_text(json.dumps(receipt,indent=2)+'\n')
+          subprocess.run(['git','add','--',*names,*removed,str(target/'runtime-sha256.json'),str(target/'CANDIDATE_RECEIPT.json')],check=True)
+          shutil.rmtree(source)
+          subprocess.run(['git','config','user.name','github-actions[bot]'],check=True)
+          subprocess.run(['git','config','user.email','41898282+github-actions[bot]@users.noreply.github.com'],check=True)
+          subprocess.run(['git','commit','-m','Stage exact Build 845; verify all 1642 files; preserve live main'],check=True)
+          subprocess.run(['git','push','origin','HEAD:refs/heads/'+os.environ['CANDIDATE_BRANCH']],check=True)
+          PY
