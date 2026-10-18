@@ -14,8 +14,8 @@ function start(a){stop();if(a.reduced||!level()){stats.skipped++;return}const to
  warm().then(()=>{if(token!==generation||current!==a||!level()||c.state!=='running')return;const elapsed=(performance.now()-a.started)/1000,duration=a.duration/1000;
   // Never emit a late catch-up call after a stalled fetch/decode/resume.
   if(elapsed>.15){stats.skipped++;return}
-  const cues=a.duration<1100?[[0,'approach',.4]]:[[350,'approach',1],[1120,'call',1],[2350,'flutter',1]];
-  for(const [phase,name,quiet] of cues){const b=buffers.get(name);if(!b)continue;const offset=phase/2750*duration;if(elapsed>offset+.06)continue;const delay=Math.max(0,offset-elapsed),length=Math.min(b.duration,duration-elapsed-delay);if(length<.06)continue;
+  const cues=a.cues||(a.duration<1100?[[0,'approach',.4]]:[[350,'approach',1],[1120,'call',1],[2350,'flutter',1]]);
+  for(const [phase,name,quiet] of cues){const b=buffers.get(name);if(!b)continue;const offset=phase/(a.cueDuration||2750)*duration;if(elapsed>offset+.06)continue;const delay=Math.max(0,offset-elapsed),length=Math.min(b.duration,duration-elapsed-delay);if(length<.06)continue;
    const s=c.createBufferSource(),e=c.createGain(),g=c.createGain();s.buffer=b;s.playbackRate.value=1;g.gain.value=level();s.connect(e);e.connect(g);g.connect(window.HORAudioMixer.output(c,'character'));
    const at=c.currentTime+delay,fade=Math.min(.06,length/3);e.gain.setValueAtTime(0,at);e.gain.linearRampToValueAtTime(quiet,at+fade);e.gain.setValueAtTime(quiet,at+length-fade);e.gain.linearRampToValueAtTime(0,at+length);const item={s,e,g,c,name};sources.add(item);s.onended=()=>dispose(item);s.start(at,0,length);stats.cues.push({id:a.id,name,phase,offsetMs:offset*1000,lengthMs:length*1000,rate:1});if(stats.cues.length>60)stats.cues.shift();
   }

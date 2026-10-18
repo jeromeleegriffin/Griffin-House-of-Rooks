@@ -1,0 +1,24 @@
+829 — LANDSCAPE POLISH REVIEW
+
+Continue from Griffin_Landscape_Friends_Review.zip. Open index.html in your existing ZIP player, or serve this complete directory locally. This is an isolated playable review, not a deployment.
+
+Changes:
+- Partner picker now displays each selected bot's actual portrait, name and playing style, with paginated choices and the existing favorite storage.
+- Waiting room: player names and level badges open stats; Remove bot is a separate, explicit button. Tap the now-open seat to choose its replacement.
+- The nest deals face down to the center, pauses, then turns its top card over. Existing bird reveal audio fires once during the turn, respecting sound settings. Portrait deal behavior is preserved.
+- Raven fight uses measurable felt geometry instead of the zero-size display:contents trick container. Both normal and short landscape captures were checked.
+- Top played card is closer to the trick. Top nameplate is closer to its player; long statuses sit in a bounded separate label.
+- Laid-down winning cards use the same flattened table plane as played cards. The notice sits below the portraits.
+- Match recap has inset margins and a compact short-height layout; cards no longer collide with the heading at 844x245.
+- Shoot the Moon bid box dimensions remain unchanged.
+- This review versions its script/style requests and precaches those exact URLs for offline reload. Existing user caches and saved games are not cleared.
+
+Verification:
+844x390, 844x290, 844x245, and 1280x800 layouts; real partner save, bot stat/close/remove/reseat actions; nest count 0 through 6 and animated flip; fight start/finish; lay-down and match fixtures; complete actual 195-bid hand through discard, trump and scoring; both bird reveal sound source starts; portrait rotation without overflow; offline reload with approved signature shuffle. No missing artwork or script errors in final runs. Ordinary and Moon bid box at 844x390 both measured 248.921875 x 102.96875.
+
+Limits:
+Network multiplayer was not verified. Waiting-room signaling was isolated for local tests; actual existing seat handlers were used. Fight/lay-down/match edge cases used deterministic presentation fixtures. Sound checks verify Web Audio source starts, not subjective handset volume.
+
+Historical documents in this package remain historical. REVIEW-CHECKS.json, REVIEW-MANIFEST.json and this README describe 829. The approved Brain authority inherited from this session is AE; no remote Brain or live server was modified. The underlying source is the existing 816-derived review, never an 805 rollback or rejected 824–828 candidate.
+
+Future continuation: preserve the existing CHAT_CONTINUITY_RULE.md and COMPLETE_BANK_READING_RULE.md verbatim, read current brain/current.json before any repository work, and continue from this ZIP. Do not infer production deployment authorization.

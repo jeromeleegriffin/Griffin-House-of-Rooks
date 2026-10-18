@@ -1,0 +1,51 @@
+.room-fullscreen831{display:none;}
+@media(orientation:landscape){
+ body :is(#lobby,#waiting)>.room-fullscreen831{display:flex;align-items:center;gap:6px;position:absolute;z-index:7;top:10px;right:62px;height:32px;min-height:32px;padding:4px 10px;border:1px solid #b49b61;border-radius:7px;background:#10221deb;color:#f4e2b5;font:13px Georgia,serif;cursor:pointer;}
+ body #waiting>.room-fullscreen831{right:16px;}
+ body #lobby #roomWelcome830{top:auto!important;bottom:86px!important;gap:10px!important;max-width:85%;}
+ #roomPartnerRow831{display:flex;align-items:center;justify-content:center;gap:10px;min-height:28px;}
+ body #lobby #roomPartnerLabel830,body #lobby #landingPartner783{position:static!important;inset:auto!important;transform:none!important;margin:0!important;white-space:nowrap!important;}
+ body #lobby #roomPartnerLabel830{display:block;padding:0!important;background:none!important;border:0!important;font:600 14px Georgia!important;}
+ body #lobby #landingPartner783{width:auto!important;min-width:128px!important;height:28px!important;min-height:28px!important;padding:3px 10px!important;font:600 13px Georgia!important;}
+ body #lobby #landingPartner783 span{font:inherit!important;}
+ body #lobby #roomEditPlayer830{flex-shrink:0;}
+ /* Empty seat buttons use one boundary, at the future player's seat. */
+ body #waiting.friends803 .wait-seat.friends-empty:not([data-position=me]){top:19%!important;min-height:32px!important;padding:5px 8px!important;width:150px!important;max-width:22%!important;}
+ body #waiting.friends803 .wait-seat.friends-empty[data-position=top]{top:14%!important;}
+ body #waiting.friends803 .wait-seat .friends-seat-role804{display:none!important;}
+ body #waiting.friends803 .wait-seat .friends-seat-choice804{border:0!important;background:none!important;box-shadow:none!important;padding:1px 0!important;font:600 14px/1.2 Georgia!important;}
+ body #waiting.friends803 .wait-seat.friends-person:not([data-position=me]){top:35%!important;}
+ body #waiting.friends803 #friendsCenter804{top:auto!important;bottom:91px!important;}
+ body #waiting.friends803 #friendsHeading803{font-size:20px!important;}
+ body #waiting.friends803 #waitingStatus{font-size:13px!important;}
+ body #waiting.friends803 .wait-seat[data-position=me]{left:12%!important;bottom:87px!important;max-width:22%!important;min-height:25px!important;font-size:14px!important;}
+ body #waiting.friends803 #friendsDock803{grid-template-columns:minmax(0,1.5fr) minmax(130px,1fr) minmax(100px,.65fr)!important;}
+ body #waiting.friends803 #friendsDock803 #friendsActions803.room-fill-next831 #startBtn{display:none!important;}
+ body #waiting.friends803 #friendsDock803 #friendsActions803 #fillSeatsBtn.hidden{display:none!important;}
+ body #waiting.friends803 #friendsDock803 #friendsActions803 #fillSeatsBtn{background:linear-gradient(#e6cb79,#ba8c32)!important;color:#211806!important;font-size:18px!important;text-shadow:none!important;}
+ /* Wider menu, compact rows, and row-aware pagination. */
+ body #houseMenu805{width:min(620px,calc(100vw - 24px))!important;}
+ body #houseMenu805 .visual-links805{grid-template-columns:repeat(2,minmax(0,1fr));gap:7px!important;}
+ body #houseMenu805 .visual-links805>button{min-height:48px!important;height:48px!important;padding:6px 9px!important;gap:8px!important;}
+ body #houseMenu805 .house-copy b{font-size:14px!important;}
+ body #houseMenu805 .house-copy small{font-size:10px!important;margin-top:2px!important;}
+ body .house-public-dialog .house-page-nav{min-height:32px;margin-top:6px;padding-top:6px;}
+ body .house-public-dialog .house-page-nav button{height:32px;min-height:32px;padding:4px 10px;}
+ body #houseMenu805 .visual-head805{min-height:28px!important;padding-bottom:6px!important;}
+}
+@media(orientation:landscape) and (max-height:340px){
+ body #lobby #roomWelcome830{bottom:63px!important;gap:6px!important;}
+ body #lobby #roomWelcome830 h1{font-size:22px!important;line-height:1.1!important;}
+ body #lobby #roomPartnerRow831{min-height:26px;gap:8px;}
+ body #lobby #landingPartner783{height:26px!important;min-height:26px!important;}
+ body #lobby #roomEditPlayer830{height:30px!important;min-height:30px!important;}
+ body #waiting.friends803 #friendsCenter804{bottom:65px!important;}
+ body #waiting.friends803 #friendsHeading803{display:none!important;}
+ body #waiting.friends803 .wait-seat[data-position=me]{bottom:64px!important;}
+ body #waiting.friends803 .wait-seat.friends-person:not([data-position=me]){top:34%!important;}
+ body #waiting .waiting-remove-bot{top:calc(34% + 28px)!important;}
+ body #houseMenu805 .visual-links805>button{height:44px!important;min-height:44px!important;}
+ body #houseMenu805 .house-copy small{display:none!important;}
+}
+
+.room-fullscreen831 svg{width:15px;height:15px;fill:none;stroke:currentColor;stroke-width:1.8;flex-shrink:0;}

@@ -1,0 +1,294 @@
+/* 812: isolated, owner-requested landscape discard presentation.
+   Full real card faces; fixed 16-to-6 state machine remains in game060.js.
+   Kept separate from portrait and from scene/character/holder rendering. */
+@media (orientation: landscape) {
+  body.in-game.angle-c-runtime #discardOverlay:not(.hidden) {
+    background: rgba(4, 10, 19, .96) !important;
+    display: flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    overscroll-behavior: none !important;
+  }
+  body.in-game.angle-c-runtime #discardOverlay .discard-sheet.gh-landscape-discard {
+    --hor-discard-face-h: clamp(68px, calc((100dvh - 210px) / 2), 118px);
+    --hor-discard-face-w: calc(var(--hor-discard-face-h) * .690476);
+    position: relative !important;
+    display: grid !important;
+    grid-template-columns: minmax(0, 1fr) !important;
+    grid-template-rows: 45px 44px minmax(0, 1fr) 48px !important;
+    row-gap: 4px !important;
+    width: min(950px, calc(100dvw - 16px)) !important;
+    height: min(570px, calc(100dvh - 12px)) !important;
+    max-height: calc(100dvh - 12px) !important;
+    margin: 0 auto !important;
+    padding: 8px 12px 9px !important;
+    box-sizing: border-box !important;
+    overflow: hidden !important;
+    border: 2px solid #bb9957 !important;
+    border-radius: 12px !important;
+    background: linear-gradient(155deg, #142635, #0a1b29 52%, #131e27) !important;
+    box-shadow: 0 0 0 2px #292016, inset 0 0 0 1px #624d2a, 0 15px 45px #000b !important;
+  }
+  body.in-game.angle-c-runtime #discardOverlay .discard-sheet.gh-landscape-discard:not(:has(.discard-kitty)) {
+    grid-template-rows: 44px minmax(0, 1fr) 48px !important;
+  }
+  body.in-game.angle-c-runtime #discardOverlay .gh-landscape-discard .discard-kitty {
+    box-sizing: border-box !important;
+    height: 44px !important;
+    min-height: 0 !important;
+    max-height: 44px !important;
+    padding: 2px 7px !important;
+    margin: 0 !important;
+    gap: 8px !important;
+    background: rgba(10, 31, 44, .85) !important;
+    border: 1px solid rgba(190, 156, 88, .48) !important;
+    border-radius: 5px !important;
+    overflow: hidden !important;
+    box-shadow: inset 0 1px 4px #0008 !important;
+  }
+  body.in-game.angle-c-runtime #discardOverlay .gh-landscape-discard .kitty-label {
+    color: #e2c88b !important;
+    font: 700 12px/1.1 Georgia, serif !important;
+    white-space: nowrap !important;
+  }
+  body.in-game.angle-c-runtime #discardOverlay .gh-landscape-discard .kitty-cards {
+    display: flex !important;
+    gap: 2px !important;
+    align-items: center !important;
+    flex-shrink: 1 !important;
+    min-width: 0 !important;
+    overflow: hidden !important;
+  }
+  body.in-game.angle-c-runtime #discardOverlay .gh-landscape-discard .kitty-cards .card-face {
+    box-sizing: border-box !important;
+    width: 22px !important;
+    height: 32px !important;
+    min-width: 22px !important;
+    flex: 0 0 22px !important;
+  }
+  body.in-game.angle-c-runtime #discardOverlay .gh-landscape-discard .gh-discard-head {
+    height: 44px !important;
+    display: flex !important;
+    align-items: center !important;
+    justify-content: space-between !important;
+    box-sizing: border-box !important;
+    gap: 12px !important;
+    padding: 2px 4px !important;
+    margin: 0 !important;
+    min-width: 0 !important;
+    min-height: 0 !important;
+    background: none !important;
+    border: 0 !important;
+  }
+  body.in-game.angle-c-runtime #discardOverlay .gh-landscape-discard .gh-discard-directions {
+    min-width: 0;
+  }
+  body.in-game.angle-c-runtime #discardOverlay .gh-landscape-discard .discard-title {
+    margin: 0 !important;
+    font: 700 clamp(16px, 2.5vw, 22px)/1.1 Georgia, serif !important;
+    color: #f2db9c !important;
+    letter-spacing: .045em !important;
+    text-shadow: 0 2px 2px #000 !important;
+    white-space: nowrap !important;
+  }
+  body.in-game.angle-c-runtime #discardOverlay .gh-landscape-discard .gh-discard-instruction {
+    margin: 3px 0 0 !important;
+    font: 500 clamp(10px, 1.35vw, 13px)/1.15 system-ui, sans-serif !important;
+    color: #d5d1c5 !important;
+    white-space: nowrap !important;
+  }
+  body.in-game.angle-c-runtime #discardOverlay .gh-landscape-discard .gh-discard-count {
+    align-self: center !important;
+    flex: none !important;
+    min-width: 115px !important;
+    padding: 5px 9px !important;
+    border: 1px solid rgba(192, 154, 76, .8) !important;
+    border-radius: 7px !important;
+    background: rgba(8, 17, 25, .88) !important;
+    color: #f4db9d !important;
+    box-shadow: inset 0 0 7px #000a !important;
+    font: 700 clamp(11px, 1.5vw, 15px)/1.2 Georgia, serif !important;
+    text-align: center !important;
+    white-space: nowrap !important;
+  }
+  body.in-game.angle-c-runtime #discardOverlay .gh-landscape-discard-felt {
+    position: relative !important;
+    display: flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    min-height: 0 !important;
+    overflow: hidden !important;
+    box-sizing: border-box !important;
+    padding: 6px 10px !important;
+    border: 1px solid #a9874d !important;
+    border-radius: 7px !important;
+    background: radial-gradient(ellipse at 52% 40%, #153f72 0%, #102e55 58%, #081b35 100%) !important;
+    box-shadow: inset 0 0 21px #000b, 0 1px 0 #e8c98544 !important;
+  }
+  body.in-game.angle-c-runtime #discardOverlay .gh-landscape-discard .discard-groups {
+    display: grid !important;
+    width: min(100%, 730px) !important;
+    height: min-content !important;
+    max-height: 100% !important;
+    min-height: 0 !important;
+    box-sizing: border-box !important;
+    grid-template-columns: repeat(8, minmax(0, 1fr)) !important;
+    grid-template-rows: repeat(2, var(--hor-discard-face-h)) !important;
+    gap: 7px 3px !important;
+    justify-items: center !important;
+    align-items: center !important;
+    overflow: visible !important;
+    padding: 0 !important;
+    margin: 0 auto !important;
+  }
+  body.in-game.angle-c-runtime #discardOverlay .gh-landscape-discard :is(.discard-color-row, .discard-color-cards) {
+    display: contents !important;
+  }
+  body.in-game.angle-c-runtime #discardOverlay .gh-landscape-discard .discard-color-label {
+    display: none !important;
+  }
+  body.in-game.angle-c-runtime #discardOverlay .gh-landscape-discard .discard-slot.discard-pick {
+    position: relative !important;
+    box-sizing: border-box !important;
+    display: flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    width: max(44px, var(--hor-discard-face-w)) !important;
+    max-width: 100% !important;
+    height: var(--hor-discard-face-h) !important;
+    max-height: 100% !important;
+    min-width: 0 !important;
+    min-height: 0 !important;
+    border: 0 !important;
+    margin: 0 !important;
+    padding: 0 !important;
+    background: none !important;
+    box-shadow: none !important;
+    overflow: visible !important;
+    appearance: none !important;
+    cursor: pointer !important;
+    touch-action: manipulation !important;
+    -webkit-tap-highlight-color: transparent !important;
+  }
+  body.in-game.angle-c-runtime #discardOverlay .gh-landscape-discard .discard-slot .discard-card-art {
+    position: relative !important;
+    box-sizing: border-box !important;
+    width: var(--hor-discard-face-w) !important;
+    min-width: var(--hor-discard-face-w) !important;
+    max-width: var(--hor-discard-face-w) !important;
+    height: var(--hor-discard-face-h) !important;
+    min-height: var(--hor-discard-face-h) !important;
+    max-height: var(--hor-discard-face-h) !important;
+    margin: 0 !important;
+    padding: 0 !important;
+    flex: 0 0 auto !important;
+    opacity: 1 !important;
+    filter: none !important;
+    overflow: hidden !important;
+    border-radius: 3px !important;
+    pointer-events: none !important;
+    background-color: #fff8e8 !important;
+    box-shadow: 0 2px 8px #0008 !important;
+    transform: none !important;
+    transition: transform .12s ease, box-shadow .12s ease !important;
+  }
+  body.in-game.angle-c-runtime #discardOverlay .gh-landscape-discard .discard-slot.selected .discard-card-art {
+    outline: 3px solid #f5cf65 !important;
+    outline-offset: 1px !important;
+    box-shadow: 0 0 0 3px #38220b, 0 0 12px 3px #e7ad40 !important;
+    transform: translateY(-2px) !important;
+  }
+  body.in-game.angle-c-runtime #discardOverlay .gh-landscape-discard .discard-slot .gh-card-check {
+    position: absolute !important;
+    display: none !important;
+    z-index: 4 !important;
+    top: -5px !important;
+    right: -5px !important;
+    left: auto !important;
+    width: 21px !important;
+    height: 21px !important;
+    box-sizing: border-box !important;
+    border: 2px solid #f3d17d !important;
+    border-radius: 50% !important;
+    align-items: center !important;
+    justify-content: center !important;
+    background: #172f23 !important;
+    color: #ffe6a2 !important;
+    font: 900 14px/1 system-ui, sans-serif !important;
+    text-shadow: 0 1px 2px #000 !important;
+    pointer-events: none !important;
+  }
+  body.in-game.angle-c-runtime #discardOverlay .gh-landscape-discard .discard-slot.selected .gh-card-check {
+    display: flex !important;
+  }
+  body.in-game.angle-c-runtime #discardOverlay .gh-landscape-discard .discard-slot:focus-visible {
+    outline: 2px dashed #fff3ad !important;
+    outline-offset: 4px !important;
+    border-radius: 5px !important;
+  }
+  body.in-game.angle-c-runtime #discardOverlay .gh-landscape-discard .discard-actions {
+    display: flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    min-height: 0 !important;
+    padding: 0 !important;
+    margin: 0 !important;
+    border: 0 !important;
+    background: none !important;
+  }
+  body.in-game.angle-c-runtime #discardOverlay .gh-landscape-discard #confirmDiscard {
+    box-sizing: border-box !important;
+    height: 42px !important;
+    min-height: 0 !important;
+    width: min(330px, 85%) !important;
+    border: 1px solid #d4b374 !important;
+    border-radius: 8px !important;
+    padding: 4px 14px !important;
+    margin: 0 !important;
+    background: linear-gradient(#1f503a, #0b2e22) !important;
+    color: #ffebbc !important;
+    text-align: center !important;
+    font: 700 16px/1.1 Georgia, serif !important;
+    box-shadow: inset 0 1px 0 #fff2, 0 2px 8px #0007 !important;
+    touch-action: manipulation !important;
+    cursor: pointer !important;
+  }
+  body.in-game.angle-c-runtime #discardOverlay .gh-landscape-discard #confirmDiscard:disabled {
+    background: linear-gradient(#26323b, #172532) !important;
+    color: #9d9d9d !important;
+    border-color: #5f615f !important;
+    box-shadow: inset 0 1px 4px #000b !important;
+    cursor: default !important;
+  }
+}
+@media (orientation: landscape) and (max-height: 350px) {
+  body.in-game.angle-c-runtime #discardOverlay .discard-sheet.gh-landscape-discard {
+    --hor-discard-face-h: clamp(60px, calc((100dvh - 140px) / 2), 82px);
+    grid-template-rows: 20px 34px minmax(0, 1fr) 38px !important;
+    gap: 2px !important;
+    padding: 6px 9px !important;
+  }
+  body.in-game.angle-c-runtime #discardOverlay .discard-sheet.gh-landscape-discard:not(:has(.discard-kitty)) {
+    grid-template-rows: 34px minmax(0, 1fr) 38px !important;
+  }
+  body.in-game.angle-c-runtime #discardOverlay .gh-landscape-discard .discard-kitty {
+    height: 20px !important;
+    max-height: 20px !important;
+    padding: 1px 7px !important;
+    min-height: 0 !important;
+  }
+  body.in-game.angle-c-runtime #discardOverlay .gh-landscape-discard .kitty-cards {display:none !important;}
+  body.in-game.angle-c-runtime #discardOverlay .gh-landscape-discard .gh-discard-head {
+    height: 34px !important;
+    padding: 0 3px !important;
+  }
+  body.in-game.angle-c-runtime #discardOverlay .gh-landscape-discard .discard-title {font-size: 16px !important;}
+  body.in-game.angle-c-runtime #discardOverlay .gh-landscape-discard .gh-discard-instruction {font-size: 10px !important;}
+  body.in-game.angle-c-runtime #discardOverlay .gh-landscape-discard .gh-discard-count {padding: 3px 5px !important;font-size: 11px !important;}
+  body.in-game.angle-c-runtime #discardOverlay .gh-landscape-discard-felt {padding:3px 6px !important;}
+  body.in-game.angle-c-runtime #discardOverlay .gh-landscape-discard .discard-groups {gap:5px 2px !important;}
+  body.in-game.angle-c-runtime #discardOverlay .gh-landscape-discard #confirmDiscard {height:35px !important;font-size:14px !important;}
+}
+@media (prefers-reduced-motion: reduce) {
+  body.in-game.angle-c-runtime #discardOverlay .gh-landscape-discard .discard-slot .discard-card-art {transition:none!important;}
+}

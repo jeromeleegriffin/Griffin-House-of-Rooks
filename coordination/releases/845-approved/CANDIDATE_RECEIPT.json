@@ -1,0 +1,33 @@
+{
+  "build": "845-share-shuffle",
+  "status": "EXACT_CANDIDATE_STAGED_NOT_DEPLOYED",
+  "sourceRepository": "JeromeLeeGriffin/Test",
+  "sourceCommit": "26cf989cedfc6e7bde269f1b22690afeaa558a45",
+  "sourcePath": "builds/845",
+  "sourceRuntimeTree": "9e0ee5871c17b33c7a70367759d67194c25b32fc",
+  "runtimeFiles": 1642,
+  "archiveSha256": "6dfd28b2d8dadbb0390b051bcaffa4c7138698045f992c8388af1a2eb45b9d2f",
+  "rollbackBranch": "rollback/pre-845-20261018",
+  "previousProductionCommit": "555e1163a826687dccf9cb2e4d60af09119669b9",
+  "ownerAuthorizedRelease": true,
+  "deletedObsoletePaths": [
+    "JEROME.html",
+    "career-phone-test.js",
+    "game.js",
+    "hor-430-patch.js",
+    "human-bid-voices798.js",
+    "jerome-griffin.html",
+    "progression-worker.js",
+    "rail-trick752.css",
+    "rail-trick752.js",
+    "shuffle-preview.html",
+    "shuffle-statistics.html",
+    "sol-diagnostics.js",
+    "stats-worker.js",
+    "style.css",
+    "sw.js",
+    "voice-review.html"
+  ],
+  "originalZipPlayerPreserved": true,
+  "deployed": false
+}

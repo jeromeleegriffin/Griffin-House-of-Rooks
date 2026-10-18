@@ -10,7 +10,8 @@
  const panel={left:126,right:2067,top:244,bottom:466};
  const plaque={cx:(panel.left+panel.right)/2,cy:(panel.top+panel.bottom)/2,width:1000,height:1000*342/2022};
  let tentativeTrump=null, choiceKey=null, confirmGroup=null, fallbackDock=null;
- const portrait=()=>matchMedia('(orientation:portrait)').matches;
+ const landscapeAdapter=()=>window.HORLandscapeTrumpGeometry?.active()?window.HORLandscapeTrumpGeometry:null;
+ const portrait=()=>!!landscapeAdapter()||matchMedia('(orientation:portrait)').matches;
  const reduced=()=>matchMedia('(prefers-reduced-motion:reduce)').matches;
  let ready=false, root, canvas, ctx, stamp, lid, closed, buttons=[], dockRef, submitRef;
  let last=null, accepted=null, markColor=null, current=null, currentMe=-1, opts={};
@@ -68,6 +69,8 @@
  function ownsPortrait(){return ready&&portrait();}
  function position(){
   if(!root||root.hidden)return;
+  if(landscapeAdapter()){landscapeAdapter().position(root);return;}
+  root.style.width='';root.style.left='';
   const rear=document.querySelector('.holder004-backrest');const hand=document.getElementById('myHand');
   const y=rear&&rear.getBoundingClientRect().height?rear.getBoundingClientRect().top+1:hand?hand.getBoundingClientRect().top-6:innerHeight-65;
   root.style.top=Math.max(48,y-root.getBoundingClientRect().height)+'px';
@@ -79,7 +82,7 @@
  function stop(reason,hide=true){
   epoch++;cancelAnimationFrame(motionFrame);motionFrame=0;pose=null;inkColor=null;if(shadow)shadow.hidden=true;if(stampPaint)drawStamp(null,1);clockTimers.forEach(clearTimeout);clockTimers=[];motions.forEach(a=>a.cancel());motions=[];
   running=false;pressed=false;pending=false;
-  if(root){root.classList.remove('tc-directional');delete root.dataset.origin;root.style.opacity='';stamp.style.transform='';lid.style.transform='';closed.style.opacity='';closed.style.transform='';buttons.forEach(b=>{b.disabled=false;delete b.dataset.selected});if(hide)root.hidden=true;}
+  if(root){root.classList.remove('tc-directional','tc-landscape-cleared');delete root.dataset.origin;root.style.opacity='';stamp.style.transform='';lid.style.transform='';closed.style.opacity='';closed.style.transform='';buttons.forEach(b=>{b.disabled=false;delete b.dataset.selected});if(hide)root.hidden=true;}
   restore();log('cancel',reason);
  }
  function showCase(interactive){
@@ -111,6 +114,7 @@
  function timing(fn,at,token){clockTimers.push(setTimeout(()=>{if(token===epoch)fn();},at));}
  function animate(el,frames,settings){const a=el.animate(frames,{fill:'forwards',...settings});motions.push(a);return a;}
  function geometry(){
+  if(landscapeAdapter())return landscapeAdapter().geometry();
   const scale=Math.max(innerWidth/875,innerHeight/1797);
   return {scale,left:(innerWidth-875*scale)/2,top:0,x:440*scale+(innerWidth-875*scale)/2,y:850*scale};
  }
@@ -124,7 +128,7 @@
   canvas.style.width=innerWidth+'px';canvas.style.height=innerHeight+'px';ctx.setTransform(dpr,0,0,dpr,0,0);ctx.clearRect(0,0,innerWidth,innerHeight);
   const tmp=document.createElement('canvas');tmp.width=mask.w;tmp.height=mask.h;const tc=tmp.getContext('2d');const out=tc.createImageData(mask.w,mask.h);const rgb=pigment[color];
   for(let i=0;i<mask.alpha.length;i++){const k=i*4;const a=mask.alpha[i];out.data[k]=rgb[0];out.data[k+1]=rgb[1];out.data[k+2]=rgb[2];out.data[k+3]=Math.round(a*.94);}
-  tc.putImageData(out,0,0);ctx.drawImage(tmp,geo.left+mask.x*geo.scale,mask.y*geo.scale,mask.w*geo.scale,mask.h*geo.scale);
+  tc.putImageData(out,0,0);if(landscapeAdapter())landscapeAdapter().paint(ctx,tmp);else ctx.drawImage(tmp,geo.left+mask.x*geo.scale,mask.y*geo.scale,mask.w*geo.scale,mask.h*geo.scale);
  }
  function sound(){try{if(typeof playNatural063==='function')playNatural063('stamp',.6);}catch(_){}}
  // The approved raster is one camera-facing view. Keep its handle upright;
@@ -154,10 +158,11 @@
   c.drawImage(image,0,0,338,cut,0,shift,338,cut);
   c.drawImage(image,0,cut,338,514-cut,0,cut+shift,338,(514-cut)*sole);
  }
+ function duration(useShared=true){return reduced()?0:useShared&&current?.phase==='play'&&Number.isFinite(current.trumpPresentationMs833)?current.trumpPresentationMs833:Math.max(950,opts.scaled?opts.scaled(1950,0):1950);}
  function ceremony(color,chooser){
   stop('new-ceremony');accepted=color;pending=false;running=true;pressed=false;
-  const duration=reduced()?0:Math.max(0,opts.scaled?opts.scaled(1950,0):1950);
-  if(duration<150){paint(color);running=false;log('reduced-or-fast',color);return;}
+  const ceremonyMs=duration();
+  if(ceremonyMs<150){paint(color);running=false;log('reduced-or-fast',color);return;}
   showCase(false);tentativeTrump=color;updateChoice();const token=epoch;
   buttons.forEach(b=>{if(b.dataset.trump===color)b.dataset.selected='';});
   const slotId=seatSlotIdForIndex(chooser),direction=({'slot-me':'bottom','slot-partner':'top','slot-left':'left','slot-right':'right'})[slotId];
@@ -166,10 +171,11 @@
   const s=stamp.getBoundingClientRect(),g=geometry(),slot=document.getElementById(slotId),avatar=slot?.querySelector('.seat-avatar,.seat-avatar-side'),seat=(avatar||slot)?.getBoundingClientRect();
   const sx=s.left+s.width/2,sy=s.top+s.height*(975-107)/1027;
   const fallback={bottom:[sx,sy],top:[g.x,g.y-130],left:[g.x-145,g.y-35],right:[g.x+145,g.y-35]}[direction];
-  const ox=direction==='bottom'?sx:Math.max(s.width*.6,Math.min(innerWidth-s.width*.6,seat?.width?seat.left+seat.width/2:fallback[0]));
-  const oy=direction==='bottom'?sy:Math.max(48+s.height,Math.min(innerHeight-75,seat?.height?(direction==='top'?seat.bottom+18:seat.top+seat.height*.72):fallback[1]));
+  let ox=direction==='bottom'?sx:Math.max(s.width*.6,Math.min(innerWidth-s.width*.6,seat?.width?seat.left+seat.width/2:fallback[0]));
+  let oy=direction==='bottom'?sy:Math.max(48+s.height,Math.min(innerHeight-75,seat?.height?(direction==='top'?seat.bottom+18:seat.top+seat.height*.72):fallback[1]));
   const pad=buttons.find(b=>b.dataset.trump===color).getBoundingClientRect(),px=pad.left+pad.width/2,py=pad.top+pad.height*.30;
-  const origin={x:ox,y:oy},target={x:g.x,y:g.y};
+  if(landscapeAdapter()&&direction!=='bottom'){const o=landscapeAdapter().origin(direction);ox=o.x;oy=o.y;}
+  const origin=landscapeAdapter()&&direction!=='bottom'?landscapeAdapter().origin(direction):{x:ox,y:oy},target={x:g.x,y:g.y};
   // h is height above the felt; screen y is its camera projection. Travel
   // x/y remains on the table plane. No per-seat roll or sideways wrist twist.
   const frame=(t,x,y,h,sole,scale)=>({t,x,y,h,sole,scale});
@@ -178,15 +184,23 @@
    frame(0,ox,oy,0,1,startScale),frame(.06,px,py,20,.80,startScale),frame(.12,px,py,0,.48,startScale),frame(.18,px,py,0,.48,startScale),frame(.25,px,py,26,.80,startScale)
   ]:[frame(0,ox,oy,12,.80,startScale),frame(.18,ox,oy,26,.80,startScale),frame(.25,ox,oy,26,.80,startScale)];
   frames.push(frame(.48,g.x,g.y,32,.68,1),frame(.56,g.x,g.y,0,.48,1),frame(.63,g.x,g.y,0,.48,1),frame(.73,g.x,g.y,32,.68,1),frame(.91,ox,oy,26,.80,startScale),frame(.98,ox,oy,0,direction==='bottom'?1:.80,startScale),frame(1,ox,oy,0,direction==='bottom'?1:.80,startScale));
+  if(landscapeAdapter()){
+   // Keep the physical brass stamper human-sized. The FELT imprint is independently
+   // painted at 264 scene units by HORLandscapeTrumpGeometry.paint().
+   // Scaling the stamper to imprint width makes the moving tool enormous.
+   const contactScale=Math.max(.90,Math.min(1.10,depth(g.y)));
+   frames.forEach(f=>{if(f.t>=.48&&f.t<=.73)f.scale=contactScale;});
+  }
   if(direction!=='bottom'){inkColor=color;log('inked',{color,source:'remote-chooser',visiblePad:false});}
   log('direction',{chooser,slotId,direction,origin,destination:target,frames,contactAnchor:{sourceX:621,sourceY:975},contactAt:.56,inkAt:direction==='bottom'?.12:0});
   root.dataset.stage='ceremony';shadow.hidden=false;
   const start=performance.now();let picked=direction!=='bottom',contact=false,segment=0;
   function render(now){
    if(token!==epoch||!running)return;
-   const t=Math.min(1,Math.max(0,(now-start)/duration));
+   const t=Math.min(1,Math.max(0,(now-start)/ceremonyMs));
    while(segment<frames.length-2&&t>frames[segment+1].t)segment++;
    const a=frames[segment],b=frames[segment+1],u=Math.max(0,Math.min(1,(t-a.t)/(b.t-a.t))),ease=u*u*(3-2*u),mix=k=>a[k]+(b[k]-a[k])*ease;
+   if(landscapeAdapter()&&t>=.25)root.classList.add('tc-landscape-cleared');
    if(!picked&&t>=.12){picked=true;inkColor=color;log('inked',{color,source:'selected-pad',pad:{x:px,y:py},at:t});}
    if(!contact&&t>=.56){contact=true;pressed=true;paint(color);sound();log('pressed',{color,at:t,height:0});}
    const x=mix('x'),y=mix('y'),height=mix('h'),scale=mix('scale'),sole=mix('sole');
@@ -194,15 +208,15 @@
    stamp.style.transform=`translate(${x-sx}px,${y-sy-height}px) scale(${scale})`;
    drawStamp(inkColor,sole);
    shadow.style.left=x+'px';shadow.style.top=y+'px';shadow.style.width=(s.width*scale*.9+height*.20)+'px';shadow.style.height=(s.width*scale*.22+height*.08)+'px';shadow.style.opacity=String(.23-height*.0045);
-   if(t>=.86&&direction==='bottom'&&root.dataset.stage!=='closing'){root.dataset.stage='closing';animate(lid,[{transform:'scaleY(1)',opacity:1},{transform:'scaleY(0)',opacity:.7}],{duration:duration*.065,easing:'ease-in'});animate(closed,[{opacity:0,transform:'scaleY(0)'},{opacity:1,transform:'scaleY(1)'}],{duration:duration*.08,easing:'ease-out'});}
+   if(t>=.86&&direction==='bottom'&&root.dataset.stage!=='closing'){root.dataset.stage='closing';animate(lid,[{transform:'scaleY(1)',opacity:1},{transform:'scaleY(0)',opacity:.7}],{duration:ceremonyMs*.065,easing:'ease-in'});animate(closed,[{opacity:0,transform:'scaleY(0)'},{opacity:1,transform:'scaleY(1)'}],{duration:ceremonyMs*.08,easing:'ease-out'});}
    root.style.opacity=t>.96?String((1-t)/.04):'1';
    if(t<1)motionFrame=requestAnimationFrame(tick);else{stop('complete');paint(color);log('complete',color);}
   }
   function tick(now){try{render(now);}catch(error){stop('animation-error');paint(color);log('animation-error',String(error));}}
   tick(start);if(running)motionFrame=requestAnimationFrame(tick);
   // A deadline handles throttled frames; normal contact is tied to render time.
-  timing(()=>{if(running){stop('deadline');paint(color);log('deadline',color);}},duration+50,token);
-  log('started',{color,duration});
+  timing(()=>{if(running){stop('deadline');paint(color);log('deadline',color);}},ceremonyMs+50,token);
+  log('started',{color,duration:ceremonyMs});
  }
  function sync(g,me,options){
   ensure();current=g;currentMe=me;opts=options||{};
@@ -249,5 +263,5 @@
  matchMedia('(orientation:portrait)').addEventListener('change',resized);
  document.addEventListener('visibilitychange',()=>{if(document.hidden&&running){stop('background');if(current?.phase==='play')paint(current.trump);}});
  new MutationObserver(()=>{if(!document.body.classList.contains('in-game')&&root&&(running||!root.hidden||markColor)){stop('left-table');paint(null);last=null;accepted=null;}}).observe(document.body,{attributes:true,attributeFilter:['class']});
- window.HORTrump714={choose,chooseFallback,sync,ownsPortrait,inspect:()=>({panel,plaque,tentativeTrump,choiceKey,ready,running,pending,accepted,markColor,visible:!!root&&!root.hidden,trace:trace.slice(),pose,inkColor,maskReady:!!mask})};
+ window.HORTrump714={duration,choose,chooseFallback,sync,ownsPortrait,inspect:()=>({panel,plaque,tentativeTrump,choiceKey,ready,running,pending,accepted,markColor,visible:!!root&&!root.hidden,trace:trace.slice(),pose,inkColor,maskReady:!!mask})};
 })();

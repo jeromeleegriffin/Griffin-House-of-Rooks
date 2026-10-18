@@ -25,7 +25,7 @@
   const schedule=()=>{if(!frame)frame=requestAnimationFrame(sync);};
   function init(){
     const branding=document.getElementById('landingBrand783');
-    if(branding){const img=document.createElement('img');img.src='assets/approved805/griffin-logo.png';img.alt='Griffin House of Rooks';branding.replaceChildren(img);branding.classList.add('room805-brand-ready');}
+    if(branding){const img=document.createElement('img');img.src='assets/brand835/house-plaque835.png';img.alt='Griffin House of Rooks';branding.replaceChildren(img);branding.classList.add('room805-brand-ready');}
     const partner=document.getElementById('landingPartner783');
     if(partner)partner.innerHTML='<span><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M19 8a8 8 0 0 0-13-2L3 9m0-5v5h5M5 16a8 8 0 0 0 13 2l3-3m0 5v-5h-5"/></svg>Change Partner</span>';
     document.body.classList.add('room805-ready');sync();

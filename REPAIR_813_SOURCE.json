@@ -1,0 +1,18 @@
+{
+  "runtime": "813-landscape-nest-review-20261017",
+  "base812Sha256": "c36dccf14338d76f07f262304ad9a126f69ce626fe763dc7473004e48fcc404f",
+  "added": [
+    "landscape-nest813.css"
+  ],
+  "modified": [
+    "game060.js",
+    "index.html",
+    "sw060.js",
+    "hor-version.js",
+    "angle-c-characters.js",
+    "REVIEW_README.md",
+    "QA_RESULT.json"
+  ],
+  "ownerApproved": false,
+  "deployed": false
+}

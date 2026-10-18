@@ -1,0 +1,85 @@
+{
+  "runtime": "813-landscape-nest-review-20261017",
+  "status": "ISOLATED_CANDIDATE_PENDING_OWNER_REVIEW_NOT_DEPLOYED",
+  "base": {
+    "archive": "812.zip",
+    "sha256": "c36dccf14338d76f07f262304ad9a126f69ce626fe763dc7473004e48fcc404f",
+    "source": "complete playable local candidate including 811 feedback checkpoint",
+    "original811Untouched": true
+  },
+  "visualChanges": [
+    "Full-width finished-looking walnut/brass and midnight-blue nest overlay with large real numbered/bird card faces",
+    "Separate area shows actual six kitty cards received and a physical six-slot Nest discard tray",
+    "Choosing a card mirrors its approved real face into the Nest slot with number and gold highlighted selection; deselection removes it",
+    "Readable distinction between six discarded and ten kept, and button prompt shows the remaining needed count",
+    "Landscape layout fits 1536x709, 1280x800, 960x420, 844x390, and 844x290, no clipping/scrolling",
+    "No change to portrait template, engine, card identities or approved artwork assets; 812 retained as fallback"
+  ],
+  "tests": {
+    "javascriptParse": "PASS node --check game060.js",
+    "realGameLandscapePicker": "PASS 200 human bid,16 real cards rendered,six selected,six mirrored, seventh blocked,deselect/reselect, original confirm to trump",
+    "landscapeViewports": [
+      [
+        1536,
+        709
+      ],
+      [
+        844,
+        390
+      ],
+      [
+        844,
+        290
+      ],
+      [
+        1280,
+        800
+      ],
+      [
+        960,
+        420
+      ],
+      [
+        1536,
+        709
+      ],
+      [
+        844,
+        290
+      ],
+      [
+        1280,
+        800
+      ]
+    ],
+    "visualGeometry": {
+      "all16Cards": true,
+      "all6NestSlots": true,
+      "noClippedCards": true,
+      "noBodyScrolling": true,
+      "errors": [],
+      "missingAssets": []
+    },
+    "portraitSmoke": "PASS, original portrait kitty Continue, choose six, green trump, actual play",
+    "fullLandscapeHand": "PASS, real 200 bid, six discard, trump, legal play to scoreboard",
+    "portraitTemplateIdenticalTo812": true,
+    "physicalAndroid": "NOT TESTED",
+    "multiplayer": "NOT TESTED",
+    "serviceWorkerOfflineReload": "NOT TESTED",
+    "nativeAudio": "NOT TESTED"
+  },
+  "protections": {
+    "testRepositoryUntouched": true,
+    "productionRepositoryUntouched": true,
+    "liveLandscapeRemainsDisabled": true,
+    "noCacheReset": true,
+    "older811And812Unmodified": true,
+    "approved017018Unmodified": true
+  },
+  "next": [
+    "Owner visual review and phone tap testing",
+    "Android Samsung and Onn physical acceptance",
+    "Continue last-trick and score animation UI work",
+    "Approval needed before any hosted deployment"
+  ]
+}

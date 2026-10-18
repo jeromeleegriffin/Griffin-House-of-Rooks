@@ -1,0 +1,73 @@
+/* Functional availability labels: selection can never name a different seated bot. */
+#botPickerGrid .bot-pick.bot-unavailable835{opacity:.62;cursor:not-allowed;}
+#botPickerGrid .bot-unavailable835>span{color:#f2d09d!important;}
+#landingPartners783 .partner-photo:disabled{opacity:.58;cursor:not-allowed;border-style:dashed!important;}
+#landingPartners783 [data-done]:disabled{opacity:.65;cursor:not-allowed;}
+/* Center all existing tour content inside the available viewport. */
+#tutorialOverlay.tour-bounded835:not(.hidden){position:fixed!important;inset:0!important;z-index:220000!important;display:grid!important;place-items:center!important;box-sizing:border-box!important;padding:12px!important;background:#020604aa!important;pointer-events:auto!important;}
+#tutorialOverlay.tour-bounded835 .tutorial-card{box-sizing:border-box!important;display:flex!important;flex-direction:column!important;width:min(400px,100%)!important;max-height:calc(100dvh - 24px)!important;margin:0!important;overflow:hidden!important;}
+#tutorialOverlay.tour-bounded835 #tutorialText{min-height:0;overflow:auto;}
+#tutorialOverlay.tour-bounded835 .tutorial-actions{flex-shrink:0;}
+@media(orientation:landscape){
+ #tutorialOverlay.tour-bounded835 .tutorial-card{width:min(620px,100%)!important;padding:10px 14px!important;}
+ #tutorialOverlay.tour-bounded835 #tutorialText{font-size:13px!important;line-height:1.3!important;}
+ #tutorialOverlay.tour-bounded835 .tutorial-title{font-size:18px!important;margin:2px 0 6px!important;}
+ #tutorialOverlay.tour-bounded835 .tutorial-actions .btn{min-height:32px!important;height:32px!important;padding:4px 12px!important;font-size:13px!important;}
+ /* Native History stays over the results and returns to the same scoreboard. */
+ body #historyModal.history-modal:not(.hidden){position:fixed!important;inset:0!important;z-index:210040!important;display:flex!important;align-items:center!important;justify-content:center!important;}
+ body #historyModal.history-modal .history-sheet{box-sizing:border-box!important;display:flex!important;flex-direction:column!important;width:min(700px,calc(100vw - 24px))!important;height:calc(100dvh - 20px)!important;max-height:calc(100dvh - 20px)!important;padding:8px 12px!important;overflow:hidden!important;gap:4px!important;}
+ body #historyModal .history-title{font-size:20px!important;line-height:22px!important;margin:0!important;}
+ body #historyModal .history-subtitle{font-size:11px!important;line-height:13px!important;margin:0!important;}
+ body #historyModal #historyBody{flex:1 1 auto!important;min-height:0!important;overflow:hidden!important;}
+ body #historyModal .history-item{box-sizing:border-box!important;padding:6px 8px!important;margin:0!important;}
+ body #historyModal .history-hand-head{margin-bottom:4px!important;}
+ body #historyModal .history-grid{grid-template-columns:repeat(4,minmax(0,1fr))!important;gap:4px 8px!important;}
+ body #historyModal .history-running{grid-column:1/-1!important;padding-top:4px!important;margin:0!important;}
+ body #historyModal .history-actions{flex:0 0 auto!important;margin:0!important;gap:8px!important;}
+ body #historyModal .history-actions .btn,body #historyModal .house-legacy-nav button{height:32px!important;min-height:32px!important;padding:4px 10px!important;font-size:13px!important;}
+ body #historyModal .house-legacy-nav{flex:0 0 32px!important;height:32px!important;min-height:32px!important;margin:0!important;}
+ body #historyModal .house-legacy-nav[hidden]{display:none!important;}
+ /* Closed scoreboard rows are real, bounded tracks rather than overlapping min heights. */
+ body.in-game.angle-c-runtime #scoreModal:not(.showing-remaining) .gh-approved-scoreboard>details{box-sizing:border-box!important;height:34px!important;padding:0 8px!important;overflow:hidden!important;}
+ body.in-game.angle-c-runtime #scoreModal:not(.showing-remaining) .gh-approved-scoreboard>details>summary{box-sizing:border-box!important;min-height:32px!important;height:32px!important;font-size:14px!important;line-height:16px!important;}
+ body.in-game.angle-c-runtime #scoreModal:not(.showing-remaining) .gh-approved-scoreboard>details[open]{height:100%!important;}
+ body.in-game.angle-c-runtime #scoreModal:not(.showing-remaining) .scoreboard-modal:has(details[open]){grid-template-rows:minmax(0,1fr) auto!important;}
+ body.in-game.angle-c-runtime #scoreModal:not(.showing-remaining):has(details[open]) #scoreModalTitle{display:none!important;}
+ body.in-game.angle-c-runtime #scoreModal:not(.showing-remaining):has(details[open]) #scoreModalBody{grid-row:1!important;}
+ body.in-game.angle-c-runtime #scoreModal:not(.showing-remaining):has(details[open]) .score-modal-actions{grid-row:2!important;}
+ body.in-game.angle-c-runtime #scoreModal:not(.showing-remaining) .ghsb-details{padding:5px!important;font-size:12px!important;line-height:1.2!important;gap:5px!important;}
+ body.in-game.angle-c-runtime #scoreModal:not(.showing-remaining) .ghsb-result-line{font-size:12px!important;line-height:1.2!important;}
+ /* One finished image plaque, composed with live welcome/waiting controls. */
+ body #lobby #roomWelcome830{display:grid!important;grid-template-columns:1fr!important;grid-template-rows:auto auto auto!important;justify-items:center!important;align-items:center!important;width:min(740px,calc(100vw - 32px))!important;max-width:none!important;gap:8px!important;bottom:88px!important;}
+ body :is(#lobby,#waiting) .room-brand830{display:block!important;position:static!important;inset:auto!important;transform:none!important;max-width:100%!important;width:235px!important;}
+ body #lobby #roomWelcome830>.room-brand830{grid-column:1!important;grid-row:1!important;}
+ body #lobby #roomWelcome830>h1{grid-column:1!important;grid-row:2!important;}
+ #roomWelcomeControls835{grid-column:1;grid-row:3;display:flex;align-items:center;justify-content:center;gap:12px;max-width:100%;}
+ body #lobby #roomPartnerRow831{min-width:0!important;gap:0!important;}
+ body #lobby #roomPartnerLabel830{display:none!important;}
+ body #lobby #landingPartner783{font:600 13px Georgia,serif!important;white-space:nowrap!important;max-width:100%!important;}
+ body #waiting.friends803 #friendsCenter804{display:flex!important;flex-direction:column!important;align-items:center!important;justify-content:center!important;gap:6px!important;width:min(600px,calc(100vw - 32px))!important;max-width:none!important;bottom:91px!important;}
+ body #waiting #friendsCenter804>svg{display:none!important;}
+ body #waiting #friendsCenter804 .room-brand830{width:240px!important;}
+ body #waiting #friendsHeading803,body #waiting #waitingStatus{margin:0!important;}
+}
+@media(orientation:landscape) and (max-height:340px){
+ body.in-game.angle-c-runtime #scoreModal:not(.showing-remaining) .scoreboard-modal{padding:8px!important;gap:4px!important;}
+ body.in-game.angle-c-runtime #scoreModal:not(.showing-remaining) #scoreModalTitle{padding:2px!important;font-size:18px!important;}
+ body.in-game.angle-c-runtime #scoreModal:not(.showing-remaining) .score-modal-actions .btn{min-height:32px!important;height:32px!important;font-size:13px!important;padding:4px 10px!important;}
+ body #lobby #roomWelcome830{grid-template-columns:170px minmax(0,1fr)!important;grid-template-rows:auto auto!important;width:min(500px,calc(100vw - 32px))!important;column-gap:12px!important;row-gap:4px!important;bottom:63px!important;}
+ body #lobby #roomWelcome830>.room-brand830{grid-column:1!important;grid-row:1/3!important;width:170px!important;}
+ body #lobby #roomWelcome830>h1{grid-column:2!important;grid-row:1!important;font-size:18px!important;line-height:1.15!important;}
+ #roomWelcomeControls835{grid-column:2!important;grid-row:2!important;gap:6px!important;}
+ body #lobby #roomEditPlayer830{height:28px!important;min-height:28px!important;padding:2px 6px 2px 3px!important;gap:4px!important;font-size:12px!important;}
+ body #lobby #roomEditPlayer830 img{width:20px!important;height:20px!important;}
+ body #lobby #roomEditPlayer830 small{display:none!important;}
+ body #lobby #roomEditPlayer830::after{content:'✎';font:12px system-ui;}
+ body #lobby #landingPartner783{height:28px!important;min-height:28px!important;padding:3px 6px!important;font-size:11px!important;}
+ body #waiting.friends803 #friendsCenter804{display:grid!important;grid-template-columns:170px minmax(0,1fr)!important;grid-template-rows:auto auto!important;column-gap:14px!important;row-gap:2px!important;width:min(480px,calc(100vw - 32px))!important;bottom:65px!important;}
+ body #waiting #friendsCenter804 .room-brand830{grid-column:1!important;grid-row:1/3!important;width:170px!important;}
+ body #waiting.friends803 #friendsHeading803{display:block!important;grid-column:2!important;grid-row:1!important;font-size:18px!important;line-height:1.15!important;}
+ body #waiting #waitingStatus{grid-column:2!important;grid-row:2!important;font-size:13px!important;}
+}
+
+@media(orientation:portrait){body #lobby #landingBrand783{width:min(50vw,200px)!important;top:8px!important;filter:none!important;}}

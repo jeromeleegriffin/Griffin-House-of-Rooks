@@ -50,7 +50,7 @@ function captureWaiter(winner,cards){
  return ()=>arrival(key,ticket,'collection-end');
 }
 function refresh(){
- frame=0;const desired=matchMedia('(orientation:portrait)').matches?document.querySelector('.game-room > .hand-area'):(document.getElementById('ltHandWrap')||document.querySelector('.lt-hand-wrap'));
+ frame=0;const desired=matchMedia('(orientation:portrait)').matches?document.querySelector('.game-room > .hand-area'):(document.getElementById('landscapeHolderCue839')||document.getElementById('ltHandWrap')||document.querySelector('.lt-hand-wrap'));
  if(desired!==area){clear('holder orientation changed');area=desired;}
  if(live&&area&&live.parentNode!==area)area.append(live);
  if(area&&!live){live=document.createElement('span');live.className='holder-cue-accessible789';live.setAttribute('role','status');live.setAttribute('aria-live','polite');live.setAttribute('aria-atomic','true');area.append(live);}

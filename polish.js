@@ -40,13 +40,7 @@
     EXP_IDS.forEach(id => o[id] = false);
     return forceNetAlwaysOn(o);
   }
-  function loadExperimental() {
-    try {
-      const raw = localStorage.getItem(EXP_KEY);
-      if (!raw) return defaultExperimental();
-      const saved = Object.assign(defaultExperimental(), JSON.parse(raw)); delete saved.cacheRefresh; return forceNetAlwaysOn(saved);
-    } catch(e) { return defaultExperimental(); }
-  }
+  function loadExperimental(){return defaultExperimental();}
   function saveExperimental(next) {
     const clean = forceNetAlwaysOn(Object.assign(defaultExperimental(), next || {})); delete clean.cacheRefresh;
     try { localStorage.setItem(EXP_KEY, JSON.stringify(clean)); } catch(e) {}
@@ -54,7 +48,7 @@
     return clean;
   }
   function applyExperimental() {
-    const source = window.__horExpInitialized ? window.horExperimental : loadExperimental();
+    const source = defaultExperimental();
     const exp = window.horExperimental = forceNetAlwaysOn(Object.assign(defaultExperimental(), source || {}));
     window.__horExpInitialized = true;
     EXP_IDS.forEach(id => document.body.classList.toggle('exp-' + id, !!exp[id]));
@@ -62,10 +56,7 @@
     inputs.forEach(i => { i.checked = !!exp[i.getAttribute('data-exp')]; });
     updateExperimentalUI();
     try { if (typeof horStartHeartbeat === 'function') horStartHeartbeat(); } catch(e) {}
-    if (exp.matchProgress) ensureMatchProgress(); else removeMatchProgress();
     if (exp.netConnectionUI || exp.netDiagnostics) ensureConnectionBadge(); else removeConnectionBadge();
-    if (exp.debugPanel) { if (typeof horEnsureDebugUI === 'function') horEnsureDebugUI(); }
-    else { if (typeof horRemoveDebugUI === 'function') horRemoveDebugUI(); }
     try { applyTestingFeatures(exp); } catch (e) { console.error('applyTestingFeatures', e); }
     try {
       const box = $('reconnectBox');
@@ -85,20 +76,7 @@
       input.checked = !!(window.horExperimental && window.horExperimental[id]);
     });
   }
-  function wireExperimentalOptions() {
-    window.horExperimental = loadExperimental();
-    window.__horExpInitialized = true;
-    document.querySelectorAll('[data-exp]').forEach(input => {
-      input.onchange = () => {
-        const x=loadExperimental(); x[input.getAttribute('data-exp')]=!!input.checked; saveExperimental(x); applyExperimental();
-        try { if (isHost && typeof broadcastPlaySettings === 'function') broadcastPlaySettings(); } catch(e) {}
-      };
-    });
-    const all = (v) => { const x=loadExperimental(); EXP_IDS.forEach(id=>x[id]=v); saveExperimental(x); applyExperimental(); try{if(isHost&&typeof broadcastPlaySettings==='function')broadcastPlaySettings();}catch(e){} };
-    const ea=$('expEnableAll'), ed=$('expDisableAll'), er=$('expResetAll');
-    if(ea) ea.onclick=()=>all(true); if(ed) ed.onclick=()=>all(false); if(er) er.onclick=()=>{ try{localStorage.removeItem(EXP_KEY);}catch(e){} window.horExperimental=defaultExperimental(); window.__horExpInitialized=true; applyExperimental(); try{if(isHost&&typeof broadcastPlaySettings==='function')broadcastPlaySettings();}catch(e){} };
-    updateExperimentalUI();
-  }
+  function wireExperimentalOptions(){window.horExperimental=defaultExperimental();window.__horExpInitialized=true;}
   window.applyHorExperimental = applyExperimental;
   window.loadHorExperimental = loadExperimental;
   window.saveHorExperimental = saveExperimental;
@@ -143,14 +121,9 @@
     b.classList.remove('hidden');
   }
   function removeConnectionBadge(){ const b=$('horConnectionBadge'); if(b) b.remove(); }
-  function ensureMatchProgress(){
-    let p=$('horMatchProgress'); if(!p){ p=document.createElement('div'); p.id='horMatchProgress'; p.className='hor-match-progress'; p.innerHTML='<div class="labels"><span id="horProgA">Griffin 0</span> · <span id="horProgB">Raven 0</span></div><div class="bar"><div class="fill" id="horProgFill"></div></div>'; const anchor=document.querySelector('.game-room')||document.getElementById('game'); if(anchor) anchor.prepend(p); }
-    const scores=(game&&game.scores)||[0,0], goal=(game&&game.targetScore)||targetScore||500;
-    const a=teamLabel(0), b=teamLabel(1); const A=$('horProgA'),B=$('horProgB'),F=$('horProgFill');
-    if(A)A.textContent=a+' '+(scores[0]||0); if(B)B.textContent=b+' '+(scores[1]||0); if(F)F.style.width=Math.min(100,Math.max(0,Math.max(scores[0]||0,scores[1]||0)/goal*100))+'%';
-  }
-  function removeMatchProgress(){ const p=$('horMatchProgress'); if(p)p.remove(); }
-  function experimentalTick(){ if(window.horExperimental.matchProgress)ensureMatchProgress(); if(window.horExperimental.netConnectionUI||window.horExperimental.netDiagnostics)ensureConnectionBadge(); if((window.horExperimental.netTurnHandoff||window.horExperimental.netOwnTurnRecovery) && typeof game!=='undefined' && game && !game.paused && game.currentPlayer===myIndex){ try{ if(typeof renderUI==='function') renderUI(); }catch(e){} } try { tickTestingFeatures(); } catch(e) {} }
+  
+  
+  function experimentalTick(){ if(window.horExperimental.netConnectionUI||window.horExperimental.netDiagnostics)ensureConnectionBadge(); if((window.horExperimental.netTurnHandoff||window.horExperimental.netOwnTurnRecovery) && typeof game!=='undefined' && game && !game.paused && game.currentPlayer===myIndex){ try{ if(typeof renderUI==='function') renderUI(); }catch(e){} } try { tickTestingFeatures(); } catch(e) {} }
   setInterval(experimentalTick,1200);
 
   window.handsPlayedSession = window.handsPlayedSession || 0;
@@ -160,91 +133,22 @@
     if (typeof seatSlotIdForIndex === 'function') return $(seatSlotIdForIndex(idx));
     return null;
   }
-  function ensureTestBox(id, html, cls) {
-    let el = $(id);
-    if (!el) {
-      el = document.createElement('div');
-      el.id = id;
-      el.className = cls || 'hor-test-box';
-      document.body.appendChild(el);
-    }
-    if (html != null) el.innerHTML = html;
-    return el;
-  }
-  function removeEl(id) { const el = $(id); if (el) el.remove(); }
+  
+  
 
-  function applyTestingFeatures(exp) {
-    window.coachForcedOff = !exp.coachOverlay;
-    document.body.classList.toggle('hor-webp-rook', !!exp.webpRookArt);
-    document.body.classList.toggle('hor-landscape-dock', !!exp.landscapeDock);
-    document.body.classList.toggle('hor-tv-display', !!exp.tvTableDisplay);
-    document.body.classList.toggle('hor-honor-hands', !!exp.hostHonorHands);
-    document.body.classList.toggle('hor-theme-cycle', !!exp.extraTableThemes);
-    if (exp.extraTableThemes) {
-      const themes = ['hor-felt-pub', 'hor-felt-kitchen', 'hor-felt-night'];
-      themes.forEach(t => document.body.classList.remove(t));
-      document.body.classList.add(themes[Math.floor(Date.now() / 60000) % themes.length]);
-    } else {
-      ['hor-felt-pub', 'hor-felt-kitchen', 'hor-felt-night'].forEach(t => document.body.classList.remove(t));
-    }
-    const xfer = $('btnTransferHost');
-    if (xfer && typeof isHost !== 'undefined' && isHost && !isSoloPractice) {
-      xfer.classList.remove('hidden');
-    }
-    if (exp.waitingQrAuto && typeof showQr === 'function' && typeof roomCode !== 'undefined' && roomCode && roomCode !== 'OFFLINE') {
-      try { showQr(); } catch (e) {}
-    }
-    removeEl('horPwaSheet');
-    if (exp.careerStats) ensureCareerSheet(); else removeEl('horCareerSheet');
-    if (exp.devModuleMap) ensureModuleMap(); else removeEl('horModuleMap');
-    ensureWaitForMeBtn();
-    if (exp.rulesSelfTest) runRulesSelfTestOnce();
-    else _rulesTestRan = false;
-    if (exp.localPeerOnly && typeof Peer === 'undefined') {
-      try { horToast('PeerJS vendor file missing — local copy required'); } catch (e) {}
-    }
-    if (exp.rematchSameFour) ensureRematchCard(); else removeEl('horRematchCard');
-    wrapTestingHooks();
-  }
+  
 
-  function tickTestingFeatures() {
-    const exp = window.horExperimental || {};
-    if (exp.seatPips) paintSeatPips(); else document.querySelectorAll('.hor-seat-pip').forEach(n => n.remove());
-    paintThinkingPulse();
-    if (exp.botStrengthLabels) paintBotLabels(); else document.querySelectorAll('.hor-bot-label').forEach(n => n.remove());
-    if (window.horHostKickMute || exp.hostKickMute) paintKickMute();
-    else document.querySelectorAll('.hor-kick-mute').forEach(n => n.remove());
-    ensureWaitForMeBtn();
-    if (exp.shareHandCard) ensureShareHandBtn();
-    if (exp.highlightReelTools) ensureHighlightTools();
-    if (exp.careerStats) updateCareerSheet();
-    if (exp.tournamentLock && typeof game !== 'undefined' && game && game.phase && game.phase !== 'lobby' && game.phase !== 'waiting') {
-      document.querySelectorAll('#optPaneRules input, #optPaneRules select').forEach(el => { el.disabled = true; });
-    } else {
-      document.querySelectorAll('#optPaneRules input, #optPaneRules select').forEach(el => { el.disabled = false; });
-    }
-    if (exp.turnAlert) maybeTurnAlert();
-    stripHostPeek();
-  }
+  
 
-  function paintSeatPips() {
-    if (typeof players === 'undefined' || !players) return;
-    const now = Date.now();
-    players.forEach((p, i) => {
-      const seat = seatElForIndex(i);
-      if (!seat || !p || p.isBot) { if (seat) { const old = seat.querySelector('.hor-seat-pip'); if (old) old.remove(); } return; }
-      let pip = seat.querySelector('.hor-seat-pip');
-      if (!pip) { pip = document.createElement('span'); pip.className = 'hor-seat-pip'; seat.appendChild(pip); }
-      const seen = (typeof horPeerLastSeen !== 'undefined' && horPeerLastSeen[p.id]) || 0;
-      const age = seen ? now - seen : 99999;
-      const open = (typeof isHost !== 'undefined' && isHost)
-        ? (p.isHost || (typeof connMap !== 'undefined' && connMap[p.id] && connMap[p.id].open))
-        : (p.id === myPeerId || (typeof hostConnection !== 'undefined' && hostConnection && hostConnection.open));
-      pip.className = 'hor-seat-pip ' + (p.disconnected || !open ? 'pip-red' : age > 8000 ? 'pip-yellow' : 'pip-green');
-      pip.title = p.disconnected ? 'Disconnected' : (open ? 'Connected' : 'Unknown');
-    });
-  }
+  
 
+  function applyTestingFeatures(){
+    window.coachForcedOff=true;
+    document.body.classList.add('hor-honor-hands');
+    const xfer=$('btnTransferHost');if(xfer&&isHost&&!isSoloPractice)xfer.classList.remove('hidden');
+    ensureWaitForMeBtn();wrapTestingHooks();
+  }
+  function tickTestingFeatures(){paintThinkingPulse();ensureWaitForMeBtn();stripHostPeek();}
   function paintThinkingPulse() {
     document.querySelectorAll('.player-slot').forEach(n => n.classList.remove('hor-thinking-pulse'));
     if (typeof game === 'undefined' || !game || game.paused || game.resolvingTrick) return;
@@ -255,52 +159,9 @@
     if (el) el.classList.add('hor-thinking-pulse');
   }
 
-  function paintBotLabels() {
-    if (typeof players === 'undefined' || !players) return;
-    const diff = (typeof botDifficulty !== 'undefined' && botDifficulty) || 'extreme';
-    players.forEach((p, i) => {
-      const seat = seatElForIndex(i);
-      if (!seat) return;
-      let lab = seat.querySelector('.hor-bot-label');
-      if (!p || !p.isBot) { if (lab) lab.remove(); return; }
-      if (!lab) { lab = document.createElement('div'); lab.className = 'hor-bot-label'; seat.appendChild(lab); }
-      const bits = [String(diff).replace(/^./, c => c.toUpperCase())];
-      if (typeof partnerNeverKill !== 'undefined' && partnerNeverKill) bits.push('won’t kill');
-      if (typeof partnerFeedLast !== 'undefined' && partnerFeedLast) bits.push('feeds last');
-      lab.textContent = bits.join(' · ');
-    });
-  }
+  
 
-  function paintKickMute() {
-    if (typeof isHost === 'undefined' || !isHost) { document.querySelectorAll('.hor-kick-mute').forEach(n => n.remove()); return; }
-    if (typeof players === 'undefined') return;
-    players.forEach((p, i) => {
-      const seat = seatElForIndex(i);
-      if (!seat || !p || p.isBot || p.isHost || p.id === myPeerId) {
-        if (seat) { const old = seat.querySelector('.hor-kick-mute'); if (old) old.remove(); }
-        return;
-      }
-      let box = seat.querySelector('.hor-kick-mute');
-      if (!box) {
-        box = document.createElement('div');
-        box.className = 'hor-kick-mute';
-        box.innerHTML = '<button type="button" data-act="mute">Mute</button><button type="button" data-act="kick">Kick</button>';
-        seat.appendChild(box);
-        box.addEventListener('click', (ev) => {
-          const act = ev.target && ev.target.getAttribute('data-act');
-          if (act === 'mute') {
-            p.muted = !p.muted;
-            try { horToast((p.name || 'Player') + (p.muted ? ' muted' : ' unmuted')); } catch (e) {}
-            try { broadcast({ type: 'message', text: (p.name || 'Player') + (p.muted ? ' was muted' : ' was unmuted') }); } catch (e) {}
-          }
-          if (act === 'kick' && typeof hostReplaceWithBot === 'function') {
-            if (!confirm('Kick ' + (p.name || 'player') + ' and sit a bot?')) return;
-            hostReplaceWithBot(p.id, p.name, false);
-          }
-        });
-      }
-    });
-  }
+  
 
   function ensureWaitForMeBtn() {
     let b = $('horWaitForMeBtn');
@@ -340,124 +201,23 @@
     }
   }
 
-  function ensureShareHandBtn() {
-    const modal = $('scoreModal');
-    if (!modal || modal.classList.contains('hidden')) return;
-    if ($('horShareHandBtn')) return;
-    const btn = document.createElement('button');
-    btn.id = 'horShareHandBtn';
-    btn.type = 'button';
-    btn.className = 'btn';
-    btn.textContent = 'Share hand';
-    btn.onclick = () => {
-      const s = landscapeLastSummary || {};
-      const text = 'House of Rooks — ' + (s.made ? 'MADE' : 'SET') + ' bid ' + (s.bid || '?') +
-        ' trump ' + ((typeof COLOR_NAMES !== 'undefined' && COLOR_NAMES[s.trump]) || s.trump || '—') +
-        '  A ' + ((s.scores && s.scores[0]) || 0) + '–B ' + ((s.scores && s.scores[1]) || 0);
-      if (navigator.share) navigator.share({ text: text }).catch(() => { try { navigator.clipboard.writeText(text); horToast('Copied'); } catch (e) {} });
-      else { try { navigator.clipboard.writeText(text); horToast('Copied hand result'); } catch (e) { alert(text); } }
-    };
-    const actions = modal.querySelector('.modal-actions') || modal;
-    actions.appendChild(btn);
-  }
+  
 
-  function ensureHighlightTools() {
-    const cele = document.getElementById('celePage') || document.getElementById('winModal') || $('ltEndGame');
-    if (!cele || cele.classList.contains('hidden')) return;
-    if ($('horReelTools')) return;
-    const box = document.createElement('div');
-    box.id = 'horReelTools';
-    box.className = 'hor-reel-tools';
-    box.innerHTML = '<button type="button" class="btn" id="horReelSkip">Skip reel</button><button type="button" class="btn" id="horReelShare">Share reel</button>';
-    cele.appendChild(box);
-    const skip = $('horReelSkip');
-    if (skip) skip.onclick = () => { try { if (typeof hideCelePage === 'function') hideCelePage(); cele.classList.add('hidden'); } catch (e) {} };
-    const share = $('horReelShare');
-    if (share) share.onclick = () => {
-      const text = 'House of Rooks highlight — ' + ((game && game.scores) ? game.scores.join('–') : '');
-      if (navigator.share) navigator.share({ text: text }).catch(() => {});
-      else try { navigator.clipboard.writeText(text); horToast('Copied'); } catch (e) {}
-    };
-  }
+  
 
-  function careerRead() {
-    try { return JSON.parse(localStorage.getItem('horCareer') || '{}'); } catch (e) { return {}; }
-  }
-  function careerWrite(x) { try { localStorage.setItem('horCareer', JSON.stringify(x)); } catch (e) {} }
-  function ensureCareerSheet() {
-    const c = careerRead();
-    ensureTestBox('horCareerSheet',
-      '<b>Career</b><div>Hands ' + (c.hands || 0) + '</div><div>Made ' + (c.made || 0) + ' · Set ' + (c.set || 0) + '</div><div>High bid ' + (c.highBid || 0) + '</div>',
-      'hor-test-box hor-career-sheet');
-  }
-  function updateCareerSheet() {
-    if (!$('horCareerSheet')) ensureCareerSheet();
-    else ensureCareerSheet();
-    if (typeof handHistory !== 'undefined' && handHistory && handHistory.length) {
-      const c = careerRead();
-      c.hands = Math.max(c.hands || 0, handHistory.length);
-      c.made = handHistory.filter(h => h.made).length;
-      c.set = handHistory.filter(h => !h.made).length;
-      c.highBid = Math.max(c.highBid || 0, ...handHistory.map(h => Number(h.bid) || 0));
-      careerWrite(c);
-    }
-  }
+  
+  
+  
+  
 
-  function ensureModuleMap() {
-    ensureTestBox('horModuleMap',
-      '<b>Module map</b><div>net — PeerJS, reconnect, grace</div><div>rules — deck, canPlay, scoring</div><div>bots — bid / play AI</div><div>ui — renderUI, landscape</div><div>polish.js — options, coach, themes</div>',
-      'hor-test-box');
-  }
+  
 
-  function ensureRematchCard() {
-    try {
-      if (typeof players !== 'undefined' && players && players.length) {
-        localStorage.setItem('horLastFour', JSON.stringify(players.map(p => ({ name: p.name, isBot: !!p.isBot }))));
-      }
-    } catch (e) {}
-    const lobby = $('lobby');
-    if (!lobby || !lobby.offsetParent && lobby.classList.contains('hidden')) return;
-    let last = [];
-    try { last = JSON.parse(localStorage.getItem('horLastFour') || '[]'); } catch (e) {}
-    if (!last.length) return;
-    const box = ensureTestBox('horRematchCard',
-      '<b>Same four?</b><div>' + last.map(p => (p.name || 'Player') + (p.isBot ? ' (bot)' : '')).join(', ') + '</div>',
-      'hor-test-box');
-    if (lobby && !lobby.contains(box)) lobby.appendChild(box);
-  }
+  
 
-  let _rulesTestRan = false;
-  function runRulesSelfTestOnce() {
-    if (_rulesTestRan) return;
-    _rulesTestRan = true;
-    const fails = [];
-    try {
-      const rook = { color: 'rook', rank: 99, id: 'rook' };
-      const r14 = { color: 'red', rank: 14, id: 'red-14' };
-      const r10 = { color: 'red', rank: 10, id: 'red-10' };
-      const g5 = { color: 'green', rank: 5, id: 'green-5' };
-      if (typeof canPlay === 'function') {
-        if (!canPlay(r10, [r10, g5], 'red', 'green')) fails.push('must follow red');
-        if (canPlay(g5, [r10, g5], 'red', 'green')) fails.push('cannot slough while holding led');
-      }
-      if (typeof compareCards === 'function') {
-        if (!(compareCards(r14, r10, 'red', 'green') > 0)) fails.push('14 beats 10');
-      }
-      if (typeof isRed2 === 'function' && !isRed2({ id: 'red-2', color: 'red', rank: 2 })) fails.push('isRed2');
-    } catch (e) { fails.push(String(e && e.message)); }
-    try { horToast(fails.length ? ('Rules test FAIL: ' + fails.join(', ')) : 'Rules self-test passed'); } catch (e) {}
-  }
 
-  function maybeTurnAlert() {
-    if (typeof game === 'undefined' || !game || typeof myIndex !== 'number') return;
-    const mine = (game.phase === 'play' || game.phase === 'bidding') && game.currentPlayer === myIndex
-      || ((game.phase === 'discard' || game.phase === 'trump') && game.bidder === myIndex);
-    if (!mine) { window._horTurnAlerted = false; return; }
-    if (window._horTurnAlerted) return;
-    window._horTurnAlerted = true;
-    try { if (typeof playSfx === 'function') playSfx('turn', { broadcastNet: false }); } catch (e) {}
-    try { if (!window.HORHolderCues789 && navigator.vibrate) navigator.vibrate([40, 40, 40]); } catch (e) {}
-  }
+  
+
+  
 
   function stripHostPeek() {
     if (typeof isHost === 'undefined' || !isHost) return;
@@ -467,30 +227,6 @@
   function wrapTestingHooks() {
     if (window.__horTestWrapped) return;
     window.__horTestWrapped = true;
-    if (typeof submitPlay === 'function') {
-      const orig = submitPlay;
-      window.submitPlay = function (cardId) {
-        if (horExpOn('confirmPlay')) {
-          if (window._horArmPlay !== cardId) {
-            window._horArmPlay = cardId;
-            try { horToast('Tap again to play'); } catch (e) {}
-            return;
-          }
-          window._horArmPlay = null;
-        }
-        return orig.apply(this, arguments);
-      };
-    }
-    if (typeof horNetSendRaw === 'function') {
-      const origSend = horNetSendRaw;
-      window.horNetSendRaw = function (conn, msg) {
-        if (horExpOn('lagSandbox')) {
-          setTimeout(() => origSend(conn, msg), 400);
-          return true;
-        }
-        return origSend(conn, msg);
-      };
-    }
     if (typeof peerOptions === 'function') {
       const origPeer = peerOptions;
       window.peerOptions = function () {
@@ -616,8 +352,6 @@
       misdealOnNoCounters, screwTheDealer, comebackSpecialChance, openWidow, revealTopNest, shootMoonEnabled,
       teamNameA: houseTeamA,
       teamNameB: houseTeamB,
-      luckySpecialsEnabled, luckySpecialsMode, luckySpecialsBoost,
-      experimentalHandOpt,
       roomTheme: loadPrefs().roomTheme || 'midnight',
       gfx: loadGfx(),
       gfxRev: 2,
@@ -650,10 +384,6 @@
     if (typeof p.openWidow === 'boolean') openWidow = p.openWidow;
     if (typeof p.revealTopNest === 'boolean') revealTopNest = p.revealTopNest;
     if (typeof p.shootMoonEnabled === 'boolean') shootMoonEnabled = p.shootMoonEnabled;
-    if (typeof p.luckySpecialsEnabled === 'boolean') luckySpecialsEnabled = p.luckySpecialsEnabled;
-    if (p.luckySpecialsMode === 'spinner' || p.luckySpecialsMode === 'fixed') luckySpecialsMode = p.luckySpecialsMode;
-    if (typeof p.luckySpecialsBoost === 'number') luckySpecialsBoost = p.luckySpecialsBoost;
-    if (typeof p.experimentalHandOpt === 'boolean') experimentalHandOpt = p.experimentalHandOpt;
     houseTeamA = asText(p.teamNameA, 'Griffin');
     houseTeamB = asText(p.teamNameB, 'Raven');
     try { if (typeof recomputeHandAndNest === 'function') recomputeHandAndNest(); } catch (e) {}
@@ -821,7 +551,7 @@
   const PLAY_TIPS = {
     lobby: {
       title: 'New at this table',
-      html: '<p>Type your name, then tap <b>Take Your Seat</b>. Tips pop up as the hand happens — bid, nest, trump, tricks, then scoring.</p><p>Friends tables work the same way. Skip anytime if you already know it.</p>'
+      html: '<p>Use the <b>gold play button</b> to start a game with bots. You can edit your name, portrait or voice before playing. Tips pop up as the hand happens — bid, nest, trump, tricks, then scoring.</p><p>Friends tables work the same way. Skip anytime if you already know it.</p>'
     },
     sit: {
       title: 'Partners sit across',
@@ -1050,22 +780,14 @@
   }
 
   function placeLobbyTipCard() {
-    const ov = $('tutorialOverlay');
-    const card = ov && ov.querySelector('.tutorial-card');
-    const join = $('joinBtn');
+    const ov = $('tutorialOverlay'), card = ov?.querySelector('.tutorial-card');
     if (!ov || !card) return;
-    if (currentTipId === 'lobby') {
-      ov.classList.add('lobby-placed');
-      let top = 12;
-      if (join) {
-        const r = join.getBoundingClientRect();
-        top = Math.max(8, Math.round(r.bottom + 10));
-      }
-      card.style.marginTop = top + 'px';
-    } else {
-      ov.classList.remove('lobby-placed');
-      card.style.marginTop = '';
-    }
+    ov.classList.remove('lobby-placed');
+    ov.classList.add('tour-bounded835');
+    card.style.marginTop = '';
+    card.setAttribute('role','dialog');
+    card.setAttribute('aria-modal','true');
+    card.setAttribute('aria-labelledby','tutorialTitle');
   }
   window.addEventListener('resize', function () {
     if (currentTipId === 'lobby') placeLobbyTipCard();
@@ -1129,9 +851,7 @@
       showPlayTip('score');
     }
   }
-  function dismissTutorial(done) {
-    finishHouseTour(!!done);
-  }
+  
 
   function markPartnerSeat() {
     // A Rook 006: portrait partner relationship remains game state; the visible
@@ -1423,19 +1143,19 @@
         const teach = document.createElement('p');
         teach.className = 'score-teach';
         const owned = body.querySelector('.ghsb-result-line');
-        const ownsPortraitScore = window.matchMedia('(orientation: portrait)').matches && owned;
-        const nestLine = (summary.nestPts || ownsPortraitScore)
+        const ownsScoreExplanation835 = !!owned;
+        const nestLine = (summary.nestPts || ownsScoreExplanation835)
           ? (' Nest ' + (summary.nestPts || 0) + ' to ' + (summary.nestWinnerName ||
-              (ownsPortraitScore ? 'Winner' : (nestGoesTo === 'bidder' ? 'makers' : 'last trick'))) + '.')
+              (ownsScoreExplanation835 ? 'Winner' : (nestGoesTo === 'bidder' ? 'makers' : 'last trick'))) + '.')
           : '';
         teach.textContent = scoringSentence(summary) + nestLine +
           ' Running total: ' + teamLabel(0) + ' ' + summary.scores[0] + ' · ' + teamLabel(1) + ' ' + summary.scores[1] +
           ' (to ' + (game?.targetScore || targetScore) + ').';
         const banner = body.querySelector('.score-banner');
         // The two summaries describe the same hand. Keep the existing scoring
-        // narrator's full explanation in the portrait renderer's single region.
+        // narrator's full explanation in the approved renderer's single region.
         // This retains set/bid-only scoring wording without a second copy.
-        if (ownsPortraitScore) {
+        if (ownsScoreExplanation835) {
           owned.textContent = teach.textContent;
         } else if (banner && banner.parentNode) {
           banner.parentNode.insertBefore(teach, banner.nextSibling);
@@ -1535,34 +1255,6 @@
   // Rook582: setBotThinking is owned exclusively by game.js.
 
 
-  const _hostUndo = window.hostUndoLastPlay;
-  window.hostUndoLastPlay = function () {
-    if (!lastPlaySnapshot) return;
-    if (lastPlaySnapshot.fromHuman) return;
-    return _hostUndo.apply(this, arguments);
-  };
-
-  const _promptPlay = window.hostPromptPlay;
-  if (typeof _promptPlay === 'function') {
-    // snapshot tagging happens in hostProcessPlay wrap
-  }
-
-  const _hostProcessPlay = window.hostProcessPlay;
-  if (typeof _hostProcessPlay === 'function') {
-    window.hostProcessPlay = function (data) {
-      const seat = data && data.player;
-      const human = seat >= 0 && players[seat] && !players[seat].isBot;
-      const r = _hostProcessPlay.apply(this, arguments);
-      if (lastPlaySnapshot) lastPlaySnapshot.fromHuman = !!human;
-      const btn = $('btnUndo');
-      if (btn) {
-        btn.title = lastPlaySnapshot && !lastPlaySnapshot.fromHuman ? 'Take back last bot play' : 'Take back last bot play';
-        btn.classList.toggle('disabled', !lastPlaySnapshot || !!lastPlaySnapshot.fromHuman);
-      }
-      return r;
-    };
-  }
-
   window.clientLeaveReplace = async function () {
     const offline = isSoloPractice || roomCode === 'OFFLINE';
     const ok = await houseConfirm({
@@ -1574,13 +1266,6 @@
     });
     if (!ok) return;
     leaveTableAfterConfirmation043();
-  };
-
-  const _redeal = window.hostRedeal;
-  window.hostRedeal = async function () {
-    const ok = await houseConfirm({ title: 'Redeal this hand?', body: 'Bids and this deal will be wiped.', danger: true });
-    if (!ok) return;
-    return _redeal.apply(this, arguments);
   };
 
   const _pauseBtn = document.getElementById('btnPause');

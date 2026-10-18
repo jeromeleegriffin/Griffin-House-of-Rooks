@@ -1,18 +1,27 @@
 /* Signature shuffle: visual adapter over the existing 732 lifecycle.
    Game and dealing logic remain unchanged from inspected Build 753. */
 (()=>{'use strict';
-const legacy=window.HORShuffle732,BASE=5600,HOLD_START=1833,HOLD_END=2400,GAP=HOLD_END-HOLD_START,PLAY=BASE-GAP;
+const BASE=5600,HOLD_START=1833,HOLD_END=2400,GAP=HOLD_END-HOLD_START,PLAY=BASE-GAP;
 // Omit only the stationary fully-lifted hold. All moving sections keep native tempo.
 function visualTime(elapsed){const t=Math.max(0,Math.min(PLAY,elapsed*PLAY/duration));return t<HOLD_START?t:t+GAP;}
 function presentationTime(assetMs){return assetMs>=HOLD_END?assetMs-GAP:assetMs;}
-window.HORShuffleLegacy732=legacy;
+
 let player=null,canvas=null,overlay=null,raf=0,active=false,mode='none',generation=0,started=0,duration=PLAY,minimal=false,soundRequested=false;
 let sources=[],last=null,stats=null;const buffers=new Map(),pending=new Map();
 const smooth=x=>{x=Math.max(0,Math.min(1,x));return x*x*(3-2*x)};
 function gain(){return Math.max(0,Math.min(1,1))}
-function silence(){for(const s of sources){try{s.node.stop();s.node.disconnect();s.envelope?.disconnect();s.gain.disconnect()}catch(_){}}sources=[];legacy.silence()}
-function stop(){generation++;active=false;cancelAnimationFrame(raf);raf=0;silence();legacy.stop();if(player){player.close();stats=player.inspect();player=null}canvas?.remove();canvas=null;overlay?.classList.remove('signature-shuffle');overlay=null;mode='none';soundRequested=false}
+function silence(){for(const s of sources){try{s.node.stop();s.node.disconnect();s.envelope?.disconnect();s.gain.disconnect()}catch(_){}}sources=[]}
+function stop(){generation++;active=false;cancelAnimationFrame(raf);raf=0;silence();if(player){player.close();stats=player.inspect();player=null}canvas?.remove();canvas=null;overlay?.classList.remove('signature-shuffle');overlay=null;mode='none';soundRequested=false}
 function geometry(t){
+ if(window.HORAngleC?.active()){
+  const g=HORAngleC.frame(),mix=minimal?1:smooth((t-5070)/490);
+  const end=HORAngleC.dealPacket(),x=innerWidth/2+(end.x-innerWidth/2)*mix;
+  const y=g.top+420*g.scale+(end.y-(g.top+420*g.scale))*mix;
+  const size=(360-170*mix)*g.scale;
+  Object.assign(canvas.style,{width:size+'px',height:size+'px',left:x-size/2+'px',top:y-size/2+'px'});
+  return {x,y,size,mix};
+ }
+
  const bg=document.getElementById('hor-room-bg'),r=bg?bg.getBoundingClientRect():{left:0,top:0,width:innerWidth,height:innerHeight};
  const cover=Math.max(r.width/875,r.height/1797),scale=cover/(915/1797),ox=r.left+(r.width-875*cover)/2;
  let slot='slot-me';try{slot=seatSlotIdForIndex(Number.isInteger(game.dealer)?game.dealer:0)}catch(_){}
@@ -28,10 +37,7 @@ function geometry(t){
 function tick(now){if(!active||mode!=='asset')return;const t=Math.min(BASE,visualTime(now-started));geometry(t);if(player)player.draw(minimal?5599:t);if(soundMuted||!soundCard)silence();else for(const s of sources)s.gain.gain.setTargetAtTime(gain(),s.ctx.currentTime,.015);if(t<BASE)raf=requestAnimationFrame(tick)}
 function start(ov,ms){
  stop();overlay=ov;duration=Math.max(1,ms);started=performance.now();active=true;
- // Preserve the approved landscape presentation and provide a deterministic rollback switch.
- if(!isPortraitViewport()||new URLSearchParams(location.search).get('shuffle')==='legacy'){
-  mode='legacy';legacy.start(ov,ms);last={mode,duration};return;
- }
+ // One approved asset presentation in both orientations; no retired wash fallback.
  mode='asset';minimal=ms<600||matchMedia('(prefers-reduced-motion:reduce)').matches||document.body.classList.contains('reduce-motion');
  ov.classList.add('signature-shuffle');canvas=document.createElement('canvas');canvas.className='signature-shuffle-canvas';canvas.setAttribute('aria-hidden','true');ov.appendChild(canvas);
  player=new GriffinShuffleAsset.Player(canvas,{skipCornerHold:true});const token=generation,p=player;
@@ -46,7 +52,7 @@ for(const event of ['pointerdown','keydown'])document.addEventListener(event,()=
 // removes common speaker-buffer lag without shifting one gesture relative to another.
 function audioEpoch(c,elapsed){const now=performance.now(),stamp=c.getOutputTimestamp?.();if(stamp&&stamp.performanceTime>0&&Math.abs(now-stamp.performanceTime)<1000){const outputNow=stamp.contextTime+(now-stamp.performanceTime)/1000,lag=c.currentTime-outputNow;if(lag>=0&&lag<=.25)return stamp.contextTime+(started-stamp.performanceTime)/1000;}return c.currentTime-elapsed;}
 function sound(){
- if(mode.startsWith('legacy'))return legacy.sound();if(!active||minimal||soundMuted||!soundCard||soundRequested)return;
+ if(!active||minimal||soundMuted||!soundCard||soundRequested)return;
  soundRequested=true;const ctx=ensureAudio();if(!ctx)return;const token=generation,pace=Math.max(1,Math.min(4,Math.round(BASE/duration)));
  load(ctx,pace).then(buffer=>{if(!buffer||token!==generation||!active||soundMuted||!soundCard)return;whenAudioReady(c=>{
   if(token!==generation||!active||soundMuted||!soundCard)return;
@@ -63,9 +69,9 @@ function sound(){
   }
  });});
 }
-async function seek(ms){if(mode!=='asset')return legacy.seek(ms);cancelAnimationFrame(raf);raf=0;const t=Math.min(BASE,visualTime(Math.max(0,ms)));geometry(t);await player?.seek(minimal?5599:t)}
+async function seek(ms){if(mode!=='asset')return;cancelAnimationFrame(raf);raf=0;const t=Math.min(BASE,visualTime(Math.max(0,ms)));geometry(t);await player?.seek(minimal?5599:t)}
 function inspect(){return {active,mode,duration,minimal,startedAt:started,motions:raf?1:0,sounds:sources.length,audioGains:sources.map(s=>s.gain.gain.value),audioRates:sources.map(s=>s.node.playbackRate.value),audioSchedule:sources.map(s=>({sourceBegin:s.sourceBegin,sourceEnd:s.sourceEnd,phase:s.phase,attack:s.attack,presentationFrom:s.presentationFrom,scheduledWhen:s.scheduledWhen,outputLatency:s.outputLatency})),lastEvent:last,asset:player?.inspect()||stats}}
-document.addEventListener('visibilitychange',()=>{if(document.hidden)stop()});window.addEventListener('pagehide',stop);window.addEventListener('orientationchange',stop);
+document.addEventListener('visibilitychange',()=>{if(document.hidden)stop()});window.addEventListener('pagehide',stop);// The live geometry follows rotation without cancelling the shuffle.
 new MutationObserver(()=>{if(active&&!document.body.classList.contains('in-game'))stop()}).observe(document.body,{attributes:true,attributeFilter:['class']});
 window.HORShuffle732={start,stop,sound,silence,seek,inspect};window.HORSignatureShuffle=window.HORShuffle732;
 })();

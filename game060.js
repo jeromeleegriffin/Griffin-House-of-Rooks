@@ -7,7 +7,7 @@
 // It's exchanged during the join handshake so a stale host or joiner (e.g.
 // one still running old cached JS) gets caught and auto-updated instead of
 // silently failing or behaving unpredictably against a mismatched peer.
-const APP_VERSION = '810-rita-jerome-voice-review-20261015';
+const APP_VERSION = '845-share-shuffle';
 window.HOR_SCRIPT_BUILD = APP_VERSION;
 
 function horThisIndex() {
@@ -86,7 +86,6 @@ let openWidow = false;
 /** Face-up top nest card during the auction */
 let revealTopNest = true;
 /** Test hook: '' | 'rook' | 'red2' — force that card onto the nest reveal */
-let forceNestReveal = '';
 /** Shoot the Moon: bidding every counter in the deck is an all-or-nothing
  * bid — make it and win the game outright, miss it and go set as usual */
 let shootMoonEnabled = true;
@@ -124,77 +123,15 @@ window.__ghSetBotSpeed623 = function(v){
 };
 window.__ghGetBotSpeed623 = function(){ return botSpeed; };
 
-// Rook593 — diagnostic SOL-seat bot takeover. This is deliberately session-only.
-// It reuses the existing bot AI and changes control only at a hand boundary.
-let horSolBotRequested = false;
-let horSolBotActive = false;
-window.HOR_SOL_BOT_ACTIVE = false;
-function horSolBotPaint(){
-  const b = document.getElementById('btnSolBot');
-  if (!b) return;
-  if (horSolBotRequested !== horSolBotActive) b.textContent = horSolBotRequested ? 'BOT NEXT HAND' : 'SOL NEXT HAND';
-  else b.textContent = horSolBotActive ? 'BOT ACTIVE' : 'SOL SEAT';
-  b.dataset.active = horSolBotActive ? '1' : '0';
-  b.dataset.pending = horSolBotRequested !== horSolBotActive ? '1' : '0';
-  b.setAttribute('aria-pressed', horSolBotRequested ? 'true' : 'false');
-}
-function horSetSolBotRequested(on){
-  if (!isHost || myIndex < 0) return false;
-  horSolBotRequested = !!on;
-  horSolBotPaint();
-  try { if (window.HORSolDiagnostics) window.HORSolDiagnostics.snap('sol-bot-request',{requested:horSolBotRequested,active:horSolBotActive}); } catch(e){}
-  return true;
-}
-function horToggleSolBot(){ return horSetSolBotRequested(!horSolBotRequested); }
-function horApplySolBotAtHandBoundary(){
-  if (!isHost || myIndex < 0 || !players || !players[myIndex]) return;
-  const p = players[myIndex];
-  if (horSolBotRequested === horSolBotActive) { horSolBotPaint(); return; }
-  horSolBotActive = horSolBotRequested;
-  window.HOR_SOL_BOT_ACTIVE = horSolBotActive;
-  if (horSolBotActive) {
-    p._horSolWasBot = !!p.isBot;
-    p._horSolOldBotStyle = p.botStyle || '';
-    p.isBot = true;
-    p.isDiagnosticSolBot = true;
-    p.botStyle = p.botStyle || 'balanced';
-  } else {
-    p.isBot = !!p._horSolWasBot;
-    p.botStyle = p._horSolOldBotStyle || '';
-    delete p.isDiagnosticSolBot;
-    delete p._horSolWasBot;
-    delete p._horSolOldBotStyle;
-  }
-  try { hideActionPanel(); hideDiscardOverlay(); } catch(e){}
-  try { renderUI(); } catch(e){}
-  try { if (window.HORSolDiagnostics) window.HORSolDiagnostics.snap('sol-bot-applied',{active:horSolBotActive}); } catch(e){}
-  horSolBotPaint();
-}
-function horSolSeatIsBot(){ return !!horSolBotActive; }
-window.horToggleSolBot = horToggleSolBot;
-window.horSolBotPaint = horSolBotPaint;
-// Rook592 — SOL diagnostic presentation-speed governor.
-// This never changes rules/AI/card order; it only scales selected safe waits.
-function solSpeedMultiplier(){
-  const n = Number(window.HOR_SOL_SPEED || 1);
-  return (n === 2 || n === 3 || n === 4) ? n : 1;
-}
+// Player pace control (1x, 3x, MAX); retired diagnostic multiplier removed.
 function solScaledDelay(ms, floorMs){
-  const diagnostic = solSpeedMultiplier();
   const production = horGamePace === 99 ? 20 : Math.max(1, Number(horGamePace)||1);
-  const speed = Math.max(diagnostic, production);
+  const speed = production;
   if (speed <= 1) return Math.max(0, Math.round(ms));
   const requestedFloor = Math.max(0, Number(floorMs == null ? 90 : floorMs));
   const floor = requestedFloor === 0 ? 0 : (horGamePace === 99 ? Math.min(requestedFloor, 35) : Math.max(45, Math.round(requestedFloor / production)));
   return Math.max(floor, Math.round(Number(ms || 0) / speed));
 }
-window.horSolDiagnosticState = function(){
-  try {
-    if (!game) return null;
-    return {phase:game.phase,currentPlayer:game.currentPlayer,bidder:game.bidder,currentBid:game.currentBid,trump:game.trump,dealer:game.dealer,scores:Array.isArray(game.scores)?game.scores.slice():null,trickCount:Array.isArray(game.trick)?game.trick.length:null,resolvingTrick:!!game.resolvingTrick};
-  } catch (e) { return null; }
-};
-
 /** Partner discipline + coach (default ON) */
 let partnerNeverKill = true;
 let partnerFeedLast = true;
@@ -400,7 +337,7 @@ function horRefreshBotCareerProfiles(){
 }
 
 function horRecordCareerHand(event){
-  if(window.HOR_SOL_BOT_ACTIVE||isSpectator||!window.HORProgression?.core)return;
+  if(isSpectator||!window.HORProgression?.core)return;
   try{
     let result;
     // Replay missed completed hands after reconnect, mid-match activation, or a failed save.
@@ -413,7 +350,6 @@ function horRecordCareerHand(event){
 
 function mergeLifetimeStats(winnerLabel) {
   if (window.HORProgression?.core && (horCareerModeOn()||HORProgression.core.read())) return; // already committed once per hand
-  if (window.HOR_SOL_BOT_ACTIVE) return; // diagnostic bot matches never touch persistent careers/stats
   try {
     const store = loadLifetimeStats();
     for (let i = 0; i < 4; i++) {
@@ -539,24 +475,7 @@ function noteHumanAuction(idx, kind, value) {
     refreshHumanPersona(p);
   } catch (e) {}
 }
-function noteHumanHandEnd() {
-  if (window.HOR_SOL_BOT_ACTIVE) return; // diagnostic bot matches never touch human play memory
-  try {
-    for (let i = 0; i < 4; i++) {
-      const p = players[i];
-      if (!p || p.isBot) continue;
-      const mem = getPlayMemory(p.name);
-      mem.hands = (mem.hands || 0) + 1;
-      if (game && game.bidder === i) {
-        mem.wonBids = (mem.wonBids || 0) + 1;
-        const made = !!(game && game.lastMade);
-        // lastMade may not exist; infer from summary later if needed
-      }
-      putPlayMemory(p.name, mem);
-      refreshHumanPersona(p);
-    }
-  } catch (e) {}
-}
+
 function humanPersonaCard(name) {
   const p = (players || []).find(x => x && !x.isBot && x.name === name);
   const mem = getPlayMemory(name);
@@ -779,327 +698,7 @@ let horPingSentAt = 0;
 let horJoinConn = null;      // latest in-flight join DataConnection
 window.horLastPingMs = 0;
 
-function pickBotTalkLine(kind, seat, ctx) {
-  const me = (players[seat] && players[seat].name) || 'Bot';
-  const other = (ctx && ctx.name) || 'them';
-  const color = (ctx && ctx.color) || 'trump';
-  const pts = (ctx && ctx.pts) != null ? ctx.pts : '';
-  const pool = {
-    trickWin: [
-      'That’s ours.',
-      'I’ll take that one.',
-      pts ? ('Nice pile — ' + pts + ' on the felt.') : 'Counters coming home.',
-      'Sit down. That trick is mine.',
-      'Trick’s closed. Don’t wait up.',
-      'Followed, ruffed, counted. Next.',
-      'That’s a book for this side of the table.',
-      'Keep tossing. I’ll keep stacking.',
-      'Felt’s getting heavy over here.',
-      'You led it. I finished it.',
-      'Partner, that one’s in the wagon.',
-      'Low card, high pile. I like that trade.',
-      'Ruff city. Enjoy the view.',
-      'Color’s dead. Trump’s alive.',
-      'That’s how you sweep a four-card mess.',
-      pts ? (pts + ' walking home with me.') : 'Points in the pocket.',
-      'Don’t clap. Just deal the next lead.',
-      'I had that trick from the second card.',
-      'Your 14 looked cute until mine showed up.',
-      'Nest can wait. This pile can’t.'
-    ],
-    trickLose: [
-      'Fine. You can have that one.',
-      'We’ll get the next stack.',
-      'Don’t get comfortable.',
-      other + ' got lucky there.',
-      'Take the crumbs. Leave the bird.',
-      'That trick was skinny anyway.',
-      'Go on, count it. Still short.',
-      'You won the trick. Not the hand.',
-      'I ducked it on purpose. Relax.',
-      'Dump and run. Classic.',
-      'Keep the 5. I wanted the next lead.',
-      other + ' can have the dust.',
-      'Not every pile is worth a fight.',
-      'Alright. Your book. My memory.',
-      'We’ll see who owns the last trick.',
-      'Throw me a counter next time. I dare you.',
-      'That ruff was loud for so few points.',
-      'Enjoy it. Trump’s getting thin over there.',
-      'Lost the trick, kept the count cards.',
-      'Fine. Lead again. I’m listening.'
-    ],
-    bid: [
-      'I’ll buy this hand.',
-      'Raise it. I like these cards.',
-      'We’re going to the nest.',
-      'Someone has to bid. Might as well be me.',
-      'Auction’s open. Let’s play.',
-      'I didn’t come here to pass pretty.',
-      'Bump it. The nest looks hungry.',
-      'This hand has a number on it.',
-      'Y’all can fold. I’ll name trump later.',
-      'That’s my bid. Write it in ink.',
-      'If you’re scared of 120, say so.',
-      'Climb with me or get off the ladder.',
-      'Nest first, excuses later.',
-      'I see trump. I hear a bid.',
-      'Don’t make me bid against myself.',
-      'Table’s quiet. I’ll make some noise.',
-      'Partner, hold on. We’re buying this.',
-      'That’s not a bid. That’s a warning.',
-      'Raise. I’ve got colors for days.',
-      'If the bird’s in the nest, it’s mine anyway.'
-    ],
-    pass: [
-      'Too rich for me.',
-      'Y’all can fight over it.',
-      'I’m sitting this auction out.',
-      'Pass. Let’s see the play.',
-      'Not my nest tonight.',
-      'Cards are polite. Bid isn’t.',
-      'I’ll defend. Somebody else can name it.',
-      'Pass. Save the set for them.',
-      'Auction’s getting spicy. I’m out.',
-      'No thank you. I like my scorecard clean.',
-      'That’s a bidder’s problem now.',
-      'Fold the auction. Open the felt.',
-      'Pass loud so nobody gets ideas.',
-      'I came to ruff, not to buy.',
-      'Let the hungry seat take it.',
-      'My hand said walk. I walked.',
-      'I’ll wait for a cheaper bird.',
-      'Not climbing that ladder in these shoes.',
-      'Pass and pray they name the wrong color.',
-      'Somebody else can feed the nest.'
-    ],
-    trump: [
-      color + ' is trump. Let’s go.',
-      'I named it. Follow or ruff.',
-      'Trump’s on the table. Play honest.',
-      'That’s the color. Don’t act surprised.',
-      color + ' walks. Everything else crawls.',
-      'Trump named. Voids incoming.',
-      'I picked ' + color + '. Live with it.',
-      'That’s the hammer color.',
-      'Follow ' + color + ' or start inventing stories.',
-      'Trump’s short at some seats. Not mine.',
-      'Name’s on the felt. Color’s locked.',
-      color + ' until the nest sings.',
-      'I didn’t name trump to be shy about it.',
-      'Ruff early, ruff often, ruff ' + color + '.',
-      'If you were void, you should’ve bid.',
-      'Trump lead incoming. Hide the counters.',
-      color + ' is the law of this hand.',
-      'Pretty color. Mean rules.',
-      'Don’t bury a 14 in ' + color + ' unless you mean it.',
-      'Trump’s named. Bird’s nervous.'
-    ],
-    nest: [
-      pts ? ('Nest pays ' + pts + '.') : 'I’ll take the nest too.',
-      'Last trick, last pennies.',
-      'Those nest counters are mine.',
-      'Kitty’s open. Hands off.',
-      'Last pile pays the rent.',
-      pts ? ('Nest dropped ' + pts + ' in the wagon.') : 'Nest came home with us.',
-      'That’s why you save a trump.',
-      'Last trick isn’t a suggestion.',
-      'Nest thought it was hiding. Cute.',
-      'Count the kitty. Then count again.',
-      'I didn’t forget the sixth card.',
-      'Partnership rule: last trick eats.',
-      'That’s the nest tax. Pay it.',
-      pts ? ('+' + pts + ' for staying awake.') : 'Stay for the last trick next time.',
-      'Bird, two, fives — nest had a party.',
-      'You fought all hand and missed the kitty.',
-      'Last trick. First thing I planned.',
-      'Nest counters don’t walk themselves.',
-      'That’s the quiet pile that wins matches.',
-      'Thank the nest. Blame the bid.'
-    ],
-    rook: [
-      'Bird’s down. Thank you.',
-      'That’s the rook. Count it.',
-      'Pretty bird. Ugly for you.',
-      'Twenty points with feathers.',
-      'The Bird landed on my side of the table.',
-      'Rook’s not a pet. It’s a paycheck.',
-      'There it is. The whole reason we deal.',
-      'Clip the wings. Bank the twenty.',
-      'You hid it in a skinny trick. Bold.',
-      'Bird called. I answered.',
-      'That’s the black-and-white tax.',
-      'Rook takes the trick and the argument.',
-      'Don’t look at me. Look at the Bird.',
-      'Highest trump, loudest silence.',
-      'I came for the nest. Stayed for the Rook.',
-      'Twenty walks. Pride stays.',
-      'You fed the Bird. I carved it.',
-      'Rook’s in the book. Hand just got honest.',
-      'That’s not a card. That’s a verdict.',
-      'Tweet tweet. Count twenty.'
-    ],
-    red2: [
-      'Red two rides with me.',
-      'Special’s in the pile.',
-      'I’ll take that painted two.',
-      'Little red liar. Big points.',
-      'Painted two thought it was sneaky.',
-      'Red 2’s not low when it pays.',
-      'That’s the extra bird without feathers.',
-      'You tossed a twenty and called it a two.',
-      'House rules: the painted two comes home.',
-      'Red 2 in the wagon. Thank the variant.',
-      'Specials anytime? Anytime’s now.',
-      'Cute rank. Mean value.',
-      'I hunt the Bird and its cousin.',
-      'That’s a counter wearing work clothes.',
-      'Don’t bury the two in a nothing trick.',
-      'Painted and counted.',
-      'Red 2, meet the scorepad.',
-      'Low card, high drama.',
-      'I’ll take the art and the points.',
-      'Two of red, twenty of trouble.'
-    ],
-    highPts: [
-      pts ? ('Fat trick. ' + pts + ' points.') : 'That one was loaded.',
-      'Leave the counters. I’ll carry them.',
-      pts ? (pts + ' in one pile. Somebody got sloppy.') : 'That trick had a whole nest in it.',
-      'Fives, tens, a 14 — grocery run.',
-      'Don’t feed a fat trick unless you own it.',
-      'That’s a scorepad event.',
-      pts ? ('Count it slow. ' + pts + ' tastes better.') : 'Heavy felt. Light opposition.',
-      'You threw count into a woodchipper.',
-      'Loaded trick. Unloaded seats.',
-      'I like my piles with a little gravy.',
-      'That was not a safe dump.',
-      pts ? ('+' + pts + '. Bid just got easier.') : 'Counters migrating my direction.',
-      'Who puts that much meat on one trick?',
-      'Thank you for the 10. And the other 10.',
-      'Fat pile. Thin excuses.',
-      'That’s how hands get made in one book.',
-      'Keep the small cards. Send the points.',
-      'I heard the scoreboard flinch.',
-      pts ? ('Write ' + pts + ' before you forget.') : 'That trick paid like a nest.',
-      'Point hunt complete. For now.'
-    ],
-    made: [
-      'Bid’s good. Pay up.',
-      'Told you we had it.',
-      'Hand made. Next deal.',
-      'Contract filled. Nest included.',
-      'That’s how you buy a hand and keep it.',
-      'Set? No. Made. Sit down.',
-      'Partner played it straight. Bid survived.',
-      'Count it. Then add the nest.',
-      'We named trump and meant it.',
-      'Auction talked. Play walked.',
-      'Not even close to a set.',
-      'Write it on the pad in ink.',
-      'Makers eat. Defenders take notes.',
-      'That’s a clean make. Deal again.',
-      'Bird, counters, last trick — all home.',
-      'You can stop watching the bid now.',
-      'We had the color. You had hope.',
-      'Made it the ugly way. Still made it.',
-      'Scoreboard likes this side tonight.',
-      'Bid stood up. Next victim.'
-    ],
-    set: [
-      'That’s a set. Rough night.',
-      'Bid went down. Happens.',
-      'They didn’t have it.',
-      'Auction got brave. Play got honest.',
-      'Set like a folding chair.',
-      'Should’ve passed at that number.',
-      'Nest couldn’t save that bid.',
-      'Trump ran out two tricks early.',
-      'That’s a hole in the scorepad.',
-      'Makers met a void they didn’t plan.',
-      'Bird hid. Bid didn’t.',
-      'Defense ate well tonight.',
-      'Too much bid, not enough color.',
-      'They bought the nest and still starved.',
-      'Set. Deal the medicine.',
-      'That’s what overconfidence names trump.',
-      'Count short. Pride long.',
-      'The pad does not negotiate.',
-      'You can hear the bid hitting the floor.',
-      'Next time bid the cards, not the vibe.'
-    ],
-    winningTaunt: [
-      'Scoreboard’s ugly for you. Get used to it.',
-      'We’re not just winning, we’re renting this table.',
-      'Keep dealing. I like these cards.',
-      'This isn’t a comeback story. It’s a eulogy.',
-      'You’re not losing, you’re spectating.',
-      'I’d say good game, but it hasn’t been one — for you.',
-      'Enjoy the view from second place.',
-      'We’ve lapped you and you’re still counting your cards.',
-      'This is what a beatdown looks like in cardboard.',
-      'Keep bidding. I love watching you dig.',
-      'You brought a nest egg. We brought a shovel.',
-      'At this rate the scorepad needs a new page just for us.',
-      'Y’all are playing checkers. We’re playing chess with feathers.',
-      'I’ve seen closer games at a coronation.',
-      'Don’t worry, participation trophies are in the mail.',
-      'We’re up so much I forgot what losing feels like.',
-      'Keep swinging. It’s cute.',
-      'Feel free to concede. I won’t tell anyone.',
-      'This lead’s got its own zip code.',
-      'You’re chasing ghosts and we’re the ghosts.',
-      'Nice try. Try again in another life.',
-      'We’re beating you so bad the Bird feels sorry for you.',
-      'Scoreboard says story time’s over.',
-      'I’d slow down, but why?',
-      'This game’s basically over. Somebody tell the nest.',
-      'You call that a fight? I call it a warm-up.',
-      'We’re up big enough to start tipping the dealer.',
-      'Keep chasing. The finish line moved.',
-      'Losing gracefully is still losing.',
-      'Bid all you want. Math already won.',
-      'Take notes. This is how it’s done.',
-      'We’re not sweating. You should be.'
-    ],
-    losingTaunt: [
-      'Enjoy the lead. Leases expire.',
-      'Big talk for a team that hasn’t won the game yet.',
-      'We’re not behind, we’re setting a trap.',
-      'This ain’t over till the last nest is counted.',
-      'Keep smiling. It’ll make the comeback sweeter.',
-      'You’re up now. Ask me again after the next hand.',
-      'Scoreboards don’t win games. Bids do.',
-      'We’re just getting the boring part out of the way.',
-      'Save the victory lap. You’ll need the energy.',
-      'This lead’s rented, not owned.',
-      'Talk’s cheap. So is your lead, apparently.',
-      'We like our comebacks dramatic.',
-      'Keep counting. We’re not done dealing.',
-      'You peaked early. We peak on time.',
-      'This is just the trailer. Wait for the movie.',
-      'Ahead now, worried later.',
-      'We’ve been down before. Ask the scorepad.',
-      'Ninth-inning energy, and we haven’t even started.',
-      'Cute lead. Won’t last past the next Bird.',
-      'Every big lead has a bigger nest waiting.',
-      'You’re loud for a team that hasn’t finished the job.',
-      'We’re not panicking. We’re plotting.',
-      'The math isn’t done. Neither are we.',
-      'Enjoy it now. Regret it at the finish line.',
-      'That lead’s got a short memory.',
-      'We don’t fold under pressure. Ask us later.',
-      'Talk to me after the nest flips.',
-      'Comebacks don’t RSVP. They just show up.',
-      'You’ll remember this lead. We’ll erase it.',
-      'We’re patient. Revenge is a slow-played hand.',
-      'Hold that pose. It won’t last.',
-      'Big lead, small hand left to prove it.'
-    ]
-  };
-  const lines = pool[kind];
-  if (!lines || !lines.length) return '';
-  return lines[Math.floor(Math.random() * lines.length)];
-}
+
 function botMaybeTableTalk() {}
 function botMaybeStandingsTaunt() {}
 function seatSlotIdForIndex(idx) {
@@ -1140,13 +739,8 @@ function readTargetScoreFromUI() {
   const ts = $('opt-target-score');
   const custom = $('opt-target-score-custom');
   if (!ts) return targetScore || 500;
-  if (ts.value === 'custom') {
-    const raw = custom ? String(custom.value || '').replace(/[^\d]/g, '') : '';
-    let v = parseInt(raw, 10);
-    if (!Number.isFinite(v) || v < 1) v = targetScore >= 1 ? targetScore : 500;
-    if (v > 2000) v = 2000;
-    return v;
-  }
+  if (ts.value === 'custom') return normalizeTargetScore(targetScore || 500);
+
   return normalizeTargetScore(ts.value);
 }
 
@@ -1223,50 +817,22 @@ function wireTargetScoreUI() {
     } else {
       setCustomScoreVisible(false);
     }
-    apply();
+    if(ts.value!=='custom')apply();
   });
 
   if (custom) {
-    custom.disabled = false;
-    custom.readOnly = false;
-    const confirmBtn = $('opt-target-score-custom-confirm');
-    const confirmCustomScore = (e) => {
-      if (e) { e.preventDefault(); e.stopPropagation(); }
-      const v = parseInt(String(custom.value || '').replace(/[^\d]/g, ''), 10);
-      if (!Number.isFinite(v) || v < 1) {
-        custom.focus();
-        custom.select();
-        return;
-      }
-      targetScore = normalizeTargetScore(v);
-      custom.value = String(targetScore);
-      apply();
-      try { custom.blur(); } catch (err) {}
-    };
-    if (confirmBtn && confirmBtn.dataset.wired !== '1') {
-      confirmBtn.dataset.wired = '1';
-      confirmBtn.addEventListener('click', confirmCustomScore);
-    }
-    // Digits only while typing
-    custom.addEventListener('input', () => {
-      const digits = String(custom.value || '').replace(/[^\d]/g, '').slice(0, 4);
-      if (custom.value !== digits) custom.value = digits;
-      const v = parseInt(digits, 10);
-      if (Number.isFinite(v) && v >= 1) {
-        targetScore = normalizeTargetScore(v);
-        const td = $('targetDisplay');
-        if (td) td.textContent = String(targetScore);
-      }
-    });
-    custom.addEventListener('change', apply);
-    custom.addEventListener('blur', apply);
-    // Stop modal/sheet handlers from eating keystrokes
-    custom.addEventListener('keydown', (e) => {
-      e.stopPropagation();
-      if (e.key === 'Enter') confirmCustomScore(e);
-    });
-    custom.addEventListener('keyup', (e) => { e.stopPropagation(); });
-    custom.addEventListener('click', (e) => { e.stopPropagation(); try { custom.focus(); } catch (err) {} });
+    custom.disabled=false;custom.readOnly=false;
+    const confirmBtn=$('opt-target-score-custom-confirm');
+    const feedback=document.createElement('p');feedback.id='customScoreFeedback836';feedback.setAttribute('role','status');feedback.setAttribute('aria-live','polite');custom.closest('.target-score-custom-wrap').append(feedback);custom.setAttribute('aria-describedby',feedback.id);
+    const valid=()=>/^\d+$/.test(custom.value)&&Number(custom.value)>=1&&Number(custom.value)<=2000;
+    const paint=()=>{const ok=valid();confirmBtn.disabled=!ok;custom.setAttribute('aria-invalid',String(!ok));feedback.textContent=(ok?'Ready to save '+Number(custom.value).toLocaleString()+'. ':'Enter a whole number from 1–2,000. ')+'Current target: '+Number(targetScore||500).toLocaleString()+'.';};
+    const commit=e=>{if(e){e.preventDefault();e.stopPropagation();}if(!valid()){paint();return;}targetScore=Number(custom.value);custom.value=String(targetScore);apply();paint();feedback.textContent='Saved target: '+Number(targetScore).toLocaleString()+'.';custom.blur();};
+    confirmBtn.addEventListener('click',commit);
+    custom.addEventListener('input',paint);
+    custom.addEventListener('keydown',e=>{e.stopPropagation();if(e.key==='Enter')commit(e)});
+    custom.addEventListener('keyup',e=>e.stopPropagation());
+    custom.addEventListener('click',e=>e.stopPropagation());
+    ts.addEventListener('change',paint);paint();
   }
   syncTargetScoreUI();
 }
@@ -1284,14 +850,6 @@ let handSortMode = (function () {
 })();
 let isSpectator = false;
 let isSoloPractice = false;
-/** Extra chance (0–50) the solo host is dealt Rook / Red 2 after a fair shuffle */
-let luckySpecialsBoost = 0;
-let luckySpecialsEnabled = false;
-/** 'fixed' | 'spinner' */
-let luckySpecialsMode = 'fixed';
-let luckySpinning = false;
-/** When host is the only human, allow the 🧪 experimental / perfect test deal */
-let experimentalHandOpt = false;
 const PLAQUE_STYLES = {
   ink: { bg: '#111111', fg: '#ffffff', label: 'Black / white' },
   paper: { bg: '#f5f5f5', fg: '#111111', label: 'White / black' },
@@ -1367,7 +925,6 @@ function applyPlaqueColors() {
 window.applyPlaqueColors = applyPlaqueColors;
 let whisperTargetIdx = -1;
 let beerSeats = [];
-let lastPlaySnapshot = null;
 let themeIndex = 0;
 let ruleVariant = 'griffin';
 const THEMES = ['theme-classic', 'theme-felt', 'theme-night'];
@@ -1453,8 +1010,6 @@ function syncOptionsUI() {
   if (cbComeback) cbComeback.checked = !!comebackSpecialChance;
   const rtn = $('opt-reveal-top-nest');
   if (rtn) rtn.checked = !!revealTopNest;
-  const fnr = $('opt-force-nest-reveal');
-  if (fnr) fnr.value = forceNestReveal || '';
   const ow = $('opt-open-widow');
   if (ow) ow.checked = !!openWidow;
   const stm = $('opt-shoot-moon');
@@ -1497,17 +1052,7 @@ function syncOptionsUI() {
   if (cbRook) cbRook.checked = includeRook;
   const cbLow = $('opt-rook-lowest');
   if (cbLow) cbLow.checked = rookLowest;
-  const luckySel = $('opt-lucky-boost');
-  if (luckySel) luckySel.value = String(luckySpecialsBoost || 0);
-  const luckyOn = $('opt-lucky-on');
-  if (luckyOn) luckyOn.checked = !!luckySpecialsEnabled;
-  const modeFixed = $('opt-lucky-fixed');
-  const modeSpin = $('opt-lucky-spinner');
-  if (modeFixed) modeFixed.checked = luckySpecialsMode !== 'spinner';
-  if (modeSpin) modeSpin.checked = luckySpecialsMode === 'spinner';
-  const expOpt = $('opt-experimental-hand');
-  if (expOpt) expOpt.checked = !!experimentalHandOpt;
-  try { syncSoloHostExtrasUI(); } catch (e) {}
+  
   const td = $('targetDisplay');
   if (td) td.textContent = String(targetScore);
   const hint = $('variantHint');
@@ -1535,10 +1080,9 @@ function broadcastPlaySettings() {
     type: 'settings',
     includeRed2, red2Points, includeRed1, includeOnes, onesHigh, includeRook, rookLowest,
     specialsAnytime, mustTrumpWhenVoid, turnTimeSec,
-    bidOnlyScoring, nestGoesTo, leadOrder, misdealOnNoCounters, screwTheDealer, comebackSpecialChance, openWidow, revealTopNest, forceNestReveal, shootMoonEnabled, botSpeed, handSortMode, timeoutPolicy,
+    bidOnlyScoring, nestGoesTo, leadOrder, misdealOnNoCounters, screwTheDealer, comebackSpecialChance, openWidow, revealTopNest, shootMoonEnabled, botSpeed, handSortMode, timeoutPolicy,
     partnerNeverKill, partnerFeedLast, dontStealPartnerBid, landscapeBidHints, nestLastTrickAnim, layDownWinningCards,
     minBid, targetScore, handSize, nestSizeDefault, ruleVariant, botDifficulty,
-    luckySpecialsBoost, luckySpecialsEnabled, luckySpecialsMode, experimentalHandOpt,
     experimental: window.horExperimental || {},
   });
 }
@@ -1547,37 +1091,9 @@ function humanPlayerCount() {
   return (players || []).filter(p => p && !p.isBot).length;
 }
 
-function isHostOnlyHuman() {
-  if (isSoloPractice) return true;
-  return !!(isHost && humanPlayerCount() <= 1);
-}
 
-function syncSoloHostExtrasUI() {
-  const box = $('soloHostExtras');
-  const solo = isHostOnlyHuman();
-  if (box) box.classList.toggle('hidden', !solo);
-  if (!solo) {
-    experimentalHandOpt = false;
-    luckySpecialsEnabled = false;
-    const expOpt = $('opt-experimental-hand');
-    if (expOpt) expOpt.checked = false;
-    const luckyOn = $('opt-lucky-on');
-    if (luckyOn) luckyOn.checked = false;
-  }
-  const controls = $('opt-lucky-controls');
-  if (controls) controls.classList.toggle('hidden', !solo || !luckySpecialsEnabled);
-  if (box && solo) box.open = true;
-  const fixedWrap = $('opt-lucky-fixed-wrap');
-  if (fixedWrap) fixedWrap.classList.toggle('hidden', luckySpecialsMode === 'spinner');
-  const inGame = document.body.classList.contains('in-game');
-  const gameOptsBtn = $('btnGameOptions');
-  if (gameOptsBtn) gameOptsBtn.classList.toggle('hidden', !inGame);
-  const perfectBtn = $('btnPerfectDeal');
-  if (perfectBtn) {
-    const show = inGame && isHost && solo && experimentalHandOpt;
-    perfectBtn.classList.toggle('hidden', !show);
-  }
-}
+
+
 
 
 
@@ -1753,7 +1269,7 @@ function playNatural063(kind, volume=1, delayMs=0, category='card', previewIndex
  const allowed=()=>!soundMuted && !document.hidden && (category==='turn'?soundTurn:category==='tick'?soundTick:category==='preview'?true:soundCard);
  if(!allowed()||!naturalCounts063[kind])return null;
  const count=naturalCounts063[kind];
- const choice=category==='preview'?previewIndex:naturalPreferences063[kind];
+ const choice=(category==='preview'||category==='result')?previewIndex:naturalPreferences063[kind];
  const index=Number.isInteger(choice)&&choice>=1&&choice<=count?choice:nextNaturalIndex063(kind,count);
  const requested=Date.now(),target=requested+Math.max(0,delayMs);
  loadNatural063(kind,index).then(buffer=>{
@@ -1975,54 +1491,29 @@ function playSetSound() {
   /* No punishment buzzer. */
 }
 
-/** Longer shuffle — ~1.5s of layered card-riffle noise */
-function playRiffleShuffleSound034() {
-  if (soundMuted || !soundCard) return;
-  const ctx = ensureAudio();
-  if (!ctx) return;
-  const t = ctx.currentTime;
-  // Dense riffle bursts over ~1.5 seconds
-  for (let i = 0; i < 28; i++) {
-    const bufferSize = Math.floor(ctx.sampleRate * (0.028 + Math.random() * 0.025));
-    const buffer = ctx.createBuffer(1, bufferSize, ctx.sampleRate);
-    const data = buffer.getChannelData(0);
-    for (let j = 0; j < bufferSize; j++) {
-      data[j] = (Math.random() * 2 - 1) * Math.exp(-j / (bufferSize * 0.32));
-    }
-    const noise = ctx.createBufferSource();
-    noise.buffer = buffer;
-    const bp = ctx.createBiquadFilter();
-    bp.type = 'bandpass';
-    bp.frequency.value = 900 + (i % 5) * 180 + Math.random() * 120;
-    bp.Q.value = 0.85;
-    const g = ctx.createGain();
-    const s = t + i * 0.052 + Math.random() * 0.012;
-    const peak = 0.12 + (i % 3) * 0.03;
-    g.gain.setValueAtTime(0.0001, s);
-    g.gain.exponentialRampToValueAtTime(peak, s + 0.008);
-    g.gain.exponentialRampToValueAtTime(0.008, s + 0.04);
-    noise.connect(bp);
-    bp.connect(g);
-    g.connect(window.HORAudioMixer.output(ctx,'gameplay'));
-    noise.start(s);
-    noise.stop(s + 0.06);
-  }
-  // Soft low thumps (deck packing)
-  for (let k = 0; k < 4; k++) {
-    const osc = ctx.createOscillator();
-    const g = ctx.createGain();
-    osc.type = 'sine';
-    osc.frequency.value = 90 + k * 15;
-    const s = t + 0.2 + k * 0.35;
-    g.gain.setValueAtTime(0.0001, s);
-    g.gain.exponentialRampToValueAtTime(0.08, s + 0.01);
-    g.gain.exponentialRampToValueAtTime(0.001, s + 0.12);
-    osc.connect(g);
-    g.connect(window.HORAudioMixer.output(ctx,'gameplay'));
-    osc.start(s);
-    osc.stop(s + 0.14);
+// A quiet room toast closes a hand; the full match gets one audience finish.
+// Score/history reopening and rotation must not replay either cue.
+const resultSoundReceipts843 = new Set();
+const resultGameIds844 = new WeakMap();
+function playResultFinish843(summary, match = false) {
+  if (!summary || (!match && game?.phase !== 'score')) return;
+  const ev = summary.careerEvent;
+  if (game && !resultGameIds844.has(game)) resultGameIds844.set(game, crypto.randomUUID());
+  const key = (match ? 'match:' : 'hand:') + (ev?.matchId || summary.matchId || game?.careerMatchId || resultGameIds844.get(game) || '') + ':' +
+    (match ? '' : (ev?.hand ?? handHistory?.length ?? 0)) + ':' + (summary.scores || []).join(',');
+  if (resultSoundReceipts843.has(key)) return;
+  resultSoundReceipts843.add(key);
+  if (resultSoundReceipts843.size > 128) resultSoundReceipts843.delete(resultSoundReceipts843.values().next().value);
+  if (match) {
+    naturalAwardAt063 = Date.now(); // Keep award toasts from piling applause onto the finish.
+    playNatural063('applause', .65, 0, 'result', 1);
+  } else if (!getMatchResult(summary.scores, game?.targetScore || targetScore || 500)) {
+    playNatural063('clink', .32, 0, 'result', 1);
   }
 }
+
+/** Longer shuffle — ~1.5s of layered card-riffle noise */
+
 
 /** Bidding intro popup removed — jump straight to the auction. */
 let biddingIntroTimer = null;
@@ -2246,32 +1737,7 @@ function playNestRevealSequence() {
 function playNestFlipSound() { if(isPortraitViewport()){playRecordedCard035('reveal');playBirdNestReaction041();}else playNestRevealSequence(); }
 function playNestLandSound() { /* land is part of playNestRevealSequence */ }
 
-function playLegacyDealCardSound035() {
-  if (soundMuted || !soundCard) return;
-  const ctx = ensureAudio();
-  if (!ctx) return;
-  const t = ctx.currentTime;
-  const bufferSize = Math.floor(ctx.sampleRate * 0.03);
-  const buffer = ctx.createBuffer(1, bufferSize, ctx.sampleRate);
-  const data = buffer.getChannelData(0);
-  for (let j = 0; j < bufferSize; j++) {
-    data[j] = (Math.random() * 2 - 1) * Math.exp(-j / (bufferSize * 0.22));
-  }
-  const noise = ctx.createBufferSource();
-  noise.buffer = buffer;
-  const bp = ctx.createBiquadFilter();
-  bp.type = 'bandpass';
-  bp.frequency.value = 1400 + Math.random() * 400;
-  bp.Q.value = 1.1;
-  const g = ctx.createGain();
-  g.gain.setValueAtTime(0.16, t);
-  g.gain.exponentialRampToValueAtTime(0.01, t + 0.04);
-  noise.connect(bp);
-  bp.connect(g);
-  g.connect(window.HORAudioMixer.output(ctx,'gameplay'));
-  noise.start(t);
-  noise.stop(t + 0.05);
-}
+
 
 /** Legacy short deal sound → full shuffle */
 function playDealSound() {
@@ -2280,8 +1746,7 @@ function playDealSound() {
 
 /** Shuffle overlay + deal cards into hand one-by-one */
 let dealAnimToken = 0;
-const SHUFFLE_ANIM_MS = 5600; // Existing landscape/explicit legacy duration preserved.
-function shuffleAnimDuration762(){return isPortraitViewport()&&new URLSearchParams(location.search).get('shuffle')!=='legacy'?5033:SHUFFLE_ANIM_MS;} // Only the asset opening omits its stationary corner hold.
+function shuffleAnimDuration762(){return 5033;} // Only the asset opening omits its stationary corner hold.
 const CARD_DEAL_MS = 115;
 
 function ensureShuffleOverlay() {
@@ -2291,24 +1756,7 @@ function ensureShuffleOverlay() {
   ov.id = 'shuffleOverlay';
   ov.className = 'shuffle-overlay hidden';
   ov.setAttribute('aria-hidden', 'true');
-  ov.innerHTML = `
-    <div class="shuffle-stage">
-      <div class="shuffle-deck" aria-hidden="true"><div class="shuffle-plane033">
-        <div class="shuffle-card sc1"></div>
-        <div class="shuffle-card sc2"></div>
-        <div class="shuffle-card sc3"></div>
-        <div class="shuffle-card sc4"></div>
-        <div class="shuffle-card sc5"></div>
-        <div class="shuffle-card wash-extra sc6"></div>
-        <div class="shuffle-card wash-extra sc7"></div>
-        <div class="shuffle-card wash-extra sc8"></div>
-        <div class="shuffle-card wash-extra sc9"></div>
-        <div class="shuffle-card wash-extra sc10"></div>
-        <div class="shuffle-card wash-extra sc11"></div>
-        <div class="shuffle-card wash-extra sc12"></div>
-      </div></div>
-      <p class="shuffle-label">Shuffling…</p>
-    </div>`;
+  // The approved asset adapter supplies the sole visual surface.
   document.body.appendChild(ov);
   return ov;
 }
@@ -2332,55 +1780,6 @@ function hideShuffleOverlay() {
   ov.classList.remove('shuffling');
   ov.classList.add('hidden');
   ov.setAttribute('aria-hidden', 'true');
-}
-
-/**
- * Present deal: shuffle anim → cards fly into hand one at a time → sort.
- * fullHand: array of card objects. onDone optional.
- */
-function runLegacyDealPresentation035(fullHand, onDone) {
-  const hand = (fullHand || []).map(c => ({ ...c }));
-  const token = ++dealAnimToken;
-  try { showGame(); } catch (e) {}
-  if (!game) game = {};
-  game.myHand = [];
-  try {
-    const handEl = $('myHand');
-    if (handEl) handEl.innerHTML = '';
-    const ltHand = $('ltHand');
-    if (ltHand) ltHand.innerHTML = '';
-    const ltPlays = $('ltPlays');
-    if (ltPlays) ltPlays.innerHTML = '';
-  } catch (e) {}
-
-  // Load the five varied card landing recordings while the shuffle plays so
-  // dealing can use the same natural paper sounds instead of the old click.
-  preloadCardLandingSounds058();
-  showShuffleOverlay();
-  try { playShuffleSound(); } catch (e) {}
-  try { renderTopNestPeek(); } catch (e) {}
-
-  setTimeout(() => {
-    if (token !== dealAnimToken) return;
-    hideShuffleOverlay();
-    let i = 0;
-    const step = () => {
-      if (token !== dealAnimToken) return;
-      if (i >= hand.length) {
-        game.myHand = hand.slice();
-        try { sortMyHandInPlace(); } catch (e) {}
-        try { renderHand(false); } catch (e) {}
-        if (typeof onDone === 'function') onDone();
-        return;
-      }
-      game.myHand = hand.slice(0, i + 1);
-      try { renderHand(false, { skipSort: true, dealIn: true }); } catch (e) {}
-      try { playDealCardSound(); } catch (e) {}
-      i += 1;
-      setTimeout(step, solScaledDelay(CARD_DEAL_MS, 18));
-    };
-    step();
-  }, solScaledDelay(shuffleAnimDuration762(), 80));
 }
 
 /** Dispatch named SFX (local + optional network) */
@@ -2599,14 +1998,7 @@ function isShootMoonBid(n) {
   return !!(shootMoonEnabled && Number.isFinite(v) && v === maxBid());
 }
 
-function teamScoreForSeat(seat) {
-  const i = Number(seat);
-  const team = (players[i] && typeof players[i].team === 'number')
-    ? players[i].team
-    : (Number.isFinite(i) ? i % 2 : 0);
-  const scores = (game && game.scores) || [0, 0];
-  return Number(scores[team] || 0);
-}
+
 
 function moonBidAllowed(seat) {
   // A negative score does not restrict Moon bids. getMatchResult owns the losing threshold.
@@ -2768,21 +2160,8 @@ function bindNoServiceModal() {
     stay.onclick = () => hideNoServiceModal();
   }
 }
-function scheduleNetRetry(fn, ms) {
-  if (phoneLooksOffline() || window._horNoServiceStop) {
-    offerOfflinePlay();
-    return;
-  }
-  const id = setTimeout(() => {
-    if (phoneLooksOffline()) { offerOfflinePlay(); return; }
-    try { fn(); } catch (e) {}
-  }, ms);
-  window._horNetRetryTimers = (window._horNetRetryTimers || []).concat([id]);
-}
-function brokerRetryMessage() {
-  if (phoneLooksOffline()) return noServiceJoinMessage();
-  return 'Can’t reach the table directory right now. Checking another path… Use Wi‑Fi or cell data if this phone has neither.';
-}
+
+
 
 function setJoinStatus(msg) {
   const text = String(msg || '');
@@ -3144,74 +2523,8 @@ function peerRoomId(code) {
 // a version mismatch is detected against a connected peer (host or joiner
 // running older cached code), so that side self-corrects instead of the
 // person needing to know to manually clear their browser data.
-// ========== Debug logging panel (toggle in Options > Experimental Polish) ==========
-// Kept fully inert unless explicitly enabled — see the 'debugPanel' entry in
-// polish.js's experimental flags. Useful for diagnosing multiplayer/connection
-// issues on a device without access to browser devtools (e.g. some mobile
-// browsers).
-let horDebugEntries = [];
-function horDebugLog(msg) {
-  if (!(window.horExperimental && window.horExperimental.debugPanel)) return;
-  try {
-    const d = new Date();
-    const ts = d.toTimeString().slice(0, 8) + '.' + String(d.getMilliseconds()).padStart(3, '0');
-    const line = ts + '  ' + msg;
-    console.log('[HOR DEBUG]', line);
-    horDebugEntries.push(line);
-    if (horDebugEntries.length > 400) horDebugEntries.shift();
-    horEnsureDebugUI();
-    horRenderDebugPanel();
-  } catch (e) {}
-}
-function horRenderDebugPanel() {
-  const panel = document.getElementById('horDebugPanel');
-  if (!panel) return;
-  panel.textContent = horDebugEntries.join('\n');
-  panel.scrollTop = panel.scrollHeight;
-}
-function horEnsureDebugUI() {
-  if (document.getElementById('horDebugToggle')) return;
-  const style = document.createElement('style');
-  style.id = 'horDebugStyle';
-  style.textContent = `
-    #horDebugToggle { position:fixed; bottom:8px; left:8px; z-index:999999; width:36px; height:36px; border-radius:50%;
-      background:rgba(0,0,0,0.65); color:#3f3; font-size:17px; display:flex; align-items:center; justify-content:center;
-      border:1px solid #3f3; cursor:pointer; }
-    #horDebugPanel { position:fixed; bottom:52px; left:8px; right:8px; max-height:42vh; overflow-y:auto;
-      background:rgba(0,0,0,0.92); color:#3f3; font:11px/1.45 monospace; padding:8px; border-radius:6px;
-      z-index:999999; white-space:pre-wrap; display:none; }
-    #horDebugPanel.show { display:block; }
-    #horDebugClear { position:fixed; bottom:8px; left:52px; z-index:999999; background:rgba(0,0,0,0.65); color:#3f3;
-      border:1px solid #3f3; border-radius:6px; padding:8px 12px; font-size:12px; display:none; cursor:pointer; }
-    #horDebugClear.show { display:block; }
-  `;
-  document.head.appendChild(style);
-  const toggle = document.createElement('div');
-  toggle.id = 'horDebugToggle';
-  toggle.textContent = '\u{1F41E}';
-  document.body.appendChild(toggle);
-  const panel = document.createElement('div');
-  panel.id = 'horDebugPanel';
-  document.body.appendChild(panel);
-  const clearBtn = document.createElement('div');
-  clearBtn.id = 'horDebugClear';
-  clearBtn.textContent = 'Clear';
-  document.body.appendChild(clearBtn);
-  toggle.addEventListener('click', () => {
-    panel.classList.toggle('show');
-    clearBtn.classList.toggle('show');
-  });
-  clearBtn.addEventListener('click', () => { horDebugEntries = []; horRenderDebugPanel(); });
-  horRenderDebugPanel();
-}
-function horRemoveDebugUI() {
-  ['horDebugToggle', 'horDebugPanel', 'horDebugClear', 'horDebugStyle'].forEach(id => {
-    const el = document.getElementById(id);
-    if (el) el.remove();
-  });
-}
-window.horEnsureDebugUI = horEnsureDebugUI;
-window.horRemoveDebugUI = horRemoveDebugUI;
+// Internal networking calls retain a no-op logging shim; no debug UI exists.
+function horDebugLog(){}
 
 function horForceUpdate() {
   window.__horUpdating = true;
@@ -3338,9 +2651,7 @@ function peerOptions(broker, forceRelay) {
   };
 }
 
-function horNextBroker() {
-  return PEER_BROKERS[0];
-}
+
 
 
 let horPeerLoadPromise = null;
@@ -3518,7 +2829,8 @@ function joinRoom() {
   if (joinInProgress) return;
   if (horHostCreateInProgress) { setJoinStatus('Creating your table…'); return; }
   const code = ($('hor-room-code').value || '').trim().toUpperCase().replace(/\s+/g, '');
-  if (!code) return alert('Enter a room code');
+  if (!code) { setJoinStatus('Enter a room code.'); $('joinFeedback841').hidden=false; $('joinFeedback841').textContent='Enter a room code.'; $('hor-room-code').setAttribute('aria-invalid','true'); $('hor-room-code').focus(); return; }
+  $('hor-room-code').removeAttribute('aria-invalid'); $('joinFeedback841').hidden=true;
   if (phoneLooksOffline()) { setJoinStatus(noServiceJoinMessage()); return; }
   if (!isHost && hostConnection && hostConnection.open && roomCode === code) {
     setJoinStatus('Already connected to table ' + code + '.'); return;
@@ -3648,8 +2960,53 @@ function horNetSendRaw(conn, msg) {
 
 function horNetSend(conn, msg) {
   if (!msg || typeof msg !== 'object') return horNetSendRaw(conn, msg);
+  if (!isHost && msg.type === 'join') msg.reconnectToken844 = horResumeToken844();
+  if (!isHost && horTurnActions844.has(msg.type) && !msg.actionContext844) msg.actionContext844 = game?.actionContext844;
+  if (isHost && msg.type === 'welcome' && !msg.spectator && !msg.preview) {
+    const p = players.find(p=>p && !p.isBot && p.id === msg.yourId && p.id === conn?.peer);
+    if (p) msg.reconnectToken844 = horEnsureResume844(p);
+  }
   if (!msg._sentAt) msg._sentAt = Date.now();
   return horNetSendRaw(conn, msg);
+}
+
+// Private, host-issued resume credentials never enter public player snapshots.
+function horResumeToken844() {
+  try { return sessionStorage.getItem('horResume844:' + roomCode) || ''; } catch (_) { return ''; }
+}
+function horEnsureResume844(player) {
+  if (!player.reconnectToken844) player.reconnectToken844 = crypto.randomUUID();
+  return player.reconnectToken844;
+}
+const horTurnActions844 = new Set(['bid','discard','trump','play','claimAllTrumps','declineClaim']);
+let horAwaitingResync844 = false;
+function horSyncActionContext844() {
+  if (!isHost || !game) return;
+  const signature = JSON.stringify([game.networkHand844,game.phase,game.currentPlayer,game.bidder,
+    game.highestBid,game.trump,game.trick?.map(p=>[p.player,p.card?.id]),game.hands?.map(h=>h.length)]);
+  if (game.actionSignature844 !== signature) {
+    game.actionSignature844 = signature;
+    game.actionContext844 = [game.careerMatchId,game.networkHand844,crypto.randomUUID()].join(':');
+  }
+}
+function horAuthorizeIncoming844(data, conn) {
+  if (!data || typeof data.type !== 'string' || !conn?.peer) return false;
+  const sender = conn.peer;
+  if (data.type === 'join') return data.id === sender && sender !== myPeerId;
+  if (data.type === 'peekTable') return true;
+  const idx = players.findIndex(p=>p && !p.isBot && p.id === sender);
+  if (idx < 0) return false;
+  if (['careerProfile','avatar','claimSeat'].includes(data.type) && data.id !== sender) return false;
+  if (data.type === 'careerAnnouncement' && data.from !== sender) return false;
+  if (data.type === 'leaveReplace' && data.playerId && data.playerId !== sender) return false;
+  if (data.type === 'requestDiscardState') return idx === game?.bidder && data.player === idx && (!data.peerId || data.peerId === sender);
+  if (horTurnActions844.has(data.type)) {
+    horSyncActionContext844();
+    return data.player === idx && !!game?.actionContext844 && data.actionContext844 === game.actionContext844;
+  }
+  if (data.type === 'newHostReady') return window._horHandoffTarget844 === sender && /^[A-Z0-9]{4}$/.test(String(data.roomCode || ''));
+  if (['readyNext','requestRematch','requestWaiting'].includes(data.type)) return players[idx].seat >= 0 && game?.phase === 'score';
+  return true;
 }
 
 function horNewActionId(kind) {
@@ -3674,6 +3031,10 @@ function horRememberAction(data) {
 
 function horQueueClientAction(msg) {
   if (!msg || typeof msg !== 'object') return false;
+  if (horTurnActions844.has(msg.type)) {
+    if (!game?.actionContext844) return false;
+    msg.actionContext844 = game.actionContext844;
+  }
   if (horExpOn('netTurnGuard') || horExpOn('netDuplicateGuard') || horExpOn('netActionQueue') || horExpOn('netAuthoritative')) {
     if (!msg.actionId) msg.actionId = horNewActionId(msg.type || 'act');
   }
@@ -3688,10 +3049,11 @@ function horQueueClientAction(msg) {
 }
 
 function horFlushOutbox() {
-  if (isHost || !hostConnection || !hostConnection.open) return false;
+  if (isHost || horAwaitingResync844 || !hostConnection || !hostConnection.open) return false;
   let sent = 0;
   const leftover = [];
   horOutbox.forEach((msg) => {
+    if (horTurnActions844.has(msg.type) && msg.actionContext844 !== game?.actionContext844) return;
     if (horNetSend(hostConnection, msg)) sent += 1;
     else leftover.push(msg);
   });
@@ -3754,6 +3116,7 @@ function setupConn(conn) {
     horDebugLog((isHost ? 'HOST' : 'CLIENT') + ': connection closed, remote peer=' + (conn && conn.peer));
     if (isHost) {
       const peerId = conn.peer;
+      if (connMap[peerId] && connMap[peerId] !== conn) return; // Old transport cannot disconnect its replacement.
       if (connMap[peerId] === conn) delete connMap[peerId];
       const seated = players.find(p => p && p.id === peerId && !p.isBot);
       if (seated && game && game.phase && game.phase !== 'lobby' && game.phase !== 'waiting') {
@@ -3820,6 +3183,7 @@ function horBeginClientReconnect() {
     return;
   }
   if (horReconnectActive) return;
+  horAwaitingResync844 = true;
   horReconnectActive = true;
   horReconnectAttempt = 0;
   const step = () => {
@@ -3918,9 +3282,11 @@ horStartHeartbeat();
 
 // ========== Message handling ==========
 function handleMessage(data, conn) {
+  if (!data || typeof data !== 'object') return;
   if (data && data.type === '__hor_ping') { try { conn && conn.send({ type:'__hor_pong', at:data.at }); } catch(e) {} return; }
   if (data && data.type === '__hor_pong') { horLastHostSeenAt = Date.now(); if (data.at) horLastPingMs = Math.max(0, Date.now() - Number(data.at)); return; }
   if (isHost) {
+    if (!horAuthorizeIncoming844(data, conn)) return;
     switch (data.type) {
       case 'join':
         horDebugLog('HOST: processing join from name=' + data.name + ' id=' + data.id + ' spectator=' + !!data.spectator + ' appVersion=' + data.appVersion);
@@ -3990,7 +3356,9 @@ function handleMessage(data, conn) {
               bid: game.bid,
               bidder: game.bidder,
               trump: game.trump,
-              trumpVoiceEvent790: game.trumpVoiceEvent790 || null, trumpVoiceRestore790: true,
+              trumpVoiceEvent790: game.trumpVoiceEvent790 || null,
+    trumpPresentation833: !!game.trumpPresentation833,
+    trumpPresentationMs833: game.trumpPresentationMs833 || 0, trumpVoiceRestore790: true,
               currentPlayer: game.currentPlayer,
               trick: game.trick,
               ledColor: game.ledColor,
@@ -4085,7 +3453,7 @@ function handleMessage(data, conn) {
         if (game && game.phase === 'discard') hostProcessDiscard(data);
         break;
       case 'requestDiscardState':
-        if (game && game.phase === 'discard') hostSendDiscardStart(data.player, data.peerId);
+        if (game && game.phase === 'discard') hostSendDiscardStart(data.player, conn.peer);
         break;
       case 'trump':
         if (game && game.phase === 'trump') hostProcessTrump(data);
@@ -4129,6 +3497,7 @@ function handleMessage(data, conn) {
         } catch (e) {}
         break;
       case 'newHostReady':
+        window._horHandoffTarget844 = null;
         broadcast({ type: 'switchHost', roomCode: data.roomCode, hostName: data.hostName });
         setTimeout(() => { try { horFollowNewHost(data.roomCode); } catch (e) {} }, 500);
         break;
@@ -4172,6 +3541,10 @@ function handleMessage(data, conn) {
           }
           break;
         }
+        if (data.reconnectToken844 && data.yourId === myPeerId) {
+          try { sessionStorage.setItem('horResume844:' + roomCode, data.reconnectToken844); } catch (_) {}
+        }
+        horAwaitingResync844 = true;
         applyPlayersSnapshot(data.players);
         if (Array.isArray(data.beerSeats)) beerSeats = data.beerSeats;
         pendingPreviewJoin = !!(pendingPreviewJoin || data.preview);
@@ -4376,7 +3749,6 @@ function handleMessage(data, conn) {
         if (typeof data.comebackSpecialChance === 'boolean') comebackSpecialChance = data.comebackSpecialChance;
         if (typeof data.openWidow === 'boolean') openWidow = data.openWidow;
         if (typeof data.revealTopNest === 'boolean') revealTopNest = data.revealTopNest;
-        if (typeof data.forceNestReveal === 'string') forceNestReveal = data.forceNestReveal;
         if (typeof data.shootMoonEnabled === 'boolean') shootMoonEnabled = data.shootMoonEnabled;
         if (data.botSpeed) botSpeed = data.botSpeed;
         if (typeof data.partnerNeverKill === 'boolean') partnerNeverKill = data.partnerNeverKill;
@@ -4467,6 +3839,7 @@ function handleMessage(data, conn) {
         if (data.matchStats) matchStats = data.matchStats;
         if (Array.isArray(data.playerStats)) playerStats = data.playerStats;
         if (data.summary) {
+          if (game && data.summary.careerEvent?.matchId) game.careerMatchId = data.summary.careerEvent.matchId;
           try { window.HORJeromeVoiceLines?.result(data.summary); } catch (e) {}
           if(data.summary.careerEvent)horRecordCareerHand(data.summary.careerEvent);
           // Host already held the nest overlay; clients may still be watching it
@@ -4507,6 +3880,7 @@ function handleMessage(data, conn) {
         try {
           if (Array.isArray(data.matchTricks)) matchTricks = data.matchTricks;
           pendingCele = {
+            matchId: data.matchId || game?.careerMatchId,
             winner: data.winner,
             scores: data.scores || [0, 0],
             highlights: data.highlights || null,
@@ -4735,31 +4109,7 @@ function showWaiting() {
 }
 
 
-function openHostOptionsModal() {
-  const m = $('hostOptionsModal');
-  if (!m) return;
-  // The same full options sheet is used in the waiting room and Offline Practice.
-  // Re-wire it every time it opens so an in-game/practice session cannot retain
-  // stale handlers from the lobby.
-  // Rook595: menu owns the viewport, never the scaled table/HUD tree.
-  if (m.parentNode !== document.body) document.body.appendChild(m);
-  m.classList.remove('hidden');
-  m.setAttribute('aria-hidden', 'false');
-  document.body.classList.add('modal-open');
-  try { syncSoloHostExtrasUI(); } catch (e) {}
-  try { syncOptionsUI(); } catch (e) {}
-  try { wireRuleOptionControls(); } catch (e) {}
-  try { wireTargetScoreUI(); } catch (e) {}
-  try { syncTargetScoreUI(); } catch (e) {}
-  try { syncQuickMenuSound(); } catch (e) {}
-  // Rook685: Layout + Speed live in the upper menu's Display pane.
-  // Make that pane the default whenever the menu opens so the existing
-  // controls are immediately visible; closing the menu hides them again.
-  try {
-    const settingsTab = m.querySelector('.opt-tab[data-opt-tab="settings"]');
-    if (settingsTab) settingsTab.click();
-  } catch (e) {}
-}
+function openHostOptionsModal(){window.HORHouseMenu805?.open();}
 
 function closeHostOptionsModal() {
   const m = $('hostOptionsModal');
@@ -4813,7 +4163,6 @@ function wireRuleOptionControls() {
   bindCheck('opt-open-widow', () => openWidow, v => { openWidow=v; });
   bindCheck('opt-shoot-moon', () => shootMoonEnabled, v => { shootMoonEnabled=v; });
   const bindChoice=(id,read,write)=>{const el=$(id);if(!el)return;el.value=read();el.onchange=()=>{write(el.value);syncOptionsUI();broadcastPlaySettings();};};
-  bindChoice('opt-force-nest-reveal',()=>forceNestReveal,v=>{forceNestReveal=v;});
   bindChoice('opt-nest-goes-to',()=>nestGoesTo,v=>{if(['lastTrick','bidder'].includes(v))nestGoesTo=v;});
   bindChoice('opt-lead-order',()=>leadOrder,v=>{if(['bidder','leftOfBidder','rightOfBidder'].includes(v))leadOrder=v;});
   bindCheck('opt-reveal-top-nest', () => revealTopNest, v => { revealTopNest = v; try { renderTopNestPeek(); } catch(e) {} });
@@ -4826,37 +4175,6 @@ function wireRuleOptionControls() {
   bindCheck('opt-include-red1', () => includeRed1, v => { includeRed1 = v; });
   bindCheck('opt-include-rook', () => includeRook, v => { includeRook = v; });
   bindCheck('opt-rook-lowest', () => rookLowest, v => { rookLowest = v; });
-  bindCheck('opt-experimental-hand', () => experimentalHandOpt, v => {
-    experimentalHandOpt = !!v && isHostOnlyHuman();
-    try { syncSoloHostExtrasUI(); } catch (e) {}
-  });
-  const luckyOn = $('opt-lucky-on');
-  if (luckyOn) {
-    luckyOn.checked = !!luckySpecialsEnabled;
-    luckyOn.onchange = () => {
-      luckySpecialsEnabled = !!luckyOn.checked && isHostOnlyHuman();
-      try { syncSoloHostExtrasUI(); } catch (e) {}
-      try { broadcastPlaySettings(); } catch (e) {}
-    };
-  }
-  const setLuckyMode = (mode) => {
-    luckySpecialsMode = mode === 'spinner' ? 'spinner' : 'fixed';
-    try { syncSoloHostExtrasUI(); } catch (e) {}
-    try { broadcastPlaySettings(); } catch (e) {}
-  };
-  const modeFixed = $('opt-lucky-fixed');
-  const modeSpin = $('opt-lucky-spinner');
-  if (modeFixed) modeFixed.onchange = () => { if (modeFixed.checked) setLuckyMode('fixed'); };
-  if (modeSpin) modeSpin.onchange = () => { if (modeSpin.checked) setLuckyMode('spinner'); };
-  const luckySel = $('opt-lucky-boost');
-  if (luckySel) {
-    luckySel.value = String(luckySpecialsBoost || 0);
-    luckySel.onchange = () => {
-      luckySpecialsBoost = isHostOnlyHuman() ? (parseInt(luckySel.value, 10) || 0) : 0;
-      try { broadcastPlaySettings(); } catch (e) {}
-    };
-  }
-
   document.querySelectorAll('input[name="red2pts"]').forEach(r => {
     r.checked = (parseInt(r.value, 10) === red2Points);
     r.onchange = () => {
@@ -5291,14 +4609,7 @@ const STYLE_HOWTO = {
 function personaByName(name) {
   return BOT_PERSONAS.find(p => p.name === name) || null;
 }
-function botHowToHTML(p) {
-  if (!p) return '';
-  const title = STYLE_TITLES[p.style] || p.style;
-  const habit = (typeof STYLE_HABIT !== 'undefined' && STYLE_HABIT[p.style]) || title;
-  const how = STYLE_HOWTO[p.style] || p.blurb || '';
-  return '<b>' + escapeHtmlSafe(p.name) + '</b> · ' + escapeHtmlSafe(habit)
-    + '<span>' + escapeHtmlSafe(how) + '</span>';
-}
+
 function hideBotStyleTip() {
   const tip = $('botStyleTip');
   if (tip) tip.classList.add('hidden');
@@ -5331,7 +4642,7 @@ function availableBotPersonas() {
   return list;
 }
 
-function addBot(seat, personaPick) {
+function addBot(seat, personaPick, options835 = {}) {
   if (!isHost) return;
   if (seatedCount() >= 4) return;
   const target = (typeof seat === 'number' && seat >= 0 && !playerAtSeat(seat)) ? seat : firstEmptySeat();
@@ -5356,6 +4667,10 @@ function addBot(seat, personaPick) {
   // Human avatar priority: choose another whole persona, never dress a fixed bot as somebody else.
   const occupiedAvatars = new Set((players || []).filter(Boolean).map(p => playerAvatars[p.id] || p.avatar));
   if (occupiedAvatars.has(persona.avatar)) {
+    if (options835.strictChoice) {
+      horToast(persona.name + ' is unavailable: that portrait is already seated.');
+      return;
+    }
     persona = pool.find(p => !occupiedAvatars.has(p.avatar) && !(players || []).some(x => x && x.isBot && x.name === p.name))
       || availableBotPersonas().find(p => !occupiedAvatars.has(p.avatar));
     if (!persona) return;
@@ -5394,7 +4709,7 @@ function rankedBotPartners(pool){
  rows.sort((a,b)=>!!a.games!==!!b.games?(a.games?-1:1):a.games?(adjusted(b)-adjusted(a)||b.games-a.games||a.index-b.index):(Number(b.p.style==='partnerFirst')-Number(a.p.style==='partnerFirst')||a.index-b.index));
  return rows;
 }
-function openBotPicker(seat) {
+function openBotPicker(seat, replaceBot=false) {
   const m = $('botPickerModal');
   const grid = $('botPickerGrid');
   if (!m || !grid) {
@@ -5406,20 +4721,27 @@ function openBotPicker(seat) {
     addBot(seat);
     return;
   }
-  grid.innerHTML = pool.map(({p,games,wins}) =>
-    '<button type="button" class="bot-pick" data-bot="' + p.name + '">'
-    + '<img src="' + avatarSrc(p.avatar) + '" alt="">'
-    + '<b>' + p.name + '</b>'
-    + '<i>' + (STYLE_TITLES[p.style] || p.style) + '</i>'
-    + '<span>' + (games ? (wins+' wins · '+games+' games · '+Math.round(100*wins/games)+'% together') : 'Not yet partnered · '+(STYLE_HOWTO[p.style] || p.blurb || '')) + '</span>'
-    + '</button>'
-  ).join('');
+  grid.innerHTML = pool.map(({p,games,wins}) => {
+    const owner = players.find(person => person && person.seat !== seat && (playerAvatars[person.id] || person.avatar) === p.avatar);
+    const reason = owner ? 'Portrait already used by ' + (owner.name || 'a seated player') : '';
+    return '<button type="button" class="bot-pick' + (owner ? ' bot-unavailable835' : '') + '" data-bot="' + p.name + '"' + (owner ? ' disabled aria-disabled="true"' : '') + '>'
+      + '<img src="' + avatarSrc(p.avatar) + '" alt="">'
+      + '<b>' + p.name + '</b>'
+      + '<i>' + (STYLE_TITLES[p.style] || p.style) + '</i>'
+      + '<span>' + (reason ? escapeHtmlSafe(reason) : games ? (wins+' wins · '+games+' games · '+Math.round(100*wins/games)+'% together') : 'Not yet partnered · '+(STYLE_HOWTO[p.style] || p.blurb || '')) + '</span></button>';
+  }).join('');
   grid.querySelectorAll('.bot-pick').forEach(btn => {
     btn.onclick = () => {
-      addBot(seat, btn.getAttribute('data-bot'));
+      const previous=replaceBot?playerAtSeat(seat):null;
+      if(previous){if(!isHost||!previous.isBot)return;players=players.filter(p=>p!==previous);}
+      addBot(seat, btn.getAttribute('data-bot'), {strictChoice:true});
+      if(previous&&!playerAtSeat(seat)){players.push(previous);updateWaitingUI();}
       closeBotPicker();
     };
   });
+  const sheet=m.querySelector('.bot-picker-sheet');sheet?.classList.toggle('replacing-bot830',!!replaceBot);
+  let remove=$('botPickerRemove830');if(!remove){remove=document.createElement('button');remove.type='button';remove.id='botPickerRemove830';remove.textContent='Remove bot';sheet?.append(remove);}
+  remove.hidden=!replaceBot;remove.onclick=()=>{if(isHost&&playerAtSeat(seat)?.isBot)removeBot(seat);closeBotPicker();};
   m.classList.remove('hidden');
 }
 
@@ -5574,39 +4896,11 @@ function freezeTopNestCard() {
   game.topNestCard = card ? hydrateNestCard(card) : null;
   return game.topNestCard;
 }
-function applyForcedNestReveal() {
-  const want = (typeof window !== 'undefined' && window.horForceNest) || forceNestReveal || '';
-  if (!game || !revealTopNest || !want) return null;
-  const nest = game.nest = Array.isArray(game.nest) ? game.nest : [];
-  const isBird = (c) => c && (c.id === 'rook' || c.color === 'rook');
-  const isR2 = (c) => c && (c.id === 'red-2' || (typeof isRed2 === 'function' && isRed2(c)));
-  const wantBird = (want === 'rook' || want === 'bird');
-  const pred = wantBird ? isBird : isR2;
-  const fallback = wantBird
-    ? { color: 'rook', rank: 99, id: 'rook' }
-    : { color: 'red', rank: 2, id: 'red-2' };
-  let card = null;
-  let idx = nest.findIndex(pred);
-  if (idx >= 0) card = nest.splice(idx, 1)[0];
-  if (!card && Array.isArray(game.hands)) {
-    for (let i = 0; i < game.hands.length; i++) {
-      const h = game.hands[i];
-      if (!Array.isArray(h)) continue;
-      idx = h.findIndex(pred);
-      if (idx < 0) continue;
-      card = h.splice(idx, 1)[0];
-      if (nest.length) h.push(nest.shift());
-      break;
-    }
-  }
-  if (!card) card = fallback;
-  nest.push(card);
-  return pinNestRevealFace(card);
-}
+
 
 function nestCountOnTable() {
   if (!game) return 0;
-  if (isPortraitViewport() && window.__dealNest036 && window.__dealNest036.token === dealAnimToken) return window.__dealNest036.count;
+  if ((isPortraitViewport() || window.HORAngleC?.active()) && window.__dealNest036 && window.__dealNest036.token === dealAnimToken) return window.__dealNest036.count;
   if (game.nest && game.nest.length) return game.nest.length;
   if (typeof game.nestCount === 'number' && game.nestCount > 0) return game.nestCount;
   return (typeof nestSizeDefault === 'number' && nestSizeDefault) || 6;
@@ -5677,7 +4971,7 @@ function nestFaceMarkup(face) {
 
 function renderTopNestPeek() {
   try { return renderTopNestPeekContent033(); }
-  finally { applyNestScatter037(); restoreNestPlacement039(); scheduleNestAlignment033(); }
+  finally { applyNestScatter037(); restoreNestPlacement039(); scheduleNestAlignment033(); window.HORNestReveal838?.sync(); }
 }
 function renderTopNestPeekContent033() {
   const bar = $('topNestPeek');
@@ -5797,7 +5091,7 @@ let horDiagnosticPreviewIndex = null;
 function horCurrentHandVisualIndex() {
   return Math.max(0, Array.isArray(handHistory) ? handHistory.length : Number((matchStats && matchStats.hands) || 0));
 }
-function horVisualIndex(){ return Number.isInteger(horDiagnosticPreviewIndex) ? horDiagnosticPreviewIndex : horCurrentHandVisualIndex(); }
+
 function horSetThemeIndex(idx, preview){
   idx=((Number(idx)||0)%42+42)%42;
   if(preview) horDiagnosticPreviewIndex=idx;
@@ -5811,16 +5105,8 @@ function horApplyHandTheme() {
   horDiagnosticPreviewIndex=null;
   return horSetThemeIndex(horCurrentHandVisualIndex(),false);
 }
-function horUpdateDiagnostic(){
-  // Rook574: player-visible theme diagnostics retired.
-}
-function horEnsureDiagnosticConsole(){
-  // Rook574: remove stale diagnostic DOM from older cached builds; never recreate it.
-  try {
-    document.getElementById('horThemeDiagnostic')?.remove();
-    document.getElementById('horDiagnosticPreview')?.remove();
-  } catch (e) {}
-}
+
+
 
 function openNestAuction() {
   if (!game) return;
@@ -6004,7 +5290,7 @@ function updateWaitingUI() {
     fillHint.classList.toggle('hidden', empty <= 0);
   }
   if (isHost) updateBotButtons();
-  try { syncSoloHostExtrasUI(); } catch (e) {}
+  
   window.HORFriends803?.refresh();
 }
 
@@ -6219,52 +5505,19 @@ function hostStartGame() {
   hostDeal();
 }
 
-function horDeveloperToolsEnabled() {
-  try {
-    const q = new URLSearchParams(location.search);
-    const enteredName = String(myName || (($('hor-player-name') && $('hor-player-name').value) || '')).trim().toUpperCase();
-    // SOL is Jerome's intentionally quiet, offline developer identity. It is convenience, not security.
-    // Offline practice intentionally uses roomCode='OFFLINE', so roomCode emptiness is NOT a valid offline test.
-    // Rook529: SOL must unlock reliably in the actual local/offline table.
-    const solOffline = enteredName === 'SOL' && (isSoloPractice === true || roomCode === 'OFFLINE' || document.body.classList.contains('offline-play'));
-    return solOffline || q.get('dev') === '1' || localStorage.getItem('horDeveloperTools') === '1';
-  } catch (e) { return false; }
-}
+function horDeveloperToolsEnabled(){return false;}
 
-function showHostGameTools(on) {
-  const devTools = horDeveloperToolsEnabled();
-  document.querySelectorAll('.host-only').forEach(el => {
-    if (el.classList.contains('developer-only')) {
-      let showDev = !!(on && isHost && devTools);
-      if (el.id === 'btnPerfectDeal') showDev = showDev && isHostOnlyHuman() && experimentalHandOpt;
-      el.classList.toggle('hidden', !showDev);
-      return;
-    }
-    if (el.id === 'btnPerfectDeal') {
-      const showExp = on && isHost && isHostOnlyHuman() && experimentalHandOpt && devTools;
-      el.classList.toggle('hidden', !showExp);
-      return;
-    }
-    if (el.id === 'btnGameOptions') {
-      el.classList.toggle('hidden', !on);
-      return;
-    }
-    if (on && isHost) el.classList.remove('hidden');
-    else el.classList.add('hidden');
-  });
+function showHostGameTools(on){
+ document.querySelectorAll('.host-only').forEach(el=>el.classList.toggle('hidden',!(on&&isHost)));
 }
 
 
-const LUCKY_SPIN_VALUES = [0, 10, 20, 30, 40, 50];
 
-function shouldSpinLuckySpecials() {
-  return !!(luckySpecialsEnabled && luckySpecialsMode === 'spinner' && isHostOnlyHuman());
-}
 
-function currentLuckyBoost() {
-  if (!luckySpecialsEnabled || !isHostOnlyHuman()) return 0;
-  return Math.max(0, Math.min(50, parseInt(luckySpecialsBoost, 10) || 0));
-}
+
+
+
+
 
 function clearTableForShuffle() {
   try {
@@ -6305,126 +5558,14 @@ function clearTableForShuffle() {
   } catch (e) {}
 }
 
-function ensureLuckySpinner() {
-  let ov = $('luckySpinnerOverlay');
-  if (ov) return ov;
-  ov = document.createElement('div');
-  ov.id = 'luckySpinnerOverlay';
-  ov.className = 'lucky-spinner-overlay hidden';
-  ov.innerHTML = `
-    <div class="lucky-spinner-sheet" role="dialog" aria-label="Lucky specials spinner">
-      <div class="lucky-spinner-title">Lucky specials</div>
-      <div class="lucky-spinner-sub">Extra chance for Rook &amp; Red 2</div>
-      <div class="lucky-wheel-wrap">
-        <div class="lucky-wheel-pointer"></div>
-        <div class="lucky-wheel" id="luckyWheel">
-          <span class="lucky-seg s0">0%</span>
-          <span class="lucky-seg s1">10%</span>
-          <span class="lucky-seg s2">20%</span>
-          <span class="lucky-seg s3">30%</span>
-          <span class="lucky-seg s4">40%</span>
-          <span class="lucky-seg s5">50%</span>
-        </div>
-      </div>
-      <div class="lucky-spinner-result" id="luckySpinnerResult">Spinning…</div>
-    </div>`;
-  document.body.appendChild(ov);
-  return ov;
-}
 
-function runLuckySpinner() {
-  return new Promise((resolve) => {
-    const ov = ensureLuckySpinner();
-    if (ov.parentNode !== document.body) document.body.appendChild(ov);
-    ov.classList.remove('hidden');
-    const wheel = $('luckyWheel');
-    const resultEl = $('luckySpinnerResult');
-    const idx = Math.floor(Math.random() * LUCKY_SPIN_VALUES.length);
-    const value = LUCKY_SPIN_VALUES[idx];
-    const slice = 360 / LUCKY_SPIN_VALUES.length;
-    // Labels start at top and go clockwise: 0,10,20,30,40,50
-    const target = 360 * 5 + (360 - idx * slice);
-    if (wheel) {
-      wheel.style.transition = 'none';
-      wheel.style.transform = 'rotate(0deg)';
-      void wheel.offsetWidth;
-      wheel.style.transition = `transform ${solScaledDelay(2400, 0)}ms cubic-bezier(0.12, 0.7, 0.12, 1)`;
-      wheel.style.transform = 'rotate(' + target + 'deg)';
-    }
-    if (resultEl) resultEl.textContent = 'Spinning…';
-    setTimeout(() => {
-      if (resultEl) resultEl.textContent = value === 0 ? '0% — fair deal' : ('+' + value + '% extra chance');
-      setTimeout(() => {
-        ov.classList.add('hidden');
-        resolve(value);
-      }, solScaledDelay(650, 0));
-    }, solScaledDelay(2500, 0));
-  });
-}
 
-function applyLuckySpecialsToHostHand() {
-  if (!game || !Array.isArray(game.hands)) return;
-  if (!isHostOnlyHuman()) return;
-  const boost = currentLuckyBoost();
-  if (!boost) return;
-  const hostSeat = (typeof myIndex === 'number' && myIndex >= 0)
-    ? myIndex
-    : Math.max(0, players.findIndex(p => p && p.isHost));
-  if (hostSeat < 0) return;
-  const hostHand = game.hands[hostSeat];
-  if (!hostHand || !hostHand.length) return;
 
-  const pulled = [];
-  const pullSpecial = (pred, label) => {
-    if (hostHand.some(pred)) {
-      pulled.push(label + ' already dealt');
-      return false;
-    }
-    if (Math.random() * 100 >= boost) return false;
-    const pools = [];
-    if (Array.isArray(game.nest)) pools.push(game.nest);
-    game.hands.forEach((h, i) => { if (i !== hostSeat && Array.isArray(h)) pools.push(h); });
-    let from = null;
-    let idx = -1;
-    for (const pool of pools) {
-      idx = pool.findIndex(pred);
-      if (idx >= 0) { from = pool; break; }
-    }
-    if (!from || idx < 0) return false;
-    const give = from.splice(idx, 1)[0];
-    const dumpIdx = Math.floor(Math.random() * hostHand.length);
-    from.push(hostHand[dumpIdx]);
-    hostHand[dumpIdx] = give;
-    pulled.push(label);
-    return true;
-  };
 
-  if (includeRook) pullSpecial(c => c && (c.id === 'rook' || c.color === 'rook'), 'Bird');
-  if (includeRed2) pullSpecial(c => c && (typeof isRed2 === 'function' ? isRed2(c) : c.id === 'red-2'), 'Red 2');
-  const ma = $('messageArea');
-  if (ma && pulled.length) {
-    const got = pulled.filter(s => s === 'Bird' || s === 'Red 2');
-    ma.textContent = got.length
-      ? ('Lucky specials: ' + got.join(' + ') + ' in your hand (+' + boost + '%)')
-      : ('Lucky specials +' + boost + '% — no extra pull this hand');
-  }
-}
 
-function hostDeal() {
-  if (luckySpinning) return;
+
+function hostDeal(){
   try { clearTableForShuffle(); } catch (e) {}
-  if (shouldSpinLuckySpecials()) {
-    luckySpinning = true;
-    runLuckySpinner().then((pct) => {
-      luckySpecialsBoost = pct;
-      luckySpinning = false;
-      hostDealNow();
-    }).catch(() => {
-      luckySpinning = false;
-      hostDealNow();
-    });
-    return;
-  }
   hostDealNow();
 }
 
@@ -6504,6 +5645,7 @@ function applyComebackSpecialChance() {
 }
 
 function hostDealNow() {
+  if (game) game.networkHand844 = crypto.randomUUID();
   window.HORBidVoice801?.stop();
   recentTricks = [];
   lastCompletedTrick = null;
@@ -6537,13 +5679,13 @@ function hostDealNow() {
   for (let i = 0; i < 4; i++) {
     game.hands[i] = deck.splice(0, hs);
   }
-  try { applyLuckySpecialsToHostHand(); } catch (e) {}
+
   try { applyComebackSpecialChance(); } catch (e) {}
   for (let i = 0; i < 4; i++) {
     sortCardsDisplay(game.hands[i]);
   }
   try { freezeTopNestCard(); } catch (e) { game.topNestCard = null; }
-  try { applyForcedNestReveal(); } catch (e) {}
+
   // House rule: misdeal & redeal if any hand has zero counter cards (no)
   // 5/10/14/one/Rook/Red 1/Red 2 at all) — nobody could bid meaningfully.
   // Bounded retry count so a pathological deck config can't loop forever.
@@ -6751,7 +5893,7 @@ function hostPromptBid() {
   $('messageArea').textContent = msg;
   broadcast({ type: 'message', text: msg });
 
-  if (game.currentPlayer === myIndex && !horSolSeatIsBot()) {
+  if (game.currentPlayer === myIndex) {
     showBidUI();
     try { maybeRemindTurn(); } catch (e) {}
   } else {
@@ -6860,22 +6002,9 @@ function placeActionPanelAboveSeat() {
 }
 // R706: the approved decisionConsole is the only bidding component.
 // Historical callers remain compatible; no landscape bidder is created or wired.
-function refreshLandscapeFeltBid() {}
+
 function syncLandscapeBidBar() {}
-function waitBannerCopy(phase, name) {
-  if (phase === 'discard') {
-    return {
-      kicker: 'The nest is open',
-      title: name + ' is burying cards',
-      sub: 'Sorting the kitty · your hand stays put'
-    };
-  }
-  return {
-    kicker: 'Trump is being named',
-    title: name + ' won the bid',
-    sub: 'Choosing the color · hold the line'
-  };
-}
+
 
 function syncWaitBanners() {
   // Rook584: retire the two large portrait/landscape waiting rectangles.
@@ -6904,10 +6033,13 @@ function syncWaitBanners() {
 
 // Legacy wait-banner entry points remain callable by old refresh paths, but they
 // now delegate to the single compact status owner instead of drawing rectangles.
-function syncPortraitWaitBanner() { syncWaitBanners(); }
-function syncLandscapeKittyWait() { syncWaitBanners(); }
 
-function showBidUI() {
+
+
+let bidDraft839 = null;
+function showBidUI(options = {}) {
+  const draftKey839 = [roomCode,myIndex,game?.dealer,auctionHigh(),discardFlowIdentity(game?.myHand,myIndex)].join('~');
+  const retainedSelection832 = bidDraft839?.key===draftKey839 ? bidDraft839.value : NaN;
   try { if(window.HORBidRepair737?.required()){const tip=$('botStyleTip');if(tip&&!tip.classList.contains('hidden')){hideBotStyleTip();horToast('Your bid is due. Player details are available after bidding.');}} } catch (e) {}
   if (nestAuctionLocked()) return;
   const landscape = !!(window.matchMedia && window.matchMedia('(orientation: landscape)').matches);
@@ -6915,6 +6047,7 @@ function showBidUI() {
   const ceiling = bidCeilingFor(myIndex) || 180;
   let suggested = Math.min(ceiling, Math.max(nextMin, parseInt(minBid, 10) || 100));
   if (!Number.isFinite(suggested)) suggested = nextMin;
+  if(Number.isSafeInteger(retainedSelection832) && retainedSelection832 % 5 === 0 && retainedSelection832 >= nextMin && retainedSelection832 <= ceiling) suggested = retainedSelection832;
   _ltBidSuggested = suggested;
   const highNum = auctionHigh();
   const high = highNum > 0 ? highNum : '—';
@@ -6969,6 +6102,7 @@ function showBidUI() {
         }
       }
       _ltBidSuggested = suggested;
+      bidDraft839 = {key:draftKey839,value:suggested};
       syncMoonBidPlaque(suggested);
       try { syncLandscapeBidBar(); } catch (e) {}
     };
@@ -7079,10 +6213,7 @@ function positionSeatBidBadges() {
   } catch(e) {}
 }
 
-function positionMoonBidBadge() {
-  // Rook591: compatibility entry point only. Bid badges have one positioning owner.
-  try { positionSeatBidBadges(); } catch (e) {}
-}
+
 
 
 function submitBid(val, opts) {
@@ -7358,7 +6489,7 @@ function finishBidding() {
   // dropped privateHand left them discarding from the old 9-card hand.
   hostSendDiscardStart(game.bidder, players[game.bidder] && players[game.bidder].id, true);
   // Show nest cards to bidder (kitty preview ~3s, then full hand to discard)
-  if (game.bidder === myIndex && !horSolSeatIsBot()) {
+  if (game.bidder === myIndex) {
     // Use the same array the host game uses so Rook cannot be dropped
     game.myHand = game.hands[game.bidder].slice();
     window.selectedForDiscard = new Set();
@@ -7389,8 +6520,8 @@ function hostSendDiscardStart(playerIdx, peerId, showKitty) {
   const idx = (typeof playerIdx === 'number' && playerIdx >= 0) ? playerIdx : game.bidder;
   if (idx !== game.bidder) return;
   const p = players[idx];
-  const pid = peerId || (p && p.id);
-  if (!pid || pid === myPeerId) return;
+  const pid = p && p.id;
+  if (!pid || (peerId && peerId !== pid) || pid === myPeerId) return;
   const hand = (game.hands[idx] || []).map(c => ({ ...c }));
   sendTo(pid, {
     type: 'discardStart',
@@ -7414,6 +6545,7 @@ function isLandscapeNow() {
 }
 
 function hideDiscardOverlay() {
+  window.HORManualNest838?.detach();
   if (window._discardKittyTimer) {
     try { clearTimeout(window._discardKittyTimer); } catch (e) {}
     window._discardKittyTimer = null;
@@ -7512,6 +6644,17 @@ function showDiscardUI(showKitty) {
     positionDiscardOverlay(ov, isLandscapeNow());
   } catch (e) {}
 
+  if(isLandscapeNow()&&window.HORManualNest838&&window._discardPage!=='kitty'){
+    window._discardPage='select';window._discardKittyShown=true;
+    HORManualNest838.show({ov,hand:game.myHand,count,flowKey,kitty:game.kittyTaken||game.nestPreview||[],confirm:(ids,keep)=>{
+      if(window._discardSubmitting||!game||game.phase!=='discard'||discardFlowIdentity(game.myHand,game.bidder)!==flowKey)return;
+      const source=(isHost&&game.hands?.[game.bidder])||game.myHand,valid=new Set(source.map(c=>String(c.id)));
+      if(ids.length!==count||new Set(ids).size!==count||ids.some(id=>!valid.has(id))||!HORHandOrder838.lock(source,keep,ids))return;
+      window._discardSubmitting=true;HORManualNest838.refresh();submitDiscard(ids);
+    }});return;
+  }
+  window.HORManualNest838?.detach();
+
   // Specials row only for true permanent trumps (not normal ones-high red 1)
   const specialParts = [];
   if (includeRook) specialParts.push('Rook');
@@ -7601,7 +6744,7 @@ function showDiscardUI(showKitty) {
 
     // Landscape keeps the established combined Kitty banner and picker.
     // Portrait receives the owner-approved Kitty-then-discard screens.
-    if (includeKittyFlash && kittyList.length && !landscape) {
+    if (includeKittyFlash && kittyList.length) {
       const kittyCards = kittyList.slice().sort(compareCardsDisplay).map(c => {
         const html = renderCardHTML(c, false);
         return html.replace('class="card-face ', 'class="card-face gh-kitty-card ');
@@ -7623,7 +6766,7 @@ function showDiscardUI(showKitty) {
       // the separate, full-face discard selection view for these same cards.
       try { document.querySelector('.hand-area')?.classList.remove('hidden'); renderHand(false); } catch (e) {}
       window._discardKittyShown = true;
-      positionDiscardOverlay(ov, false);
+      positionDiscardOverlay(ov, landscape);
       const cont = $('kittyContinueBtn');
       if (cont) {
         cont.focus({preventScroll:true});
@@ -7634,6 +6777,7 @@ function showDiscardUI(showKitty) {
         if (!game || game.phase !== 'discard' || discardFlowIdentity(game.myHand, game.bidder) !== window._discardFlowKey) return;
         window._discardPage = 'select';
         window._discardPickStep = 1;
+        if(isLandscapeNow()){showDiscardUI(false);return;}
         renderOverlay(false);
         ov.querySelector('.discard-pick')?.focus({preventScroll:true});
       };
@@ -7656,7 +6800,21 @@ function showDiscardUI(showKitty) {
       const id = String(card.id);
       const selected = window.selectedForDiscard.has(id);
       const aria = `${cardLabel(card)}${selected ? ', selected' : ''}`;
-      return `<button type="button" aria-label="${aria}" aria-pressed="${selected}" class="discard-slot discard-pick ${selected ? 'selected' : ''}" data-id="${id}" data-selected="${selected}"><span class="card-face ${cardClass(card)} discard-card-art" aria-hidden="true">${cardInnerHTML(card)}</span><span class="gh-card-check" aria-hidden="true">✓</span></button>`;
+      // Portrait retains its original selected check; landscape numbers the
+      // six Nest selections so player can see what moved to the discard tray.
+      const nestOrder = selected ? Array.from(window.selectedForDiscard).indexOf(id) + 1 : 0;
+      return `<button type="button" aria-label="${aria}" aria-pressed="${selected}" class="discard-slot discard-pick ${selected ? 'selected' : ''}" data-id="${id}" data-selected="${selected}"><span class="card-face ${cardClass(card)} discard-card-art" aria-hidden="true">${cardInnerHTML(card)}</span><span class="gh-card-check" aria-hidden="true">${landscape && nestOrder ? nestOrder : '✓'}</span></button>`;
+    };
+    // Preview only. These small cards are mirrors of the six selected from the
+    // authoritative 16-card hand, never another discard state or a second hand.
+    const nestSlotMarkup = () => {
+      const selected = Array.from(window.selectedForDiscard || []).slice(0, count);
+      return Array.from({length: count}, (_, i) => {
+        const id = selected[i];
+        const card = id == null ? null : (game.myHand || []).find(c => String(c.id) === String(id));
+        if (!card) return `<span class="gh-813-well" aria-label="Nest slot ${i + 1} empty"><span class="gh-813-well-no">${i+1}</span></span>`;
+        return `<span class="gh-813-well filled" aria-label="Nest slot ${i + 1}: ${cardLabel(card)}"><span class="card-face ${cardClass(card)} gh-813-mini-face" aria-hidden="true">${cardInnerHTML(card)}</span></span>`;
+      }).join('');
     };
     const rows = (portrait ? portraitGroups : groups).map(g => {
       const groupKey = portrait ? g.key : g.key;
@@ -7667,13 +6825,13 @@ function showDiscardUI(showKitty) {
         <h3 class="discard-color-label">${g.label}</h3>
         <div class="discard-color-cards">${cards.map(selectionButton).join('')}</div>
       </section>`;
-      return `<div class="discard-color-row discard-color-${g.key}">
+      // Match the complete, accessible portrait card component. In the
+      // previous landscape markup these were clickable DIV card faces with
+      // no explicit selection control, which made the sixteen-card screen
+      // visually confusing and inaccessible by keyboard or assistive tech.
+      return `<div class="discard-color-row discard-color-${g.key}" data-discard-group="${g.key}">
         <div class="discard-color-label">${g.label}</div>
-        <div class="discard-color-cards">${cards.map(c => {
-          const id = String(c.id);
-          const sel = window.selectedForDiscard.has(id) ? 'selected' : '';
-          return `<div class="card-face ${cardClass(c)} ${sel} discard-pick" data-id="${id}">${cardInnerHTML(c)}</div>`;
-        }).join('')}</div>
+        <div class="discard-color-cards">${cards.map(selectionButton).join('')}</div>
       </div>`;
     }).join('');
 
@@ -7697,17 +6855,27 @@ function showDiscardUI(showKitty) {
       ov.classList.add('gh-discard-page');
     } else {
       ov.innerHTML = `
-        <div class="discard-sheet">
-          ${kittyBlock}
-          <div class="gh-discard-head">
-            <div><h2 class="discard-title">SELECT ${count} TO DISCARD</h2><p class="gh-discard-instruction">Choose ${count} cards from your ${game.myHand.length}-card hand to put in the kitty</p></div>
-            <div class="gh-discard-count"><strong id="discardCountLabel">${nSel} / ${count}</strong><span>Selected</span></div>
+        <section class="discard-sheet gh-landscape-discard gh-landscape-discard-813" role="dialog" aria-modal="true" aria-labelledby="discardTitle">
+          <header class="gh-discard-head gh-813-head">
+            <div class="gh-discard-directions"><div class="gh-813-overline">GRIFFIN HOUSE OF ROOKS <span>·</span> THE NEST</div><h2 class="discard-title" id="discardTitle">Choose ${count} for the Nest</h2><p class="gh-discard-instruction">The ${count} chosen cards are discarded. Your other ${game.myHand.length-count} stay in your hand.</p></div>
+            <div class="gh-discard-count"><span class="gh-813-count-n" id="discardCountLabel" aria-live="polite">${nSel} of ${count}</span><span class="gh-813-count-label">selected for the Nest</span></div>
+          </header>
+          <div class="gh-813-trays">
+            <div class="gh-813-received">${kittyBlock || `<div class="gh-813-received-summary"><strong>Kitty received</strong><small>All ${game.myHand.length} cards are ready to choose from</small></div>`}</div>
+            <div class="gh-813-nest" role="group" aria-label="Cards selected to discard into the Nest">
+              <div class="gh-813-nest-title"><span>NEST</span><small>Cards you are discarding</small></div>
+              <div class="gh-813-wells" id="nestDiscardWells">${nestSlotMarkup()}</div>
+            </div>
           </div>
-          <div class="discard-groups">${rows}</div>
-          <div class="discard-actions">
-            <button type="button" class="btn primary" id="confirmDiscard" ${nSel !== count ? 'disabled' : ''}>Confirm Discard (${nSel}/${count})</button>
+          <div class="gh-landscape-discard-felt gh-813-hand">
+            <div class="gh-813-hand-caption"><strong>YOUR HAND</strong><span>Tap a card to move it to the Nest. Tap again to put it back.</span></div>
+            <div class="discard-groups" role="group" aria-label="Choose exactly ${count} cards to discard">${rows}</div>
           </div>
-        </div>`;
+          <footer class="discard-actions gh-813-actions">
+            <span class="gh-813-keep"><strong>${game.myHand.length-count}</strong> cards kept in your hand</span>
+            <button type="button" class="btn primary" id="confirmDiscard" ${nSel !== count ? 'disabled' : ''}>${nSel === count ? `Confirm ${count} for the Nest` : `Choose ${count-nSel} more`}</button>
+          </footer>
+        </section>`;
       ov.classList.remove('hidden', 'gh-kitty-page', 'gh-discard-page');
     }
     ov.classList.remove('hidden');
@@ -7738,13 +6906,25 @@ function showDiscardUI(showKitty) {
       }
       const n = window.selectedForDiscard.size;
       const lab = $('discardCountLabel');
-      if (lab) lab.textContent = portrait ? `${n} / ${count} selected` : `${n} / ${count}`;
+      if (lab) lab.textContent = portrait ? `${n} / ${count} selected` : `${n} of ${count}`;
+      // Landscape's receiving tray updates in place without changing any
+      // hand, card IDs, turn state, discard handler, or the portrait workflow.
+      if (!portrait && ov.querySelector('.gh-landscape-discard-813')) {
+        const wells = ov.querySelector('#nestDiscardWells');
+        if (wells) wells.innerHTML = nestSlotMarkup();
+        const ids = Array.from(window.selectedForDiscard);
+        ov.querySelectorAll('.discard-pick').forEach(pick => {
+          const order = ids.indexOf(String(pick.dataset.id));
+          const number = pick.querySelector('.gh-card-check');
+          if (number) number.textContent = order >= 0 ? String(order + 1) : '✓';
+        });
+      }
       el.setAttribute('aria-pressed', String(window.selectedForDiscard.has(id)));
       const slot = el.closest('.discard-slot');
       if (slot) slot.dataset.selected = String(window.selectedForDiscard.has(id));
       const btn = $('confirmDiscard');
       if (btn) {
-        if (!portrait) btn.textContent = `Confirm Discard (${n}/${count})`;
+        if (!portrait) btn.textContent = n === count ? `Confirm ${count} for the Nest` : `Choose ${count-n} more`;
         const validIds = new Set((game.myHand || []).map(c => String(c.id)));
         const validCount = [...window.selectedForDiscard].filter(value => validIds.has(String(value))).length;
         btn.disabled = n !== count || validCount !== count;
@@ -7756,8 +6936,9 @@ function showDiscardUI(showKitty) {
       // already excludes cancelled/dragged touches and supports rapid taps;
       // pointerup plus a timed click veto dropped independent activations.
       el.addEventListener('click',e=>toggleDiscardCard(el,e));
-      // Portrait uses native buttons (Enter/Space generate one click). Keep
-      // the existing keyboard fallback only for landscape's legacy divs.
+      // Native buttons in both orientations already provide Enter/Space
+      // activation. Keep the legacy keyboard fallback defensively only if
+      // an old non-button pick is ever rendered by a separate template.
       if(el.tagName!=='BUTTON')el.addEventListener('keydown',e=>{
         if(e.repeat||(e.key!=='Enter'&&e.key!==' '))return;
         e.preventDefault();toggleDiscardCard(el,e);
@@ -7782,6 +6963,7 @@ function showDiscardUI(showKitty) {
           btn.disabled = true;
           return;
         }
+        if(window.HORHandOrder838){const full=window.HORManualNest838?.orderFor(source)||HORHandOrder838.ordered(source).map(c=>String(c.id));if(!HORHandOrder838.lock(source,full.filter(id=>!valid.includes(id)),valid))return;}
         window._discardSubmitting = true;
         btn.disabled = true;
         btn.textContent = portrait ? 'Discarding…' : 'Discarding…';
@@ -7860,13 +7042,16 @@ function fitDiscardOverlayCards() {
 
 
 function rejectDiscardLocal(needed, message) {
+  setTimeout(()=>window.HORManualNest838?.refresh(),0);
   window._discardSubmitting = false;
   const btn = $('confirmDiscard');
   if (btn) {
     const selected = window.selectedForDiscard?.size || 0;
     btn.disabled = selected !== needed;
     if (!document.querySelector('#discardOverlay.gh-discard-page')) {
-      btn.textContent = `Confirm Discard (${selected}/${needed})`;
+      btn.textContent = document.querySelector('#discardOverlay .gh-landscape-discard-813')
+        ? (selected === needed ? `Confirm ${needed} for the Nest` : `Choose ${needed-selected} more`)
+        : `Confirm Discard (${selected}/${needed})`;
     } else {
       btn.textContent = 'Confirm Discard';
     }
@@ -7977,7 +7162,7 @@ function hostProcessDiscard(data) {
   const msg = `${players[game.bidder].name} chooses Trump`;
   $('messageArea').textContent = msg;
   broadcast({ type: 'message', text: msg });
-  if (game.bidder === myIndex && !horSolSeatIsBot()) {
+  if (game.bidder === myIndex) {
     hideDiscardOverlay();
     showTrumpUI();
     renderHand(false);
@@ -8007,7 +7192,7 @@ function showTrumpUI() {
   } else {
     dock.style.left=''; dock.style.top=''; dock.style.transform='';
   }
-  if (!landscape && window.HORTrump714 && window.HORTrump714.choose(dock, submitTrump, game)) return;
+  if ((!landscape || window.HORAngleC?.active()) && window.HORTrump714 && window.HORTrump714.choose(dock, submitTrump, game)) return;
   dock.classList.remove('decision-mode-bid');
     dock.classList.add('decision-mode-trump');
   let html = '<div class="decision-console-title">STAMP THE TRUMP</div><div class="stamp-trump-grid">';
@@ -8056,6 +7241,20 @@ function hostProcessTrump(data) {
   if (horRememberAction(data)) return;
   game.trump = data.color;
   game.phase = 'play';
+  // Keep the first trick behind the shared physical stamp, including MAX pace.
+  const stampHold = window.HORTrump714?.ownsPortrait() ? window.HORTrump714.duration(false) : 0;
+  game.trumpPresentationMs833 = stampHold;
+  game.trumpPresentation833 = stampHold > 0;
+  if (stampHold > 0) {
+    const stampedGame = game;
+    setTimeout(() => {
+      if (game !== stampedGame) return;
+      game.trumpPresentation833 = false;
+      broadcastState();
+      if (game.phase === 'play' && !game.paused) hostPromptPlay();
+    }, stampHold + 120);
+  }
+
   //790: public presentation event identity; never a bid/trick input.
   game.trumpVoiceEvent790 = horNewActionId('trump-voice');
   try { window.HORTrumpVoice?.chosen(game, playerAvatars); } catch(e) { console.warn('Trump voice:',e); }
@@ -8126,12 +7325,17 @@ function hostTransferHost() {
   const n = parseInt(pick, 10);
   if (!n || n < 1 || n > humans.length) return;
   const target = humans[n - 1];
+  players.filter(p=>!p.isBot).forEach(horEnsureResume844);
+  try { sessionStorage.setItem('horResume844:' + roomCode, horEnsureResume844(players.find(p=>p.id===myPeerId))); } catch (_) {}
   const snapshot = {
     game: JSON.parse(JSON.stringify({
       phase: game.phase, dealer: game.dealer, scores: game.scores,
       careerMatchId: game.careerMatchId, careerExtras: game.careerExtras,
+      networkHand844: game.networkHand844,
       hands: game.hands, nest: game.nest, bid: game.bid, bidder: game.bidder,
-      trumpVoiceEvent790: game.trumpVoiceEvent790 || null, trumpVoiceRestore790: true,
+      trumpVoiceEvent790: game.trumpVoiceEvent790 || null,
+    trumpPresentation833: !!game.trumpPresentation833,
+    trumpPresentationMs833: game.trumpPresentationMs833 || 0, trumpVoiceRestore790: true,
       trump: game.trump, currentPlayer: game.currentPlayer, trick: game.trick,
       ledColor: game.ledColor, tricksTaken: game.tricksTaken, nestCards: game.nestCards,
       passCount: game.passCount, highestBid: game.highestBid, discardCount: game.discardCount,
@@ -8147,6 +7351,7 @@ function hostTransferHost() {
     handHistory: handHistory.slice(),
   };
   window._horHandoffFrom = myPeerId;
+  window._horHandoffTarget844 = target.id;
   sendTo(target.id, { type: 'hostHandoff', snapshot });
   broadcast({ type: 'message', text: 'Host transferring to ' + target.name + '… stay in this tab.' });
   try { horToast('Handing the table to ' + target.name + '…'); } catch (e) {}
@@ -8207,6 +7412,8 @@ function finishHostHandoff(newId) {
 
 function horFollowNewHost(code) {
   if (!code) return;
+  const token844 = horResumeToken844();
+  if (token844) { try { sessionStorage.setItem('horResume844:' + String(code).toUpperCase(), token844); } catch (_) {} }
   isHost = false;
   try {
     if ($('hor-room-code')) $('hor-room-code').value = String(code);
@@ -8245,11 +7452,11 @@ function hostTogglePause() {
     if (game.phase === 'play') hostPromptPlay();
     else if (game.phase === 'bidding') hostPromptBid();
     else if (game.phase === 'discard') {
-      if (game.bidder === myIndex && !horSolSeatIsBot()) showDiscardUI();
+      if (game.bidder === myIndex) showDiscardUI();
       else if (players[game.bidder]?.isBot) scheduleBot();
       else hostSendDiscardStart(game.bidder, players[game.bidder] && players[game.bidder].id, false);
     } else if (game.phase === 'trump') {
-      if (game.bidder === myIndex && !horSolSeatIsBot()) showTrumpUI();
+      if (game.bidder === myIndex) showTrumpUI();
       else if (players[game.bidder]?.isBot) scheduleBot();
     }
   }
@@ -8452,7 +7659,8 @@ function showDisconnectBanner(text) {
 }
 
 function hostResyncClient(conn, playerId) {
-  if (!conn) return;
+  if (!conn || conn.peer !== playerId) return;
+  horSyncActionContext844();
   try {
     conn.send({
       type: 'welcome',
@@ -8471,6 +7679,9 @@ function hostResyncClient(conn, playerId) {
       type: 'state', trumpVoiceRestore790: true,
       seq: horNetSeq,
       phase: game.phase,
+      careerMatchId: game.careerMatchId,
+      networkHand844: game.networkHand844,
+      actionContext844: game.actionContext844,
       scores: game.scores,
       bid: game.bid,
       highestBid: game.highestBid,
@@ -8480,6 +7691,8 @@ function hostResyncClient(conn, playerId) {
       bidder: game.bidder,
       trump: game.trump,
     trumpVoiceEvent790: game.trumpVoiceEvent790 || null,
+    trumpPresentation833: !!game.trumpPresentation833,
+    trumpPresentationMs833: game.trumpPresentationMs833 || 0,
       currentPlayer: game.currentPlayer,
       trick: game.trick,
       ledColor: game.ledColor,
@@ -8564,6 +7777,8 @@ function hostReplaceWithBot(peerId, nameHint, fromDisconnect = false) {
     isBot: true,
     isTempBot: true,
     replacedHumanName: oldName,
+    reconnectToken844: horEnsureResume844(players[idx]),
+    seat: players[idx].seat,
   };
   const msg = fromDisconnect
     ? `🤖 ${oldName} replaced by a bot (can rejoin later)`
@@ -8585,29 +7800,33 @@ function hostReplaceWithBot(peerId, nameHint, fromDisconnect = false) {
   }
 }
 
-/** Rejoining player takes back a temp bot seat if name matches or free bot seat. */
+/** A returning transport reclaims only its authenticated human seat. */
 function hostTryReclaimSeat(conn, data) {
   const name = (data.name || '').trim();
-  const nameKey = name.toLowerCase();
-  let idx = -1;
-  if (horExpOn('netNameReclaim')) {
-    idx = players.findIndex(p => p && p.disconnected && !p.isBot && (p.id === data.id || (nameKey && String(p.name || '').trim().toLowerCase() === nameKey)));
-    if (idx < 0) idx = players.findIndex(p => p && p.isTempBot && nameKey && String(p.replacedHumanName || '').trim().toLowerCase() === nameKey);
-    if (idx < 0 && nameKey) idx = players.findIndex(p => p && p.isTempBot && String(p.name || '').replace(/\s*\(bot\)$/i, '').trim().toLowerCase() === nameKey);
-    if (idx < 0 && data.reconnect) idx = players.findIndex(p => p && p.isTempBot);
-  } else {
-    idx = players.findIndex(p => p && p.isTempBot && p.replacedHumanName === name);
-    if (idx < 0) idx = players.findIndex(p => p && p.isTempBot);
-  }
+  const token = typeof data.reconnectToken844 === 'string' ? data.reconnectToken844 : '';
+  const idx = players.findIndex(p=>p && (!p.isBot || p.isTempBot) &&
+    ((p.disconnected && p.id === conn.peer && data.id === conn.peer) ||
+      (token && p.reconnectToken844 === token)));
   if (idx < 0) return false;
 
   const team = players[idx].team;
+  const seat = players[idx].seat;
+  const reconnectToken844 = horEnsureResume844(players[idx]);
+  const oldId844 = players[idx].id;
+  const oldConn844 = connMap[oldId844];
+  if (oldConn844 && oldConn844 !== conn) {
+    delete connMap[oldId844];
+    try { oldConn844.close(); } catch (_) {}
+  }
+  hostCancelDisconnectGrace(oldId844);
   players[idx] = {
     id: data.id,
     name: name || players[idx].replacedHumanName || players[idx].name || 'Player',
     avatar: humanAvatarAllowed783(avatarKey(data.avatar)) ? avatarKey(data.avatar) : AVATARS[0],
     voice: validHumanVoice(data.voice),
     team,
+    seat,
+    reconnectToken844,
     isHost: false,
     isBot: false,
     isTempBot: false,
@@ -9075,7 +8294,7 @@ function showTrumpShowdown() {
 }
 
 function hostPromptPlay() {
-  if (!game || game.phase !== 'play') return;
+  if (!game || game.phase !== 'play' || game.trumpPresentation833) return;
   if (game.resolvingTrick || game.claimAnimating) return;
   if (game.paused) return;
   try {
@@ -9113,7 +8332,7 @@ function hostPromptPlay() {
     : `${name} to play`;
   $('messageArea').textContent = msg;
   broadcast({ type: 'message', text: msg });
-  if (game.currentPlayer === myIndex && !horSolSeatIsBot()) {
+  if (game.currentPlayer === myIndex) {
     lastTurnIndex = myIndex;
     renderHand();
     try { renderUI(); } catch (e) {}
@@ -9142,7 +8361,7 @@ function hostPromptPlay() {
 // repeated taps each triggered a full hand re-render + layout pass, and
 // spamming it could stack up enough of those to freeze the tab.
 function playCardIfMyTurn(cardId) {
-  if (!game || game.phase !== 'play' || myIndex < 0 || isSpectator || horSolSeatIsBot()) return false;
+  if (!game || game.phase !== 'play' || game.trumpPresentation833 || myIndex < 0 || isSpectator) return false;
   const id = String(cardId);
   if (game.currentPlayer !== myIndex || game.resolvingTrick || game.paused) {
     const msg = $('messageArea');
@@ -9175,7 +8394,7 @@ function submitPlay(cardId) {
 
 
 function hostProcessPlay(data) {
-  if (!game || game.phase !== 'play') return;
+  if (!game || game.phase !== 'play' || game.trumpPresentation833) return;
   if (game.resolvingTrick) return;
   if (game.paused) return;
   if (data.player !== game.currentPlayer) return;
@@ -9187,23 +8406,6 @@ function hostProcessPlay(data) {
   if (idx < 0) return;
   const card = hand[idx];
   if (!canPlay(card, hand, game.ledColor, game.trump)) return;
-
-  // Snapshot for undo (practice with bots)
-  if (players.every(p => p.isBot || p.id === myPeerId)) {
-    lastPlaySnapshot = {
-      hands: game.hands.map(h => h.map(c => ({ ...c }))),
-      trick: game.trick.map(t => ({ player: t.player, card: { ...t.card } })),
-      ledColor: game.ledColor,
-      currentPlayer: game.currentPlayer,
-      fromHuman: !!(players[data.player] && !players[data.player].isBot),
-      tricksTaken: [
-        game.tricksTaken[0].map(c => ({ ...c })),
-        game.tricksTaken[1].map(c => ({ ...c })),
-      ],
-    };
-  } else {
-    lastPlaySnapshot = null;
-  }
 
   hand.splice(idx, 1);
   if (!game.ledColor) {
@@ -9298,7 +8500,6 @@ function hostProcessPlay(data) {
     // Highlight winner card in trick
     game.lastTrickWinner = winner.player;
     broadcastState();
-    lastPlaySnapshot = null; // can't undo after trick resolves
 
     // Give players a short, deliberate pause to see the winning trick before
     // the celebration overlay/fanfare starts.
@@ -9359,7 +8560,10 @@ function hostProcessPlay(data) {
         hostPromptPlay();
       }
     };
-    setTimeout(finishTrick, solScaledDelay(2800, 700));
+    // Landscape presentation has a bounded, pace-aware collection budget.
+    // Existing resolution identity guard also protects cancellation/new hands.
+    const fightHold837=window.HORRavenFight741?.collectionDelay(game,horGamePace,reduceMotion||matchMedia('(prefers-reduced-motion: reduce)').matches,!isSoloPractice)||0;
+    setTimeout(finishTrick, Math.max(solScaledDelay(2800, 700),fightHold837));
   } else {
     game.currentPlayer = (game.currentPlayer + 1) % 4;
     broadcastState();
@@ -9367,17 +8571,7 @@ function hostProcessPlay(data) {
   }
 }
 
-function hostUndoLastPlay() {
-  if (!isHost || !lastPlaySnapshot || !game || game.phase !== 'play' || game.resolvingTrick) return;
-  game.hands = lastPlaySnapshot.hands;
-  game.trick = lastPlaySnapshot.trick;
-  game.ledColor = lastPlaySnapshot.ledColor;
-  game.currentPlayer = lastPlaySnapshot.currentPlayer;
-  game.tricksTaken = lastPlaySnapshot.tricksTaken;
-  lastPlaySnapshot = null;
-  broadcastState();
-  hostPromptPlay();
-}
+
 
 
 
@@ -9896,10 +9090,7 @@ const LEGACY_SIMULATED_BOT_NAMES = [
   'Hollow','Vex','Marrow','Pike','Thistle','Frost','Bramble','Ember','Emberlyn',
   'Pebble','Dice','Nix','Anchor','Cinder'
 ];
-function purgeLegacySimulatedBotStats() {
-  // Names cannot prove that a record is synthetic. Preserve every saved bot career.
-  return {preserved:true};
-}
+
 
 function renderAllTimeLeaders() {
   const store = loadLifetimeStats();
@@ -10041,7 +9232,6 @@ function wireScoreModalActions(summary) {
   if (histBtn) {
     histBtn.classList.remove('hidden');
     histBtn.onclick = () => {
-      modal.classList.add('hidden');
       openHandHistory({ fromScoreboard: true });
     };
   }
@@ -10066,6 +9256,7 @@ function showScoreModal(summary) {
   const modal = $('scoreModal');
   const body = $('scoreModalBody');
   if (!modal || !body || !summary) return;
+  try { playResultFinish843(summary); } catch (e) {}
   try {
     if (modal.parentElement !== document.body) document.body.appendChild(modal);
     modal.classList.add('score-modal-top');
@@ -10167,7 +9358,8 @@ function showWinCelebration(winner, scores) {
   if (!ov) return;
   liftOverlayToBody(ov, 'overlay-top');
   liftOverlayToBody($('celePage'), 'overlay-top');
-  pendingCele = { winner, scores: Array.isArray(scores) ? [...scores] : [0, 0] };
+  pendingCele = { matchId: game?.careerMatchId, winner, scores: Array.isArray(scores) ? [...scores] : [0, 0] };
+  try { playResultFinish843(pendingCele, true); } catch (e) {}
   $('winTitle').textContent = winner === 'Tie' ? "It's a Tie!" : `${winner} Wins!`;
   $('winSub').textContent = `Final: A ${scores[0]} – B ${scores[1]}`;
   ov.classList.remove('hidden');
@@ -10188,6 +9380,7 @@ function showWinCelebration(winner, scores) {
     try {
       broadcast({
         type: 'matchHighlights',
+        matchId: game?.careerMatchId,
         winner,
         scores: pendingCele.scores,
         matchTricks: matchTricks || [],
@@ -10234,7 +9427,7 @@ function hostStartNextHand() {
   window._ltShowRemaining = false;
   landscapeLastSummary = null;
   // Rook593: SOL/BOT control ownership changes only here, between hands.
-  try { horApplySolBotAtHandBoundary(); } catch (e) { console.error('[SOL bot boundary]', e); }
+
   try { clearTableForShuffle(); } catch (e) {}
   if (game) game.dealer = rotateDealerRight(game.dealer);
   hostDeal();
@@ -10359,7 +9552,6 @@ function startMatchCelebration() {
     }
   }
 
-  try { playSfx('made', { broadcastNet: false }); } catch (e) {}
   playHighlightReel(highlights);
 }
 
@@ -10389,7 +9581,7 @@ function playHighlightReel(highlights) {
       ? 'Biggest trick'
       : (isHighest ? 'Biggest trick' : 'Second biggest');
     renderCeleTrick(stage, trick, label, i, instant, isHighest);
-    try { playSfx('trick', { broadcastNet: false }); } catch (e) {}
+    // The match applause owns this finish; recap cards do not replay trick sounds.
     const plays = (trick.plays || []).length || 4;
     const hold = instant ? 50 : (720 + plays * 420 + 1600);
     i += 1;
@@ -10424,7 +9616,7 @@ function renderCeleTrick(stage, trick, label, idx, instant, isHighest) {
           const name = playerNameAt(t.player);
           const html = (typeof renderCardHTML === 'function') ? renderCardHTML(t.card, true) : '';
           return `<div class="cele-play${isW ? ' winner' : ''}" data-pi="${pi}" data-winner="${isW ? '1' : '0'}">
-            ${isW ? '<div class="cele-crown">👑</div>' : '<div class="cele-crown" style="visibility:hidden">👑</div>'}
+            ${isW ? '<div class="cele-crown"><img src="assets/images/winner-crown841.svg" alt="Winning card"></div>' : '<div class="cele-crown" style="visibility:hidden"><img src="assets/images/winner-crown841.svg" alt=""></div>'}
             ${html}
             <div class="cele-play-name">${name}</div>
           </div>`;
@@ -10525,6 +9717,7 @@ function applyReturnToWaiting() {
 
 // ========== State broadcast & client apply ==========
 function broadcastState() {
+  horSyncActionContext844();
   // Public state
   // Live counters taken this hand (for bid progress UI)
   let handPtsA = 0, handPtsB = 0;
@@ -10538,6 +9731,9 @@ function broadcastState() {
     type: 'state',
     seq: horNetSeq,
     phase: game.phase,
+    careerMatchId: game.careerMatchId,
+    networkHand844: game.networkHand844,
+    actionContext844: game.actionContext844,
     scores: game.scores,
 
     bid: game.bid,
@@ -10547,6 +9743,8 @@ function broadcastState() {
     bidder: game.bidder,
     trump: game.trump,
     trumpVoiceEvent790: game.trumpVoiceEvent790 || null,
+    trumpPresentation833: !!game.trumpPresentation833,
+    trumpPresentationMs833: game.trumpPresentationMs833 || 0,
     currentPlayer: game.currentPlayer,
     trick: game.trick,
     ledColor: game.ledColor,
@@ -10618,45 +9816,7 @@ function broadcastState() {
 
 function showBottomTrickWinnerNotice() { try { window.HORHolderCues789?.sync(game, myIndex, isSpectator); } catch (_) {} }
 
-function showLegacyLandscapeTrickNotice752() {
-  try {
-    if (!game || !game.resolvingTrick || game.lastTrickWinner == null) return;
-    const winner = Number(game.lastTrickWinner);
-    const me = (typeof myIndex === 'number' && myIndex >= 0) ? myIndex : 0;
-    const rel = ((winner - me) % 4 + 4) % 4;
-    if (rel !== 0) return; // only the bottom/local player gets this notice
-    const trick = Array.isArray(game.trick) ? game.trick : [];
-    if (trick.length !== 4) return;
-    const sig = trick.map(t => t && t.card ? String(t.card.id) : '').join('|');
-    const key = 'bottom-win:' + winner + ':' + sig;
-    if (window._bottomTrickWinnerNoticeKey === key) return;
-    window._bottomTrickWinnerNoticeKey = key;
-    const show = () => {
 
-    let el = document.getElementById('bottomTrickWinnerNotice');
-    if (!el) {
-      el = document.createElement('div');
-      el.id = 'bottomTrickWinnerNotice';
-      el.className = 'bottom-trick-winner-notice';
-      el.setAttribute('aria-live', 'assertive');
-      el.setAttribute('role', 'status');
-      el.innerHTML = '<div class="btwn-trophy">🏆</div><div class="btwn-title">YOU WON THE TRICK!</div><div class="btwn-sub">Those cards are yours</div>';
-      document.body.appendChild(el);
-    }
-    el.classList.remove('btwn-show');
-    el.classList.remove('btwn-landscape');
-    void el.offsetWidth;
-    el.classList.add('btwn-show');
-    if (window.matchMedia && window.matchMedia('(orientation: landscape)').matches) el.classList.add('btwn-landscape');
-    (window.HORRavenFight741?.stopClock||clearTimeout)(window._bottomTrickWinnerNoticeTimer);
-    window._bottomTrickWinnerNoticeTimer = (window.HORRavenFight741?.later||setTimeout)(() => {
-      try { el.classList.remove('btwn-show'); } catch (e) {}
-    }, 2200);
-    };
-    if(window.HORRavenFight741?.deferCelebration(show))return;
-    show();
-  } catch (e) { console.error('bottom trick winner notice', e); }
-}
 
 function applyState(data) {
   if(data?.phase==='dealing'&&game?.phase!=='dealing')window.HORBidVoice801?.stop();
@@ -10672,6 +9832,9 @@ function applyState(data) {
   }
   Object.assign(game, {
     phase: data.phase,
+    careerMatchId: data.careerMatchId || game.careerMatchId,
+    networkHand844: data.networkHand844 || game.networkHand844,
+    actionContext844: data.actionContext844 || null,
     scores: data.scores,
 
     bid: data.bid,
@@ -10686,6 +9849,8 @@ function applyState(data) {
     bidder: data.bidder,
     trump: data.trump,
     trumpVoiceEvent790: data.trumpVoiceEvent790 || null,
+    trumpPresentation833: !!data.trumpPresentation833,
+    trumpPresentationMs833: data.trumpPresentationMs833 || 0,
     trumpVoiceRestore790: !!data.trumpVoiceRestore790,
     currentPlayer: data.currentPlayer,
     trick: data.trick || [],
@@ -10806,6 +9971,10 @@ function applyState(data) {
     }
   } else if (game.claimAnimating) {
     hideActionPanel();
+  }
+  if (!isHost && data.actionContext844) {
+    horAwaitingResync844 = false;
+    horFlushOutbox();
   }
 }
 
@@ -11724,22 +10893,7 @@ function fitHandToScreen() {
 
 
 /** Relative strength among trump cards (higher = stronger). Matches compareCards order. */
-function trumpDefendStrength(card, trump) {
-  if (!card) return -1;
-  if (rookLowest) {
-    if (isRed1(card)) return 1000;
-    if (isRed2(card)) return 900;
-    if (card.color === 'rook' || card.id === 'rook') return 0; // lowest
-    if (trump && card.color === trump) return effectiveRank(card);
-    return -1;
-  }
-  // Rook high (default): Red1 > Rook > Red2 > normal trump by rank
-  if (isRed1(card)) return 1000;
-  if (card.color === 'rook' || card.id === 'rook') return 950;
-  if (isRed2(card)) return 900;
-  if (trump && card.color === trump) return effectiveRank(card);
-  return -1;
-}
+
 
 function normalizeHandSortMode(mode) {
   if (mode === 'suit' || mode === 'color-high' || !mode) return 'color-high';
@@ -11816,8 +10970,17 @@ function sortCardsDisplay(arr) {
 }
 
 function sortMyHandInPlace() {
+  if(game?.myHand&&window.HORHandOrder838){HORHandOrder838.apply(game.myHand);return;}
   if (!game || !game.myHand) return;
-  sortCardsDisplay(game.myHand);
+  if (game.phase === 'trump') {
+    // Both orientations: show special birds, then the longest color groups.
+    const special = c => isRookCard(c) ? 0 : (includeRed2 && isRed2(c)) ? 1 : 2;
+    const counts = Object.create(null);
+    for (const c of game.myHand) if (special(c) === 2) counts[c.color] = (counts[c.color] || 0) + 1;
+    game.myHand.sort((a,b) => special(a)-special(b)
+      || (special(a)<2 ? 0 : (counts[b.color]||0)-(counts[a.color]||0)
+      || displayColorGroup(a)-displayColorGroup(b) || compareCardsDisplay(a,b)));
+  } else sortCardsDisplay(game.myHand);
 }
 
 function cardLegalClass(card, hand) {
@@ -11954,7 +11117,7 @@ function onViewportChange() {
     try { placeActionPanelAboveSeat(); } catch (e) {}
     try {
       if (game && game.phase === 'trump' && game.bidder === myIndex && !isSpectator) showTrumpUI();
-      else if (game && game.phase === 'bidding' && game.currentPlayer === myIndex && !isSpectator && typeof showBidUI === 'function') showBidUI();
+      else if (game && game.phase === 'bidding' && game.currentPlayer === myIndex && !isSpectator && typeof showBidUI === 'function') showBidUI({preserveSelection: !!window.HORAngleC?.active()});
       else if (game && game.phase === 'play' && game.trumpClaimPlayer === myIndex && typeof showAllTrumpsClaimUI === 'function') showAllTrumpsClaimUI();
     } catch (e) {}
     setTimeout(() => {
@@ -11963,7 +11126,7 @@ function onViewportChange() {
         if (typeof fitDiscardOverlayCards === 'function') fitDiscardOverlayCards();
         relocateClaimLaydownLayer();
         if (game && game.phase === 'trump' && game.bidder === myIndex && !isSpectator) showTrumpUI();
-        else if (game && game.phase === 'bidding' && game.currentPlayer === myIndex && !isSpectator && typeof showBidUI === 'function') showBidUI();
+        else if (game && game.phase === 'bidding' && game.currentPlayer === myIndex && !isSpectator && typeof showBidUI === 'function') showBidUI({preserveSelection: !!window.HORAngleC?.active()});
         else if (game && game.phase === 'play' && game.trumpClaimPlayer === myIndex && typeof showAllTrumpsClaimUI === 'function') showAllTrumpsClaimUI();
       } catch (e) {}
     }, 200);
@@ -12021,7 +11184,7 @@ function clearClaimOverlays() {
 
 // ========== Bot AI ==========
 function isBotTurn() {
-  if (!isHost || !game) return false;
+  if (!isHost || !game || game.trumpPresentation833) return false;
   if (game.resolvingTrick) return false;
   if (game.paused) return false;
   if (game.phase === 'bidding' || game.phase === 'play') {
@@ -12295,77 +11458,13 @@ function bestTrumpColor(hand) {
 }
 
 /** Estimate counters this hand can capture if it names best trump. */
-function estimateHandValue(hand) {
-  const a = analyzeHand(hand);
-  const trump = bestTrumpColor(hand);
-  let val = 0;
-  if (a.rook) val += rookLowest ? 12 : 22;
-  if (a.red1) val += 28;
-  if (a.red2) val += 18;
-  const trumpCards = a.byColor[trump] || [];
-  val += trumpCards.length * 6;
-  trumpCards.forEach(c => {
-    if (c.rank >= 12) val += 8;
-    if (c.rank === 10 || c.rank === 14 || c.rank === 5 || c.rank === 1) val += cardPoints(c) * 0.6;
-  });
-  // Voids = ruffing power
-  val += a.voids * 8 + Math.max(0, a.shorts - 1) * 4;
-  // Off-suit counters (defensive value)
-  COLORS.filter(c => c !== trump).forEach(col => {
-    (a.byColor[col] || []).forEach(c => {
-      const p = cardPoints(c);
-      if (p) val += p * 0.35;
-    });
-  });
-  return { value: val, trump, analysis: a };
-}
+
 
 function botPersonaStyle(idx) {
   return (players[idx] && players[idx].botStyle) || 'balanced';
 }
 
-function applyStyleToBid(style, value, bid, floor, ceiling, nextMin, highest) {
-  if (style === 'randomish') {
-    if (Math.random() < 0.22) return 0;
-    if (highest < floor && Math.random() < 0.7) return floor;
-    return nextMin <= ceiling && Math.random() < 0.35 ? nextMin : 0;
-  }
-  if (style === 'passive') {
-    if (highest >= floor + 20) return 0;
-    return value >= floor - 5 ? (highest < floor ? floor : nextMin <= ceiling ? nextMin : 0) : 0;
-  }
-  if (style === 'safe') {
-    if (bid > 0 && value < highest + 8) return 0;
-    if (bid > floor && bid > value + 5) return 0;
-    return bid;
-  }
-  if (style === 'bidHappy') {
-    if (highest < floor) return floor;
-    if (nextMin <= ceiling && value + 25 >= nextMin) return nextMin;
-    return bid;
-  }
-  if (style === 'aggressive') {
-    if (highest < floor && value >= floor - 30) return floor;
-    if (nextMin <= ceiling && value + 18 >= nextMin) return Math.min(ceiling, nextMin + (value >= 80 ? 10 : 0));
-    return bid;
-  }
-  if (style === 'partnerFirst') {
-    return bid;
-  }
-  if (style === 'pointHungry' || style === 'trumpHeavy' || style === 'rookHunter' || style === 'showboat') {
-    if (highest < floor && value >= floor - 25) return floor;
-    return bid;
-  }
-  if (style === 'sandbag') {
-    if (highest >= floor) return 0;
-    return value >= floor + 30 ? floor : 0;
-  }
-  if (style === 'countSaver' || style === 'lastTrick' || style === 'leadLong') {
-    if (bid > 0 && value < highest + 15) return 0;
-    return bid;
-  }
-  return bid;
-}
+
 
 function styleTrumpColor(hand, style) {
   const counts = {};
@@ -12553,52 +11652,44 @@ function sortMyHand() {
 }
 
 function drawQr(code) {
-  const link = joinLink(code);
-  const line = $('joinLinkLine');
+  const link = joinLink(code), line = $('joinLinkLine'), graphic = $('qrGraphic845');
   if (line) {
-    if (link && /^https?:/i.test(link)) {
-      line.innerHTML = '<a class="join-site-link" href="' + escapeHtmlSafe(link) +
-        '" target="_blank" rel="noopener">' + escapeHtmlSafe(link) + '</a>';
-    } else {
-      line.textContent = link || '';
+    line.replaceChildren();
+    if (/^https?:/i.test(link)) {
+      const a=document.createElement('a'); a.href=link; a.target='_blank'; a.rel='noopener';
+      a.textContent='Open table '+String(code || roomCode || ''); line.appendChild(a);
     }
   }
-  const img = $('qrImg');
-  const canvas = $('qrCanvas');
-  if (img && link && /^https?:/i.test(link)) {
-    img.src = 'https://api.qrserver.com/v1/create-qr-code/?size=420x420&margin=4&color=000000&bgcolor=ffffff&data=' + encodeURIComponent(link);
-    img.classList.remove('hidden');
-    if (canvas) canvas.style.display = 'none';
-    img.onerror = () => {
-      img.classList.add('hidden');
-      if (canvas) canvas.style.display = '';
-    };
-  } else if (img) {
-    img.classList.add('hidden');
-    if (canvas) canvas.style.display = '';
+  const label=$('qrTable845'); if(label) label.textContent='TABLE '+String(code || roomCode || '');
+  if(!graphic)return;
+  graphic.replaceChildren();
+  try {
+    if(!/^https?:/i.test(link))throw Error('No hosted join link');
+    const source=document.createElement('div');
+    const qr=new QRCode(source,{text:link,width:512,height:512,correctLevel:QRCode.CorrectLevel.M});
+    const model=qr._oQRCode, count=model.getModuleCount(), unit=8;
+    const canvas=document.createElement('canvas'); canvas.width=canvas.height=(count+8)*unit;
+    const ctx=canvas.getContext('2d');ctx.fillStyle='#fff';ctx.fillRect(0,0,canvas.width,canvas.height);
+    ctx.fillStyle='#000';for(let y=0;y<count;y++)for(let x=0;x<count;x++)if(model.isDark(y,x))ctx.fillRect((x+4)*unit,(y+4)*unit,unit,unit);
+    graphic.appendChild(canvas);
+    graphic.setAttribute('aria-label','Scan to join table '+String(code || roomCode || ''));
+  } catch(e) {
+    graphic.textContent='QR unavailable. Use the table code or join link.';
   }
-  if (!canvas || typeof code !== 'string') return;
-  // Fallback mark if the real QR image cannot load
-  const ctx = canvas.getContext('2d');
-  const size = 160;
-  ctx.fillStyle = '#fff';
-  ctx.fillRect(0, 0, size, size);
-  ctx.fillStyle = '#1a120b';
-  ctx.fillRect(8, 8, size - 16, 8);
-  ctx.fillRect(8, size - 16, size - 16, 8);
-  ctx.fillRect(8, 8, 8, size - 16);
-  ctx.fillRect(size - 16, 8, 8, size - 16);
-  [[16, 16], [size - 48, 16], [16, size - 48]].forEach(([x, y]) => {
-    ctx.fillRect(x, y, 32, 32);
-    ctx.fillStyle = '#fff';
-    ctx.fillRect(x + 6, y + 6, 20, 20);
-    ctx.fillStyle = '#1a120b';
-    ctx.fillRect(x + 11, y + 11, 10, 10);
-  });
-  ctx.font = 'bold 22px Georgia';
-  ctx.textAlign = 'center';
-  ctx.fillText(code, size / 2, size / 2 + 8);
 }
+
+// A same-origin ZIP player owns the browser's top-level share identity.
+// Brand that document too; never read or modify an unrelated cross-origin parent.
+function horSyncShareBrand845(){
+  const icon=new URL('assets/images/house-of-rooks-192.png?v=845',location.href).href;
+  for(const doc of [document,(()=>{try{return window.top.document}catch(e){return null}})()]){
+    if(!doc)continue;
+    doc.title='House of Rooks';
+    for(const old of doc.querySelectorAll('link[rel~="icon"]'))old.remove();
+    const mark=doc.createElement('link');mark.rel='icon';mark.type='image/png';mark.sizes='192x192';mark.href=icon;doc.head.appendChild(mark);
+  }
+}
+horSyncShareBrand845();
 
 function copyRoomCode() {
   const code = roomCode || ($('displayCode') && $('displayCode').textContent);
@@ -12636,6 +11727,7 @@ function shareRoomText(code, url) {
 }
 
 function shareRoom() {
+  horSyncShareBrand845();
   const code = roomCode || '';
   const url = canShareJoinQr() ? joinLink(code) : '';
   const text = url
@@ -12668,11 +11760,8 @@ function fullscreenElement() {
 }
 
 function wantLandscapeFullscreen() {
-  try {
-    if (!document.body || !document.body.classList.contains('in-game')) return false;
-    if (window.matchMedia && window.matchMedia('(orientation: landscape)').matches) return true;
-  } catch (e) {}
-  return false;
+  // 839: fullscreen is a user choice, independent of phone orientation.
+  return typeof window.HORManualFullscreen831 === 'boolean' ? window.HORManualFullscreen831 : !!fullscreenElement();
 }
 
 function enterLandscapeFullscreen() {
@@ -12734,118 +11823,9 @@ function toggleFullscreen() {
   syncBrowserFitBtn();
 }
 
-function hostDealPerfectHand() {
-  if (!isHost || !game) return;
-  if (!isHostOnlyHuman() || !experimentalHandOpt) {
-    alert('Experimental hand is only available when you are the only human player and the option is enabled.');
-    return;
-  }
-  if (game.phase === 'play' && game.trick && game.trick.length) {
-    alert('Finish the current trick first');
-    return;
-  }
-  if (!confirm('Deal an experimental testing hand to the host? It always includes the Bird plus one full color (and Red 2 if that card is on).')) return;
 
-  // Fresh deck, then force-seed the Bird so it cannot be dropped by option flags.
-  includeRook = true;
-  try { const cbRook = $('opt-include-rook'); if (cbRook) cbRook.checked = true; } catch (e) {}
-  const deck = makeDeck().slice();
-  let rookCard = deck.find(c => c && (c.id === 'rook' || c.color === 'rook'));
-  if (!rookCard) {
-    rookCard = { color: 'rook', rank: 99, id: 'rook' };
-    deck.push(rookCard);
-  }
-  const red2Card = includeRed2
-    ? deck.find(c => c && (c.id === 'red-2' || (typeof isRed2 === 'function' && isRed2(c))))
-    : null;
 
-  const used = new Set();
-  const specialCards = [];
-  specialCards.push(rookCard);
-  used.add(rookCard.id);
-  if (red2Card && !used.has(red2Card.id)) {
-    specialCards.push(red2Card);
-    used.add(red2Card.id);
-  }
 
-  const testColor = COLORS[Math.floor(Math.random() * COLORS.length)];
-  const colorCards = deck.filter(c => c && c.color === testColor && !used.has(c.id) && c.id !== 'red-2');
-  const extra = includeRed2 && red2Card ? ', Rook + Red 2' : ', Rook';
-  const normalHandSize = handSize || 10;
-  const colorSlots = Math.max(0, normalHandSize - specialCards.length);
-  if (colorCards.length < colorSlots) {
-    alert('Experimental hand could not be created with the current deck settings.');
-    return;
-  }
-
-  shuffle(colorCards);
-  const perfect = shuffle(specialCards.concat(colorCards.slice(0, colorSlots)));
-  if (!perfect.some(c => c && (c.id === 'rook' || c.color === 'rook'))) {
-    if (perfect.length) perfect[perfect.length - 1] = rookCard;
-    else perfect.push(rookCard);
-  }
-  const perfectIds = new Set(perfect.map(c => c.id));
-  const rest = deck.filter(c => !perfectIds.has(c.id));
-
-  recentTricks = [];
-  lastCompletedTrick = null;
-  lastCompletedTrickWinner = null;
-  game.nest = [];
-  game.hands = [[], [], [], []];
-  const hostSeat = (typeof myIndex === 'number' && myIndex >= 0) ? myIndex : 0;
-  game.hands[hostSeat] = perfect.slice();
-  for (let i = 0; i < 4; i++) {
-    if (i === hostSeat) continue;
-    game.hands[i] = rest.splice(0, normalHandSize);
-  }
-  game.nest = rest.slice();
-  game.hands.forEach(h => sortCardsDisplay(h));
-  try { freezeTopNestCard(); } catch (e) { game.topNestCard = null; }
-  try { applyForcedNestReveal(); } catch (e) {}
-  knownVoids = [{}, {}, {}, {}];
-  lastTurnIndex = -1;
-  window._turnOppKey = '';
-  window._lastTurnBeepKey = '';
-  lastTrickLen = 0;
-  game.currentPlayer = firstActorSeat(game.dealer);
-  game.passCount = 0;
-  game.highestBid = (minBid || 70) - 5;
-  game.bidder = -1;
-  game.bid = 0;
-  game.shotTheMoon = false;
-  game.trump = null;
-  game.bidStatus = [null, null, null, null];
-  game.phase = 'dealing';
-  game.players = publicPlayersSnapshot(); // Refresh seats before dealing, rather than after it.
-  game.myHand = (myIndex === 0) ? game.hands[0].slice() : (game.hands[myIndex] || []).slice();
-  game.claimDeclined = false;
-  game.claimAnimation = null;
-  game.claimAnimating = false;
-  game.trumpClaimPlayer = null;
-  game.claimRevealHands = null;
-  try { clearClaimOverlays(); } catch (e) {}
-  showGame();
-  broadcast({ type: 'message', text: `🧪 Experimental hand: ${testColor}${extra}.` });
-  broadcastState();
-  const presented = (game.hands[myIndex] || []).map(c => ({ ...c }));
-  runDealPresentation(presented, () => {
-    if (!game) return;
-    game.phase = 'bidding';
-    game.myHand = (game.hands[myIndex] || []).slice();
-    broadcastState();
-    try { hostPromptBid(); } catch (e) {}
-  });
-}
-
-function hostRedeal() {
-  if (!isHost || !game) return;
-  if (game.phase === 'play' && game.trick && game.trick.length) {
-    alert('Finish the current trick first');
-    return;
-  }
-  if (!confirm('Redeal this hand?')) return;
-  hostDeal();
-}
 
 
 
@@ -13068,7 +12048,7 @@ function startSoloPractice() {
 
     const note = $('messageArea');
     if (note) note.textContent = 'Offline practice — you vs 3 bots. Bots only use public info.';
-    try { syncSoloHostExtrasUI(); } catch (e) {}
+    
   } catch (e) {
     console.error(e);
     alert('Offline practice error: ' + e.message);
@@ -13323,12 +12303,7 @@ bindClick('btnPause', () => {
   hostTogglePause();
 });
 bindClick('btnResumePause', () => { if (isHost && game && game.paused) hostTogglePause(); });
-bindClick('btnRedeal', hostRedeal);
-bindClick('btnPerfectDeal', hostDealPerfectHand);
-bindClick('btnUndo', () => {
-  if (lastPlaySnapshot && lastPlaySnapshot.fromHuman) return;
-  hostUndoLastPlay();
-});
+
 bindClick('copyCodeBtn', copyRoomCode);
 bindClick('shareBtn', shareRoom);
 function setQrOpen(open) {
@@ -13360,7 +12335,6 @@ bindClick('showQrBtn', () => {
 });
 bindClick('closeQrBtn', () => setQrOpen(false));
 function openHandHistory(opts) {
-  if (window.matchMedia && window.matchMedia('(orientation: landscape)').matches) return;
   const fromScore = !!(opts && opts.fromScoreboard);
   const modal = $('historyModal');
   const body = $('historyBody');
@@ -13385,6 +12359,8 @@ function openHandHistory(opts) {
     `).join('');
   }
   modal.classList.remove('hidden');
+  const close = $('closeHistory');
+  if (close) {close.textContent = fromScore ? 'Back to Scoreboard' : 'Close'; close.focus({preventScroll:true});}
 }
 function closeHandHistory() {
   const hm = $('historyModal');
@@ -13394,8 +12370,8 @@ function closeHandHistory() {
   hm.classList.remove('from-scoreboard');
   if (fromScore) {
     const score = $('scoreModal');
-    const landscape = !!(window.matchMedia && window.matchMedia('(orientation: landscape)').matches);
-    if (!landscape && score) score.classList.remove('hidden');
+    if (score) score.classList.remove('hidden');
+    $('scoreModalHistory')?.focus({preventScroll:true});
   }
 }
 bindClick('btnHistory', () => openHandHistory());
@@ -13403,31 +12379,6 @@ bindClick('closeHistory', () => closeHandHistory());
 bindClick('winOk', () => { try { startMatchCelebration(); } catch (e) { console.error(e); } });
 bindClick('celeRematch', () => { try { requestRematch(); } catch (e) { console.error(e); } });
 bindClick('celeWaiting', () => { try { requestWaitingRoom(); } catch (e) { console.error(e); } });
-
-// Rook594 — unattended diagnostic navigation for SOL BOT mode.
-// Captures each continuation screen before advancing it. It never chooses bids/trump/cards here.
-let horDiagNavSeen='';
-function horDiagBotNavigate(){
-  if(!horSolBotActive || !isHost) return;
-  const visible=id=>{const e=$(id);return e&&!e.classList.contains('hidden')&&getComputedStyle(e).display!=='none'&&getComputedStyle(e).visibility!=='hidden';};
-  let key='', btn=null;
-  if(visible('winOverlay')){ key='match-win'; btn=$('winOk'); }
-  else if(visible('celePage') && $('celeActions') && !$('celeActions').classList.contains('hidden')){ key='match-celebration'; btn=(typeof window.__ghAutoTestShouldRematch==='function'&&!window.__ghAutoTestShouldRematch())?null:$('celeRematch'); }
-  else if(visible('scoreModal')){ key='hand-score'; btn=$('scoreModalNext'); }
-  else if(visible('trumpShowdown')){ key='trump-showdown'; btn=$('trumpShowdownClose'); }
-  if(key && key!==horDiagNavSeen){
-    horDiagNavSeen=key;
-    try{ if(window.HORSolDiagnostics) window.HORSolDiagnostics.snap('bot-screen-before-click',{screen:key}); }catch(e){}
-    setTimeout(()=>{ try{ if(horSolBotActive && btn && !btn.disabled) btn.click(); }catch(e){} },solScaledDelay(650,120));
-    return;
-  }
-  if(!key) horDiagNavSeen='';
-  // Surface unknown blocking overlays instead of hanging silently.
-  const blockers=[...document.querySelectorAll('.modal:not(.hidden), .overlay:not(.hidden), [role="dialog"]:not(.hidden)')]
-    .filter(e=>!['scoreModal','winOverlay','hostOptionsModal','historyModal'].includes(e.id));
-  if(blockers.length){ const u='unknown:'+blockers.map(e=>e.id||e.className).join('|'); if(u!==horDiagNavSeen){horDiagNavSeen=u;try{if(window.HORSolDiagnostics)window.HORSolDiagnostics.snap('UNHANDLED SCREEN',{screen:u});}catch(e){}} }
-}
-setInterval(horDiagBotNavigate,900);
 
 (function initFromUrl() {
   try {
@@ -13630,6 +12581,13 @@ function updateLandscapeBidHint() {
 }
 
 function updateLandscapeTheater() {
+  // Presentation boundary: pass only public identities/counts, never card data.
+  if (window.HORAngleCHands) {
+    const counts = Array.isArray(game?.handsCount) && !isHost
+      ? game.handsCount
+      : (Array.isArray(game?.hands) ? game.hands.map(h => Array.isArray(h) ? h.length : null) : []);
+    window.HORAngleCHands.sync({players:(game?.players||[]).map(p=>({id:p?.id,name:p?.name})),counts,localSeat:myIndex,phase:game?.phase});
+  }
   const endEl = $('ltEndGame');
   const endSummary = landscapeLastSummary;
   const isLandscape = window.matchMedia && window.matchMedia('(orientation: landscape)').matches;
@@ -13886,7 +12844,7 @@ function updateLandscapeTheater() {
         roleBits.push('<span class="lt-badge lt-you">Me</span>');
       }
       const teamCls = teamOf(t.player) === 0 ? 'team-a' : 'team-b';
-      return `<div class="lt-play ${teamCls} ${isFinalWinner ? 'winner' : ''} ${isLeading ? 'leading' : ''} ${isPartner ? 'partner' : ''} ${isMe ? 'you' : ''} ${isLatest ? 'latest' : ''} ${isRookPulse ? 'rook-play-pulse' : ''}">
+      return `<div data-c-seat="${seatSlotIdForIndex(t.player)}" data-c-play="${horCurrentHandVisualIndex()}:${t.player}:${t.card.id}" class="lt-play ${teamCls} ${isFinalWinner ? 'winner' : ''} ${isLeading ? 'leading' : ''} ${isPartner ? 'partner' : ''} ${isMe ? 'you' : ''} ${isLatest ? 'latest' : ''} ${isRookPulse ? 'rook-play-pulse' : ''}">
       <div class="lt-order">${ord}</div>
       ${isFinalWinner ? '<div class="lt-win-stamp">WINS</div>' : ''}
       ${typeof renderCardHTML === 'function' ? renderCardHTML(t.card, false) : ''}
@@ -13920,6 +12878,7 @@ function updateLandscapeTheater() {
     if (footerEl) footerEl.textContent = '';
   }
 
+  if(game?.myHand&&game.phase!=='dealing')window.HORHandOrder838?.apply(game.myHand);
   // --- Your hand in landscape (playable on turn; coach-highlighted while bidding) ---
   const handEl = $('ltHand');
   const handLabel = $('ltHandLabel');
@@ -13934,7 +12893,7 @@ function updateLandscapeTheater() {
           ? (game.hands[myIndex] || [])
           : []);
     const isMyTurn = !!(game && game.phase === 'play' && game.currentPlayer === myIndex
-      && !game.resolvingTrick && !game.paused && !isSpectator && !game.claimAnimating);
+      && !game.resolvingTrick && !game.paused && !isSpectator && !game.claimAnimating && !game.trumpPresentation833);
     try { maybeRemindTurn(); } catch (e) {}
     const highlightSet = new Set(
       (isBidding && bidAdvice && bidAdvice.highlightIds) ? bidAdvice.highlightIds.map(String) : []
@@ -14195,199 +13154,7 @@ window.addEventListener('resize',()=>{const p=$('portraitLastTrickPopover');if(p
 /* Build 467 Career badge */
 
 
-// Rook468 — restore Career Test / Activation entrance.
-(function wireCareerTestEntrance(){
-  function bind(){
-    const b=document.getElementById('horCareerTestBtn');
-    if(!b || b.__horBound) return;
-    b.__horBound=true;
-    b.addEventListener('click',function(e){
-      e.preventDefault(); e.stopPropagation();
-      try{
-        if(window.HORProgression && HORProgression.localCareer &&
-           typeof HORProgression.localCareer.showActivationPanel==='function'){
-          HORProgression.localCareer.showActivationPanel();
-        }
-      }catch(err){console.error(err);}
-    });
-  }
-  if(document.readyState==='loading') document.addEventListener('DOMContentLoaded',bind);
-  else bind();
-})();
-
-
-
-
-
-
-/* Rook530 — SOL Visual Layout Studio 2
- * The editor is an overlay, not a second layout engine. It never polls/reapplies geometry.
- * Pick virtually any live table/UI element, move it, size it, lock it, save it, and export later.
- */
-(function horInstallVisualStudio(){
-  const KEY='horSolVisualStudioV1', PANEL_KEY='horSolStudioPanelV3';
-  const DEFAULT_PORTRAIT={"#slot-me .seat-avatar":{"x":29,"y":-17,"w":null,"h":null,"scale":1.4,"font":null,"z":null,"hidden":false,"locked":false},"#slot-partner .seat-avatar":{"x":0,"y":0,"w":null,"h":null,"scale":1.2,"font":null,"z":null,"hidden":false,"locked":false},"#slot-left .seat-avatar-side":{"x":14,"y":-11,"w":null,"h":null,"scale":1.2,"font":1,"z":null,"hidden":false,"locked":false},"#slot-right .seat-avatar-side":{"x":-6,"y":-18,"w":null,"h":null,"scale":1.2,"font":null,"z":null,"hidden":false,"locked":false},"#actionPanel":{"x":-13,"y":-30,"w":null,"h":null,"scale":0.87,"font":null,"z":null,"hidden":false,"locked":false},"#slot-me .bid-badge":{"x":0,"y":0,"w":null,"h":null,"scale":1,"font":null,"z":null,"hidden":false,"locked":false},"#slot-left .name":{"x":-12,"y":9,"w":null,"h":null,"scale":1,"font":null,"z":null,"hidden":false,"locked":false},"#slot-left .bid-badge":{"x":0,"y":10,"w":null,"h":null,"scale":1,"font":null,"z":null,"hidden":false,"locked":false},"#slot-partner .name":{"x":-57,"y":-2,"w":null,"h":null,"scale":1.2,"font":null,"z":null,"hidden":false,"locked":false},"#slot-right .name":{"x":19,"y":1,"w":null,"h":null,"scale":1,"font":null,"z":null,"hidden":false,"locked":false},"#slot-me .name":{"x":35,"y":-8,"w":null,"h":null,"scale":1.2,"font":null,"z":null,"hidden":false,"locked":false},"#slot-right .bid-badge":{"x":0,"y":0,"w":null,"h":null,"scale":1,"font":null,"z":null,"hidden":false,"locked":false},"#trickArea":{"x":14,"y":-109,"w":null,"h":null,"scale":1,"font":null,"z":null,"hidden":false,"locked":false},"#slot-right":{"x":-8,"y":-7,"w":null,"h":null,"scale":1,"font":null,"z":null,"hidden":false,"locked":false},"#btnToggleTopOpts":{"x":-15,"y":95,"w":null,"h":null,"scale":1,"font":null,"z":null,"hidden":false,"locked":false},"#leaveReplaceBtn":{"x":-15,"y":18,"w":null,"h":null,"scale":1,"font":null,"z":null,"hidden":false,"locked":false}};
-  // Rook647: these elements now have authoritative source geometry from the live-phone capture.
-  // Do not let an empty/fresh browser resurrect older SOL default offsets for them.
-  ['#slot-me .seat-avatar','#slot-partner .seat-avatar','#slot-left .seat-avatar-side','#slot-right .seat-avatar-side'].forEach(k=>{ delete DEFAULT_PORTRAIT[k]; });
-  let editing=false,picking=false,target=null,targetKey='',drag=null,panelDrag=null,history=[],future=[],grid=1,aspect=true;
-  const orientation=()=>innerWidth>innerHeight?'landscape':'portrait';
-  const q=s=>document.querySelector(s);
-  const safeNum=(v,d=0)=>Number.isFinite(Number(v))?Number(v):d;
-  function readAll(){try{const a=JSON.parse(localStorage.getItem(KEY)||'{}')||{};if(!a.portrait||!Object.keys(a.portrait).length){a.portrait=JSON.parse(JSON.stringify(DEFAULT_PORTRAIT));localStorage.setItem(KEY,JSON.stringify(a));}return a;}catch(_){return {portrait:JSON.parse(JSON.stringify(DEFAULT_PORTRAIT))};}}
-  function writeAll(v){localStorage.setItem(KEY,JSON.stringify(v));}
-  // Rook540: migrate only the five approved portrait visual corrections from the 531 baseline.
-  // This is intentionally one-shot so later manual edits remain possible.
-  (function rook540SurgicalPortraitMigration(){
-    const mk='horRook540SurgicalVisualMigration';
-    if(localStorage.getItem(mk)==='1') return;
-    try{
-      const a=JSON.parse(localStorage.getItem(KEY)||'{}')||{};
-      a.portrait=a.portrait||{};
-      const patch={
-        '#slot-me .bid-badge':{x:0,y:0},
-        '#slot-right .name':{x:19,y:1},
-        '#slot-left .bid-badge':{x:0,y:10}
-      };
-      Object.keys(patch).forEach(k=>{
-        const prior=a.portrait[k]||{};
-        a.portrait[k]=Object.assign({x:0,y:0,w:null,h:null,scale:1,font:null,z:null,hidden:false,locked:false},prior,patch[k]);
-      });
-      // Rook541: old SOL exports could contain direct/fragile selectors for the hand
-      // and for generated played-card descendants. Those elements are dynamically
-      // rendered and must remain under the game's native card CSS, not saved SOL
-      // width/height/scale/translation. Keep #trickArea itself because its approved
-      // 531 position is structural; remove only card-presentation descendants.
-      Object.keys(a.portrait).forEach(k=>{
-        const cardPresentation =
-          k==='#myHand' || k.startsWith('#myHand ') || k.startsWith('#myHand>') ||
-          k.includes('#trickArea ') || k.includes('#trickArea>') ||
-          k.includes('.trick-stack');
-        if(cardPresentation) delete a.portrait[k];
-      });
-      localStorage.setItem(KEY,JSON.stringify(a));
-      localStorage.setItem(mk,'1');
-    }catch(_){}
-  })();
-  (function rook541CardPresentationRecovery(){
-    const mk='horRook541CardPresentationRecovery';
-    if(localStorage.getItem(mk)==='1') return;
-    try{
-      const a=JSON.parse(localStorage.getItem(KEY)||'{}')||{};
-      const p=a.portrait||{};
-      Object.keys(p).forEach(k=>{
-        const cardPresentation =
-          k==='#myHand' || k.startsWith('#myHand ') || k.startsWith('#myHand>') ||
-          k.includes('#trickArea ') || k.includes('#trickArea>') ||
-          k.includes('.trick-stack');
-        if(cardPresentation) delete p[k];
-      });
-      a.portrait=p;
-      localStorage.setItem(KEY,JSON.stringify(a));
-      localStorage.setItem(mk,'1');
-    }catch(_){}
-  })();
-    // Rook597: approved bid console is not owned by SOL Visual Studio. Purge every saved legacy bid-dock transform.
-  (function rook597PurgeLegacyBidDockOwnership(){
-    try{
-      const a=JSON.parse(localStorage.getItem(KEY)||'{}')||{};
-      ['portrait','landscape'].forEach(o=>{if(a[o]&&a[o]['#decisionConsole']) delete a[o]['#decisionConsole'];});
-      localStorage.setItem(KEY,JSON.stringify(a));
-    }catch(_){}
-  })();
-
-  function readPanel(){try{return JSON.parse(localStorage.getItem(PANEL_KEY)||'{}')||{};}catch(_){return {};}}
-  function writePanel(v){localStorage.setItem(PANEL_KEY,JSON.stringify(v));}
-  function keyFor(el){
-    if(!el)return''; if(el.id)return'#'+CSS.escape(el.id);
-    const seat=el.closest&&el.closest('.player-slot');
-    if(seat&&seat.id){if(el===seat)return'#'+CSS.escape(seat.id);const cls=[...el.classList].find(c=>!c.startsWith('sol-')&&c!=='hidden');if(cls)return'#'+CSS.escape(seat.id)+' .'+CSS.escape(cls);}
-    let cur=el,path=[];while(cur&&cur!==document.body&&path.length<6){let part=cur.tagName.toLowerCase();const cls=[...cur.classList].find(c=>!c.startsWith('sol-')&&c!=='hidden');if(cls)part+='.'+CSS.escape(cls);const par=cur.parentElement;if(par){const same=[...par.children].filter(x=>x.tagName===cur.tagName);if(same.length>1)part+=`:nth-of-type(${same.indexOf(cur)+1})`;}path.unshift(part);cur=par;}return path.join('>');
-  }
-  function recFor(key=targetKey){const a=readAll(),o=orientation();return Object.assign({x:0,y:0,w:null,h:null,scale:1,font:null,z:null,hidden:false,locked:false},a[o]&&a[o][key]||{});}
-  function saveRec(r,key=targetKey){if(!key)return;const a=readAll(),o=orientation();a[o]=a[o]||{};a[o][key]=r;writeAll(a);}
-  function applyRec(el,key){if(!el||!key)return;const r=recFor(key);el.classList.add('sol-studio-managed');el.style.setProperty('--sol-vs-x',safeNum(r.x)+'px');el.style.setProperty('--sol-vs-y',safeNum(r.y)+'px');el.style.setProperty('--sol-vs-scale',safeNum(r.scale,1));el.style.width=r.w==null?'':safeNum(r.w)+'px';el.style.height=r.h==null?'':safeNum(r.h)+'px';el.style.fontSize=r.font==null?'':safeNum(r.font)+'px';el.style.zIndex=r.z==null?'':String(Math.round(safeNum(r.z)));el.classList.toggle('sol-studio-hidden',!!r.hidden);el.classList.toggle('sol-studio-locked',!!r.locked);}
-  function rook550AuthoritativeKey(k){return k==='#decisionConsole'||k==='#slot-me .name'||k==='#slot-partner .name'||k==='#slot-left .name'||k==='#slot-right .name';}
-  function applySavedOnce(){const a=readAll(),o=orientation(),m=a[o]||{};Object.keys(m).forEach(k=>{if(rook550AuthoritativeKey(k))return;try{const el=q(k);if(el)applyRec(el,k);}catch(_){}});}
-  function snap(v){return grid>1?Math.round(v/grid)*grid:Math.round(v);}
-  function pushHistory(){if(!targetKey)return;history.push({o:orientation(),key:targetKey,r:recFor()});if(history.length>80)history.shift();future=[];}
-  function restore(h){if(!h)return;const a=readAll();a[h.o]=a[h.o]||{};a[h.o][h.key]=h.r;writeAll(a);if(h.o===orientation()){const el=q(h.key);if(el)applyRec(el,h.key);}paint();}
-  function undo(){if(!history.length)return;future.push({o:orientation(),key:targetKey,r:recFor()});restore(history.pop());}
-  function redo(){if(!future.length)return;history.push({o:orientation(),key:targetKey,r:recFor()});restore(future.pop());}
-  function normalizeTarget(el){
-    if(!el)return el;
-    const av=el.closest&&el.closest('.seat-avatar,.seat-avatar-side'); if(av)return av;
-    const nm=el.closest&&el.closest('.player-slot .name'); if(nm)return nm;
-    return el;
-  }
-  function setTarget(el){el=normalizeTarget(el);if(!el||el.closest('#solStudioPanel'))return;target=el;targetKey=keyFor(el);document.querySelectorAll('.sol-studio-target').forEach(x=>x.classList.remove('sol-studio-target'));target.classList.add('sol-studio-target');picking=false;document.documentElement.classList.remove('sol-studio-picking');applyRec(target,targetKey);paint();}
-  function field(id){return q('#'+id);}
-  function restorePanelPosition(){const p=q('#solStudioPanel');if(!p)return;const all=readPanel(),r=all[orientation()]||{};p.classList.toggle('collapsed',!!r.collapsed);p.style.left=r.left!=null?r.left+'px':'';p.style.top=r.top!=null?r.top+'px':'';p.style.right=r.left!=null?'auto':'';p.style.bottom=r.top!=null?'auto':'';if(r.width)p.style.width=r.width+'px';if(r.height)p.style.height=r.height+'px';}
-  function savePanelPosition(){const p=q('#solStudioPanel');if(!p)return;const all=readPanel(),o=orientation(),box=p.getBoundingClientRect();all[o]={left:Math.round(box.left),top:Math.round(box.top),width:Math.round(box.width),height:p.classList.contains('collapsed')?null:Math.round(box.height),collapsed:p.classList.contains('collapsed')};writePanel(all);}
-  function dockPanel(side){const p=q('#solStudioPanel');if(!p)return;const box=p.getBoundingClientRect(),pad=6;let left=box.left,top=box.top;if(side==='left'){left=pad;top=Math.max(pad,Math.min(innerHeight-box.height-pad,top));}if(side==='right'){left=Math.max(pad,innerWidth-box.width-pad);top=Math.max(pad,Math.min(innerHeight-box.height-pad,top));}if(side==='top'){top=pad;left=Math.max(pad,Math.min(innerWidth-box.width-pad,left));}if(side==='bottom'){top=Math.max(pad,innerHeight-box.height-pad);left=Math.max(pad,Math.min(innerWidth-box.width-pad,left));}p.style.left=left+'px';p.style.top=top+'px';p.style.right='auto';p.style.bottom='auto';savePanelPosition();}
-  function ensurePanel(){let p=q('#solStudioPanel');if(p)return p;p=document.createElement('div');p.id='solStudioPanel';p.className='sol-studio-panel hidden';p.innerHTML=`
-   <div class="sol-studio-head" id="solVsHandle"><b>SOL VISUAL STUDIO</b><span id="solVsOrient"></span><button id="solVsCollapse" title="Collapse">—</button><button id="solVsDone">DONE</button></div>
-   <div class="sol-studio-body">
-   <div class="sol-studio-row"><button id="solVsPick">PICK ANYTHING</button><button id="solVsParent">PARENT</button><button id="solVsChild">CHILD</button><span id="solVsTarget">Nothing selected</span></div><div id="solVsSafety" class="sol-studio-safety"></div>
-   <div class="sol-studio-row sol-studio-avatar-quick"><button data-sol-pick="#slot-me .seat-avatar">BOTTOM AVATAR</button><button data-sol-pick="#slot-partner .seat-avatar">TOP AVATAR</button><button data-sol-pick=".player-slot.left .seat-avatar-side">LEFT AVATAR</button><button data-sol-pick=".player-slot.right .seat-avatar-side">RIGHT AVATAR</button></div>
-   <div class="sol-studio-row"><button data-sol-pick="#slot-me .name">BOTTOM NAME</button><button data-sol-pick="#slot-partner .name">TOP NAME</button><button data-sol-pick=".player-slot.left .name">LEFT NAME</button><button data-sol-pick=".player-slot.right .name">RIGHT NAME</button></div>
-   <div class="sol-studio-row"><button data-sol-find="bid">BID BOX / CONTROLS</button><button data-sol-find="trump">TRUMP UI</button><button data-sol-find="nest">NEST UI</button><button data-sol-find="last">LAST 3</button></div>
-   <div class="sol-studio-grid">
-    <label>X<input id="solVsX" type="number" step="1"></label><label>Y<input id="solVsY" type="number" step="1"></label>
-    <label>W<input id="solVsW" type="number" step="1" placeholder="auto"></label><label>H<input id="solVsH" type="number" step="1" placeholder="auto"></label>
-    <label>SCALE<input id="solVsScale" type="number" step="0.01" min="0.1" max="5"></label><label>FONT<input id="solVsFont" type="number" step="1" placeholder="auto"></label>
-    <label>Z<input id="solVsZ" type="number" step="1" placeholder="auto"></label><label>GRID<select id="solVsGrid"><option>1</option><option>2</option><option>5</option><option>10</option></select></label>
-   </div>
-   <div class="sol-studio-row"><button id="solVsSmaller">− SIZE</button><button id="solVsLarger">+ SIZE</button><button id="solVsAspect">🔗 ASPECT ON</button><button id="solVsHide">HIDE</button><button id="solVsLock">LOCK</button><button id="solVsReset">RESET ITEM</button></div>
-   <div class="sol-studio-row"><button id="solVsUndo">↶ UNDO</button><button id="solVsRedo">↷ REDO</button><button id="solVsGuides">GUIDES + SAFE AREA</button><button id="solVsBoxes">BOXES</button></div><div class="sol-studio-row"><button id="solVsLockAll">LOCK ALL</button><button id="solVsUnlockAll">UNLOCK ALL</button><button id="solVsUnhideAll">UNHIDE ALL</button><button id="solVsHidden">HIDDEN ITEMS</button></div><div id="solVsHiddenList" class="sol-hidden-list hidden"></div><div class="sol-studio-row"><button id="solVsThinking">PREVIEW THINKING</button><button id="solVsImport">IMPORT LAYOUT</button></div>
-   <div class="sol-studio-row"><button id="solVsCopy">COPY VALUES</button><button id="solVsPaste">PASTE VALUES</button><button id="solVsExport">FINALIZE / EXPORT</button><button id="solVsResetOri">RESET ORIENTATION</button></div>
-   <div class="sol-studio-row sol-studio-dock"><span>MOVE EDITOR:</span><button data-sol-dock="left">◀</button><button data-sol-dock="top">▲</button><button data-sol-dock="bottom">▼</button><button data-sol-dock="right">▶</button></div>
-   <textarea id="solVsExportBox" class="hidden"></textarea><div class="sol-studio-viewport" id="solVsViewport"></div><div class="sol-studio-resize" id="solVsResize" title="Resize editor">↘</div>
-   <div class="sol-studio-help">Drag title bar to move editor • PICK ANYTHING then tap a live UI object • drag selected object • arrows 1px • Shift+arrows 10px • LOCK protects candidate</div>
-   </div>`;document.body.appendChild(p);
-   q('#solVsDone').onclick=()=>setEditing(false);q('#solVsPick').onclick=()=>{picking=true;document.documentElement.classList.add('sol-studio-picking');};
-   q('#solVsParent').onclick=()=>{if(target&&target.parentElement&&!target.parentElement.closest('#solStudioPanel'))setTarget(target.parentElement);};q('#solVsChild').onclick=()=>{if(target&&target.firstElementChild)setTarget(target.firstElementChild);};
-   p.querySelectorAll('[data-sol-pick]').forEach(b=>b.onclick=()=>{const el=q(b.getAttribute('data-sol-pick'));if(el)setTarget(el);});
-   p.querySelectorAll('[data-sol-find]').forEach(b=>b.onclick=()=>{const kind=b.getAttribute('data-sol-find');const sels={bid:['#bidPanel','.bid-panel','.bidding-panel','.bid-controls','#bidControls'],trump:['#actionPanel','#ltTrumpBar','#trumpBanner','#trumpPanel','.trump-panel','.trump-showdown'],nest:['#nestArea','.nest-area','.kitty-area'],last:['#btnLast3','.last-three','.last3']}[kind]||[];const el=sels.map(x=>q(x)).find(Boolean);if(el)setTarget(el);});
-   ['X','Y','W','H','Scale','Font','Z'].forEach(n=>field('solVs'+n).addEventListener('change',applyFields));q('#solVsGrid').onchange=e=>grid=safeNum(e.target.value,1);
-   q('#solVsSmaller').onclick=()=>mut(r=>r.scale=Math.max(.1,safeNum(r.scale,1)-.05));q('#solVsLarger').onclick=()=>mut(r=>r.scale=Math.min(5,safeNum(r.scale,1)+.05));
-   q('#solVsAspect').onclick=()=>{aspect=!aspect;paint();};q('#solVsHide').onclick=()=>mut(r=>r.hidden=!r.hidden);q('#solVsLock').onclick=()=>mut(r=>r.locked=!r.locked);q('#solVsReset').onclick=resetItem;
-   q('#solVsUndo').onclick=undo;q('#solVsRedo').onclick=redo;q('#solVsGuides').onclick=()=>document.documentElement.classList.toggle('sol-studio-guides');q('#solVsBoxes').onclick=()=>document.documentElement.classList.toggle('sol-studio-boxes');
-   q('#solVsCopy').onclick=()=>{if(targetKey)sessionStorage.setItem('horSolVsClipboard',JSON.stringify(recFor()));};q('#solVsPaste').onclick=()=>{try{const r=JSON.parse(sessionStorage.getItem('horSolVsClipboard')||'null');if(r){pushHistory();saveRec(r);applyRec(target,targetKey);paint();}}catch(_){}};
-   q('#solVsExport').onclick=exportLayout;q('#solVsResetOri').onclick=resetOrientation;
-   q('#solVsLockAll').onclick=()=>bulkFlag('locked',true);q('#solVsUnlockAll').onclick=()=>bulkFlag('locked',false);q('#solVsUnhideAll').onclick=()=>bulkFlag('hidden',false);q('#solVsHidden').onclick=showHidden;q('#solVsThinking').onclick=previewThinking;q('#solVsImport').onclick=importLayout;
-   q('#solVsCollapse').onclick=e=>{e.stopPropagation();p.classList.toggle('collapsed');savePanelPosition();};
-   p.querySelectorAll('[data-sol-dock]').forEach(b=>b.onclick=()=>dockPanel(b.getAttribute('data-sol-dock')));
-   const h=q('#solVsHandle');h.addEventListener('pointerdown',e=>{if(e.target.closest('button'))return;const box=p.getBoundingClientRect();panelDrag={id:e.pointerId,dx:e.clientX-box.left,dy:e.clientY-box.top};h.setPointerCapture&&h.setPointerCapture(e.pointerId);e.preventDefault();});
-   h.addEventListener('pointermove',e=>{if(!panelDrag||e.pointerId!==panelDrag.id)return;const box=p.getBoundingClientRect();const left=Math.max(0,Math.min(innerWidth-box.width,e.clientX-panelDrag.dx));const top=Math.max(0,Math.min(innerHeight-box.height,e.clientY-panelDrag.dy));p.style.left=left+'px';p.style.top=top+'px';p.style.right='auto';p.style.bottom='auto';e.preventDefault();});
-   h.addEventListener('pointerup',e=>{if(!panelDrag||e.pointerId!==panelDrag.id)return;panelDrag=null;savePanelPosition();});
-   let panelResize=null;const rh=q('#solVsResize');rh.addEventListener('pointerdown',e=>{const b=p.getBoundingClientRect();panelResize={id:e.pointerId,sx:e.clientX,sy:e.clientY,w:b.width,h:b.height};rh.setPointerCapture&&rh.setPointerCapture(e.pointerId);e.preventDefault();e.stopPropagation();});rh.addEventListener('pointermove',e=>{if(!panelResize||e.pointerId!==panelResize.id)return;p.style.width=Math.max(280,panelResize.w+e.clientX-panelResize.sx)+'px';p.style.height=Math.max(180,panelResize.h+e.clientY-panelResize.sy)+'px';e.preventDefault();});rh.addEventListener('pointerup',e=>{if(panelResize&&e.pointerId===panelResize.id){panelResize=null;savePanelPosition();}});
-   restorePanelPosition();return p;
-  }
-  function bulkFlag(prop,val){const a=readAll(),o=orientation(),m=a[o]||{};Object.keys(m).forEach(k=>m[k][prop]=val);writeAll(a);Object.keys(m).forEach(k=>{try{const el=q(k);if(el)applyRec(el,k);}catch(_){}});paint();}
-  function showHidden(){const box=q('#solVsHiddenList'),m=readAll()[orientation()]||{};box.innerHTML='';Object.keys(m).filter(k=>m[k].hidden).forEach(k=>{const b=document.createElement('button');b.textContent='SHOW '+k;b.onclick=()=>{m[k].hidden=false;const a=readAll();a[orientation()]=m;writeAll(a);const el=q(k);if(el)applyRec(el,k);showHidden();};box.appendChild(b);});if(!box.children.length)box.textContent='No SOL-hidden items.';box.classList.toggle('hidden',false);}
-  function previewThinking(){const el=q('#botThinking');if(!el)return;el.classList.toggle('hidden');if(!el.classList.contains('hidden')){el.textContent='Player is thinking…';setTarget(el);}}
-  function importLayout(){const box=q('#solVsExportBox');box.classList.remove('hidden');box.readOnly=false;box.placeholder='Paste exported SOL JSON here, then press IMPORT LAYOUT again';const raw=box.value.trim();if(!raw){box.focus();return;}try{const data=JSON.parse(raw),a=readAll(),o=data.orientation||orientation();a[o]=Object.assign(a[o]||{},data.layout||data[o]||{});writeAll(a);applySavedOnce();box.value='Imported '+Object.keys(data.layout||data[o]||{}).length+' items into '+o+'.';}catch(e){box.value='IMPORT ERROR: '+e.message;}}
-  function structuralLabel(){if(!target)return'';if(target.id==='trickArea'||target.classList.contains('center-area')||target.classList.contains('trick-stack'))return '⚠ PROTECTED STRUCTURE — contains/positions played cards. Move carefully; do not hide/delete.';if(target.id==='botThinking')return 'THINKING BOX — independent transient UI.';if(target.id==='actionPanel'||target.id==='ltTrumpBar')return 'TRUMP/ACTION UI — separate from TRICK.';return '';}
-  function mut(fn){if(!targetKey)return;pushHistory();const r=recFor();fn(r);saveRec(r);applyRec(target,targetKey);paint();}
-  function applyFields(){if(!targetKey)return;pushHistory();const r=recFor();r.x=snap(safeNum(field('solVsX').value));r.y=snap(safeNum(field('solVsY').value));r.w=field('solVsW').value===''?null:Math.max(1,safeNum(field('solVsW').value));r.h=field('solVsH').value===''?null:Math.max(1,safeNum(field('solVsH').value));r.scale=Math.max(.1,Math.min(5,safeNum(field('solVsScale').value,1)));r.font=field('solVsFont').value===''?null:Math.max(1,safeNum(field('solVsFont').value));r.z=field('solVsZ').value===''?null:safeNum(field('solVsZ').value);saveRec(r);applyRec(target,targetKey);paint();}
-  function resetItem(){if(!targetKey)return;pushHistory();const a=readAll(),o=orientation();if(a[o])delete a[o][targetKey];writeAll(a);if(target){target.classList.remove('sol-studio-managed','sol-studio-hidden','sol-studio-locked');['--sol-vs-x','--sol-vs-y','--sol-vs-scale'].forEach(x=>target.style.removeProperty(x));['width','height','font-size','z-index'].forEach(x=>target.style.removeProperty(x));}paint();}
-  function resetOrientation(){if(!confirm('Reset every SOL override for '+orientation()+'?'))return;const a=readAll();delete a[orientation()];writeAll(a);location.reload();}
-  function exportLayout(){const box=q('#solVsExportBox');box.value=JSON.stringify({build:531,orientation:orientation(),layout:readAll()[orientation()]||{}},null,2);box.classList.remove('hidden');box.select();try{navigator.clipboard&&navigator.clipboard.writeText(box.value);}catch(_){} }
-  function paint(){ensurePanel();const r=recFor();q('#solVsOrient').textContent=orientation().toUpperCase();q('#solVsTarget').textContent=targetKey||'Nothing selected';q('#solVsSafety').textContent=structuralLabel();q('#solVsViewport').textContent=innerWidth+'×'+innerHeight+' '+orientation();if(!targetKey)return;field('solVsX').value=Math.round(r.x);field('solVsY').value=Math.round(r.y);field('solVsW').value=r.w==null?'':Math.round(r.w);field('solVsH').value=r.h==null?'':Math.round(r.h);field('solVsScale').value=safeNum(r.scale,1).toFixed(2);field('solVsFont').value=r.font==null?'':Math.round(r.font);field('solVsZ').value=r.z==null?'':Math.round(r.z);q('#solVsAspect').textContent=aspect?'🔗 ASPECT ON':'⛓ ASPECT OFF';q('#solVsHide').classList.toggle('active',!!r.hidden);q('#solVsLock').classList.toggle('active',!!r.locked);}
-  function setEditing(on){if(!horDeveloperToolsEnabled())on=false;editing=!!on;document.documentElement.classList.toggle('sol-studio-editing',editing);ensurePanel().classList.toggle('hidden',!editing);if(editing)restorePanelPosition();if(!editing){picking=false;document.documentElement.classList.remove('sol-studio-picking');document.querySelectorAll('.sol-studio-target').forEach(x=>x.classList.remove('sol-studio-target'));}}
-  function toggle(){setEditing(!editing);}
-  function ensureButton(){const toolbar=q('#topToolbar')||q('.toolbar');if(!toolbar||q('#btnSolStudio'))return;const old=q('#btnSolLayout');if(old)old.remove();const b=document.createElement('button');b.type='button';b.id='btnSolStudio';b.className='icon-btn developer-only hidden sol-studio-launch';b.title='SOL Visual Layout Studio';b.innerHTML='✥ <span>SOL Studio</span>';b.onclick=e=>{e.preventDefault();toggle();};const more=toolbar.querySelector('.game-more');toolbar.insertBefore(b,more||null);}
-  document.addEventListener('pointerdown',e=>{if(!editing||e.target.closest('#solStudioPanel'))return;if(picking){e.preventDefault();e.stopPropagation();setTarget(e.target);return;}if(!target||!target.contains(e.target))return;const r=recFor();if(r.locked)return;e.preventDefault();e.stopPropagation();pushHistory();drag={id:e.pointerId,sx:e.clientX,sy:e.clientY,x:r.x,y:r.y};try{target.setPointerCapture(e.pointerId)}catch(_){}target.classList.add('sol-studio-dragging');},true);
-  document.addEventListener('pointermove',e=>{if(!drag||e.pointerId!==drag.id)return;e.preventDefault();const r=recFor();r.x=snap(drag.x+e.clientX-drag.sx);r.y=snap(drag.y+e.clientY-drag.sy);saveRec(r);applyRec(target,targetKey);paint();},true);
-  document.addEventListener('pointerup',e=>{if(!drag||e.pointerId!==drag.id)return;target&&target.classList.remove('sol-studio-dragging');drag=null;},true);
-  document.addEventListener('keydown',e=>{if(!editing||!targetKey||['INPUT','TEXTAREA','SELECT'].includes(document.activeElement&&document.activeElement.tagName))return;if(e.ctrlKey&&e.key.toLowerCase()==='z'){e.preventDefault();return e.shiftKey?redo():undo();}if(e.ctrlKey&&e.key.toLowerCase()==='y'){e.preventDefault();return redo();}const d={ArrowLeft:[-1,0],ArrowRight:[1,0],ArrowUp:[0,-1],ArrowDown:[0,1]}[e.key];if(!d)return;e.preventDefault();const step=(e.shiftKey?10:1)*grid;mut(r=>{if(!r.locked){r.x=snap(r.x+d[0]*step);r.y=snap(r.y+d[1]*step);}});},true);
-  addEventListener('resize',()=>{restorePanelPosition();paint();});
-  document.addEventListener('DOMContentLoaded',()=>{try{document.getElementById('btnSolStudio')?.remove();document.getElementById('solStudioPanel')?.remove();}catch(_){} applySavedOnce();});
-  window.HORSolVisualStudio={apply:applySavedOnce,export:()=>JSON.stringify(readAll(),null,2)};
-})();;
-
-
+// 842: retired layout editor removed; fixed source geometry remains.
 // Rook574 live theme bootstrap (diagnostic UI retired)
 if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',()=>{try{horSetThemeIndex(horCurrentHandVisualIndex(),false);}catch(e){}});else{try{horSetThemeIndex(horCurrentHandVisualIndex(),false);}catch(e){}}
 
@@ -14404,115 +13171,7 @@ if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',
 })();
 
 
-/* Rook626 — POSITION EVIDENCE + RELIABLE DIAGNOSTICS
-   Clean evolution of Rook623. Diagnostic-only; gameplay rules/AI decisions are untouched. */
-(function(){
- if(window.__gh626)return; window.__gh626=1;
- const $q=s=>bar.querySelector(s)||document.querySelector(s);
- const qs=e=>e?(e.id?'#'+CSS.escape(e.id):e.tagName.toLowerCase()+([...e.classList].slice(0,3).map(x=>'.'+CSS.escape(x)).join(''))):'';
- const isTool=e=>e&&e.closest&&e.closest('#gh624bar,#gh624finder,#gh624outline,#gh625sync,#gh626mini');
- const visible=e=>{if(!e||isTool(e))return false;let r=e.getBoundingClientRect(),c=getComputedStyle(e);return (r.width||r.height)&&c.display!=='none'&&c.visibility!=='hidden'&&+c.opacity!==0};
- const rect=e=>{let r=e.getBoundingClientRect();return {x:+r.x.toFixed(1),y:+r.y.toFixed(1),w:+r.width.toFixed(1),h:+r.height.toFixed(1)}};
- const timeline=[], deep=[], mutations=[], uniqueStates={}; const fpIndex=new Map();
- let seq=0,timer=0,stateSeq=0,drag=null;
- const test={active:false,gamesDone:0,target:5,startedAt:0,oldSpeed:'normal',oldSolSpeed:1,lastWinSig:'',stopping:false};
- const syncEvents=[]; let syncSeq=0,syncTicker=0,syncFlashTimer=0;
-
- function kind(){
-  // Rook626: classify only production UI that is ACTUALLY visible. Generic
-  // '*menu*' matching mislabeled gameplay because persistent menu descendants
-  // can exist while their overlay is hidden. Record the exact evidence selector.
-  const tests=[
-   ['BID',['#decisionConsole']],
-   ['TRUMP',['#actionPanel.trump-showdown']],
-   ['DISCARD',['#discardOverlay','[id*=\"discard\" i]','[class*=\"discard\" i]']],
-   ['RESULTS',['#winOverlay','#celePage']],
-   ['MENU',['#hostOptionsModal']],
-   ['POPUP',['[role=\"dialog\"]','.modal','[class*=\"popup\" i]']]
-  ];
-  for(const [name,sels] of tests) for(const sel of sels) try{
-    const hit=[...document.querySelectorAll(sel)].find(e=>visible(e));
-    if(hit) return {name,evidence:qs(hit)};
-  }catch(e){}
-  return {name:'GAME',evidence:'production-table'};
- }
- function lite(){
-  return [...document.querySelectorAll('body *')].filter(visible).map(e=>{let r=rect(e),c=getComputedStyle(e);return {s:qs(e),p:qs(e.parentElement),...r,z:c.zIndex,cls:(typeof e.className==='string'?e.className:'').slice(0,120)};});
- }
- function fp(k,list){return k+'|'+list.map(x=>[x.s,x.p,Math.round(x.x),Math.round(x.y),Math.round(x.w),Math.round(x.h),x.cls].join(':')).join('|')}
- function deepCapture(k,n){
-   const cand=[...document.querySelectorAll('body *')].filter(e=>visible(e)&&(/bid|trump|discard|menu|modal|popup|action|spinner|spin|stamp|moon|anim/i.test((e.id||'')+' '+e.className+' '+(e.getAttribute('data-state')||'')))).slice(0,45);
-   deep.push({n,state:k,items:cand.map(e=>{let c=getComputedStyle(e),r=rect(e);return {s:qs(e),p:qs(e.parentElement),...r,cls:e.className||'',text:(e.innerText||'').trim().replace(/\s+/g,' ').slice(0,100),css:{position:c.position,left:c.left,top:c.top,right:c.right,bottom:c.bottom,transform:c.transform,z:c.zIndex,display:c.display,visibility:c.visibility,overflow:c.overflow,animation:c.animation,transition:c.transition},before:{content:getComputedStyle(e,'::before').content,animation:getComputedStyle(e,'::before').animation,transform:getComputedStyle(e,'::before').transform},after:{content:getComputedStyle(e,'::after').content,animation:getComputedStyle(e,'::after').animation,transform:getComputedStyle(e,'::after').transform}};})});
-   if(deep.length>180)deep.shift();
- }
- function capture(reason,force=false){
-  const els=lite(),ks=kind(),k=ks.name,f=fp(k,els); let id=fpIndex.get(f),isNew=!id;
-  if(isNew){id='S'+(++stateSeq);fpIndex.set(f,id);uniqueStates[id]={id,state:k,firstSeen:Date.now(),occurrences:0,viewport:[innerWidth,innerHeight,devicePixelRatio],elements:els};}
-  uniqueStates[id].occurrences++;
-  const important=(isNew||force)&&/BID|TRUMP|DISCARD|MENU|POPUP/.test(k);const syncId=(test.active&&important)?syncMark('state',k+' '+id,true):null;
-  timeline.push({n:++seq,t:Date.now(),state:k,stateEvidence:ks.evidence,reason,stateRef:id,newState:isNew,syncId,elapsedMs:test.startedAt?Date.now()-test.startedAt:null});
-  if(timeline.length>2400)timeline.shift();
-  if(important)deepCapture(k,seq);
-  paintStatus();
- }
- function schedule(r){clearTimeout(timer);timer=setTimeout(()=>capture(r),180)}
- function paintStatus(extra){
-   if(!status)return;
-   status.textContent=extra||(test.active?`AUTO TEST • GAME ${Math.min(test.gamesDone+1,test.target)}/${test.target} • RECORDING`:`AUTO MAP • ${Object.keys(uniqueStates).length} UNIQUE • ${kind().name}`);
- }
- const mo=new MutationObserver(ms=>{let meaningful=false;for(const m of ms){if(isTool(m.target))continue;mutations.push({t:Date.now(),type:m.type,target:qs(m.target),attr:m.attributeName||''});if(/class|style|hidden|aria-hidden/.test(m.attributeName||'')||m.addedNodes.length||m.removedNodes.length)meaningful=true;}if(mutations.length>3000)mutations.splice(0,500);if(meaningful)schedule('ui-change');});
- mo.observe(document.body,{subtree:true,childList:true,attributes:true,attributeFilter:['class','style','hidden','aria-hidden']});
- addEventListener('resize',()=>capture('resize',true),{passive:true});
-
- const bar=document.createElement('div');bar.id='gh624bar';
- bar.innerHTML='<b id="gh624drag" title="Drag mapper">AUTO MAP ↕</b><span id="gh624status">STARTING</span><button id="gh624test">AUTO TEST ×5</button><button id="gh624stop" disabled>STOP TEST</button><button id="gh626collapse">COLLAPSE</button><span>BOT:</span><button data-sp="blitz">BLITZ</button><button data-sp="normal">NORMAL</button><button data-sp="slow">SLOW</button><button id="gh624find">FIND ELEMENT</button><button id="gh624flag">FLAG</button><button id="gh624export">EXPORT</button>';
- Object.assign(bar.style,{position:'fixed',left:'2px',bottom:'2px',zIndex:'2147483647',display:'flex',gap:'4px',alignItems:'center',flexWrap:'wrap',padding:'4px 6px',background:'#050505',color:'#fff',border:'1px solid #ffd65a',borderRadius:'6px',font:'700 10px Arial',maxWidth:'calc(100vw - 4px)',touchAction:'none'});
- /* Rook687: keep legacy mapper code available internally, but do not expose its production UI. */
- const status=bar.querySelector('#gh624status');
- const sync=document.createElement('div');sync.id='gh625sync';sync.hidden=true;
- sync.innerHTML='<div id="gh625syncMain">VIDEO SYNC</div><div id="gh625syncSub">READY</div>';
- Object.assign(sync.style,{position:'fixed',left:'50%',top:'8px',transform:'translateX(-50%)',zIndex:'2147483645',pointerEvents:'none',minWidth:'230px',padding:'8px 12px',background:'rgba(0,0,0,.92)',color:'#fff',border:'3px solid #ffd65a',borderRadius:'8px',textAlign:'center',font:'900 16px Arial',letterSpacing:'.5px',boxShadow:'0 0 0 2px #000'});document.body.appendChild(sync);
- const mini=document.createElement('button');mini.id='gh626mini';mini.hidden=true;mini.textContent='AUTO TEST';Object.assign(mini.style,{position:'fixed',right:'4px',bottom:'4px',zIndex:'2147483647',padding:'7px 9px',background:'#050505',color:'#ffd65a',border:'1px solid #ffd65a',borderRadius:'6px',font:'800 10px Arial'}); /* Rook687: intentionally not mounted in normal gameplay. */
- function setCollapsed(on){const collapsed=!!on;bar.hidden=collapsed;bar.style.setProperty('display',collapsed?'none':'flex','important');mini.hidden=!collapsed;mini.style.setProperty('display',collapsed?'block':'none','important');mini.textContent=test.active?('TEST '+Math.min(test.gamesDone+1,test.target)+'/'+test.target+' • '+elapsed()):'AUTO MAP';}
- mini.onclick=()=>setCollapsed(false);
- function elapsed(){const ms=Math.max(0,Date.now()-(test.startedAt||Date.now())),sec=Math.floor(ms/1000);return String(Math.floor(sec/60)).padStart(2,'0')+':'+String(sec%60).padStart(2,'0')}
- function syncPaint(main,sub){sync.hidden=false;sync.style.setProperty('display','block','important');$q('#gh625syncMain').textContent=main;$q('#gh625syncSub').textContent=sub||'';}
- function syncMark(type,label,flash=true){const id='SYNC-'+String(++syncSeq).padStart(4,'0'),ev={id,n:syncSeq,t:Date.now(),elapsedMs:test.startedAt?Date.now()-test.startedAt:0,game:test.active?Math.min(test.gamesDone+1,test.target):test.gamesDone,type,label:label||type};syncEvents.push(ev);if(syncEvents.length>1200)syncEvents.shift();if(flash){clearTimeout(syncFlashTimer);syncPaint(id+' • '+(label||type),test.active?('GAME '+Math.min(test.gamesDone+1,test.target)+'/'+test.target+' • '+elapsed()):'VIDEO MARK');sync.style.background='rgba(110,0,0,.96)';syncFlashTimer=setTimeout(()=>{sync.style.background='rgba(0,0,0,.92)'},900)}return id}
- function startSyncTicker(){clearInterval(syncTicker);syncTicker=setInterval(()=>{if(test.active){syncPaint('VIDEO SYNC • '+elapsed(),'GAME '+Math.min(test.gamesDone+1,test.target)+'/'+test.target+' • LAST '+(syncEvents.length?syncEvents[syncEvents.length-1].id:'—'));if(!mini.hidden)mini.textContent='TEST '+Math.min(test.gamesDone+1,test.target)+'/'+test.target+' • '+elapsed();}},250)}
- function stopSyncTicker(){clearInterval(syncTicker);syncTicker=0}
- function countdown(done){let n=3;syncPaint('VIDEO SYNC • 3','AUTO TEST STARTING');const iv=setInterval(()=>{n--;if(n>0){syncPaint('VIDEO SYNC • '+n,'AUTO TEST STARTING');return}clearInterval(iv);syncPaint('VIDEO SYNC • GO','GAME 1/'+test.target);syncMark('test-start','AUTO TEST START',false);setTimeout(done,350)},850)}
- bar.querySelectorAll('button').forEach(b=>Object.assign(b.style,{padding:'4px 6px',font:'700 10px Arial'}));
- const handle=$q('#gh624drag');handle.style.cursor='move';
- function dragStart(ev){if(ev.target!==handle)return;const r=bar.getBoundingClientRect();drag={dx:ev.clientX-r.left,dy:ev.clientY-r.top};bar.style.right='auto';bar.style.bottom='auto';handle.setPointerCapture?.(ev.pointerId);ev.preventDefault();}
- function dragMove(ev){if(!drag)return;const x=Math.max(0,Math.min(innerWidth-bar.offsetWidth,ev.clientX-drag.dx)),y=Math.max(0,Math.min(innerHeight-bar.offsetHeight,ev.clientY-drag.dy));bar.style.left=x+'px';bar.style.top=y+'px';}
- function dragEnd(){drag=null;}
- handle.addEventListener('pointerdown',dragStart);handle.addEventListener('pointermove',dragMove);handle.addEventListener('pointerup',dragEnd);handle.addEventListener('pointercancel',dragEnd);
-
- function paintSpeed(){bar.querySelectorAll('[data-sp]').forEach(b=>{b.style.outline=(b.dataset.sp===(typeof window.__ghGetBotSpeed623==='function'?window.__ghGetBotSpeed623():'normal')?'2px solid #ffd65a':'none')});}
- bar.querySelectorAll('[data-sp]').forEach(b=>b.onclick=()=>{if(typeof window.__ghSetBotSpeed623==='function')window.__ghSetBotSpeed623(b.dataset.sp);paintSpeed();capture('bot-speed-'+b.dataset.sp,true);});
- $q('#gh626collapse').onclick=()=>setCollapsed(true);
-
- const finder=document.createElement('div');finder.id='gh624finder';finder.hidden=true;
- finder.innerHTML='<div><b>FIND / SELECT ELEMENT</b> <button id="gh624close">X</button></div><input id="gh624search" placeholder="spinner, spin, stamp, moon, bid, trump…" style="width:96%;margin:5px 0"><div id="gh624results" style="max-height:42vh;overflow:auto"></div>';
- Object.assign(finder.style,{position:'fixed',left:'6px',right:'6px',top:'6px',zIndex:'2147483647',padding:'8px',background:'#080808',color:'#fff',border:'2px solid #ffd65a',font:'12px Arial'});document.body.appendChild(finder);
- const outline=document.createElement('div');outline.id='gh624outline';outline.hidden=true;Object.assign(outline.style,{position:'fixed',pointerEvents:'none',zIndex:'2147483646',border:'3px solid #ff3b30',boxSizing:'border-box'});document.body.appendChild(outline);
- function highlight(e){let r=e.getBoundingClientRect();Object.assign(outline.style,{left:r.left+'px',top:r.top+'px',width:r.width+'px',height:r.height+'px'});outline.hidden=false;paintStatus(`SELECTED ${qs(e)} X${Math.round(r.x)} Y${Math.round(r.y)} ${Math.round(r.width)}×${Math.round(r.height)}`);capture('selected-'+qs(e),true);}
- function search(){let q=$q('#gh624search').value.trim().toLowerCase(),all=[...document.querySelectorAll('body *')].filter(visible);let a=all.filter(e=>{let s=((e.id||'')+' '+(typeof e.className==='string'?e.className:'')+' '+(e.innerText||'')).toLowerCase();return !q||s.includes(q)}).slice(0,80);$q('#gh624results').innerHTML='';a.forEach(e=>{let r=rect(e),b=document.createElement('button');b.textContent=`${qs(e)}  X${r.x} Y${r.y} ${r.w}×${r.h}`;Object.assign(b.style,{display:'block',width:'100%',textAlign:'left',margin:'2px 0',padding:'5px'});b.onclick=()=>highlight(e);$q('#gh624results').appendChild(b)});}
- $q('#gh624find').onclick=()=>{finder.hidden=false;$q('#gh624search').value='spin';search();$q('#gh624search').focus()};$q('#gh624close').onclick=()=>finder.hidden=true;$q('#gh624search').oninput=search;$q('#gh624flag').onclick=()=>capture('manual-flag',true);
-
- function stopTest(reason){if(!test.active||test.stopping)return;test.stopping=true;syncMark('test-stop',reason==='complete'?'AUTO TEST COMPLETE':'AUTO TEST STOPPED',true);capture('auto-test-stop-'+reason,true);test.active=false;stopSyncTicker();try{horSetSolBotRequested(false);horApplySolBotAtHandBoundary();}catch(e){}try{window.HOR_SOL_SPEED=test.oldSolSpeed||1;document.body.classList.remove('hor-auto-test-fast');}catch(e){}try{if(typeof window.__ghSetBotSpeed623==='function')window.__ghSetBotSpeed623(test.oldSpeed||'normal');}catch(e){}$q('#gh624test').disabled=false;$q('#gh624stop').disabled=true;paintSpeed();paintStatus(reason==='complete'?`AUTO TEST COMPLETE • ${test.gamesDone}/${test.target} GAMES • READY TO EXPORT`:`AUTO TEST STOPPED • ${test.gamesDone}/${test.target} COMPLETE • READY TO EXPORT`);setTimeout(()=>{sync.hidden=true;sync.style.display='none';},2200);setCollapsed(false);test.stopping=false;}
- function startTest(){if(test.active)return;if(!isHost||myIndex<0){paintStatus('AUTO TEST REQUIRES HOST SEAT');return;}test.active=true;test.gamesDone=0;test.startedAt=Date.now();test.lastWinSig='';syncEvents.length=0;syncSeq=0;test.oldSpeed=typeof window.__ghGetBotSpeed623==='function'?window.__ghGetBotSpeed623():'normal';test.oldSolSpeed=window.HOR_SOL_SPEED||1;window.HOR_SOL_SPEED=4;document.body.classList.add('hor-auto-test-fast');if(typeof window.__ghSetBotSpeed623==='function')window.__ghSetBotSpeed623('blitz');try{horSetSolBotRequested(true);horApplySolBotAtHandBoundary();}catch(e){}$q('#gh624test').disabled=true;$q('#gh624stop').disabled=false;paintSpeed();paintStatus();countdown(()=>{if(!test.active)return;startSyncTicker();setCollapsed(true);capture('auto-test-start',true);try{hostStartGame();}catch(e){console.error('[AUTO TEST start]',e);stopTest('start-error');}})}
- $q('#gh624test').onclick=startTest;$q('#gh624stop').onclick=()=>stopTest('manual');
- window.__ghAutoTestActive=()=>test.active;
- window.__ghAutoTestShouldRematch=()=>test.active&&test.gamesDone<test.target;
- window.__ghAutoTestState=()=>({...test});
- setInterval(()=>{if(!test.active)return;try{const ov=document.getElementById('winOverlay');const vis=ov&&!ov.classList.contains('hidden')&&getComputedStyle(ov).display!=='none';if(vis){const sig=JSON.stringify((game&&game.scores)||[])+'|'+((handHistory&&handHistory.length)||0);if(sig!==test.lastWinSig){test.lastWinSig=sig;test.gamesDone++;syncMark('game-complete','GAME '+test.gamesDone+'/'+test.target+' COMPLETE',true);capture('auto-test-game-'+test.gamesDone+'-complete',true);if(test.gamesDone>=test.target){stopTest('complete');return;}if(test.gamesDone===4){window.HOR_SOL_SPEED=1;document.body.classList.remove('hor-auto-test-fast');if(typeof window.__ghSetBotSpeed623==='function')window.__ghSetBotSpeed623('normal');syncMark('speed','GAME 5 NORMAL SPEED',true);capture('game-5-normal-speed',true);}paintStatus();}}}catch(e){}},250);
-
- $q('#gh624export').onclick=()=>{capture('export',true);const data={tool:'Rook626 Position Repair + Reliable Auto Map + Video Sync',build:626,botSpeed:(typeof window.__ghGetBotSpeed623==='function'?window.__ghGetBotSpeed623():'unknown'),autoTest:{active:test.active,gamesDone:test.gamesDone,target:test.target,startedAt:test.startedAt},videoSync:{format:'SYNC-####',events:syncEvents},summary:{uniqueStates:Object.keys(uniqueStates).length,timelineEvents:timeline.length,deepCaptures:deep.length,mutations:mutations.length},uniqueStates,timeline,deep,mutations};const blob=new Blob([JSON.stringify(data,null,2)],{type:'application/json'}),a=document.createElement('a');a.href=URL.createObjectURL(blob);a.download='ROOK626_AUTO_GAME_MAP.json';a.click();setTimeout(()=>URL.revokeObjectURL(a.href),1000);paintStatus(`EXPORTED ${Object.keys(uniqueStates).length} UNIQUE STATES`);};
- setTimeout(()=>{capture('startup',true);paintSpeed()},250);
-})();
-
-
+// 842: retired diagnostic recorder/auto-test control bar removed.
 /* R706: permanent header, visible layout-tool owner and shared decision portal.
    This code only owns presentation. R705's pace governor/timers are unchanged. */
 (function initR706TablePresentation(){
@@ -14532,8 +13191,6 @@ if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',
     const clearHeader=()=>{const size=bar.classList.contains('score-collapsed')?42:Math.ceil(bar.getBoundingClientRect().bottom+8);clearance.style.height=size+'px';clearance.style.minHeight=size+'px';clearance.style.flexBasis=size+'px';};
     new MutationObserver(clearHeader).observe(bar,{attributes:true,attributeFilter:['class']});
     new ResizeObserver(clearHeader).observe(bar);clearHeader();
-    const layout=document.getElementById('ghTopLayout693');
-    if(layout)layout.addEventListener('click',()=>window.HORCompactLayout?.toggle());
     horSetGamePace(horGamePace);
     const dock=document.getElementById('decisionConsole');
     const sync=()=>{
@@ -14866,7 +13523,8 @@ function positionRailControls035(controls) {
   controls.style.setProperty('transform','none','important');controls.style.setProperty('translate','none','important');
 }
 function dealFlight035(player,duration) {
-  if (!isPortraitViewport() || document.body.classList.contains('reduce-motion')) return;
+  const landscapeDeal=!!window.HORAngleC?.active();
+  if ((!isPortraitViewport()&&!landscapeDeal) || document.body.classList.contains('reduce-motion')) return;
   const bg=$('hor-room-bg'),r=bg?bg.getBoundingClientRect():{left:0,top:0,width:innerWidth,height:innerHeight};
   const cover=Math.max(r.width/875,r.height/1797),offsetX=r.left+(r.width-875*cover)/2;
   const project=(x,y)=>({x:offsetX+x*cover,y:r.top+y*cover});
@@ -14877,7 +13535,7 @@ function dealFlight035(player,duration) {
   // A packet on the dealer's side of the felt, clear of portraits and rail.
   const packets747={'slot-me':[610,1000],'slot-partner':[437.5,720],
     'slot-left':[235,880],'slot-right':[640,880]};
-  const start=project(...packets747[dealerSlot]);
+  const start=landscapeDeal?HORAngleC.dealPacket():project(...packets747[dealerSlot]);
   const sid=seatSlotIdForIndex(player==='nest'?myIndex:player);
   const feltTargets={'slot-partner':[437.5,690],'slot-left':[195,850],'slot-right':[680,850],'slot-me':[437.5,1090]};
   let end=project(...(feltTargets[sid]||feltTargets['slot-me']));
@@ -14892,7 +13550,8 @@ function dealFlight035(player,duration) {
     end=pr&&pr.width?{x:pr.left+pr.width/2+landing.x*cover,y:pr.top+pr.height/2+landing.y*cover}:project(437.5+landing.x,800+landing.y);
   }
   // Visible flight reaches the player; middle cards land on the real Nest pile.
-  const scale=cover/(915/1797);
+  if(landscapeDeal)end=HORAngleC.dealTarget(player);
+  const scale=landscapeDeal?HORAngleC.frame().scale:cover/(915/1797);
   const carrier=document.createElement('div');carrier.className='deal-moving036';carrier.setAttribute('aria-hidden','true');
   carrier.dataset.dealer=String(game.dealer);carrier.dataset.dealerSlot=dealerSlot;carrier.dataset.player=String(player);carrier.dataset.startX=String(start.x);carrier.dataset.startY=String(start.y);carrier.dataset.endX=String(end.x);carrier.dataset.endY=String(end.y);
   carrier.style.cssText=`position:fixed!important;left:${start.x-25*scale}px!important;top:${start.y-27*scale}px!important;width:${50*scale}px!important;height:${54*scale}px!important;display:block!important;visibility:visible!important;opacity:1!important;pointer-events:none!important;z-index:2147483500!important;`;
@@ -14903,19 +13562,20 @@ function dealFlight035(player,duration) {
     const face=pinnedNestRevealFace()||freezeTopNestCard();
     if(face){card.classList.add('face-up-flight040');card.innerHTML=renderCardHTML(face,true);}
   }
+  if(landscapeDeal){carrier.classList.add('landscape-deal830');carrier.style.setProperty('left',(start.x-55*scale)+'px','important');carrier.style.setProperty('top',(start.y-51.7*scale)+'px','important');card.style.setProperty('--deal-landscale830',scale);}
   card.style.setProperty('--deal-scale035',scale);carrier.appendChild(card);document.body.appendChild(carrier);
   const flights=window.__dealFlights036||(window.__dealFlights036=new Set());
   let frame=0,deadline=0,origin=performance.now(),stopped=false;
   const flight={stop(){if(stopped)return;stopped=true;cancelAnimationFrame(frame);clearTimeout(deadline);carrier.remove();flights.delete(flight);}};flights.add(flight);
   const move=time=>{
     if(stopped)return;
-    if(!isPortraitViewport()||!document.body.classList.contains('in-game')||document.hidden){flight.stop();return;}
+    if((!isPortraitViewport()&&!window.HORAngleC?.active())||!document.body.classList.contains('in-game')||document.hidden){flight.stop();return;}
     const t=Math.min(1,(time-origin)/Math.max(1,duration)),ease=1-Math.pow(1-t,2);
     // No sinusoidal upward hop: height steadily settles toward the felt.
-    const height=18*cover*(1-ease);
+    const height=18*(landscapeDeal?scale:cover)*(1-ease);
     // Bottom receiving path skirts the portrait before entering the holder.
     const bend=project(850,1260),u=1-ease;
-    const point=(sid==='slot-me'&&player!=='nest')
+    const point=(!landscapeDeal&&sid==='slot-me'&&player!=='nest')
       ?{x:u*u*start.x+2*u*ease*bend.x+ease*ease*end.x,
         y:u*u*start.y+2*u*ease*bend.y+ease*ease*end.y}
       :{x:start.x+(end.x-start.x)*ease,y:start.y+(end.y-start.y)*ease};
@@ -14924,7 +13584,7 @@ function dealFlight035(player,duration) {
     carrier.dataset.dealProgress=String(t);
     if(t<1)frame=requestAnimationFrame(move);else setTimeout(()=>flight.stop(),duration>80?12:0);
   };
-  carrier.style.setProperty('transform',`translate3d(0,${-18*cover}px,0)`,'important');
+  carrier.style.setProperty('transform',`translate3d(0,${-18*(landscapeDeal?scale:cover)}px,0)`,'important');
   frame=requestAnimationFrame(move);deadline=setTimeout(()=>flight.stop(),duration+120);
 }
 function stopDealFlights036() {
@@ -14955,10 +13615,11 @@ function flipDealtNest036(token,onDone) {
   game.nestFlipStage=2;game.nestFlipped=true;window._horNestPileSig='';
   // The flight already has its regular deal sound; no delayed second card cue.
   try{renderTopNestPeek();playBirdNestReaction041();}catch(_){}
-  onDone();
+  if(window.HORNestReveal838){HORNestReveal838.reveal(face).finally(()=>{if(token===dealAnimToken)onDone();});}else onDone();
 }
 function runDealPresentation(fullHand,onDone) {
-  if(!isPortraitViewport()){runLegacyDealPresentation035(fullHand,onDone);return;}
+  window.HORHandOrder838?.newDeal();
+  // Both orientations use the approved all-seat deal presentation.
   const hand=(fullHand||[]).map(c=>({...c})),token=++dealAnimToken;
   stopPresentationSounds035();stopDealFlights036();document.body.classList.remove('dealing035');
   try{showGame();}catch(_){}if(!game)game={};game.myHand=[];
@@ -15005,7 +13666,7 @@ function nestLanding037(index) {
   return {x:(noise(3)-.5)*12,y:(noise(9)-.5)*9,angle:(noise(17)-.5)*12};
 }
 function applyNestScatter037() {
-  if(!isPortraitViewport())return;
+  if(!isPortraitViewport()&&!window.HORAngleC?.active())return;
   const area=$('nestArea'),pile=area&&area.querySelector('.table-nest-pile');
   if(!pile)return;
   const cards=pile.querySelectorAll(':scope > .table-nest-under, :scope > .table-nest-top, :scope > .table-nest-flip, :scope > .nest-stay-face');

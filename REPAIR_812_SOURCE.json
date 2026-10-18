@@ -1,0 +1,19 @@
+{
+  "revision": "812-landscape-discard-review-20261017",
+  "base_archive_sha256": "9c75578920f328cc05d2c3f498f5c3bee94e8952eee5586cb0f9e8c18c065e78",
+  "overlay": "landscape-discard812.css",
+  "changedFiles": [
+    "index.html",
+    "game060.js",
+    "angle-c-runtime.js",
+    "angle-c-runtime.css",
+    "angle-c-characters.js",
+    "trump714.js",
+    "hor-version.js",
+    "sw060.js",
+    "QA_RESULT.json",
+    "REVIEW_README.md",
+    "landscape-discard812.css"
+  ],
+  "releaseStatus": "ISOLATED_REVIEW_CANDIDATE_NOT_DEPLOYED_NOT_OWNER_APPROVED"
+}

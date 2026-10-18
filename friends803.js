@@ -4,7 +4,7 @@ const root=document.getElementById('waiting');if(!root)return;
 const scene=document.getElementById('friendsScene803'),stage=document.getElementById('friendsStage803');
 const setup=document.createElement('section');setup.hidden=true;setup.className='gh-menu-section';setup.id='friendsSetup803';setup.innerHTML='<div class="gh-menu-section-title">Table setup</div>';
 for(const node of [root.querySelector('.team-name-row'),root.querySelector('.bot-count-row')])if(node)setup.append(node);
-document.querySelector('#hostOptionsModal .gh-menu-body').append(setup);
+document.getElementById('hostOptionsModal').append(setup);
 let svg,renderKey='';
 function refresh(){
  setup.hidden=!isHost||root.classList.contains('hidden');

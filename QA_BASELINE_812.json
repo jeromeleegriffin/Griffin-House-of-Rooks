@@ -1,0 +1,151 @@
+{
+  "runtime": "812-landscape-discard-review-20261017",
+  "status": "ISOLATED_REVIEW_CANDIDATE_NOT_DEPLOYED_NOT_OWNER_APPROVED",
+  "basis": {
+    "archive": "811.zip",
+    "sha256": "9c75578920f328cc05d2c3f498f5c3bee94e8952eee5586cb0f9e8c18c065e78",
+    "archiveFiles": 1572
+  },
+  "recoveredOwnerFeedback": {
+    "record": "coordination/pending/811-owner-feedback-20261017/SOURCE_CHECKPOINT.json",
+    "sourceFileHashesExact": true,
+    "files": [
+      "angle-c-runtime.js",
+      "angle-c-runtime.css",
+      "angle-c-characters.js",
+      "trump714.js"
+    ]
+  },
+  "changes": [
+    "Landscape discard now reuses complete real production numbered/bird card art inside accessible button slots",
+    "16-card picker is a single 8x2 blue felt grid with centered walnut/brass border, count, clear keep-ten text",
+    "Selected discard cards gain gold outline and accessible checked badge; confirmation stays disabled until exactly six valid cards",
+    "Landscape no-scroll short-height adaptation at 844x290 and tablet adaptation at 1280x800",
+    "Approved prior landscape header/trump/status changes merged byte-for-byte from 811 follow-up checkpoint"
+  ],
+  "verification": {
+    "javascriptSyntax": "PASS for game060.js angle-c-runtime.js angle-c-characters.js trump714.js sw060.js",
+    "isolatedComponentGeometry": "PASS five landscape viewport scenarios",
+    "scenarioResults": [
+      {
+        "viewport": "844x390_kitty",
+        "all16Visible": true,
+        "selectedSix": true,
+        "confirmEnabled": true,
+        "noBodyScrolling": true
+      },
+      {
+        "viewport": "844x290_kitty",
+        "all16Visible": true,
+        "selectedSix": true,
+        "confirmEnabled": true,
+        "noBodyScrolling": true
+      },
+      {
+        "viewport": "844x290_picker",
+        "all16Visible": true,
+        "selectedSix": true,
+        "confirmEnabled": true,
+        "noBodyScrolling": true
+      },
+      {
+        "viewport": "1280x800_kitty",
+        "all16Visible": true,
+        "selectedSix": true,
+        "confirmEnabled": true,
+        "noBodyScrolling": true
+      },
+      {
+        "viewport": "960x420_kitty",
+        "all16Visible": true,
+        "selectedSix": true,
+        "confirmEnabled": true,
+        "noBodyScrolling": true
+      }
+    ],
+    "productionAssetPreview": "20 source numbered/bird images rendered in 844x390 isolated fixture",
+    "entirePlayableGameBrowserTest": "PASS: complete isolated Chromium landscape hand to score; refer to integratedLandscapeHand (real game engine with local browser-origin shims)",
+    "physicalAndroid": "NOT TESTED",
+    "serviceWorkerOfflineReload": "NOT TESTED FOR 812",
+    "multiplayer": "NOT TESTED",
+    "portraitLogicDiff": "discard markup retained unchanged inside if(portrait), other additions confined to landscape or version identifiers",
+    "actualGameDiscardHandlerInIsolatedDOM": "PASS six picked, seventh rejected, deselect disables Confirm, reselect enables Confirm, six unique IDs submitted, zero JavaScript errors",
+    "handlerResult": "evidence/discard-handler-results.json",
+    "visualEvidence": [
+      "evidence/discard-layout-844x390.png",
+      "evidence/discard-six-selected-844x390.png",
+      "evidence/discard-small-screen-844x290.png"
+    ],
+    "warning": "Browser isolated DOM check executed with real game060.js selection and submit callback, not a full game end-to-end play.",
+    "integratedLandscapeHand": {
+      "status": "PASS — one full 200-point Shoot the Moon hand through scoreboard",
+      "environment": "Chromium in controlled isolated browser with all game scripts and local assets loaded through intercepted static requests; localStorage and crypto.randomUUID shims needed because direct navigation is administrator-blocked",
+      "viewport": "844x390",
+      "pace": "MAX",
+      "steps": [
+        "Start offline game with three bots",
+        "Skip first-play tutorial",
+        "Reach human bidding, use original +5 button 19 times and bid 200",
+        "Receive six kitty cards and display sixteen-card hand",
+        "Select exactly six of sixteen, verify all sixteen images load, verify scrolling absent and Confirm becomes enabled",
+        "Submit discards with original handler",
+        "Select green trump and confirm with physical case control",
+        "Play ten legal human cards using existing playCardIfMyTurn handler",
+        "Reach real Scoreboard for failed Shoot the Moon"
+      ],
+      "finalScores": {
+        "Griffin": -200,
+        "Raven": 180
+      },
+      "nextHandVisible": true,
+      "observed": {
+        "humanCardsPlayed": 10,
+        "workingCardImages": 16,
+        "pageErrors": 0,
+        "asset404s": 0,
+        "assetRequestsServed": 1112
+      },
+      "nonfatalConsoleError": "[Main intelligence fallback] Instant-win moon is outside the frozen championship contract rules",
+      "limits": [
+        "Bot fallback logged one nonfatal console error, did not halt scoring; not diagnosed or modified",
+        "Tests use local/browser shims instead of live origin and active service worker",
+        "No physical Android, multiplayer, offline-reload, native audio or full-match claim"
+      ]
+    },
+    "integratedPortraitSmoke": {
+      "status": "PASS — original portrait bidding, kitty continue, discard six, trump confirm, entered play",
+      "viewport": "390x844",
+      "assetsLoaded": 593,
+      "pageErrors": 0,
+      "asset404s": 0,
+      "unchangedPortraitTemplate": true,
+      "limits": [
+        "Did not complete portrait scoring in this run",
+        "No physical Android portrait confirmation"
+      ]
+    },
+    "browserTestDetails": "Full Playwright session executed actual 812 HTML and game scripts, with requested local images/CSS/JS fulfilled from unpacked archive. Unchanged game handlers exercised; direct browser navigation blocked by host policy, so testing environment provided memory-only storage and UUID support.",
+    "trumpChoice": "Two-step original physical stamp case; selection + explicit confirmation required. Browser test used both.",
+    "portraitRules": "Original portrait discard template and rules unchanged; portrait smoke completed its selected six-card flow without errors.",
+    "uiOpacity": "Confirm button fades from disabled 0.48 opacity to full opacity over ~0.2 seconds after selecting six; enablement and click action verified.",
+    "assessedArtifacts": [
+      "evidence/812_LANDSCAPE_DISCARD_SELECTED.png",
+      "evidence/812_LANDSCAPE_SCOREBOARD.png",
+      "evidence/812_PORTRAIT_DISCARD_SELECTED.png"
+    ]
+  },
+  "protected": {
+    "productionUntouched": true,
+    "testServerUntouched": true,
+    "original811ZipUntouched": true,
+    "approved017And018Untouched": true,
+    "noStateReset": true,
+    "noGameplayRuleChanges": true
+  },
+  "next": [
+    "Finish integrated end-to-end bid/kitty/trump/score Playwright test in an environment permitting local navigation",
+    "Physical Samsung and Onn landscape review",
+    "Audit History/Last Trick, end-screen overlap, achievement-over-card, stale points at trump choice, short-height face cropping, fixed cast/roster mismatch",
+    "Owner review before deployment"
+  ]
+}

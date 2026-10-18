@@ -1,0 +1,9 @@
+835 — Griffin plaque asset
+
+Finished asset: assets/brand835/house-plaque835.png
+2048 x 768 RGBA PNG. Transparent outside the physical plaque. Generated from the existing approved805 Griffin wordmark reference; dark emerald inset, restrained brass bevel and walnut edge, brighter Griffin emblem and exact GRIFFIN / HOUSE OF ROOKS lettering. Used for welcome branding in both orientations and landscape waiting-table branding. Physical appearance comes from this image asset; layout CSS only places the image and live controls.
+
+Generation prompt:
+Use case: precise-object-edit. Asset type: finished Griffin House of Rooks wordmark plaque for a premium card game. Reference image is the approved identity: preserve the same heraldic gold griffin facing left, same GRIFFIN lettering and HOUSE OF ROOKS wording. Redesign the treatment as one highly readable horizontal physical house plaque, front-on camera, wide ratio about 3:1, closely cropped with minimal transparent margins. Deep almost-black emerald inset, subtle dark walnut outer edge, restrained thin polished brass double bevel. Increase contrast and thickness of gold wordmark so it reads at small mobile size, bright warm ivory-gold lettering; griffin left, GRIFFIN large right, HOUSE OF ROOKS below. Exact wording only 'GRIFFIN' and 'HOUSE OF ROOKS'. Spacious balanced typography. No extra text, no UI buttons, no new symbols, no ornate scrollwork, no room scenery, no table, no large shadow outside the plaque. Authentic photographic materials, clean finished asset, completely transparent outside its physical silhouette.
+
+The 834 bookshelf/lantern, room/table artwork, felt, fireplace and rail asset remain byte-for-byte unchanged. No new table skin, avatars, holder, bid-box materials or card assets.

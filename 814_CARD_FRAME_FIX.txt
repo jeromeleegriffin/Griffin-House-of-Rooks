@@ -1,0 +1,1 @@
+Landscape Nest card frame overflow/padding correction. Source 813 preserved. Not deployed; visual device acceptance pending.

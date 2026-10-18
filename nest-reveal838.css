@@ -1,0 +1,6 @@
+/* The cutout is a real alpha artwork asset; the existing nest plane owns positioning. */
+body #nestArea .card-face.nest838-reveal{overflow:visible!important;isolation:isolate;--nest838-glow:#e5ba56;animation:nest838-pulse var(--nest838-duration,950ms) ease-in-out 1!important}
+body #nestArea .card-face.nest838-red{--nest838-glow:#dc4e3d}
+body #nestArea .nest838-relief{position:absolute!important;inset:0!important;width:100%!important;height:100%!important;pointer-events:none!important;z-index:15;overflow:visible!important;border-radius:inherit}
+@keyframes nest838-pulse{0%,100%{box-shadow:0 0 0 0 transparent;filter:brightness(1)}45%{box-shadow:0 0 0 2px var(--nest838-glow),0 0 18px 5px var(--nest838-glow);filter:brightness(1.06)}}
+@media(prefers-reduced-motion:reduce){body #nestArea .card-face.nest838-reveal{animation-name:nest838-still!important} @keyframes nest838-still{0%,100%{outline:2px solid transparent}25%,75%{outline:2px solid var(--nest838-glow)}}}

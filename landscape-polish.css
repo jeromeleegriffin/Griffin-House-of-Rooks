@@ -1,0 +1,60 @@
+@media(orientation:landscape){
+ #landingPartners783{position:fixed!important;inset:0!important;margin:auto!important;box-sizing:border-box!important;width:min(760px,calc(100vw - 28px))!important;max-width:none!important;height:min(350px,calc(100dvh - 20px))!important;max-height:none!important;padding:14px!important;overflow:hidden!important;display:none;gap:8px;grid-template-rows:auto auto minmax(0,1fr) auto;}
+ #landingPartners783[open]{display:grid!important;}
+ #landingPartners783 .identity-dialog-head h2{font-size:23px!important;margin:0!important;}
+ #landingPartners783 .identity-dialog-head button{width:32px!important;height:32px!important;min-height:0!important;padding:0!important;}
+ #landingPartners783>p{font:13px/1.2 system-ui!important;margin:0!important;}
+ #landingPartners783 [data-partner-control]{display:none!important;}
+ #landingPartners783>[data-done]{position:absolute!important;right:14px!important;bottom:12px!important;height:32px!important;min-height:0!important;padding:3px 16px!important;font-size:14px!important;}
+ .partner-photo-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));grid-auto-rows:minmax(0,1fr);gap:8px;min-height:0;}
+ .partner-photo{display:flex;align-items:center;gap:9px;min-width:0;min-height:0;padding:6px!important;border:1px solid #8f7848!important;border-radius:8px!important;background:#10273b!important;color:#f8e9bf!important;text-align:left;}
+ .partner-photo[aria-pressed=true]{border:2px solid #efc963!important;background:#263a37!important;}
+ .partner-photo img,.partner-random{width:48px;height:58px;object-fit:cover;border-radius:5px;flex:none;}
+ .partner-random{display:grid;place-items:center;font-size:34px;background:#182119;}
+ .partner-photo strong{display:block;font:700 16px/1.2 Georgia;}
+ .partner-photo small{display:block;font:12px/1.2 system-ui;color:#d9c799;margin-top:3px;}
+ .partner-photo-nav{display:flex;align-items:center;justify-content:center;gap:14px;padding-right:90px;min-height:32px;font:13px system-ui;}
+ .partner-photo-nav button{font-size:13px!important;height:30px!important;min-height:0!important;padding:2px 10px!important;}
+ .partner-photo-nav button:disabled{opacity:.35;}
+ #waiting .waiting-remove-bot{position:absolute;z-index:25;top:calc(44% + 39px);transform:translateX(-50%);height:30px;min-height:30px;padding:3px 13px;font:12px system-ui;color:#efdba7;border:1px solid #ac8e50;border-radius:6px;background:#10202a;touch-action:manipulation;}
+ #waiting .waiting-remove-bot[hidden]{display:none!important;}
+ .waiting-remove-bot[data-position=left]{left:13.44%;}.waiting-remove-bot[data-position=top]{left:28%;}.waiting-remove-bot[data-position=right]{left:42.56%;}
+ #waiting [id^=waitSeat] small{pointer-events:none;}
+ body.in-game.angle-c-runtime #nestArea.nest{position:fixed!important;left:50%!important;top:var(--c-nest-y,48vh)!important;bottom:auto!important;width:110px!important;height:159px!important;min-height:0!important;margin:0!important;padding:0!important;translate:none!important;scale:none!important;transform:translate(-50%,-50%) scale(var(--polish-scale,1)) scaleY(.65)!important;z-index:100!important;pointer-events:none!important;}
+ body.in-game.angle-c-runtime #nestArea .table-nest-pile{width:110px!important;height:159px!important;transform:none!important;translate:none!important;}
+ body.in-game.angle-c-runtime #nestArea :is(.table-nest-under,.table-nest-top,.table-nest-flip,.table-nest-flip-inner,.nest-face-up,.table-nest-flip-back){width:110px!important;height:159px!important;max-width:none!important;max-height:none!important;}
+ body.in-game.angle-c-runtime #nestArea .table-nest-flip-inner{transition:transform .9s cubic-bezier(.22,.62,.18,1)!important;}
+ body.in-game.angle-c-runtime #nestArea .table-nest-flip.is-reveal{animation:none!important;}
+ body.in-game.angle-c-runtime #claimLaydownLayer .claim-plane-wrapper{left:50%!important;top:var(--c-nest-y,49vh)!important;transform:scale(var(--polish-claim-scale,1)) scaleY(.65)!important;}
+ body.in-game.angle-c-runtime #claimLaydownLayer .claim-laydown-banner{top:calc(var(--c-nest-y,49vh) - 75px)!important;max-width:min(56vw,430px)!important;padding:5px 12px!important;border-radius:6px!important;font:600 13px/1.2 system-ui!important;animation:none!important;transform:translateX(-50%)!important;}
+ body.in-game.angle-c-runtime #celePage{box-sizing:border-box!important;padding:max(12px,env(safe-area-inset-top)) max(14px,env(safe-area-inset-right)) max(12px,env(safe-area-inset-bottom)) max(14px,env(safe-area-inset-left))!important;}
+ body.in-game.angle-c-runtime #celePage .cele-inner{box-sizing:border-box!important;padding:10px!important;gap:8px!important;grid-template-columns:160px minmax(0,1fr) 100px!important;}
+ body.in-game.angle-c-runtime #celePage .cele-actions .btn{font:600 12px/1.2 system-ui!important;padding:6px 10px!important;min-height:30px!important;max-width:100%!important;}
+ body.in-game.angle-c-runtime #celePage .cele-head h1{font-size:22px!important;margin:0!important;}
+ body.in-game.angle-c-runtime #celePage .cele-kicker{font-size:10px!important;}
+ body.in-game.angle-c-runtime #celePage .cele-recap .recap-grid div{padding:5px 8px!important;}
+ body.in-game.angle-c-runtime #celePage .cele-trick{padding:8px!important;}
+ body.in-game.angle-c-runtime #celePage .cele-play .card-face{width:min(12vw,19vh)!important;height:calc(min(12vw,19vh) * 1.448)!important;}
+ body.in-game.angle-c-runtime #celePage .cele-trick-head{font-size:13px!important;}
+ body.in-game.angle-c-runtime #celePage .cele-trick-meta{font-size:12px!important;}
+ body.in-game.angle-c-runtime #headerContractLine805{font-size:11px!important;line-height:1.25!important;}
+}
+@media(orientation:portrait){.partner-photo-grid,.partner-photo-nav,.waiting-remove-bot{display:none!important;}}
+@media(orientation:landscape) and (max-height:340px){
+ #landingPartners783{padding:9px!important;gap:5px;}
+ #landingPartners783 .identity-dialog-head h2{font-size:19px!important;}
+ .partner-photo img,.partner-random{height:44px;width:38px;}
+ .partner-photo strong{font-size:14px;}.partner-photo small{font-size:11px;}
+ #waiting .waiting-remove-bot{top:calc(44% + 33px);height:26px;min-height:26px;font-size:11px;}
+ body.in-game.angle-c-runtime #celePage .cele-inner{padding:7px!important;gap:5px!important;}
+ body.in-game.angle-c-runtime #celePage .cele-head h1{font-size:18px!important;}
+ body.in-game.angle-c-runtime #celePage .cele-actions .btn{min-height:25px!important;padding:4px 8px!important;font-size:11px!important;}
+ body.in-game.angle-c-runtime #celePage .cele-trick-head{flex:none!important;gap:2px 8px!important;margin:0 0 3px!important;}
+ body.in-game.angle-c-runtime #celePage .cele-trick-taker{font-size:13px!important;}
+ body.in-game.angle-c-runtime #celePage .cele-trick-label{font-size:10px!important;}
+ body.in-game.angle-c-runtime #celePage .cele-trick-meta{font-size:10px!important;}
+ body.in-game.angle-c-runtime #celePage .cele-play .card-face{width:min(10vw,13vh)!important;height:calc(min(10vw,13vh) * 1.448)!important;}
+ body.in-game.angle-c-runtime #celePage .cele-play{gap:2px!important;}
+ body.in-game.angle-c-runtime #celePage .cele-crown{height:12px!important;font-size:11px!important;line-height:12px!important;}
+ body.in-game.angle-c-runtime #celePage .cele-play-name{font-size:10px!important;line-height:12px!important;}
+}

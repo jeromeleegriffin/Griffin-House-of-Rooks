@@ -1,0 +1,107 @@
+.room-brand830,#roomWelcome830,#roomEntryDock830,#roomPartnerLabel830{display:none;}
+@media(orientation:landscape){
+ body.in-game.angle-c-runtime #landscapeTheater #nestArea.nest{z-index:2!important;}
+ body.in-game.angle-c-runtime #landscapeTheater #nestArea .card-back{background:#151515 url('assets/images/cardback-griffin-approved-133.png') 58% 40.5%/111.3% 111.9% no-repeat!important;border:0!important;box-sizing:border-box!important;}
+ body.in-game.angle-c-runtime #landscapeTheater #nestArea .card-back::before,body.in-game.angle-c-runtime #landscapeTheater #nestArea .card-back::after{display:none!important;}
+ body #lobby #landingLandscapeReview,body #waiting.friends803 #friendsLandscapeReview{width:100%!important;inset:0!important;height:100%!important;}
+ body #lobby{background:#0a1412!important;}
+ body :is(#lobby,#waiting) .room-brand830{display:block;position:absolute;left:18px;top:10px;z-index:4;width:145px;pointer-events:none;}
+ .room-brand830 img{display:block;width:100%;height:auto;}
+ body #lobby #landingBrand783{display:none!important;}
+ body #lobby #landingMenuButton783{top:10px!important;right:16px!important;width:36px!important;height:36px!important;font-size:23px!important;min-height:36px!important;}
+ body #lobby #landingPanel783{display:none!important;}
+ body #lobby #roomWelcome830{display:flex;flex-direction:column;align-items:center;position:absolute;z-index:4;left:50%;top:53%;transform:translateX(-50%);width:max-content;max-width:80%;gap:7px;text-align:center;}
+ #roomWelcome830 h1{margin:0;font:600 clamp(20px,3vw,31px)/1.1 Georgia;color:#f4dfa3;text-shadow:0 2px 3px #000;}
+ #roomWelcome830 #roomEditPlayer830{display:flex;align-items:center;gap:10px;min-height:34px;height:36px;padding:3px 12px 3px 4px;background:#101c25ed;border:1px solid #b89d60;border-radius:20px;color:#f8e8bf;font:600 14px Georgia;}
+ #roomEditPlayer830 img{width:28px;height:28px;object-fit:cover;border-radius:50%;border:1px solid #be9e51;}
+ #roomEditPlayer830 small{font:12px system-ui;color:#e5c978;border-left:1px solid #947942;padding-left:10px;}
+ body #lobby #roomPartnerLabel830{display:block;position:absolute;left:50%;top:33%;transform:translateX(-50%);z-index:4;padding:3px 10px;background:#101c25ef;color:#f5e6bd;border:1px solid #af9454;border-radius:6px;font:600 12px Georgia;}
+ body #lobby #landingPartner783{left:50%!important;top:calc(33% + 25px)!important;bottom:auto!important;width:130px!important;height:28px!important;min-height:28px!important;}
+ body #lobby #landingPartner783>span{border-radius:6px!important;font:600 12px Georgia!important;gap:5px!important;}
+ body #lobby #landingPartner783 svg{width:14px!important;height:14px!important;flex-basis:14px!important;}
+ body #lobby #roomEntryDock830{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:10px;position:absolute;z-index:6;left:9%;right:9%;bottom:12px;padding:8px 12px;background:linear-gradient(100deg,#2e180a,#5b351c 45%,#2e180a);border:1px solid #b49755;border-radius:16px 16px 7px 7px;box-shadow:0 4px 9px #0009;}
+ #roomEntryDock830 #houseFriendsEntry805{display:contents!important;}
+ body #lobby #roomEntryDock830 button{box-sizing:border-box!important;width:100%!important;min-width:0!important;height:44px!important;min-height:44px!important;max-height:44px!important;padding:4px 6px!important;margin:0!important;font:600 clamp(13px,2vw,20px)/1.1 Georgia!important;border-radius:8px!important;text-decoration:none!important;}
+ body #lobby #roomEntryDock830 #soloPracticeBtn{background:linear-gradient(#f0d887,#d2a747 45%,#be8d2e)!important;border:1px solid #f3dc9b!important;color:#201704!important;}
+ body #lobby #roomEntryDock830 :is(#friendsToggleBtn,#joinBtn){background:linear-gradient(#15344c,#0c1726)!important;border:1px solid #b49b61!important;color:#f7e7b9!important;}
+ body #lobby.joining #landingPanel783{display:block!important;position:absolute!important;left:50%!important;right:auto!important;top:50%!important;transform:translate(-50%,-50%)!important;width:min(460px,calc(100vw - 30px))!important;background:#11221cfa!important;max-height:calc(100dvh - 20px)!important;overflow:auto!important;z-index:20!important;}
+ body #lobby.joining #landingPanel783>:not(#joinForm):not(#lobbyStatus){display:none!important;}
+ body #lobby.joining #roomWelcome830{visibility:hidden;}
+ #roomIdentity830{position:fixed;inset:0;margin:auto;width:min(620px,calc(100vw - 28px));max-width:none;height:max-content;max-height:calc(100dvh - 20px);overflow:auto;background:#102338;border:1px solid #baa265;padding:12px;color:#f8e6b8;}
+ #roomIdentity830 header{display:flex;align-items:center;justify-content:space-between;margin-bottom:8px;}
+ #roomIdentity830 h2{margin:0;font:600 22px Georgia;}
+ #roomIdentity830 header button{padding:6px 20px;min-height:32px;}
+ #roomIdentity830 .identity-name-label{font-size:13px;margin:0 0 4px;}
+ #roomIdentity830 #hor-player-name{box-sizing:border-box;width:100%;height:34px;font-size:16px;margin:0 0 7px;padding:4px 9px;}
+ #roomIdentity830 .identity-choice{display:flex;gap:12px;padding:0;}
+ #roomIdentity830 .identity-avatar{min-height:60px;font-size:13px;}
+ #roomIdentity830 .identity-avatar img{width:44px!important;height:44px!important;}
+ #roomIdentity830 .identity-voice select{height:32px;min-height:32px;font-size:13px;}
+ #roomIdentity830 .identity-voice button{height:28px;min-height:28px;margin-top:3px;padding:3px 10px;}
+ body #waiting.friends803 .wait-seat:is(.friends-person,.friends-empty):not([data-position=me]){top:35%!important;width:150px!important;max-width:20%!important;min-height:26px!important;padding:3px 6px!important;border:1px solid #a78e50!important;border-radius:6px!important;background:#10202aea!important;}
+ body #waiting.friends803 .wait-seat[data-position=left]{left:24%!important;}body #waiting.friends803 .wait-seat[data-position=top]{left:50%!important;}body #waiting.friends803 .wait-seat[data-position=right]{left:76%!important;}
+ body #waiting.friends803 .wait-seat strong{font:600 clamp(11px,1.6vw,16px)/1.2 Georgia!important;white-space:nowrap!important;}
+ body #waiting.friends803 .wait-seat:not([data-position=me]) small{display:none!important;}
+ body #waiting .waiting-remove-bot{top:calc(35% + 32px)!important;height:28px!important;min-height:28px!important;font:600 12px Georgia!important;}
+ body #waiting .waiting-remove-bot[data-position=left]{left:24%!important;}body #waiting .waiting-remove-bot[data-position=top]{left:50%!important;}body #waiting .waiting-remove-bot[data-position=right]{left:76%!important;}
+ body #waiting.friends803 .wait-seat[data-position=me]{left:50%!important;bottom:82px!important;width:max-content!important;max-width:240px!important;padding:3px 12px!important;border:1px solid #bca15d!important;border-radius:5px!important;background:#15231aef!important;min-height:26px!important;}
+ body #waiting.friends803 .wait-seat[data-position=me] small{display:none!important;}
+ body #waiting.friends803 #friendsCenter804{left:50%!important;top:58%!important;width:max-content!important;max-width:90%!important;transform:translateX(-50%)!important;}
+ body #waiting.friends803 #friendsHeading803{font:600 clamp(18px,2.5vw,27px)/1.15 Georgia!important;margin:0!important;}
+ body #waiting.friends803 #waitingStatus{font:13px/1.2 Georgia!important;margin-top:3px!important;}
+ body #waiting .friends-flourish804,body #waiting .friends-dock-line804,body #waiting #friendsSeatHint803{display:none!important;}
+ body #waiting.friends803 #friendsDock803{display:grid!important;grid-template-columns:minmax(0,1.2fr) minmax(130px,1fr) minmax(90px,.7fr)!important;align-items:center!important;gap:10px!important;box-sizing:border-box!important;left:5%!important;right:5%!important;bottom:12px!important;width:90%!important;max-width:none!important;transform:none!important;padding:8px 12px!important;min-height:58px!important;border:1px solid #b49755!important;border-radius:14px!important;background:linear-gradient(100deg,#2e180a,#5b351c 45%,#2e180a)!important;}
+ body #waiting.friends803 .friends-dock-top804{display:flex!important;align-items:center!important;gap:6px!important;min-width:0!important;}
+ body #waiting.friends803 #friendsTableOptions804{font:600 11px Georgia!important;white-space:nowrap!important;margin:0!important;}
+ body #waiting.friends803 .friends-code804{display:flex!important;align-items:center!important;gap:2px!important;min-width:0!important;}
+ body #waiting.friends803 #friendsDock803 :is(button,.btn){min-width:0!important;margin:0!important;min-height:36px!important;height:36px!important;max-height:36px!important;padding:3px 8px!important;font:600 13px Georgia!important;white-space:nowrap!important;border-radius:6px!important;}
+ body #waiting.friends803 #copyCodeBtn{width:23px!important;min-width:23px!important;padding:0!important;}
+ body #waiting.friends803 #friendsActions803{display:flex!important;gap:6px!important;margin:0!important;}
+ body #waiting.friends803 #friendsActions803 button{flex:1!important;}
+ body #waiting.friends803 #startBtn{font-size:18px!important;}
+ body #waiting.friends803 .friends-footer{display:flex!important;justify-content:flex-end!important;margin:0!important;padding:0!important;}
+ body #waiting.friends803 .friends-footer::before,body #waiting.friends803 .friends-footer::after{display:none!important;}
+ body #botPickerModal .bot-picker-sheet.replacing-bot830 #botPickerClose{width:48%!important;margin-left:52%!important;}
+ #botPickerRemove830{display:none;}
+ body #botPickerModal .bot-picker-sheet.replacing-bot830 #botPickerRemove830:not([hidden]){display:block;position:absolute;bottom:10px;left:10px;width:calc(48% - 10px);height:34px;min-height:34px;font-size:13px;}
+ body.in-game .landscape-deal830 .deal-flight035{width:110px!important;height:159px!important;transform-origin:0 0!important;transform:scale(var(--deal-landscale830)) scaleY(.65) rotate(-7deg)!important;}
+ body.in-game .landscape-deal830 .deal-flight035>.card-face{position:absolute!important;inset:0!important;width:100%!important;height:100%!important;margin:0!important;transform:none!important;}
+}
+@media(orientation:landscape) and (max-height:340px){
+ body :is(#lobby,#waiting) .room-brand830{width:115px;left:12px;top:8px;}
+ body #lobby #roomWelcome830{gap:5px;}
+ #roomWelcome830 h1{font-size:21px;}
+ #roomWelcome830 #roomEditPlayer830{height:28px;min-height:28px;font-size:12px;}
+ #roomEditPlayer830 img{width:23px;height:23px;}
+ body #lobby #roomEntryDock830{bottom:8px;left:7%;right:7%;padding:5px 8px;gap:7px;}
+ body #lobby #roomEntryDock830 button{height:34px!important;min-height:34px!important;max-height:34px!important;font-size:15px!important;}
+ body #lobby #landingPartner783{top:calc(33% + 23px)!important;height:24px!important;min-height:24px!important;}
+ body #waiting.friends803 .wait-seat:is(.friends-person,.friends-empty):not([data-position=me]){top:32%!important;min-height:22px!important;}
+ body #waiting .waiting-remove-bot{top:calc(32% + 27px)!important;min-height:24px!important;height:24px!important;}
+ body #waiting.friends803 #friendsCenter804{top:55%!important;}
+ body #waiting.friends803 #friendsHeading803{display:none!important;}
+ body #waiting.friends803 #waitingStatus{font-size:13px!important;}
+ body #waiting.friends803 .wait-seat[data-position=me]{bottom:64px!important;min-height:22px!important;}
+ body #waiting.friends803 #friendsDock803{bottom:8px!important;padding:5px 8px!important;min-height:45px!important;gap:7px!important;}
+ body #waiting.friends803 #friendsDock803 :is(button,.btn){height:32px!important;min-height:32px!important;max-height:32px!important;font-size:12px!important;padding:3px 6px!important;}
+ body #waiting.friends803 #startBtn{font-size:16px!important;}
+}
+/* Retire the former split-room geometry and dock ornament explicitly. */
+@media(orientation:landscape){
+ body #waiting.friends803 .wait-seat:is(.friends-person,.friends-empty)[data-position=left]{left:24%!important;}
+ body #waiting.friends803 .wait-seat:is(.friends-person,.friends-empty)[data-position=top]{left:50%!important;}
+ body #waiting.friends803 .wait-seat:is(.friends-person,.friends-empty)[data-position=right]{left:76%!important;}
+ body #waiting.friends803 #friendsDock803::before,body #waiting.friends803 #friendsDock803::after{content:none!important;display:none!important;}
+ body #waiting.friends803 #friendsDock803 #friendsSeatHint803{display:none!important;}
+ body #waiting.friends803 #friendsDock803 #leaveBtn{display:flex!important;align-items:center!important;justify-content:center!important;height:36px!important;min-height:36px!important;padding:4px 12px!important;border:1px solid #b69a59!important;background:linear-gradient(#16324a,#0b1624)!important;color:#f3e3b9!important;font:600 13px Georgia,serif!important;}
+ body #waiting.friends803 #friendsDock803 #startBtn{font:600 18px Georgia,serif!important;}
+ body #waiting.friends803 #friendsDock803{background:linear-gradient(#1b0e0680,#1b0e0680),url('assets/cardholder/backrest004.png') center/cover!important;}
+ body #lobby #roomEntryDock830{background:linear-gradient(#1b0e0680,#1b0e0680),url('assets/cardholder/backrest004.png') center/cover!important;}
+ body #lobby #roomWelcome830 h1{font:600 clamp(20px,3vw,31px)/1.1 Georgia,serif!important;}
+ body #lobby #roomEntryDock830 :is(#soloPracticeBtn,#friendsToggleBtn,#joinBtn){font-family:Georgia,serif!important;font-weight:600!important;}
+}
+@media(orientation:landscape) and (max-height:340px){
+ body #waiting.friends803 #friendsDock803 #leaveBtn{height:32px!important;min-height:32px!important;font-size:12px!important;}
+ body #waiting.friends803 #friendsDock803 #startBtn{font-size:16px!important;}
+ body #lobby #roomWelcome830 h1{font-size:21px!important;}
+}

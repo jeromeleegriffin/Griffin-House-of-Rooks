@@ -9,7 +9,7 @@
       if (updating) return;
       updating = true;
       try {
-        const active = portrait.matches && dock.classList.contains('decision-mode-bid') && !dock.classList.contains('hidden');
+        const active = (portrait.matches || window.HORAngleC?.active()) && dock.classList.contains('decision-mode-bid') && !dock.classList.contains('hidden');
         let surface = Array.from(dock.children).find(el => el.classList.contains('approved-bid-surface'));
         if (!active) {
           if (dock.classList.contains('approved-bid-portrait')) dock.classList.remove('approved-bid-portrait');

@@ -1,0 +1,22 @@
+GRIFFIN HOUSE OF ROOKS — LANDSCAPE FRIENDS REVIEW
+2026-10-17 · lower-camera-friends-review-20261017
+
+CONTINUING THE SAME GAME
+Previous delivered Griffin_Landscape_Layout_Review.zip:SHA2567b0ce395adec3f65f86660c8ed957ef61230c43b9a06c7f09e368560e0fd73f7. Oval artwork, gameplay camera, larger cards, holder clearance, lower-left score and lower-right controls retained. No new artwork generated.
+
+THIS PASS
+• Bid Box keeps the same normal width and height when200/Shoot the Moon appears. Removed the Moon-only size adjustment. Measured before/after equality at844x390 and844x290. Existing brass-connected Moon plaque retained. Very short views still place the full assembly slightly right to clear the far player's face.
+• Top nameplate moved closer to the far player, remaining beside the face.
+• Friends waiting screen uses the landscape oval scene and actual seat-relative identities. Seated faces are visible; oversized empty holder removed from landscape waiting only. Existing seat/stat/remove/choose controls retained. Empty-seat buttons, local plaque, readiness, table code and host controls stay visible.
+• Bot picker has a bounded area for complete bot cards, compact heading, navigation and Cancel. Original ranked order, persona information and selection handlers retained. At844x390 and844x290 it showed6 entries/page,9 pages;844x245 browser-bar view showed3 entries/page,18 pages;1280x800 showed16 entries/page,4 pages. Next/Previous and real selection tested.
+
+PLAY
+Open this ZIP with your existing game ZIP player. Alternatively extract all files together, serve the folder locally (python3 -m http.server 8000), then open http://localhost:8000. Entry:index.html. Included GriffinHousePlayer.html retains original bytes.
+
+CHECKS AND LIMITS
+Normal human195 bid and short human200 Shoot the Moon each completed genuine six-card discard, trump choice/confirmation and card input through scoring. No forced game/score state. Click-attempt counts can include original450ms-lock rejections; they are not trick counts. Offline worker-controlled reload/solo entry rendered without missing art. Source/script checks and ZIP CRC/hash checks passed.
+Friends UI uses an ISOLATED LOCAL HOST FIXTURE that bypasses signaling, then genuine seat/picker/fill/remove/cancel/start clicks. It verifies layout, actual seat/identity mapping and start dispatch, not network connectivity. No cross-device multiplayer certification. Physical Android and the owner's installed ZIP player still need owner review. Existing portrait presentation and rules are retained. No deployment or player-data clearing occurred.
+
+PRESERVATION
+Underlying816.zip SHA2564c79e110f29c77b536dc50304697c53fcef0f4e5c1b8ab23f7b1bf2d1b058af7. Engine game060.js differs only in its runtime marker. Rules, AI, saves, voices, card art and original portrait files retain source bytes. Presentation changes are in the three landscape files plus runtime/cache markers. Previous reviews remain rollback candidates.
+Earlier carried-over README/QA/manifests are historical. REVIEW-CHECKS.json and REVIEW-MANIFEST.json describe this package. Keep player data intact when reviewing/rolling back.

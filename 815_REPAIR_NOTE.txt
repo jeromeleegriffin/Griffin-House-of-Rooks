@@ -1,0 +1,8 @@
+BUILD 815 | ISOLATED LANDSCAPE REVIEW | NOT DEPLOYED
+Base: exact Build 814 archive, all other runtime files untouched.
+- Physical stamper contact size is no longer derived from the felt imprint width. Landscape flight/contact keeps the physical stamper about its natural size.
+- Felt trump imprint remains 264 scene units. No paint/ink geometry modified.
+- Lead status now uses numeric owner of the trick's first played card; before the first card it uses currentPlayer.
+- Added per-frame lightweight game-state signature tracking to keep all four seat labels synchronized even when no DOM mutations occur.
+- No portrait CSS or portrait-only code modified.
+Validation: node syntax checks pass. Full Android animation and complete-hand runtime checks pending owner review. Neither live repository touched.

@@ -1,0 +1,54 @@
+{
+  "build": "845-share-shuffle",
+  "base": "844.zip",
+  "base_sha256": "7c0b7003f8dbbc41ed39017daee3e1c73e4f3669ff27b867287ea3d0f61ddfca",
+  "changed": [
+    {
+      "path": "REVIEW-CHECKS.json",
+      "sha256": "fd50253ab03da3d625a60925c5d7398615f786172e97b383370911d84fce79ec"
+    },
+    {
+      "path": "game060.js",
+      "sha256": "5cdef2d51ce0aa61aa6fa250d6817e59f0d3c4f14b9c7a927c5bf09f3473ed71"
+    },
+    {
+      "path": "hor-version.js",
+      "sha256": "ae45a605d9bcdfd290b22acb11a8ae25590efd5807c06b57dcdfbce96e8c0cda"
+    },
+    {
+      "path": "index.html",
+      "sha256": "8e021989d60700ec91a1ad6de8166037430d624bb90c5779c5b9ba233e39aa16"
+    },
+    {
+      "path": "signature-shuffle.css",
+      "sha256": "f0f1dd5dfd5f11c9791576aab921629501eea59652e8524dae499fe0fee9e40b"
+    },
+    {
+      "path": "signature-shuffle.js",
+      "sha256": "378a02685107cb73f1862ff9bd1373899f8c670f0132a3b741550567fbc7d977"
+    },
+    {
+      "path": "style057.css",
+      "sha256": "741acd2139dc546fabe8d30f1a9c499e9f99c7ae46c37b695cc801e3a8eee169"
+    },
+    {
+      "path": "sw060.js",
+      "sha256": "cecddf34def0467acbe6ee050fd8fc7c2a922321e192e3ff07e36f640a0ae93c"
+    }
+  ],
+  "added": [
+    {
+      "path": "README-845.txt",
+      "sha256": "879758bc9e03783ba69cae1f5cc710f23ca4a1ce9ecd7805178fac4b53217a35"
+    },
+    {
+      "path": "qrcode845.js",
+      "sha256": "3ee72de9f69c668f9567363a9358df955960bae9000d9ebd66414670f88e8735"
+    },
+    {
+      "path": "review-continuity/845-CHECKPOINT.txt",
+      "sha256": "879758bc9e03783ba69cae1f5cc710f23ca4a1ce9ecd7805178fac4b53217a35"
+    }
+  ],
+  "removed": []
+}

@@ -5279,109 +5279,6 @@ body:not(.in-game) #app {
   pointer-events: auto !important;
 }
 
-/* ===== Lucky specials spinner ===== */
-.lucky-spinner-overlay {
-  position: fixed;
-  inset: 0;
-  z-index: 190000;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  background: rgba(6, 8, 5, 0.82);
-}
-.lucky-spinner-overlay.hidden { display: none !important; }
-.lucky-spinner-sheet {
-  text-align: center;
-  padding: 1rem 1.2rem 1.15rem;
-  border-radius: 16px;
-  border: 2px solid rgba(201,162,39,.7);
-  background: linear-gradient(165deg, rgba(38,26,13,.97), rgba(10,17,11,.97));
-  box-shadow: 0 16px 40px rgba(0,0,0,.55);
-  min-width: min(86vw, 320px);
-}
-.lucky-spinner-title {
-  color: #ffd54f;
-  font-weight: 900;
-  letter-spacing: .06em;
-  text-transform: uppercase;
-  font-size: 1.05rem;
-}
-.lucky-spinner-sub {
-  color: #ffe9a8;
-  font-size: .82rem;
-  margin: .15rem 0 .7rem;
-}
-.lucky-wheel-wrap {
-  position: relative;
-  width: 220px;
-  height: 220px;
-  margin: 0 auto .7rem;
-}
-.lucky-wheel-pointer {
-  position: absolute;
-  top: -8px;
-  left: 50%;
-  width: 0;
-  height: 0;
-  margin-left: -10px;
-  border-left: 10px solid transparent;
-  border-right: 10px solid transparent;
-  border-top: 18px solid #ffd54f;
-  z-index: 2;
-  filter: drop-shadow(0 2px 2px rgba(0,0,0,.45));
-}
-.lucky-wheel {
-  width: 220px;
-  height: 220px;
-  border-radius: 50%;
-  border: 4px solid #c9a227;
-  box-shadow: inset 0 0 0 8px rgba(0,0,0,.25), 0 8px 20px rgba(0,0,0,.4);
-  background: conic-gradient(
-    from -30deg,
-    #3e2723 0 60deg,
-    #5d4037 60deg 120deg,
-    #1b5e20 120deg 180deg,
-    #33691e 180deg 240deg,
-    #bf360c 240deg 300deg,
-    #e65100 300deg 360deg
-  );
-  position: relative;
-}
-.lucky-seg {
-  position: absolute;
-  left: 50%;
-  top: 50%;
-  width: 70px;
-  margin-left: -35px;
-  color: #fff8e1;
-  font-weight: 900;
-  font-size: .82rem;
-  text-shadow: 0 1px 2px #000;
-  transform-origin: 50% 0;
-  text-align: center;
-}
-.lucky-seg.s0 { transform: rotate(0deg) translateY(-88px); }
-.lucky-seg.s1 { transform: rotate(60deg) translateY(-88px); }
-.lucky-seg.s2 { transform: rotate(120deg) translateY(-88px); }
-.lucky-seg.s3 { transform: rotate(180deg) translateY(-88px); }
-.lucky-seg.s4 { transform: rotate(240deg) translateY(-88px); }
-.lucky-seg.s5 { transform: rotate(300deg) translateY(-88px); }
-.lucky-spinner-result {
-  color: #ffe082;
-  font-weight: 800;
-  min-height: 1.3em;
-}
-@media (orientation: landscape) {
-  .lucky-wheel-wrap, .lucky-wheel { width: 168px; height: 168px; }
-  .lucky-seg { font-size: .72rem; width: 58px; margin-left: -29px; }
-  .lucky-seg.s0 { transform: rotate(0deg) translateY(-66px); }
-  .lucky-seg.s1 { transform: rotate(60deg) translateY(-66px); }
-  .lucky-seg.s2 { transform: rotate(120deg) translateY(-66px); }
-  .lucky-seg.s3 { transform: rotate(180deg) translateY(-66px); }
-  .lucky-seg.s4 { transform: rotate(240deg) translateY(-66px); }
-  .lucky-seg.s5 { transform: rotate(300deg) translateY(-66px); }
-}
-
 /* ===== Shuffle + deal presentation ===== */
 .shuffle-overlay {
   position: fixed;
@@ -12855,27 +12752,11 @@ body.in-game .landscape-theater::before{content:"HOUSE OF ROOKS"!important}
 .sol-layout-panel button { border:1px solid #a77a2c; border-radius:7px; min-height:30px; padding:.3rem .46rem; background:#3a2812; color:#ffe8a8; font-weight:800; font-size:10px; }
 .sol-layout-panel button.active { background:#d0a23c; color:#1a1007; border-color:#ffe69a; box-shadow:inset 0 1px 0 rgba(255,255,255,.45); }
 #solLayoutCoords { min-width:170px; text-align:center; }
-
-
-/* Rook528 — SOL Visual Layout Studio */
-.sol-studio-managed{translate:var(--sol-vs-x,0px) var(--sol-vs-y,0px)!important;scale:var(--sol-vs-scale,1)!important;transform-origin:center center!important}
-.sol-studio-hidden{opacity:.12!important}
-.sol-studio-editing .sol-studio-target{outline:2px dashed #ffd65a!important;outline-offset:4px!important;cursor:move!important;touch-action:none!important}
-.sol-studio-editing .sol-studio-dragging{outline-style:solid!important;filter:drop-shadow(0 0 8px rgba(255,210,70,.8))}
-.sol-studio-editing.sol-studio-picking *, .sol-studio-picking *{cursor:crosshair!important}
-.sol-studio-boxes .player-slot,.sol-studio-boxes .hand,.sol-studio-boxes .trick-area,.sol-studio-boxes button,.sol-studio-boxes .modal{outline:1px solid rgba(100,220,255,.55)!important}
-.sol-studio-guides body:before,.sol-studio-guides body:after{content:"";position:fixed;z-index:999990;pointer-events:none;background:rgba(255,90,90,.55)}
-.sol-studio-guides body:before{left:50%;top:0;width:1px;height:100vh}.sol-studio-guides body:after{top:50%;left:0;height:1px;width:100vw}
-.sol-studio-panel{position:fixed;z-index:1000002;right:max(6px,env(safe-area-inset-right));bottom:max(6px,env(safe-area-inset-bottom));width:min(96vw,520px);max-height:48vh;overflow:auto;box-sizing:border-box;padding:.5rem;border:1px solid #b98a36;border-radius:10px;background:rgba(18,12,7,.97);color:#ffe8a8;box-shadow:0 5px 22px rgba(0,0,0,.65);font:700 10px/1.15 system-ui,sans-serif}
-.sol-studio-panel.hidden,.sol-studio-panel .hidden{display:none!important}.sol-studio-head,.sol-studio-row{display:flex;gap:.3rem;align-items:center;justify-content:center;flex-wrap:wrap;margin:.22rem 0}.sol-studio-head b{margin-right:auto}.sol-studio-grid{display:grid;grid-template-columns:repeat(4,minmax(64px,1fr));gap:.3rem}.sol-studio-grid label{display:flex;align-items:center;gap:.2rem;font-size:9px}.sol-studio-grid input,.sol-studio-grid select{width:100%;min-width:0;box-sizing:border-box;background:#160f08;color:#ffe8a8;border:1px solid #795b28;border-radius:5px;padding:.25rem}.sol-studio-panel button{border:1px solid #a77a2c;border-radius:6px;min-height:28px;padding:.25rem .42rem;background:#3a2812;color:#ffe8a8;font-weight:800;font-size:9px}.sol-studio-panel button.active{background:#d0a23c;color:#1a1007}.sol-studio-help{opacity:.75;text-align:center;font-size:9px;margin-top:.25rem}.sol-studio-panel textarea{width:100%;height:90px;box-sizing:border-box;background:#0c0906;color:#f7df9c;font:9px monospace}
-@media (max-width:600px){.sol-studio-panel{left:2vw;right:2vw;width:96vw}.sol-studio-grid{grid-template-columns:repeat(4,1fr)}}
+@media (max-width:600px){}
 
 
 /* ===== Rook529: SOL activation + table cleanup ===== */
-/* SOL's private launcher is impossible to miss in offline developer play, invisible otherwise. */
-#btnSolStudio.sol-studio-launch{width:auto!important;min-width:92px!important;padding:.32rem .5rem!important;border-color:#e0b64c!important;background:linear-gradient(180deg,#5a3d16,#2a1a09)!important;color:#ffe6a0!important}
-#btnSolStudio.sol-studio-launch span{position:static!important;display:inline!important;font-size:.66rem!important;margin-left:.2rem!important}
-#btnSolStudio.sol-studio-launch.hidden{display:none!important}
+/* SOL's private launcher is impossible to miss in offline developer play{width:auto!important;min-width:92px!important;padding:.32rem .5rem!important;border-color:#e0b64c!important;background:linear-gradient(180deg,#5a3d16,#2a1a09)!important;color:#ffe6a0!important}
 /* More opens away from the central felt instead of dropping across play. */
 .game-more-menu{top:auto!important;bottom:calc(100% + 5px)!important}
 /* Message Table is retired from player-facing UI, including stale cached markup. */
@@ -12884,24 +12765,8 @@ body.in-game .landscape-theater::before{content:"HOUSE OF ROOKS"!important}
 #trumpBadge{display:none!important}
 
 
-/* ===== Rook530: SOL Studio 2 — movable editor, stable game geometry ===== */
-.sol-studio-head{cursor:grab!important;user-select:none;touch-action:none;border-bottom:1px solid rgba(185,138,54,.35);padding-bottom:.25rem!important}
-.sol-studio-head:active{cursor:grabbing!important}
-.sol-studio-panel.collapsed{width:auto!important;min-width:235px!important;max-height:none!important;overflow:hidden!important}
-.sol-studio-panel.collapsed .sol-studio-body{display:none!important}
-.sol-studio-dock span{opacity:.72;font-size:8px}
-.sol-studio-dock button{min-width:34px!important}
-/* Position/scale are editor-owned independent CSS properties. Gameplay transform animations
-   cannot rewrite the saved SOL translation/scale. */
-.sol-studio-managed{translate:var(--sol-vs-x,0px) var(--sol-vs-y,0px)!important;scale:var(--sol-vs-scale,1)!important}
-
-/* ===== Rook531: SOL Studio 3 safety/workflow ===== */
-.sol-studio-panel{resize:none!important;min-width:280px!important;min-height:180px!important;max-width:98vw!important;max-height:92vh!important}
-.sol-studio-resize{position:absolute;right:2px;bottom:2px;width:24px;height:24px;display:grid;place-items:center;cursor:nwse-resize;touch-action:none;color:#ffd65a;font-size:16px;z-index:3}
-.sol-studio-safety{min-height:12px;text-align:center;color:#ffcf66;font-size:8px;font-weight:900}
+/* ===== Rook530: SOL Studio 2 — movable editor{cursor:grab!important;user-select:none;touch-action:none;border-bottom:1px solid rgba(185,138,54,.35);padding-bottom:.25rem!important}
 .sol-hidden-list{max-height:90px;overflow:auto;border:1px solid rgba(185,138,54,.4);padding:3px}.sol-hidden-list button{display:block;width:100%;text-align:left;margin:2px 0}
-.sol-studio-viewport{position:sticky;bottom:0;margin:3px 26px 0 0;text-align:right;pointer-events:none;opacity:.75;font-size:8px}
-.sol-studio-guides:before{content:"PHONE SAFE AREA";position:fixed;inset:10px;z-index:999989;border:1px dashed rgba(255,214,90,.8);box-shadow:0 0 0 10px rgba(255,80,80,.08);pointer-events:none;color:#ffd65a;font:700 8px system-ui;padding:2px}
 #trickArea{pointer-events:none}#trickArea .trick-card-wrap,#trickArea .card{pointer-events:auto}
 
 
@@ -13198,11 +13063,7 @@ body.in-game .landscape-theater::before{content:"HOUSE OF ROOKS"!important}
   #slot-me .name,
   #slot-partner .name,
   #slot-left .name,
-  #slot-right .name,
-  #slot-me .name.sol-studio-managed,
-  #slot-partner .name.sol-studio-managed,
-  #slot-left .name.sol-studio-managed,
-  #slot-right .name.sol-studio-managed {
+  #slot-right .name{
     translate:none !important;
     scale:1 !important;
     transform:none !important;
@@ -13433,14 +13294,7 @@ body.in-game .landscape-theater::before{content:"HOUSE OF ROOKS"!important}
   backdrop-filter:blur(4px);-webkit-backdrop-filter:blur(4px);
 }
 
-/* Lucky Specials remains a real interactive spinner, but loses the old brown sheet. */
-.lucky-spinner-overlay { background:rgba(2,8,10,.62) !important;backdrop-filter:blur(6px);-webkit-backdrop-filter:blur(6px); }
-.lucky-spinner-sheet {
-  border:1px solid rgba(225,190,91,.78) !important;
-  border-radius:20px !important;
-  background:radial-gradient(circle at 50% 0,rgba(221,184,75,.11),transparent 35%),linear-gradient(165deg,rgba(7,18,20,.97),rgba(5,12,14,.98)) !important;
-  box-shadow:0 16px 42px rgba(0,0,0,.62),0 0 26px rgba(213,176,68,.10) !important;
-}
+/* Lucky Specials remains a real interactive spinner{ background:rgba(2,8,10,.62) !important;backdrop-filter:blur(6px);-webkit-backdrop-filter:blur(6px); }
 
 
 /* ===== Rook554: one-shot centered trump announcement =====
@@ -14312,7 +14166,7 @@ html:not(.hor-original-cards) body .trick-stack .trick-card-wrap .card-face:not(
 #scoreModal:not(.showing-remaining) .score-modal-actions #scoreModalNext::after{content:"  ▶"}
 #scoreModal:not(.showing-remaining) .score-modal-actions .hidden{display:none!important}
 
-#horThemeDiagnostic,#horDiagnosticPreview,#btnSolStudio,#solStudioPanel{display:none!important;}
+#horThemeDiagnostic,#horDiagnosticPreview,#btnSolStudio{display:none!important;}
 
 @media (orientation:portrait) and (max-width:520px){
   #scoreModal:not(.showing-remaining) .modal-content.scoreboard-modal{width:96vw!important;padding:78px 8px 8px!important}
@@ -14901,10 +14755,6 @@ nn/* ===== Rook595 — failed-fix reset + viewport menu + approved opaque bid sh
 @media(max-width:520px){#hostOptionsModal .gh-menu-utility-grid{grid-template-columns:1fr 1fr!important}}
 /* Seat attachments have one geometry writer in game.js. Neutralize historical fixed-coordinate ownership. */
 .player-slot>.bid-badge,#slot-me>.bid-badge,:is(#botThinking,.auction-status).bot-thinking{right:auto!important;bottom:auto!important;margin:0!important}
-/* Emergency diagnostics are independent of the game menu. */
-#solDiagEmergency{position:fixed!important;right:max(8px,env(safe-area-inset-right))!important;bottom:max(8px,env(safe-area-inset-bottom))!important;z-index:2147483646!important;min-width:44px!important;height:34px!important;padding:0 9px!important;border:1px solid #d3ad4b!important;border-radius:18px!important;background:#111!important;color:#f4d77b!important;font:800 11px/1 system-ui,sans-serif!important;box-shadow:0 4px 16px rgba(0,0,0,.5)!important}
-#solDiagEmergencyPanel{position:fixed!important;right:max(8px,env(safe-area-inset-right))!important;bottom:50px!important;z-index:2147483646!important;display:grid!important;grid-template-columns:1fr!important;gap:5px!important;width:150px!important;padding:7px!important;border:1px solid #d3ad4b!important;border-radius:10px!important;background:#111!important;box-shadow:0 8px 24px rgba(0,0,0,.65)!important}
-#solDiagEmergencyPanel.hidden{display:none!important}#solDiagEmergencyPanel button{min-height:36px!important;border:1px solid #6d5a2d!important;border-radius:7px!important;background:#222!important;color:#fff!important;font:750 11px/1.1 system-ui,sans-serif!important}
 
 
 /* ===== Rook600 — compact match score + seat status + reliable diagnostics ===== */
@@ -14974,8 +14824,7 @@ nn/* ===== Rook595 — failed-fix reset + viewport menu + approved opaque bid sh
 /* Retire the experimental seat-pip objects that produced the unexplained stray dots. */
 .hor-seat-pip{display:none!important;}
 
-/* Emergency DIAG is viewport-owned, independent of menus/scoreboard/table state. */
-#solDiagEmergency{
+/* Emergency DIAG is viewport-owned{
   display:block!important;
   visibility:visible!important;
   opacity:1!important;
@@ -14985,25 +14834,6 @@ nn/* ===== Rook595 — failed-fix reset + viewport menu + approved opaque bid sh
   bottom:max(8px,env(safe-area-inset-bottom))!important;
   z-index:2147483646!important;
 }
-#solDiagExportNotice{
-  position:fixed!important;
-  left:50%!important;
-  bottom:max(54px,calc(env(safe-area-inset-bottom) + 54px))!important;
-  transform:translate(-50%,12px)!important;
-  z-index:2147483647!important;
-  max-width:min(92vw,560px)!important;
-  padding:9px 12px!important;
-  border:1px solid #d3ad4b!important;
-  border-radius:10px!important;
-  background:#101210!important;
-  color:#f5df99!important;
-  font:800 11px/1.25 system-ui,sans-serif!important;
-  text-align:center!important;
-  opacity:0!important;
-  pointer-events:none!important;
-  transition:opacity .15s ease,transform .15s ease!important;
-}
-#solDiagExportNotice.show{opacity:1!important;transform:translate(-50%,0)!important;}
 
 
 /* ===== ROOK611 COMPACT LAYOUT TOOL ===== */
@@ -15179,50 +15009,10 @@ body.in-game .in-game-leave .leave-exit-btn,body.in-game .in-game-leave .leave-m
 @media(orientation:landscape){body.in-game #decisionConsole:not(.hidden){left:50%!important;top:50%!important;transform:translate(-50%,-50%)!important}}
 @media(max-width:380px) and (orientation:portrait){#discardOverlay .gh-kitty-title{font-size:22px}#discardOverlay .gh-kitty-page .kitty-flash-card{width:42px!important;height:61px!important;flex-basis:42px!important}#discardOverlay .discard-pick{width:35px!important;height:51px!important;flex-basis:35px!important}}
 
-/* Rook635 layout tool — clean rebuild; draggable + collapsible. */
-#ghLayout635{position:fixed!important;left:8px;bottom:8px;z-index:2147483647!important;width:min(94vw,330px)!important;background:#080808!important;color:#fff!important;border:1px solid #b58b35!important;border-radius:7px!important;padding:4px!important;box-sizing:border-box!important;font:8px/1.1 Arial,sans-serif!important;box-shadow:0 2px 12px #000!important}
-#ghLayout635 button{background:#171717!important;color:#fff!important;border:1px solid #8e6c2b!important;border-radius:4px!important;min-height:22px!important;padding:2px 5px!important;font:700 8px Arial,sans-serif!important}
-#ghLayout635 button.active{background:#6b511e!important;border-color:#f0cf72!important}
-#ghLayout635 .gh635-head{display:flex!important;align-items:center!important;gap:3px!important}
-#ghLayout635 .gh635-drag{flex:1!important;cursor:move!important;touch-action:none!important;color:#e5c267!important;font-weight:900!important;letter-spacing:.05em!important;padding:5px 3px!important;user-select:none!important}
-#ghLayout635 .gh635-body{display:block!important}
-#ghLayout635.collapsed{width:auto!important;min-width:124px!important;padding:3px!important}
-#ghLayout635.collapsed .gh635-body,#ghLayout635.collapsed [data-names]{display:none!important}
-#ghLayout635 .gh635-picks,#ghLayout635 .gh635-move{display:flex!important;gap:3px!important;margin-top:3px!important;flex-wrap:nowrap!important}
-#ghLayout635 .gh635-picks button{flex:1!important}
-#ghLayout635 #gh635Read{margin-top:3px!important;background:#000!important;border:1px solid #292929!important;padding:3px!important;white-space:nowrap!important;overflow:hidden!important;text-overflow:ellipsis!important;font:8px monospace!important}
-#ghLayout635 .gh635-move button{flex:0 0 auto!important}
-#ghLayout635 .gh635-names{display:grid!important;grid-template-columns:1fr 1fr!important;gap:3px!important;margin-top:3px!important;padding-top:3px!important;border-top:1px solid #5f481f!important}
-#ghLayout635 .gh635-names[hidden]{display:none!important}
-#ghLayout635 .gh635-names input{width:100%!important;min-width:0!important;box-sizing:border-box!important;background:#000!important;color:#fff!important;border:1px solid #8e6c2b!important;border-radius:3px!important;padding:3px!important;font:9px Arial,sans-serif!important}
-#ghLayoutOutline635{position:fixed!important;z-index:2147483646!important;pointer-events:none!important;border:2px dashed #ffd45a!important;box-sizing:border-box!important;background:rgba(255,212,90,.04)!important}
-
 
 /* R640 exact restored full-game compact mapper CSS from working R624 */
 .ghc-names{display:none!important;margin-top:5px!important;padding:6px!important;border:1px solid #8e6c2b!important;border-radius:5px!important;background:#111!important;color:#eee!important;font-size:10px!important}.ghc-names.show{display:block!important}.ghc-names-title{font-weight:700;margin-bottom:4px;color:#f3d889}.ghc-names label{display:flex;align-items:center;gap:4px;margin:2px 0}.ghc-names input{width:110px;min-width:0;padding:3px 4px;border:1px solid #555;border-radius:3px;background:#222;color:#fff;font-size:10px}.ghc-name-actions{display:flex;gap:3px;margin-top:4px}
-#ghCompact611{position:fixed!important;z-index:2147483647!important;width:min(96vw,460px)!important;background:#080808!important;color:#fff!important;border:1px solid #b58b35!important;border-radius:7px!important;padding:4px!important;box-sizing:border-box!important;font:10px/1.15 Arial,sans-serif!important;touch-action:manipulation!important}
-#ghCompact611[data-dock="bottom"]{left:50%!important;bottom:4px!important;right:auto!important;top:auto!important;transform:translateX(-50%)!important}
-#ghCompact611[data-dock="top"]{left:50%!important;top:4px!important;right:auto!important;bottom:auto!important;transform:translateX(-50%)!important}
-#ghCompact611[data-dock="left"]{left:4px!important;top:50%!important;right:auto!important;bottom:auto!important;transform:translateY(-50%)!important}
-#ghCompact611[data-dock="right"]{right:4px!important;top:50%!important;left:auto!important;bottom:auto!important;transform:translateY(-50%)!important}
-#ghCompact611 button{appearance:none!important;background:#171717!important;color:#fff!important;border:1px solid #8e6c2b!important;border-radius:4px!important;padding:2px 6px!important;min-height:25px!important;font:700 9px Arial,sans-serif!important}
-#ghCompact611 .ghc-line{display:flex!important;gap:3px!important;align-items:center!important;justify-content:center!important;margin:2px 0!important}
-#ghCompact611 #ghcRead611{white-space:nowrap!important;overflow:hidden!important;text-overflow:ellipsis!important;background:#000!important;border:1px solid #292929!important;padding:3px 5px!important;font:9px monospace!important}
-#ghCompact611 .ghc-more{display:none!important;gap:3px!important;justify-content:center!important;margin-top:3px!important}
-#ghCompact611.show-more .ghc-more{display:flex!important}
-#ghCompact611 .ghc-mini{display:none!important}
-#ghCompact611.collapsed{width:auto!important;padding:2px!important;background:rgba(8,8,8,.94)!important}
-#ghCompact611.collapsed .ghc-full{display:none!important}
-#ghCompact611.collapsed .ghc-mini{display:block!important}
-#ghCompact611.collapsed .ghc-mini button{min-height:24px!important;padding:2px 8px!important}
-#ghCompactOutline611{position:fixed!important;z-index:2147483646!important;pointer-events:none!important;border:2px dashed #ffd45a!important;box-sizing:border-box!important;background:rgba(255,212,90,.03)!important}
-@media(max-width:430px){#ghCompact611{width:min(98vw,420px)!important}#ghCompact611 button{padding:2px 5px!important;font-size:8px!important}}
-
-/* Rook646 mapper panel mobility retained. Failed Rook644 avatar patch and failed
-   Rook646 Settings-pane speed placement are intentionally removed before Rook647 replacement. */
-#ghCompact611[data-dock="free"]{right:auto!important;bottom:auto!important;transform:none!important}
-#ghCompact611 .ghc-full{cursor:move}
-#ghCompact611 button,#ghCompact611 input,#ghCompact611 textarea{cursor:auto}
+@media(max-width:430px){}
 
 
 /* ===== Rook647 — authoritative phone geometry bake =====
@@ -15262,15 +15052,7 @@ body.in-game .player-slot.hor-thinking-pulse .seat-avatar-img{
   transform:none !important;
 }
 
-/* The existing speed DOM is moved, not duplicated, into the compact menu. */
-#ghCompact611 .ghc-mini{align-items:center!important;gap:4px!important;white-space:nowrap!important}
-#ghCompact611.collapsed .ghc-mini{display:flex!important}
-#ghCompact611 #horGameSpeed{
-  position:static!important;inset:auto!important;transform:none!important;
-  display:flex!important;align-items:center!important;gap:2px!important;margin:0!important;
-  width:auto!important;max-width:none!important;z-index:auto!important;
-}
-#ghCompact611 #horGameSpeed button{pointer-events:auto!important}
+/* The existing speed DOM is moved, not duplicated{align-items:center!important;gap:4px!important;white-space:nowrap!important}
 
 /* ===== Rook654 — QUIET PREMIUM BID DOCK =====
    Rook653's full-panel artwork has been removed. The live 331x191 Rook631
@@ -15651,15 +15433,11 @@ body.in-game #decisionConsole.decision-mode-bid .bid-console-title::before{
 
 
 /* ===== Rook677 RECOVERY — diagnostics belong in upper Settings menu =====
-   Surgical recovery from Rook676. No table, card, Bid Dock, or gameplay geometry changes. */
-#hostOptionsModal #optPaneSettings #ghCompact611{
+   Surgical recovery from Rook676. No table, card, Bid Dock{
   position:static!important;left:auto!important;right:auto!important;top:auto!important;bottom:auto!important;
   transform:none!important;width:100%!important;max-width:none!important;margin:.65rem 0 0!important;
   z-index:auto!important;box-sizing:border-box!important;
 }
-#hostOptionsModal #optPaneSettings #ghCompact611.collapsed{width:100%!important;min-width:0!important;}
-#hostOptionsModal #optPaneSettings #ghCompact611 .ghc-mini{display:flex!important;justify-content:flex-start!important;}
-#hostOptionsModal #optPaneSettings #ghCompact611 .ghc-speed-slot{display:none!important;}
 /* Speed stays in its original .hor-speed-menu-setting home in Settings. */
 #hostOptionsModal #optPaneSettings > .hor-speed-menu-setting #horGameSpeed{
   position:static!important;inset:auto!important;transform:none!important;display:flex!important;
@@ -15685,10 +15463,6 @@ body.in-game #decisionConsole.decision-mode-bid #bidValue.is-moon{
   font:950 clamp(1.65rem,6.5vw,1.95rem)/1 Georgia,"Times New Roman",serif!important;
   letter-spacing:-.015em!important;
 }
-
-
-/* ===== Rook693: safe recovery from confirmed-good Rook688 ===== */
-#solDiagEmergency,#solDiagEmergencyPanel{display:none!important;}
 #ghTopTools693{display:flex!important;align-items:center!important;justify-content:center!important;gap:4px!important;flex-wrap:wrap!important;margin:.22rem 0 .05rem!important;padding:.18rem .25rem!important;border-top:1px solid rgba(201,162,39,.28)!important}
 #ghTopTools693 .gh-top-tools-label{font:850 .62rem/1 system-ui,sans-serif!important;color:#ead28d!important;letter-spacing:.05em!important}
 #ghTopTools693 button{appearance:none!important;min-width:32px!important;min-height:26px!important;padding:2px 6px!important;border:1px solid rgba(211,173,75,.58)!important;border-radius:7px!important;background:rgba(12,15,17,.78)!important;color:#f3e4b5!important;font:850 .68rem/1 system-ui,sans-serif!important}
@@ -15727,7 +15501,6 @@ body:not(.in-game)>#topBar{display:none!important}
 #topBar #ghTopTools693{display:flex!important}
 body.in-game #bidOverlayHost{visibility:visible!important;position:fixed!important;inset:0!important;transform:none!important;z-index:2147483400!important}
 body.in-game #decisionConsole{visibility:visible!important}
-#ghCompact611.r706-layout-open{top:112px!important;max-height:calc(100vh - 120px)!important;overflow:auto!important}
 @media(max-width:430px){
  #matchHeader706{left:4px!important;right:4px!important}
  #matchHeader706 #scoreRow{gap:3px!important;font-size:.65rem!important}
@@ -16592,3 +16365,13 @@ body.he064-open #houseEffects064[hidden]{display:none!important}
   pointer-events:none!important;
  }
 }
+
+/* 845: bound the complete QR and its four-module white quiet zone to the viewport. */
+body #qrBox{height:100dvh!important;display:grid;grid-template-columns:minmax(0,1fr);grid-template-rows:minmax(0,1fr) auto;gap:12px;padding:48px 18px 18px!important;overflow:hidden;align-items:center;justify-items:center;}
+#qrGraphic845{width:min(100%,420px,calc(100dvh - 200px));aspect-ratio:1;background:white;padding:16px;box-sizing:border-box;min-height:0;min-width:0;}
+#qrGraphic845 canvas,#qrGraphic845 img{width:100%!important;height:100%!important;max-width:100%;object-fit:contain;}
+#qrBox .qr-info845{text-align:center;min-width:0;}
+#qrBox .qr-info845 h2{color:#000;font:700 24px/1.2 system-ui;margin:0 0 10px;}
+#qrBox .option-hint{font:600 16px/1.35 system-ui;margin:8px 0;max-width:340px;}
+#qrBox #closeQrBtn{width:44px!important;height:44px!important;top:max(4px,env(safe-area-inset-top));right:max(4px,env(safe-area-inset-right));font-size:30px;}
+@media(orientation:landscape){body #qrBox{grid-template-columns:minmax(0,1fr) minmax(180px,.8fr);grid-template-rows:minmax(0,1fr);padding:16px max(54px,env(safe-area-inset-right)) 16px max(16px,env(safe-area-inset-left))!important;gap:24px;}#qrGraphic845{width:min(100%,420px,calc(100dvh - 32px));}#qrBox .qr-info845{justify-self:start;}}

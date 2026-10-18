@@ -1,0 +1,16 @@
+832 FINISHED TABLE ASSET
+
+Final project asset: assets/lower-camera/room-table-baize832.svg
+Asset is a self-contained SVG image1844x853, loaded as an image exactly like the previousPNG. It embeds the unchanged830 room raster and a new photographic blue-cloth raster. The material is clipped to an inner boundary traced from actual blue pixels of the original table, not an invented ellipse. Restrained asset-local illumination is included in the SVG. This is a finished physical scene asset; no DOM/CSS layer simulates the felt and no blur/sharpen filter is used to conceal defects.
+
+Source room: assets/lower-camera/room-table-lantern830.png,1844x853. Preserved unchanged in the final asset, including relocated bookshelf lantern, rail, brass and room. Runtime rail/body occlusion remains the original registered structure.
+
+Material: built-in image generation; final clean-cloth source exec-4f0b045f-f376-4c9e-b914-a25f8f6b059d.png. Entire material raster embedded inside the final SVG, so no external source file or service is needed.
+
+Exact final material-generation prompt:
+A photographic material sample filling the entire image: pristine royal cobalt blue billiard baize cloth, extremely fine matte wool fiber nap, perfectly flat and taut. Nearly solid blue at this viewing distance. No patterns or lines whatsoever. No swirls, no marbling, no embroidery, no embossed relief, no wrinkles, no clouds. Fine subtle photographic fiber grain only. Soft even illumination, uniform neutral rich royal blue. A high quality flat fabric material texture photograph, wide landscape crop, no table, no border, no objects, no text. 1844 by 853.
+
+Rejected scene-edit attempts:
+exec-3e22bca2-2172-4742-9acd-12feb59f42c5.png, exec-cf80978e-6065-49fe-a34f-f0f884c2bb2a.png and exec-bcc829da-966d-468e-98f4-298fcdac68c2.png retained too much of the old loopy pattern. They are not referenced by the game or included as selected assets. No claim that these scene regenerations preserve exact original pixels.
+
+Construction follows the Master Brain physical-environment distinction: use existing pixels for the room/rail, image material for the cloth, native asset registration for the contour, ordinary CSS/DOM only for functional controls and placement. No AI-generated gameplay cards/text/UI.

@@ -1,8 +1,5 @@
 /* No invisible navigation hit boxes over an outstanding human bid, either orientation. */
-body.in-game.human-bid-required737 .in-game-leave,
-body.in-game.human-bid-required737 .in-game-leave button{
- display:none!important;visibility:hidden!important;pointer-events:none!important;
-}
+/* 839: menu/fullscreen remain reachable while a human bid is due. */
 /* Keep the existing opaque landscape label cover when Bid is disabled;
    opacity would expose the artwork's baked sample amount beneath it. */
 body.in-game #decisionConsole.decision-mode-bid:not(.approved-bid-portrait) #bidConfirm:disabled{

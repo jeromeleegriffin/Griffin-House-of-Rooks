@@ -1,0 +1,719 @@
+{
+  "build": "845-share-shuffle",
+  "base": "844.zip",
+  "checks": {
+    "presentation": {
+      "checks": [
+        {
+          "name": "Full scannable QR, quiet zone and close fit 844x245",
+          "ok": true,
+          "detail": {
+            "rect": {
+              "x": 133.828125,
+              "y": 32,
+              "right": 314.828125,
+              "bottom": 213
+            },
+            "quiet": true,
+            "close": {
+              "x": 796,
+              "y": 4,
+              "right": 840,
+              "bottom": 48
+            },
+            "overflow": false,
+            "remote": false,
+            "link": "http://127.0.0.1:9001/?room=ABCD"
+          }
+        },
+        {
+          "name": "Full scannable QR, quiet zone and close fit 844x390",
+          "ok": true,
+          "detail": {
+            "rect": {
+              "x": 61.328125,
+              "y": 32,
+              "right": 387.328125,
+              "bottom": 358
+            },
+            "quiet": true,
+            "close": {
+              "x": 796,
+              "y": 4,
+              "right": 840,
+              "bottom": 48
+            },
+            "overflow": false,
+            "remote": false,
+            "link": "http://127.0.0.1:9001/?room=ABCD"
+          }
+        },
+        {
+          "name": "Full scannable QR, quiet zone and close fit 1280x720",
+          "ok": true,
+          "detail": {
+            "rect": {
+              "x": 151.4375,
+              "y": 166,
+              "right": 539.4375,
+              "bottom": 554
+            },
+            "quiet": true,
+            "close": {
+              "x": 1232,
+              "y": 4,
+              "right": 1276,
+              "bottom": 48
+            },
+            "overflow": false,
+            "remote": false,
+            "link": "http://127.0.0.1:9001/?room=ABCD"
+          }
+        },
+        {
+          "name": "Full scannable QR, quiet zone and close fit 390x844",
+          "ok": true,
+          "detail": {
+            "rect": {
+              "x": 34,
+              "y": 220.46875,
+              "right": 356,
+              "bottom": 542.46875
+            },
+            "quiet": true,
+            "close": {
+              "x": 342,
+              "y": 4,
+              "right": 386,
+              "bottom": 48
+            },
+            "overflow": false,
+            "remote": false,
+            "link": "http://127.0.0.1:9001/?room=ABCD"
+          }
+        },
+        {
+          "name": "Full scannable QR, quiet zone and close fit 360x640",
+          "ok": true,
+          "detail": {
+            "rect": {
+              "x": 34,
+              "y": 133.46875,
+              "right": 326,
+              "bottom": 425.46875
+            },
+            "quiet": true,
+            "close": {
+              "x": 312,
+              "y": 4,
+              "right": 356,
+              "bottom": 48
+            },
+            "overflow": false,
+            "remote": false,
+            "link": "http://127.0.0.1:9001/?room=ABCD"
+          }
+        },
+        {
+          "name": "Share keeps Rooks title, join URL and code",
+          "ok": true
+        },
+        {
+          "name": "Document icon points to Griffin asset",
+          "ok": true
+        },
+        {
+          "name": "Native first deal uses approved asset",
+          "ok": true,
+          "detail": {
+            "active": true,
+            "mode": "asset",
+            "duration": 5033,
+            "minimal": false,
+            "startedAt": 3301.5,
+            "motions": 1,
+            "sounds": 3,
+            "audioGains": [
+              1,
+              1,
+              1
+            ],
+            "audioRates": [
+              1,
+              1,
+              1
+            ],
+            "audioSchedule": [
+              {
+                "sourceBegin": 0.18,
+                "sourceEnd": 0.76,
+                "phase": 0.18,
+                "attack": 0,
+                "presentationFrom": 0.18,
+                "scheduledWhen": 0.2525170068027211,
+                "outputLatency": 0.032
+              },
+              {
+                "sourceBegin": 3.014,
+                "sourceEnd": 3.8,
+                "phase": 2.433333333333333,
+                "attack": 0.008,
+                "presentationFrom": 1.858333333333333,
+                "scheduledWhen": 1.889866333333333,
+                "outputLatency": 0.032
+              },
+              {
+                "sourceBegin": 3.8,
+                "sourceEnd": 5.1,
+                "phase": 3.8,
+                "attack": 0,
+                "presentationFrom": 3.233,
+                "scheduledWhen": 3.264533,
+                "outputLatency": 0.032
+              }
+            ],
+            "lastEvent": {
+              "mode": "asset",
+              "duration": 5033,
+              "minimal": false,
+              "art": "approved Griffin PNG",
+              "frames": 168,
+              "omittedStationaryFrames": 17,
+              "removedHoldMs": 567,
+              "releaseDurationAt1x": 850
+            },
+            "asset": {
+              "frame": 16,
+              "decodedPages": 2,
+              "decodedBytes": 14155776,
+              "loads": 2,
+              "misses": 4,
+              "closed": false
+            }
+          }
+        },
+        {
+          "name": "Rotating opening keeps approved shuffle running",
+          "ok": true
+        },
+        {
+          "name": "Opening finishes in usable auction",
+          "ok": true
+        },
+        {
+          "name": "Later opening rejects retired shuffle switch 844",
+          "ok": true,
+          "detail": {
+            "active": true,
+            "mode": "asset",
+            "duration": 5033,
+            "minimal": false,
+            "startedAt": 21737.10000000149,
+            "motions": 1,
+            "sounds": 0,
+            "audioGains": [],
+            "audioRates": [],
+            "audioSchedule": [],
+            "lastEvent": {
+              "mode": "asset",
+              "duration": 5033,
+              "minimal": false,
+              "art": "approved Griffin PNG",
+              "frames": 168,
+              "omittedStationaryFrames": 17,
+              "removedHoldMs": 567,
+              "releaseDurationAt1x": 850
+            },
+            "asset": {
+              "frame": -1,
+              "decodedPages": 0,
+              "decodedBytes": 0,
+              "loads": 0,
+              "misses": 0,
+              "closed": false
+            },
+            "deckVisible": "absent"
+          }
+        },
+        {
+          "name": "Later opening rejects retired shuffle switch 390",
+          "ok": true,
+          "detail": {
+            "active": true,
+            "mode": "asset",
+            "duration": 5033,
+            "minimal": false,
+            "startedAt": 22030.60000000149,
+            "motions": 1,
+            "sounds": 0,
+            "audioGains": [],
+            "audioRates": [],
+            "audioSchedule": [],
+            "lastEvent": {
+              "mode": "asset",
+              "duration": 5033,
+              "minimal": false,
+              "art": "approved Griffin PNG",
+              "frames": 168,
+              "omittedStationaryFrames": 17,
+              "removedHoldMs": 567,
+              "releaseDurationAt1x": 850
+            },
+            "asset": {
+              "frame": -1,
+              "decodedPages": 0,
+              "decodedBytes": 0,
+              "loads": 0,
+              "misses": 0,
+              "closed": false
+            },
+            "deckVisible": "absent"
+          }
+        }
+      ],
+      "errors": [],
+      "failed": []
+    },
+    "wrapper": {
+      "checks": [
+        {
+          "name": "Same-origin outer ZIP-player identity adopts Griffin icon and game title",
+          "ok": true,
+          "icon": "http://127.0.0.1:9004/assets/images/house-of-rooks-192.png?v=845"
+        }
+      ],
+      "errors": [],
+      "failed": []
+    },
+    "rotation": {
+      "checks": [
+        {
+          "name": "Rotations during initial presentation reach a usable auction",
+          "ok": true
+        },
+        {
+          "name": "Selected bid survives resize plus orientationchange 390x844",
+          "ok": true
+        },
+        {
+          "name": "Selected bid survives resize plus orientationchange 844x245",
+          "ok": true
+        },
+        {
+          "name": "Selected bid survives resize plus orientationchange 844x390",
+          "ok": true
+        },
+        {
+          "name": "Kitty Received survives orientation 390",
+          "ok": true
+        },
+        {
+          "name": "Kitty Received survives orientation 844",
+          "ok": true
+        },
+        {
+          "name": "Rotation mid-drag cancels ghost without discarding a card",
+          "ok": true
+        },
+        {
+          "name": "Five selected discards survive orientation 390x844",
+          "ok": true
+        },
+        {
+          "name": "Five selected discards survive orientation 844x245",
+          "ok": true
+        },
+        {
+          "name": "Five selected discards survive orientation 844x390",
+          "ok": true
+        },
+        {
+          "name": "Trump chooser selection survives rotation",
+          "ok": true
+        },
+        {
+          "name": "Rotation during trump stamp releases play barrier",
+          "ok": true
+        }
+      ],
+      "states": [
+        {
+          "phase": "dealing",
+          "ids": [],
+          "selected": [],
+          "ghosts": 0
+        },
+        {
+          "phase": "dealing",
+          "ids": [],
+          "selected": [],
+          "ghosts": 0
+        },
+        {
+          "phase": "dealing",
+          "ids": [],
+          "selected": [],
+          "ghosts": 0
+        },
+        {
+          "phase": "dealing",
+          "ids": [],
+          "selected": [],
+          "ghosts": 0
+        },
+        {
+          "phase": "bidding",
+          "ids": [
+            "green-1",
+            "green-11",
+            "green-8",
+            "green-5",
+            "black-1",
+            "black-8",
+            "black-7",
+            "red-14",
+            "red-12",
+            "red-8"
+          ],
+          "selected": [],
+          "bid": "130",
+          "ghosts": 0
+        },
+        {
+          "phase": "bidding",
+          "ids": [
+            "green-1",
+            "green-11",
+            "green-8",
+            "green-5",
+            "black-1",
+            "black-8",
+            "black-7",
+            "red-14",
+            "red-12",
+            "red-8"
+          ],
+          "selected": [],
+          "bid": "130",
+          "ghosts": 0
+        },
+        {
+          "phase": "bidding",
+          "ids": [
+            "green-1",
+            "green-11",
+            "green-8",
+            "green-5",
+            "black-1",
+            "black-8",
+            "black-7",
+            "red-14",
+            "red-12",
+            "red-8"
+          ],
+          "selected": [],
+          "bid": "130",
+          "ghosts": 0
+        },
+        {
+          "phase": "discard",
+          "ids": [
+            "rook",
+            "red-2",
+            "black-1",
+            "black-13",
+            "black-8",
+            "black-7",
+            "green-1",
+            "green-11",
+            "green-8",
+            "green-5",
+            "red-14",
+            "red-12",
+            "red-8",
+            "red-7",
+            "yellow-11",
+            "yellow-10"
+          ],
+          "selected": [],
+          "ghosts": 0
+        },
+        {
+          "phase": "discard",
+          "ids": [
+            "rook",
+            "red-2",
+            "black-1",
+            "black-13",
+            "black-8",
+            "black-7",
+            "green-1",
+            "green-11",
+            "green-8",
+            "green-5",
+            "red-14",
+            "red-12",
+            "red-8",
+            "red-7",
+            "yellow-11",
+            "yellow-10"
+          ],
+          "selected": [],
+          "ghosts": 0
+        },
+        {
+          "phase": "discard",
+          "ids": [
+            "rook",
+            "red-2",
+            "black-1",
+            "black-13",
+            "black-8",
+            "black-7",
+            "green-1",
+            "green-11",
+            "green-8",
+            "green-5",
+            "red-14",
+            "red-12",
+            "red-8",
+            "red-7",
+            "yellow-11",
+            "yellow-10"
+          ],
+          "selected": [],
+          "ghosts": 0
+        },
+        {
+          "phase": "discard",
+          "ids": [
+            "rook",
+            "red-2",
+            "black-1",
+            "black-13",
+            "black-8",
+            "black-7",
+            "green-1",
+            "green-11",
+            "green-8",
+            "green-5",
+            "red-14",
+            "red-12",
+            "red-8",
+            "red-7",
+            "yellow-11",
+            "yellow-10"
+          ],
+          "selected": [],
+          "ghosts": 0
+        },
+        {
+          "phase": "discard",
+          "ids": [
+            "rook",
+            "red-2",
+            "black-1",
+            "black-13",
+            "black-8",
+            "black-7",
+            "green-1",
+            "green-11",
+            "green-8",
+            "green-5",
+            "red-14",
+            "red-12",
+            "red-8",
+            "red-7",
+            "yellow-11",
+            "yellow-10"
+          ],
+          "selected": [
+            "yellow-10",
+            "yellow-11",
+            "red-7",
+            "red-8",
+            "red-12"
+          ],
+          "ghosts": 0
+        },
+        {
+          "phase": "discard",
+          "ids": [
+            "rook",
+            "red-2",
+            "black-1",
+            "black-13",
+            "black-8",
+            "black-7",
+            "green-1",
+            "green-11",
+            "green-8",
+            "green-5",
+            "red-14",
+            "red-12",
+            "red-8",
+            "red-7",
+            "yellow-11",
+            "yellow-10"
+          ],
+          "selected": [
+            "yellow-10",
+            "yellow-11",
+            "red-7",
+            "red-8",
+            "red-12"
+          ],
+          "ghosts": 0
+        },
+        {
+          "phase": "discard",
+          "ids": [
+            "rook",
+            "red-2",
+            "black-1",
+            "black-13",
+            "black-8",
+            "black-7",
+            "green-1",
+            "green-11",
+            "green-8",
+            "green-5",
+            "red-14",
+            "red-12",
+            "red-8",
+            "red-7",
+            "yellow-11",
+            "yellow-10"
+          ],
+          "selected": [
+            "yellow-10",
+            "yellow-11",
+            "red-7",
+            "red-8",
+            "red-12"
+          ],
+          "ghosts": 0
+        },
+        {
+          "phase": "trump",
+          "ids": [
+            "rook",
+            "red-2",
+            "black-1",
+            "black-13",
+            "black-8",
+            "black-7",
+            "green-1",
+            "green-11",
+            "green-8",
+            "green-5"
+          ],
+          "selected": [],
+          "ghosts": 0
+        },
+        {
+          "phase": "play",
+          "ids": [
+            "rook",
+            "red-2",
+            "black-1",
+            "black-13",
+            "black-8",
+            "black-7",
+            "green-1",
+            "green-11",
+            "green-8",
+            "green-5"
+          ],
+          "selected": [],
+          "ghosts": 0
+        },
+        {
+          "phase": "play",
+          "ids": [
+            "rook",
+            "red-2",
+            "black-1",
+            "black-13",
+            "black-8",
+            "black-7",
+            "green-1",
+            "green-11",
+            "green-8",
+            "green-5"
+          ],
+          "selected": [],
+          "ghosts": 0
+        }
+      ],
+      "errors": [],
+      "failed": []
+    },
+    "offline": {
+      "truth": {
+        "page": "845-share-shuffle",
+        "script": "845-share-shuffle",
+        "marker": "845-share-shuffle",
+        "worker": {
+          "build": "845-share-shuffle",
+          "cache": "house-of-rooks-845-share-shuffle"
+        },
+        "controller": "http://127.0.0.1:9003/sw060.js?v=845-share-shuffle",
+        "coherent": true
+      },
+      "review": true,
+      "manifest": {
+        "name": "House of Rooks",
+        "short_name": "House of Rooks",
+        "description": "Four-player partnership trick-taking by Jerome Griffin. Host a table from your phone.",
+        "id": "./",
+        "start_url": "./",
+        "scope": "./",
+        "display": "fullscreen",
+        "background_color": "#0e1610",
+        "theme_color": "#1a120b",
+        "orientation": "any",
+        "icons": [
+          {
+            "src": "assets/images/house-of-rooks-192.png?v=805-ownerreview",
+            "sizes": "192x192",
+            "type": "image/png",
+            "purpose": "any"
+          },
+          {
+            "src": "assets/images/house-of-rooks-512.png?v=805-ownerreview",
+            "sizes": "512x512",
+            "type": "image/png",
+            "purpose": "any"
+          },
+          {
+            "src": "assets/images/house-of-rooks-192-maskable.png?v=805-ownerreview",
+            "sizes": "192x192",
+            "type": "image/png",
+            "purpose": "maskable"
+          },
+          {
+            "src": "assets/images/house-of-rooks-512-maskable.png?v=805-ownerreview",
+            "sizes": "512x512",
+            "type": "image/png",
+            "purpose": "maskable"
+          }
+        ],
+        "display_override": [
+          "fullscreen",
+          "standalone"
+        ]
+      },
+      "newCSS": true,
+      "landscapeAssets": true,
+      "manual": true,
+      "heads": true,
+      "qr": {
+        "canvas": true,
+        "vendor": "function",
+        "remote": false
+      },
+      "errors": []
+    }
+  }
+}

@@ -5,7 +5,7 @@
   "id": "./",
   "start_url": "./",
   "scope": "./",
-  "display": "standalone",
+  "display": "fullscreen",
   "background_color": "#0e1610",
   "theme_color": "#1a120b",
   "orientation": "any",
@@ -34,5 +34,9 @@
       "type": "image/png",
       "purpose": "maskable"
     }
+  ],
+  "display_override": [
+    "fullscreen",
+    "standalone"
   ]
 }

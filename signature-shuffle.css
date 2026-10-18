@@ -1,6 +1,6 @@
 /* Finished Blender assets only. CSS positions the playback surface, never bends cards. */
-@media (orientation:portrait){
- body.in-game #shuffleOverlay.signature-shuffle .shuffle-deck{visibility:hidden!important}
- body.in-game #shuffleOverlay.signature-shuffle .shuffle-label{display:none!important}
+@media (orientation:portrait), (orientation:landscape){
+ body #shuffleOverlay .shuffle-deck{visibility:hidden!important}
+ body #shuffleOverlay .shuffle-label{display:none!important}
  .signature-shuffle-canvas{position:fixed!important;display:block;pointer-events:none!important;transform:none!important;margin:0!important;max-width:none!important;max-height:none!important;z-index:1}
 }
