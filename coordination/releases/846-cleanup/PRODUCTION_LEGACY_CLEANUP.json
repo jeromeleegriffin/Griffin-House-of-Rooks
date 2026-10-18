@@ -1,0 +1,29 @@
+{
+  "status": "VERIFIED_UNREFERENCED_PRODUCTION_ROOT_ALIASES_ARCHIVED",
+  "files": [
+    {
+      "from": "bots_3.js",
+      "to": "docs/history/production-legacy-source/bots_3.js",
+      "sha": "f3392f4bf1de3ee69ae8c625a4574b7b253e729d"
+    },
+    {
+      "from": "polish_4.js",
+      "to": "docs/history/production-legacy-source/polish_4.js",
+      "sha": "a88059fe3c7e930a5233e408f4e26d5a75bfaa95"
+    },
+    {
+      "from": "rook532-luxbid.css",
+      "to": "docs/history/production-legacy-source/rook532-luxbid.css",
+      "sha": "3145ddcd0959903d216141361e9b67feca4c6a9e"
+    },
+    {
+      "from": "rules_8.js",
+      "to": "docs/history/production-legacy-source/rules_8.js",
+      "sha": "ed744c7722c08df12262f826b235fcdc10fedd32"
+    }
+  ],
+  "activeRuntimeReferences": 0,
+  "originalZipLoaderReferences": 0,
+  "sharedSourceFilesUnchanged": 1650,
+  "reason": "Independent production CI exposed old pre-845 source copies outside the recovered runtime; preserve their exact bytes as history and remove them from the active root."
+}
