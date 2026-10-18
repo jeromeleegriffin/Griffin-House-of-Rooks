@@ -50,6 +50,8 @@ jobs:
               assert len(data)==item['size'],str(p)
               assert hashlib.sha256(data).hexdigest()==item['sha256'],str(p)
               assert hashlib.sha1(b'blob '+str(len(data)).encode()+b'\0'+data).hexdigest()==item['sha'],str(p)
+              # The connected integration installs CI separately; this job token cannot create workflows.
+              if str(p)=='.github/workflows/source-check.yml':continue
               target=root/p;target.parent.mkdir(parents=True,exist_ok=True);target.write_bytes(data)
               names.append(str(p))
           removed=receipt['deletedPaths']
@@ -59,7 +61,7 @@ jobs:
           target=root/'coordination/releases/846-cleanup';target.mkdir(parents=True,exist_ok=True)
           for p in evidence.iterdir():
               if p.is_file():shutil.copyfile(p,target/p.name)
-          (target/'PRODUCTION_CANDIDATE.json').write_text(json.dumps({'build':'846-source-cleanup','status':'STAGED_NOT_DEPLOYED','sourceCommit':'71dee12ecdeb41d8edc91a9b02adc4e5716b5d9b','verifiedFiles':1650,'previousProductionCommit':'be2054a9d730162fbeae20ad8b8511438e9d6cfc','rollbackBranch':'rollback/pre-846-20261018','ownerRequestedCleanup':True,'mainModified':False},indent=2)+'\n')
+          (target/'PRODUCTION_CANDIDATE.json').write_text(json.dumps({'build':'846-source-cleanup','status':'APPLICATION_STAGED_CI_WORKFLOW_PENDING_NOT_DEPLOYED','sourceCommit':'71dee12ecdeb41d8edc91a9b02adc4e5716b5d9b','verifiedSourceFiles':1650,'importedFiles':1649,'pendingFile':'.github/workflows/source-check.yml','previousProductionCommit':'be2054a9d730162fbeae20ad8b8511438e9d6cfc','rollbackBranch':'rollback/pre-846-20261018','ownerRequestedCleanup':True,'mainModified':False},indent=2)+'\n')
           subprocess.run(['git','add','--',*names,*removed,str(target)],check=True)
           shutil.rmtree(source)
           subprocess.run(['git','config','user.name','github-actions[bot]'],check=True)
