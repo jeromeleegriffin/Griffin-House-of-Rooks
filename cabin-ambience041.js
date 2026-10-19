@@ -27,8 +27,6 @@
     owl: 100,
     wolf: 100,
     rain: 100,
-    thunder: 65,
-    stormMinutes: 12,
     cricketRate: 1,
   };
   const settings = { ...defaults };
@@ -37,20 +35,18 @@
     for (const key of Object.keys(defaults))
       if (Number.isFinite(data[key]))
         settings[key] = Math.max(
-          key === 'stormMinutes' ? 6 : key === 'cricketRate' ? 0.5 : 0,
-          Math.min(key === 'stormMinutes' ? 60 : key === 'cricketRate' ? 2 : 100, data[key])
+          key === 'cricketRate' ? 0.5 : 0,
+          Math.min(key === 'cricketRate' ? 2 : 100, data[key])
         );
   } catch (_) {}
-  let stormDue = 0,
-    stormCalls = 0;
   function setSound(key, value) {
     if (!(key in defaults) || !Number.isFinite(Number(value))) return;
     settings[key] = Math.max(
-      key === 'stormMinutes' ? 6 : key === 'cricketRate' ? 0.5 : 0,
-      Math.min(key === 'stormMinutes' ? 60 : key === 'cricketRate' ? 2 : 100, Number(value))
+      key === 'cricketRate' ? 0.5 : 0,
+      Math.min(key === 'cricketRate' ? 2 : 100, Number(value))
     );
     remember('horAmbientSoundsV1', JSON.stringify(settings));
-    if (key === 'stormMinutes' || key === 'cricketRate') {
+    if (key === 'cricketRate') {
       stop();
       sync();
     } else sync();
@@ -89,23 +85,6 @@
     !(typeof soundMuted !== 'undefined' && soundMuted);
   function buffer(name) {
     if (buffers.has(name)) return buffers.get(name);
-    if (name === 'thunder') {
-      const b = ctx.createBuffer(1, RATE * 9, RATE),
-        out = b.getChannelData(0);
-      let low = 0;
-      for (let i = 0; i < out.length; i++) {
-        low = 0.985 * low + 0.015 * (Math.random() * 2 - 1);
-        const t = i / RATE;
-        out[i] =
-          low *
-          3.5 *
-          Math.min(1, t * 5) *
-          Math.exp(-t / 3) *
-          (0.65 + 0.35 * Math.sin(t * 2.3) ** 2);
-      }
-      buffers.set(name, b);
-      return b;
-    }
     const raw = atob(PCM[name]),
       b = ctx.createBuffer(1, raw.length / 2, RATE),
       out = b.getChannelData(0);
@@ -208,37 +187,9 @@
       schedule(kind, lo, hi, token);
     }, delay);
   }
-  function storm(token) {
-    const delay = settings.stormMinutes * 60000;
-    stormDue = Date.now() + delay;
-    later(() => {
-      if (token !== epoch || !running) return;
-      if (!allowed()) {
-        sync();
-        return;
-      }
-      if (settings.thunder > 0) {
-        const now = ctx.currentTime;
-        stormCalls++;
-        rainUntil = now + 90;
-        busyUntil = rainUntil;
-        hushWildlife();
-        for (const v of voices) if (v.name === 'rain') v.stop();
-        voice('rain', 75, true, 8);
-        voice('thunder', 0, false, 0.3);
-        for (const seconds of [22, 49])
-          later(() => {
-            if (token === epoch && running && allowed() && settings.thunder > 0)
-              voice('thunder', 0, false, 0.3);
-          }, seconds * 1000);
-      }
-      storm(token);
-    }, delay);
-  }
   function stop() {
     running = false;
     owlDue = 0;
-    stormDue = 0;
     epoch++;
     timers.forEach(clearTimeout);
     timers.clear();
@@ -297,7 +248,6 @@
       schedule('owl', 900, 1800, token);
       schedule('wolf', 480, 900, token);
       schedule('rain', 1200, 2400, token);
-      storm(token);
     } catch (_) {
       stop();
     }
@@ -362,8 +312,6 @@
       owlsEnabled,
       owlDue,
       owlCalls,
-      stormDue,
-      stormCalls,
       settings: { ...settings },
       timers: timers.size,
       voices: [...voices].map((v) => ({ name: v.name, level: v.level.gain.value })),

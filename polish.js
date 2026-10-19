@@ -753,12 +753,19 @@
       const ok = $('confirmOk');
       ok.classList.toggle('danger', danger !== false);
       sheet.classList.remove('hidden');
+      if (!sheet.open) sheet.showModal();
       const done = (val) => {
+        sheet.close();
         sheet.classList.add('hidden');
         sheet.classList.remove('leave-table-confirm');
         ok.onclick = null;
         $('confirmCancel').onclick = null;
+        sheet.oncancel = null;
         resolve(val);
+      };
+      sheet.oncancel = (e) => {
+        e.preventDefault();
+        done(false);
       };
       ok.onclick = () => done(true);
       $('confirmCancel').onclick = () => done(false);
@@ -777,15 +784,40 @@
     },
     bidding: {
       title: 'The auction is on',
-      html: '<p>Someone is bidding. Bid any amount divisible by five above the current bid or pass. You may raise by 5, 10, 15, 20, 25 or more. Tap or hold +5 and −5 to choose the amount, then confirm your bid. Three passes and the high bidder buys the nest.</p><p>Counters that score: 5s, 10s, 14s, 1s (15), the Bird (20), Red 2 (20 when it is in).</p>',
+      html: () =>
+        '<p>A bid is the number of points your team promises to capture this hand. The minimum is ' +
+        minBid +
+        '. Raise to an amount divisible by five above the current bid, or pass. Passing takes you out of this auction. The last bidder remaining wins the nest (also called the kitty).</p><p>Point cards: 5s = 5; 10s and 14s = 10. ' +
+        (includeOnes ? '1s = 15. ' : '') +
+        (includeRook ? 'Blackbird = 20. ' : '') +
+        (includeRed2 ? 'Red Two = ' + red2Points + '. ' : '') +
+        (includeRed1 ? 'Special Red One = 30. ' : '') +
+        'Other cards are worth no points.</p>',
     },
     myBid: {
       title: 'Your bid',
-      html: '<p>Use +5 / −5, then Bid, or Pass. Only bid what this hand plus a fair nest can make. A set costs you the bid.</p>',
+      html: '<p>Tap or hold +5 / −5 to choose an amount, then tap Bid. Or tap Pass to leave this auction. Bid only as many points as you think your team can capture. If your team misses its bid, it loses that many points.</p>',
     },
     nest: {
-      title: 'You bought the nest',
-      html: '<p>Those extra cards are now in your hand. Throw the same number back. Keep trump length and counters. Then you name trump.</p>',
+      title: 'Choosing your hand',
+      html: () => {
+        const count =
+          game?.phase === 'discard'
+            ? game.discardCount ||
+              game.kittyTaken?.length ||
+              game.nestPreview?.length ||
+              nestSizeDefault
+            : nestSizeDefault;
+        return (
+          '<p>If you win the bid, the ' +
+          count +
+          ' nest cards are added to your hand. Put ' +
+          count +
+          ' cards into the nest so that you keep ' +
+          handSize +
+          '. Tap a card to move it; tap it in the nest to return it. Then lock your hand and choose trump.</p><p>Tip: try to keep several cards in the color you plan to make trump, along with strong cards and cards worth points.</p>'
+        );
+      },
     },
     nestWait: {
       title: 'Waiting on the nest',
@@ -794,11 +826,16 @@
     trump: {
       title: 'Stamp trump',
       html: function () {
-        let line =
-          'Pick the color you want as trump. That color — and the Bird — beat everything else.';
-        if (typeof includeRed2 !== 'undefined' && includeRed2) {
-          line += ' Red 2 is the second-highest trump, under the Bird.';
-        }
+        let line = 'Trump is the color that beats other colors. Choose a color, then confirm it. ';
+        if (includeRed1) line += 'Special Red One is the highest trump. ';
+        if (includeRook && !rookLowest)
+          line += 'Blackbird beats ' + (includeRed2 ? 'Red Two and ' : '') + 'ordinary trump. ';
+        if (includeRed2) line += 'Red Two is always trump and beats ordinary trump. ';
+        if (includeRook && rookLowest) line += 'Blackbird is the lowest trump at this table. ';
+        line +=
+          includeOnes && onesHigh
+            ? '1 is highest within each color.'
+            : '14 is highest within each color.';
         return '<p>' + line + '</p>';
       },
     },
@@ -808,15 +845,26 @@
     },
     lead: {
       title: 'Lead a card',
-      html: '<p>Gold-rim cards are legal. Tap one to play it. Long-press a dim card to see why it will not play.</p>',
+      html: '<p>The player leading starts the trick by playing any card. When it is your turn, gold-rim cards are legal: tap one to play it. Tap a dim card to see why it cannot be played.</p>',
     },
     follow: {
       title: 'Follow color',
-      html: '<p>Play the color that was led if you have it. If you are void you may trump or dump off-color. Highest trump, else highest of the led color, wins the trick.</p>',
+      html: () =>
+        '<p>The first card sets the led color. Play that color if you have it. ' +
+        (specialsAnytime ? 'Included special trump cards may be played at any time. ' : '') +
+        (mustTrumpWhenVoid
+          ? 'If you have none of the led color, you must play trump if you have one; otherwise play any card. '
+          : 'If you have none of the led color, you may play any card. ') +
+        'The highest trump wins; if no trump is played, the highest card of the led color wins. The winner leads the next trick.</p>',
     },
     score: {
       title: 'Hand is in',
-      html: '<p>Makers need at least the bid in counters. Miss it and they are set. Nest counters usually go to last trick.</p><p>This tour will stay quiet unless you mark this name new again.</p>',
+      html: () =>
+        '<p>The bidding team must capture at least its bid in points, including any nest points it receives. Make it: score ' +
+        (bidOnlyScoring ? 'the bid amount' : 'all points captured') +
+        '. Miss it: lose the bid amount. Opponents score their captured points.</p><p>Nest points go to ' +
+        (nestGoesTo === 'bidder' ? 'the bidding team' : 'the team taking the last trick') +
+        ' at this table. Open Hand Details on the scoreboard to see the calculation.</p>',
     },
   };
   const PLAY_TIP_ORDER = [
@@ -836,7 +884,6 @@
   let tourActive = false;
   let currentTipId = '';
   let manualTour = false;
-  let pendingTips = [];
   window.horTourBlocking = false;
   window.horTourResumeBot = false;
 
@@ -964,6 +1011,7 @@
     if (window.horPinTip && !force) return;
     const ov = $('tutorialOverlay');
     if (ov) {
+      if (ov.open) ov.close();
       ov.classList.add('hidden');
       ov.classList.remove('lobby-placed');
       ov.setAttribute('aria-hidden', 'true');
@@ -978,11 +1026,6 @@
 
   function resumeAfterTip() {
     window.horTourBlocking = false;
-    if (pendingTips.length) {
-      const next = pendingTips.shift();
-      showPlayTip(next, { force: true });
-      return;
-    }
     setTimeout(maybeTutorial, 80);
     if (window.horTourResumeBot) {
       window.horTourResumeBot = false;
@@ -998,10 +1041,8 @@
     if (!manualTour && !isNewPlayer()) return;
     if (!manualTour && seenTip(id) && !(opts && opts.force)) return;
     if (tourActive && currentTipId === id) return;
-    if (tourActive && currentTipId && currentTipId !== id) {
-      if (pendingTips.indexOf(id) < 0) pendingTips.push(id);
-      return;
-    }
+    // Re-evaluate the actual phase after dismissal instead of queuing stale turns.
+    if (tourActive && currentTipId && currentTipId !== id) return;
     const ov = $('tutorialOverlay');
     const tx = $('tutorialText');
     const title = $('tutorialTitle');
@@ -1026,19 +1067,36 @@
     if (title) title.textContent = step.title;
     tx.innerHTML = typeof step.html === 'function' ? step.html() : step.html;
     window.horPinTip = true;
-    if (next) next.textContent = 'Got it';
-    if (back) back.classList.add('hidden');
+    const idx = PLAY_TIP_ORDER.indexOf(id);
+    if (next)
+      next.textContent = manualTour
+        ? idx === PLAY_TIP_ORDER.length - 1
+          ? 'Done'
+          : 'Next'
+        : 'Got it';
+    if (back) {
+      back.classList.toggle('hidden', !manualTour);
+      back.disabled = idx === 0;
+    }
     const bar = $('tutorialProgress');
     if (bar) {
-      const idx = PLAY_TIP_ORDER.indexOf(id);
+      bar.setAttribute('aria-hidden', 'false');
+      bar.setAttribute('role', 'img');
+      bar.setAttribute(
+        'aria-label',
+        manualTour
+          ? 'Topic ' + (idx + 1) + ' of ' + PLAY_TIP_ORDER.length + ': ' + step.title
+          : step.title
+      );
       bar.innerHTML = PLAY_TIP_ORDER.map((_, i) => {
         const cls = i === idx ? 'on' : i < idx ? 'done' : '';
-        return '<span class="tutorial-dot ' + cls + '"></span>';
+        return '<span aria-hidden="true" class="tutorial-dot ' + cls + '"></span>';
       }).join('');
     }
     ov.classList.remove('hidden');
     ov.setAttribute('aria-hidden', 'false');
     placeLobbyTipCard();
+    if (!ov.open) ov.showModal();
   }
 
   function placeLobbyTipCard() {
@@ -1048,9 +1106,6 @@
     ov.classList.remove('lobby-placed');
     ov.classList.add('tour-bounded835');
     card.style.marginTop = '';
-    card.setAttribute('role', 'dialog');
-    card.setAttribute('aria-modal', 'true');
-    card.setAttribute('aria-labelledby', 'tutorialTitle');
   }
   window.addEventListener('resize', function () {
     if (currentTipId === 'lobby') placeLobbyTipCard();
@@ -1072,7 +1127,6 @@
     window.horPinTip = false;
     hideTourCard(true);
     manualTour = false;
-    pendingTips = [];
     window.horTourBlocking = false;
     if (window.horTourResumeBot) {
       window.horTourResumeBot = false;
@@ -1178,20 +1232,12 @@
     if (!box) return;
     const made = (matchStats.madeA || 0) + (matchStats.madeB || 0);
     const sets = (matchStats.setsA || 0) + (matchStats.setsB || 0);
-    let capture = '—';
+    let capture = 'No completed tricks recorded';
     try {
       const pool = (matchTricks || []).slice();
-      const hit = pool.find(
-        (t) =>
-          t &&
-          t.plays &&
-          t.plays.some((p) => p.card && (p.card.color === 'rook' || p.card.id === 'rook')) &&
-          t.plays.some(
-            (p) =>
-              p.card && ((typeof isRed2 === 'function' && isRed2(p.card)) || p.card.id === 'red-2')
-          )
-      );
-      if (hit) capture = 'Bird took Red 2';
+      pool.sort((a, b) => (b.points || 0) - (a.points || 0));
+      if (pool[0])
+        capture = Number(pool[0].points || 0) + ' points · ' + asText(pool[0].winnerName, 'Player');
     } catch (e) {}
     const mvpSeat = (function () {
       try {
@@ -1277,8 +1323,20 @@
     });
     const tn = $('tutorialNext');
     const tourSkip = $('tutorialSkip');
+    $('tutorialOverlay').addEventListener('cancel', (e) => {
+      e.preventDefault();
+      tn?.click();
+    });
     if (tn)
       tn.onclick = () => {
+        if (manualTour) {
+          const idx = PLAY_TIP_ORDER.indexOf(currentTipId);
+          hideTourCard(true);
+          if (idx < PLAY_TIP_ORDER.length - 1)
+            showPlayTip(PLAY_TIP_ORDER[idx + 1], { force: true });
+          else finishHouseTour(false);
+          return;
+        }
         if (currentTipId) markTipSeen(currentTipId);
         window.horPinTip = false;
         hideTourCard(true);
@@ -1289,6 +1347,12 @@
             window.flushAfterTour();
         } catch (e) {}
       };
+    $('tutorialBack').onclick = () => {
+      const idx = PLAY_TIP_ORDER.indexOf(currentTipId);
+      if (!manualTour || idx <= 0) return;
+      hideTourCard(true);
+      showPlayTip(PLAY_TIP_ORDER[idx - 1], { force: true });
+    };
     if (tourSkip) tourSkip.onclick = () => finishHouseTour(true);
     const replay = $('replayTutorialBtn');
     if (replay) replay.onclick = () => startHouseTour();
@@ -1517,7 +1581,10 @@
 
   const _showScore = window.showScoreModal;
   window.showScoreModal = function (summary) {
+    const firstBeginnerScore = isNewPlayer() && !seenTip('score');
     _showScore.apply(this, arguments);
+    if (firstBeginnerScore)
+      $('scoreModalBody')?.querySelector('.ghsb-hand-details')?.setAttribute('open', '');
     window.handsPlayedSession = (window.handsPlayedSession || 0) + 1;
     try {
       showPlayTip('score');
@@ -1590,7 +1657,10 @@
     let label = winner;
     if (winner === 'Team A') label = teamLabel(0);
     if (winner === 'Team B') label = teamLabel(1);
-    _showWin.call(this, label, scores);
+    // Keep canonical team IDs in recap state and network messages; localize only the title.
+    _showWin.call(this, winner, scores);
+    const title = $('winTitle');
+    if (title) title.textContent = winner === 'Tie' ? "It's a Tie!" : `${label} Wins!`;
     const sub = $('winSub');
     if (sub && scores)
       sub.textContent =
@@ -1601,6 +1671,9 @@
   window.startMatchCelebration = function () {
     _startCele.apply(this, arguments);
     const data = pendingCele || {};
+    const title = $('celeTitle');
+    const team = winningTeamIndex(data.winner);
+    if (title && team !== null) title.textContent = `${teamLabel(team)} Wins!`;
     nightRecap(data.winner, data.scores || [0, 0]);
   };
 
@@ -1632,38 +1705,85 @@
     return r;
   };
 
+  const boundHandRoots = new WeakSet();
   function bindWhyOnCards(root) {
-    if (!root) return;
-    root.querySelectorAll('.card-face').forEach((el) => {
-      if (el.dataset.whyBound === '1') return;
-      el.dataset.whyBound = '1';
-      let holdTimer = 0;
-      const explain = (ev) => {
-        const id = String(el.dataset.id);
-        const card = ((game && game.myHand) || []).find((c) => String(c.id) === id);
-        const reason = card ? illegalReason(card) : 'Not a legal play right now';
-        const x = (ev && ev.clientX) || el.getBoundingClientRect().left + 24;
-        const y = (ev && ev.clientY) || el.getBoundingClientRect().top;
-        showWhy(reason, x, y);
-      };
-      el.addEventListener('pointerdown', (ev) => {
-        if (el.classList.contains('playable')) tapHaptic(true);
-        clearTimeout(holdTimer);
-        // Dim cards only explain on a true hold so a tap never plays them.
-        holdTimer = setTimeout(() => explain(ev), 420);
+    if (!root || boundHandRoots.has(root)) return;
+    boundHandRoots.add(root);
+    root.setAttribute('role', 'group');
+    root.setAttribute('aria-label', 'Your hand');
+    const cardFor = (el) => game?.myHand?.find((c) => String(c.id) === String(el.dataset.id));
+    const explain = (el, ev) => {
+      const reason = illegalReason(cardFor(el));
+      if (!reason) return;
+      const rect = el.getBoundingClientRect();
+      showWhy(reason, ev?.clientX ?? rect.left + 24, ev?.clientY ?? rect.top);
+    };
+    const annotate = () =>
+      root.querySelectorAll('.card-face').forEach((el) => {
+        const card = cardFor(el);
+        if (!card) return;
+        const reason = illegalReason(card);
+        const name = isRookCard(card)
+          ? 'Blackbird'
+          : isRed1(card)
+            ? 'Special Red One'
+            : includeRed2 && isRed2(card)
+              ? 'Red Two'
+              : colorLabel(card.color) + ' ' + card.rank;
+        el.setAttribute('role', 'button');
+        el.tabIndex = 0;
+        el.setAttribute('aria-label', name + (reason ? '. ' + reason : '. Play card'));
+        el.setAttribute('aria-disabled', String(!!reason));
       });
-      const cancelHold = () => {
-        clearTimeout(holdTimer);
-      };
-      el.addEventListener('pointerup', cancelHold);
-      el.addEventListener('pointercancel', cancelHold);
-      // Do not cancel on pointerleave — a slight finger wobble was killing the hold.
-      el.addEventListener('contextmenu', (ev) => {
-        ev.preventDefault();
-        explain(ev);
-      });
+    // Delegate to the stable hand container. Landscape repaints/clones replace
+    // card nodes, so per-card markers cannot be used as listener ownership.
+    let holdTimer = 0;
+    const cancelHold = () => clearTimeout(holdTimer);
+    root.addEventListener('pointerdown', (ev) => {
+      const el = ev.target.closest('.card-face');
+      if (!el || !root.contains(el)) return;
+      cancelHold();
+      if (el.classList.contains('playable')) tapHaptic(true);
+      else holdTimer = setTimeout(() => explain(el, ev), 420);
     });
+    root.addEventListener('pointerup', cancelHold);
+    root.addEventListener('pointercancel', cancelHold);
+    root.addEventListener(
+      'click',
+      (ev) => {
+        const el = ev.target.closest('.card-face');
+        if (el && illegalReason(cardFor(el))) {
+          ev.preventDefault();
+          ev.stopImmediatePropagation();
+          explain(el, ev);
+        }
+      },
+      true
+    );
+    root.addEventListener('keydown', (ev) => {
+      const el = ev.target.closest('.card-face');
+      if (!el || !['Enter', ' '].includes(ev.key)) return;
+      ev.preventDefault();
+      if (ev.repeat) return;
+      if (illegalReason(cardFor(el))) explain(el);
+      else el.click();
+    });
+    root.addEventListener('contextmenu', (ev) => {
+      const el = ev.target.closest('.card-face');
+      if (!el) return;
+      ev.preventDefault();
+      explain(el, ev);
+    });
+    new MutationObserver(annotate).observe(root, {
+      childList: true,
+      subtree: true,
+      attributes: true,
+      attributeFilter: ['class'],
+    });
+    annotate();
   }
+  bindWhyOnCards($('myHand'));
+  bindWhyOnCards($('ltHand'));
   const _renderHand = window.renderHand;
   window.renderHand = function (discardMode, opts) {
     _renderHand.apply(this, arguments);

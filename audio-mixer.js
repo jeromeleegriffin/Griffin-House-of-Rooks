@@ -90,14 +90,16 @@
     }
   }
   function renderValues() {
-    const panel = document.getElementById('horAudioLevels');
-    if (!panel) return;
-    panel.querySelectorAll('[data-audio-level]').forEach((el) => {
+    // Public menus move the original rows between pages. Keep controls and their
+    // readouts connected even when the original fieldset is no longer present.
+    document.querySelectorAll('[data-audio-level]').forEach((el) => {
       const k = el.dataset.audioLevel;
       el.value = String(Math.round(levels[k] * 100));
-      panel.querySelector('[data-audio-value="' + k + '"]').textContent = el.value + '%';
+      el.closest('.hor-audio-row').querySelector('[data-audio-value]').textContent = el.value + '%';
     });
-    panel.querySelector('[data-audio-mute]').checked = levels.voicesMuted;
+    document.querySelectorAll('[data-audio-mute]').forEach((el) => {
+      el.checked = levels.voicesMuted;
+    });
   }
   function mount() {
     const host = document.querySelector('.gh-menu-sound .gh-sound-panel');
@@ -129,13 +131,13 @@
         )
         .join('') +
       '<label class="hor-audio-mute"><input type="checkbox" data-audio-mute> Mute voices</label><small>Voices: bids, passes, Shoot the Moon and trump calls. Character effects: wolf howl and raven effects. Ambience: background sounds; fire and cabin controls below keep their individual balance.</small>';
-    panel.addEventListener('input', (e) => {
-      if (e.target.dataset.audioLevel)
-        set(e.target.dataset.audioLevel, Number(e.target.value) / 100);
+    panel.querySelectorAll('[data-audio-level]').forEach((control) => {
+      control.addEventListener('input', () =>
+        set(control.dataset.audioLevel, Number(control.value) / 100)
+      );
     });
-    panel.addEventListener('change', (e) => {
-      if (e.target.hasAttribute('data-audio-mute')) set('voicesMuted', e.target.checked);
-    });
+    const mute = panel.querySelector('[data-audio-mute]');
+    mute.addEventListener('change', () => set('voicesMuted', mute.checked));
     host.prepend(panel);
     renderValues();
   }

@@ -83,7 +83,6 @@
           'My Profile',
           'Volume Controls',
           'Room Ambience',
-          'Thunderstorms',
           'Crickets',
           'Rain',
           'Distant wolf howl',
@@ -447,6 +446,9 @@
       if (kind === 'Tiered awards')
         for (const item of P.FAMILIES)
           add(item.name, (c) => {
+            const description = document.createElement('p');
+            description.textContent = item.description;
+            c.append(description);
             const dl = document.createElement('dl');
             P.MEDALS.forEach((medal, i) => {
               const pair = document.createElement('div'),
@@ -687,18 +689,14 @@
           move(n, body);
       for (const [key, title] of [
         ['crickets', 'Crickets'],
-        ['thunder', 'Thunderstorms'],
         ['rain', 'Rain'],
         ['wolf', 'Distant wolf howl'],
         ['bird', 'Outdoor birds'],
         ['owl', 'Owls'],
         ['wind', 'Wind'],
       ])
-        action(
-          body,
-          title,
-          'Volume' + (key === 'thunder' || key === 'crickets' ? ' and frequency' : ''),
-          () => ambientSound(key, title)
+        action(body, title, 'Volume' + (key === 'crickets' ? ' and frequency' : ''), () =>
+          ambientSound(key, title)
         );
     }
     function rangeControl(body, title, value, change) {
@@ -727,30 +725,22 @@
         values = api.settings();
       rangeControl(body, title + ' volume', values[key], (value) => api.setSound(key, value));
       note(body, 'Set volume to 0% to turn this sound off. Your choice saves automatically.');
-      if (key === 'thunder' || key === 'crickets') {
+      if (key === 'crickets') {
         const label = document.createElement('label');
         label.className = 'house-sound-control';
-        label.textContent = key === 'thunder' ? 'Time between storms' : 'Cricket frequency';
+        label.textContent = 'Cricket frequency';
         const select = document.createElement('select');
         select.setAttribute('aria-label', label.textContent);
-        const options =
-          key === 'thunder'
-            ? [
-                [6, 'Every 6 minutes'],
-                [12, 'Every 12 minutes (default)'],
-                [24, 'Every 24 minutes'],
-                [60, 'Every hour'],
-              ]
-            : [
-                [0.5, 'Occasional: every 4–8 minutes'],
-                [1, 'Regular: every 2–4 minutes (default)'],
-                [2, 'Frequent: every 1–2 minutes'],
-              ];
+        const options = [
+          [0.5, 'Occasional: every 4–8 minutes'],
+          [1, 'Regular: every 2–4 minutes (default)'],
+          [2, 'Frequent: every 1–2 minutes'],
+        ];
         for (const [value, text] of options) {
           const o = new Option(text, value);
           select.append(o);
         }
-        const pref = key === 'thunder' ? 'stormMinutes' : 'cricketRate';
+        const pref = 'cricketRate';
         select.value = String(values[pref]);
         select.onchange = () => api.setSound(pref, Number(select.value));
         label.append(select);
@@ -758,9 +748,7 @@
       }
       note(
         body,
-        key === 'thunder'
-          ? 'A short rain shower with distant thunder. Rain volume is controlled separately. Timers run during visible play and restart when you return.'
-          : 'Outdoor sounds pause while the game is hidden. Wildlife waits until rain and other calls finish.'
+        'Outdoor sounds pause while the game is hidden. Wildlife waits until rain and other calls finish.'
       );
     }
     function effectControls() {
@@ -965,8 +953,9 @@
         true
       );
     }
-    // Retired Settings entry routes to the remaining player preferences in My Profile.
-    openHostOptionsModal = () => profile();
+    // The waiting-table control opens the existing game setup, including guest
+    // and in-game read-only guards. Player preferences have their own route.
+    openHostOptionsModal = () => tableSetup();
     $('hor-player-name').addEventListener(
       'keydown',
       (e) => {
@@ -1071,15 +1060,6 @@
     }
 
     function paint() {
-      if (modalId === 'botPickerModal') {
-        [...body.children].forEach((e) => e.removeAttribute('data-house-legacy-hidden'));
-        const q = HORChoiceRows841.status(body);
-        buttons[0].disabled = !q.previous;
-        buttons[1].disabled = !q.next;
-        nav.querySelector('span').textContent = q.current + ' / ' + q.total;
-        nav.hidden = false;
-        return;
-      }
       [...body.children].forEach((e, i) =>
         e.toggleAttribute('data-house-legacy-hidden', !pages[page]?.includes(i))
       );
@@ -1103,11 +1083,7 @@
       });
       const items = all.filter((e) => !e.hasAttribute('data-search-hidden'));
       if (empty) empty.hidden = !!items.length;
-      if (modalId === 'botPickerModal') {
-        if (reset) body.scrollTop = 0;
-        paint();
-        return;
-      }
+      if (modalId === 'botPickerModal') body.scrollTop = 0;
       nav.hidden = false;
       pages = [];
       let group = [],
@@ -1136,22 +1112,13 @@
       frame = requestAnimationFrame(() => layout(reset));
     }
     buttons[0].onclick = () => {
-      if (modalId === 'botPickerModal') {
-        HORChoiceRows841.move(body, -1);
-        return;
-      }
       page = Math.max(0, page - 1);
       paint();
     };
     buttons[1].onclick = () => {
-      if (modalId === 'botPickerModal') {
-        HORChoiceRows841.move(body, 1);
-        return;
-      }
       page = Math.min(pages.length - 1, page + 1);
       paint();
     };
-    if (modalId === 'botPickerModal') body.addEventListener('scroll', paint, { passive: true });
     new MutationObserver(() => schedule(true)).observe(body, { childList: true });
     new MutationObserver(() => {
       if (search) search.value = '';

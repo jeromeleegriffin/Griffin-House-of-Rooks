@@ -1,0 +1,94 @@
+/* Scoped end-of-hand overlay. Existing table, cards, avatars and Bid Dock stay untouched. */
+#endHandEffectsV12 {
+  position: fixed;
+  inset: 0;
+  z-index: 2147483644;
+  pointer-events: none;
+  overflow: hidden;
+}
+#endHandEffectsV12 .end-hand-v12-stage {
+  position: absolute;
+  isolation: isolate;
+  z-index: 1;
+}
+#endHandEffectsV12 .end-hand-v12-art {
+  position: absolute;
+  object-fit: contain;
+  max-width: none;
+  pointer-events: none;
+  z-index: 2;
+}
+#endHandEffectsV12 .seal {
+  width: 45%;
+  height: 65%;
+  left: 27.5%;
+  top: 17%;
+}
+#endHandEffectsV12 .raven {
+  width: 85%;
+  height: 70%;
+  left: 7.5%;
+  top: 13%;
+}
+#endHandEffectsV12 .end-hand-v12-glow {
+  position: absolute;
+  width: 75%;
+  height: 50%;
+  left: 12.5%;
+  top: 25%;
+  border-radius: 50%;
+  background: radial-gradient(ellipse, #e9b95588 0%, #d3a45122 38%, transparent 72%);
+}
+#endHandEffectsV12 .end-hand-v12-skip {
+  position: absolute;
+  right: max(12px, env(safe-area-inset-right));
+  bottom: max(12px, env(safe-area-inset-bottom));
+  pointer-events: auto;
+  min-height: 40px;
+  border: 1px solid #a68751;
+  border-radius: 8px;
+  padding: 8px 12px;
+  background: #12212ded;
+  color: #ffe7b6;
+}
+#endHandEffectsV12 .end-hand-v12-status {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+  clip-path: inset(50%);
+}
+body.end-hand-v12-running #scoreModal {
+  animation: end-hand-v12-score-in 1050ms ease both;
+  pointer-events: none;
+}
+body.end-hand-v12-running #horProgressToastHost {
+  visibility: hidden;
+}
+@keyframes end-hand-v12-score-in {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+@media (orientation: landscape) {
+  #endHandEffectsV12 .seal {
+    height: 85%;
+    top: 7.5%;
+    width: 30%;
+    left: 35%;
+  }
+  #endHandEffectsV12 .raven {
+    width: 63%;
+    left: 18.5%;
+    height: 90%;
+    top: 5%;
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  body.end-hand-v12-running #scoreModal {
+    animation: none;
+  }
+}

@@ -751,9 +751,23 @@
       choose(dockRef, submitRef, current);
     position();
   }
+  // These two approved images are sampled for their existing pixels. A preview
+  // host may redirect them to a CDN, so request CORS before setting src.
+  function pixelImage(src) {
+    return new Promise((resolve, reject) => {
+      const image = new Image();
+      image.crossOrigin = 'anonymous';
+      image.onload = () => resolve(image);
+      image.onerror = () => reject(Error('Pixel image unavailable: ' + src));
+      image.src = src;
+    });
+  }
   function prepareMaterials() {
     const preload = [...Object.keys(specs), 'confirm-brass'].map((name) =>
-      window.HORAssetLoading772.image(assetRoot + name + '.png')
+      (name === 'stamp'
+        ? pixelImage(assetRoot + name + '.png')
+        : window.HORAssetLoading772.image(assetRoot + name + '.png')
+      )
         .then((im) => {
           if (name === 'stamp') {
             buildMaterials(im);
@@ -781,30 +795,30 @@
   };
   faintTable.onerror = () => log('faint-table', false);
   faintTable.src = 'assets/trump746/table-faint.png';
-  const table = new Image();
-  table.onload = () => {
-    // Actual-pixel mask: the approved pale crest has a distinct red/blue ratio
-    // from blue felt. No new crest silhouette or table image is synthesized.
-    const x = 260,
-      y = 750,
-      w = 360,
-      h = 220,
-      src = document.createElement('canvas');
-    src.width = w;
-    src.height = h;
-    const c = src.getContext('2d');
-    c.drawImage(table, x, y, w, h, 0, 0, w, h);
-    const data = c.getImageData(0, 0, w, h).data,
-      alpha = new Uint8ClampedArray(w * h);
-    for (let i = 0; i < alpha.length; i++) {
-      const k = i * 4;
-      const strength = (data[k] - 0.15 * data[k + 2] - 3) / 15;
-      alpha[i] = Math.max(0, Math.min(1, strength)) * 255;
-    }
-    mask = { x, y, w, h, alpha };
-    if (markColor) paint(markColor);
-  };
-  table.src = 'assets/table003/room-table-perspective.png';
+  pixelImage('assets/table003/room-table-perspective.png')
+    .then((table) => {
+      // Actual-pixel mask: the approved pale crest has a distinct red/blue ratio
+      // from blue felt. No new crest silhouette or table image is synthesized.
+      const x = 260,
+        y = 750,
+        w = 360,
+        h = 220,
+        src = document.createElement('canvas');
+      src.width = w;
+      src.height = h;
+      const c = src.getContext('2d');
+      c.drawImage(table, x, y, w, h, 0, 0, w, h);
+      const data = c.getImageData(0, 0, w, h).data,
+        alpha = new Uint8ClampedArray(w * h);
+      for (let i = 0; i < alpha.length; i++) {
+        const k = i * 4;
+        const strength = (data[k] - 0.15 * data[k + 2] - 3) / 15;
+        alpha[i] = Math.max(0, Math.min(1, strength)) * 255;
+      }
+      mask = { x, y, w, h, alpha };
+      if (markColor) paint(markColor);
+    })
+    .catch((error) => log('mask-error', String(error)));
   window.addEventListener('resize', resized);
   window.addEventListener('orientationchange', () => requestAnimationFrame(resized));
   matchMedia('(orientation:portrait)').addEventListener('change', resized);

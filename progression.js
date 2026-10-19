@@ -66,145 +66,176 @@
   const FAMILIES = [
     {
       'id': 'career_points',
+      'description': 'Earn career points through play and achievements.',
       'name': 'Point Collector',
       'stat': 'points',
       'thresholds': [1000, 10000, 50000, 250000, 1000000],
     },
     {
       'id': 'hands',
+      'description': 'Complete hands.',
       'name': 'Old Hand',
       'stat': 'hands',
       'thresholds': [25, 100, 500, 2500, 10000],
     },
     {
       'id': 'games',
+      'description': 'Complete games.',
       'name': 'Game Night',
       'stat': 'gamesPlayed',
       'thresholds': [10, 50, 250, 1000, 5000],
     },
-    { 'id': 'wins', 'name': 'Winner', 'stat': 'gamesWon', 'thresholds': [5, 25, 100, 500, 2500] },
+    {
+      'id': 'wins',
+      'description': 'Win games with your team.',
+      'name': 'Winner',
+      'stat': 'gamesWon',
+      'thresholds': [5, 25, 100, 500, 2500],
+    },
     {
       'id': 'tricks',
+      'description': 'Win tricks personally.',
       'name': 'Trick Taker',
       'stat': 'tricksWon',
       'thresholds': [50, 250, 1000, 5000, 20000],
     },
     {
       'id': 'high_roller_made',
+      'description': 'Win the auction with a bid of at least 180 and make that bid.',
       'name': 'High Roller',
       'stat': 'highRollerMade',
       'thresholds': [1, 5, 25, 100, 500],
     },
     {
       'id': 'red2_hunter',
+      'description': 'Capture Red Two in tricks you win.',
       'name': 'Red 2 Hunter',
       'stat': 'red2Captures',
       'thresholds': [10, 50, 250, 1000, 5000],
     },
     {
       'id': 'big_tricks',
+      'description': 'Win tricks worth at least 30 points each.',
       'name': 'Heavy Hitter',
       'stat': 'bigTricks',
       'thresholds': [10, 50, 250, 1000, 5000],
     },
     {
       'id': 'nest_raider',
+      'description': 'Receive the nest under the selected table rules.',
       'name': 'Nest Raider',
       'stat': 'nestWins',
       'thresholds': [10, 50, 250, 1000, 5000],
     },
     {
       'id': 'nest_points',
+      'description': 'Collect points from nests you receive.',
       'name': 'Nest Fortune',
       'stat': 'nestPts',
       'thresholds': [250, 2500, 12500, 50000, 250000],
     },
     {
       'id': 'bids_won',
+      'description': 'Win auctions.',
       'name': 'Bid Winner',
       'stat': 'bidsWon',
       'thresholds': [10, 50, 250, 1000, 5000],
     },
     {
       'id': 'bids_made',
+      'description': 'Win auctions and make your bids.',
       'name': 'Contract Keeper',
       'stat': 'bidsMade',
       'thresholds': [10, 50, 250, 1000, 5000],
     },
     {
       'id': 'moon_made',
+      'description': 'Successfully Shoot the Moon.',
       'name': 'Moonshiner',
       'stat': 'moonMade',
       'thresholds': [1, 5, 25, 100, 500],
     },
     {
       'id': 'moon_attempts',
+      'description': 'Attempt Shoot the Moon.',
       'name': 'Moon Chaser',
       'stat': 'moonAttempts',
       'thresholds': [5, 25, 100, 500, 2000],
     },
     {
       'id': 'bagger',
+      'description': 'Historical award: bags are retired. Previously earned medals are preserved.',
       'name': 'Bag Collector',
       'stat': 'bags',
       'thresholds': [10, 50, 250, 1000, 5000],
     },
     {
       'id': 'streak',
+      'description': 'Your longest run of consecutive game wins.',
       'name': 'Hot Streak',
       'stat': 'longestWinStreak',
       'thresholds': [2, 3, 5, 7, 10],
     },
     {
       'id': 'exact_bid',
+      'description': 'Make bids with exactly the required number of points.',
       'name': 'Exactly',
       'stat': 'exactBidMakes',
       'thresholds': [1, 10, 50, 250, 1000],
     },
     {
       'id': 'close_wins',
+      'description': 'Win games by 5 points or fewer.',
       'name': 'Photo Finish',
       'stat': 'closeWins',
       'thresholds': [1, 10, 50, 250, 1000],
     },
     {
       'id': 'routs',
+      'description': 'Win games by at least 200 points.',
       'name': 'Dominator',
       'stat': 'routWins',
       'thresholds': [1, 10, 50, 250, 1000],
     },
     {
       'id': 'sweeps',
+      'description': 'Win every trick in a hand personally.',
       'name': 'Clean House',
       'stat': 'sweepHands',
       'thresholds': [1, 5, 25, 100, 500],
     },
     {
       'id': 'bot_partner_wins',
+      'description': 'Your highest number of game wins with one bot partner.',
       'name': 'Winning Partnership',
       'stat': 'bestPartnerWins',
       'thresholds': [5, 10, 25, 50, 100],
     },
     {
       'id': 'comebacks',
+      'description': 'Win games after your team trailed by at least 100 points.',
       'name': 'Comeback Kid',
       'stat': 'comebackWins',
       'thresholds': [1, 10, 50, 250, 1000],
     },
     {
       'id': 'colors',
+      'description':
+        'Make bids in all four trump colors; progress is the count in your least-used color.',
       'name': 'Trump Traveler',
       'stat': 'allTrumpColorWins',
       'thresholds': [1, 5, 25, 100, 500],
     },
     {
       'id': 'made_streak',
+      'description': 'Your longest run of consecutive made bids as bidder.',
       'name': 'Contract Streak',
       'stat': 'longestMadeBidStreak',
       'thresholds': [2, 3, 5, 7, 10],
     },
     {
       'id': 'partners',
+      'description': 'Your highest number of game wins with one bot partner.',
       'name': 'Partner Power',
       'stat': 'samePartnerWins',
       'thresholds': [5, 25, 100, 500, 2000],
@@ -549,11 +580,13 @@ HORCareerCore.install(window.HORProgression);
       setTimeout(() => enqueue(ev), 500);
       return;
     }
+    if (window.HOREndHandEffectsV12?.deferCelebration(() => enqueue(ev))) return;
     if (window.HORRavenFight741?.deferCelebration(() => enqueue(ev))) return;
     state.queue.push(ev);
     pump();
   }
   function pump() {
+    if (window.HOREndHandEffectsV12?.deferCelebration(pump)) return;
     if (window.HORRavenFight741?.deferCelebration(pump)) return;
     const prefs = presentationPrefs();
     while (
@@ -736,7 +769,10 @@ HORCareerCore.install(window.HORProgression);
       const complete = tiers >= thresholds.length;
       entries.push({
         name: f.name,
-        detail: complete ? 'All five medals earned' : (P.MEDALS || [])[tiers] || 'Next medal',
+        detail:
+          f.description +
+          ' ' +
+          (complete ? 'All five medals earned' : (P.MEDALS || [])[tiers] || 'Next medal'),
         value: val,
         target: next,
         remaining: complete ? 0 : Math.max(0, next - val),
@@ -754,6 +790,7 @@ HORCareerCore.install(window.HORProgression);
       entries.push({
         name: f.name,
         detail: f.description || 'Special feat',
+        personalBest: ['highBid', 'bestHandPoints'].includes(f.stat),
         value: val,
         target,
         remaining: complete ? 0 : Math.max(0, target - val),
@@ -968,12 +1005,14 @@ HORCareerCore.install(window.HORProgression);
               '%"></i></div><small>' +
               (a.complete
                 ? 'Completed'
-                : num(a.value) +
-                  ' / ' +
-                  num(a.target) +
-                  ' · ' +
-                  num(a.remaining) +
-                  ' more needed') +
+                : a.personalBest
+                  ? 'Best: ' + num(a.value) + ' · Target: ' + num(a.target)
+                  : num(a.value) +
+                    ' / ' +
+                    num(a.target) +
+                    ' · ' +
+                    num(a.remaining) +
+                    ' more needed') +
               '</small></div>'
             );
           })
@@ -1065,7 +1104,9 @@ HORCareerCore.install(window.HORProgression);
         (f) =>
           '<div style="margin:12px 0;padding:10px;border:1px solid #ffffff22;border-radius:10px"><b>' +
           esc(f.name) +
-          '</b><div>' +
+          '</b><p>' +
+          esc(f.description) +
+          '</p><div>' +
           P.MEDALS.map(
             (m, i) =>
               '<span style="display:inline-block;margin:5px 8px 0 0">' +

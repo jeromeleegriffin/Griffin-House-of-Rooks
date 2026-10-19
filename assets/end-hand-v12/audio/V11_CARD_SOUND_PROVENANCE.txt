@@ -1,0 +1,1 @@
+Final Trick v11: newly synthesized from NumPy pseudorandom noise shaped with SciPy filters and timing envelopes. No samples, recordings, loops, external sound libraries or copyrighted audio were imported. Sound design: four quiet paper-on-felt sliding gestures and a soft card-stack contact; no pitched musical tone or synthetic sweep. This provenance describes v11 trick.wav only.

@@ -1,0 +1,22 @@
+All three mixes are new 2.5-second design candidates, not owner-approved sound.
+48 kHz stereo PCM16. Signal peaks approx -10 dBFS; original natural recordings
+are faded/mixed with new harmonic synthesis. No source file in 845 was replaced.
+
+Griffin Seal: original synthesized descending low impact, inharmonic metallic
+partials, and short layered harmonic/string-like flourish. This is synthesis,
+not a recorded orchestra. Subjective cinematic quality is unverified.
+
+Raven: existing natural063/wings-01.wav, source short pigeon wing flap by
+zouzmusic/Freesound 414671, CC0 in inherited provenance. Existing
+raven-fight761/call.wav, derived from qubodup/nigelcoop crow.wav, Freesound813114,
+CC0 in inherited provenance. This is a real crow/corvid call, NOT a
+species-verified Common Raven recording. New quiet atmospheric harmonic chord.
+
+Final Trick: existing natural063/gather-01.wav from MellowAudio Playing Cards,
+Freesound591486, and card-play/card-land-01.wav from filmfan87, Freesound108395,
+CC0 per original project records; new subtle rising harmonic chord.
+
+No external source/license was newly fetched or independently re-certified.
+Original project attribution and processing records are included unchanged.
+See tools/produce_layers_audio.py for exact new synthesis/mix recipe.
+The source paths in that script refer to the preserved baseline game.

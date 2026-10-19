@@ -7,7 +7,7 @@
 // It's exchanged during the join handshake so a stale host or joiner (e.g.
 // one still running old cached JS) gets caught and auto-updated instead of
 // silently failing or behaving unpredictably against a mismatched peer.
-const APP_VERSION = '846-source-cleanup';
+const APP_VERSION = '846-complete-repairs-20261019';
 window.HOR_SCRIPT_BUILD = APP_VERSION;
 
 function horThisIndex() {
@@ -185,16 +185,19 @@ let turnSoundChoice = Math.max(
 );
 let playLockUntil = 0;
 let knownVoids = [{}, {}, {}, {}]; // extreme bot: playerIdx -> {color: true}
-let matchStats = {
-  hands: 0,
-  highBid: 0,
-  setsA: 0,
-  setsB: 0,
-  madeA: 0,
-  madeB: 0,
-  bidSum: 0,
-  bidCount: 0,
-};
+function freshMatchStats() {
+  return {
+    hands: 0,
+    highBid: 0,
+    setsA: 0,
+    setsB: 0,
+    madeA: 0,
+    madeB: 0,
+    bidSum: 0,
+    bidCount: 0,
+  };
+}
+let matchStats = freshMatchStats();
 // Per-seat stats for the current match — tracked for every seat, human or bot,
 // so the stats page can show a real breakdown instead of just team totals.
 function freshPlayerStat() {
@@ -1283,6 +1286,8 @@ function syncTargetScoreUI() {
     setCustomScoreVisible(true);
     if (custom) custom.value = cur;
   }
+  // Programmatic resets/reopens must refresh validation as well as the value.
+  if (custom) custom.dispatchEvent(new Event('input', { bubbles: true }));
 }
 
 function wireTargetScoreUI() {
@@ -2236,7 +2241,7 @@ function playSetSound() {
 const resultSoundReceipts843 = new Set();
 const resultGameIds844 = new WeakMap();
 function playResultFinish843(summary, match = false) {
-  if (!summary || (!match && game?.phase !== 'score')) return;
+  if (!summary || (!match && (game?.phase !== 'score' || window.HOREndHandEffectsV12))) return;
   const ev = summary.careerEvent;
   if (game && !resultGameIds844.has(game)) resultGameIds844.set(game, crypto.randomUUID());
   const key =
@@ -3439,6 +3444,7 @@ function isPrivateOrLocalHost(host) {
 
 function canShareJoinQr() {
   try {
+    if (isSoloPractice || roomCode === 'OFFLINE') return false;
     if ((location.protocol || '') !== 'https:') return false;
     return !isPrivateOrLocalHost(location.hostname);
   } catch (e) {
@@ -3454,6 +3460,12 @@ function applyWaitingShareMode() {
   const speak = $('speakCodeLine');
   const copyBtn = $('copyCodeBtn');
   const shareBtn = $('shareBtn');
+  const offline = isSoloPractice || roomCode === 'OFFLINE';
+  for (const button of [qrBtn, copyBtn, shareBtn]) {
+    if (!button) continue;
+    button.disabled = offline;
+    button.toggleAttribute('data-offline-invitation', offline);
+  }
   document.body.classList.toggle('wifi-join-only', !qrOk);
   if (qrBtn) {
     qrBtn.classList.toggle('hidden', !qrOk);
@@ -3944,6 +3956,12 @@ function joinRoom() {
   window._horNoServiceStop = false;
   isSoloPractice = false;
   myName = ($('hor-player-name').value || '').trim() || 'Player';
+  // An explicit lobby join starts a new handshake. A saved flag from an
+  // earlier table must not hide the seating UI; live reconnects keep it.
+  if (!horClientIsPlaying()) {
+    horMarkActiveTable(false);
+    window._horStayInGame = false;
+  }
   roomCode = code;
   isHost = false;
   joinInProgress = true;
@@ -4005,6 +4023,7 @@ function joinRoom() {
     } catch (_) {}
     if (peer === joinPeer) peer = null;
     joinInProgress = false;
+    horLobbyCancel043 = null;
     setJoinStatus(message);
   };
   horLobbyCancel043 = () => {
@@ -4066,6 +4085,16 @@ function joinRoom() {
       });
       horJoinConn = conn;
       hostConnection = conn;
+      conn.__horJoinAccepted844 = () => {
+        if (!currentConnection()) return;
+        joined = finished = true;
+        clearTimers();
+        joinInProgress = false;
+        horLobbyCancel043 = null;
+      };
+      conn.__horJoinRejected844 = (message) => {
+        if (currentConnection()) finishFailure(message);
+      };
       setupConn(conn);
     } catch (e) {
       queueRetry();
@@ -4092,17 +4121,24 @@ function joinRoom() {
         pendingWelcomeSeat <= 3
       )
         joinMsg.preferredSeat = pendingWelcomeSeat;
-      if (!horNetSendRaw(conn, joinMsg)) {
+      // Use the normal envelope, including this room's saved resume credential.
+      if (!horNetSend(conn, joinMsg)) {
         finishFailure(
           'Connection opened but the join message could not be sent. Please try again.'
         );
         return;
       }
-      joined = finished = true;
-      clearTimers();
-      joinInProgress = false;
-      horLobbyCancel043 = null;
-      setJoinStatus('Connected. Waiting for the host…');
+      // A data channel is not host admission. Keep ownership and a bounded
+      // wait until handleMessage successfully applies the matching welcome.
+      if (!currentConnection()) return;
+      setJoinStatus('Connected. Confirming your place at the table…');
+      clearTimeout(joinTimer);
+      joinTimer = setTimeout(() => {
+        if (currentConnection())
+          finishFailure(
+            'The host did not confirm your join. Keep the host screen open and try again.'
+          );
+      }, 10000);
     });
     conn.on('error', () => {
       if (currentConnection()) queueRetry();
@@ -4348,6 +4384,9 @@ function setupConn(conn) {
     return horNetSend(conn, msg);
   };
   conn.on('data', (data) => {
+    // Late packets from an abandoned attempt must not navigate or overwrite
+    // the replacement connection's table.
+    if (!isHost && hostConnection !== conn) return;
     horDebugLog((isHost ? 'HOST' : 'CLIENT') + ': data received, type=' + (data && data.type));
     horLastHostSeenAt = Date.now();
     if (conn && conn.peer) horPeerLastSeen[conn.peer] = Date.now();
@@ -4359,6 +4398,7 @@ function setupConn(conn) {
     }
   });
   conn.on('error', (err) => {
+    if (!isHost && hostConnection !== conn) return;
     console.error('Data connection error:', err);
     horDebugLog(
       (isHost ? 'HOST' : 'CLIENT') +
@@ -4375,6 +4415,7 @@ function setupConn(conn) {
     }
   });
   conn.on('close', () => {
+    if (!isHost && hostConnection !== conn) return;
     horDebugLog(
       (isHost ? 'HOST' : 'CLIENT') + ': connection closed, remote peer=' + (conn && conn.peer)
     );
@@ -4677,7 +4718,11 @@ function handleMessage(data, conn) {
             },
           });
           try {
-            conn.send({ type: 'players', players: publicPlayersSnapshot(), beerSeats });
+            conn.send({
+              type: 'players',
+              players: publicPlayersSnapshot(),
+              beerSeats,
+            });
           } catch (e) {}
           break;
         }
@@ -4747,14 +4792,20 @@ function handleMessage(data, conn) {
               if (horExpOn('spectatorLateJoin')) {
                 data.spectator = true;
               } else {
-                conn.send({ type: 'error', message: 'Room full — join as spectator instead' });
+                conn.send({
+                  type: 'error',
+                  message: 'Room full — join as spectator instead',
+                });
                 return;
               }
             }
           } else if (horExpOn('spectatorLateJoin')) {
             data.spectator = true;
           } else {
-            conn.send({ type: 'error', message: 'Room full — join as spectator instead' });
+            conn.send({
+              type: 'error',
+              message: 'Room full — join as spectator instead',
+            });
             return;
           }
         }
@@ -4806,7 +4857,11 @@ function handleMessage(data, conn) {
           // Stay standing until they pick an open chair or a bot. Do not
           // auto-assign a seat — already seated humans must keep showing
           // in the chairs they claimed.
-          broadcast({ type: 'players', players: publicPlayersSnapshot(), beerSeats });
+          broadcast({
+            type: 'players',
+            players: publicPlayersSnapshot(),
+            beerSeats,
+          });
           updateWaitingUI();
         }
         conn.send({
@@ -4825,7 +4880,11 @@ function handleMessage(data, conn) {
           },
         });
         try {
-          conn.send({ type: 'players', players: publicPlayersSnapshot(), beerSeats });
+          conn.send({
+            type: 'players',
+            players: publicPlayersSnapshot(),
+            beerSeats,
+          });
         } catch (e) {}
         break;
 
@@ -4834,7 +4893,11 @@ function handleMessage(data, conn) {
         if (p && !p.isBot) {
           p.careerPublic = data.profile && data.profile.enabled ? data.profile : null;
           broadcast({ type: 'careerProfile', id: p.id, profile: p.careerPublic }, p.id);
-          broadcast({ type: 'players', players: publicPlayersSnapshot(), beerSeats });
+          broadcast({
+            type: 'players',
+            players: publicPlayersSnapshot(),
+            beerSeats,
+          });
         }
         break;
       }
@@ -4904,12 +4967,20 @@ function handleMessage(data, conn) {
         break;
       case 'peekTable':
         try {
-          conn.send({ type: 'players', players: publicPlayersSnapshot(), beerSeats });
+          conn.send({
+            type: 'players',
+            players: publicPlayersSnapshot(),
+            beerSeats,
+          });
         } catch (e) {}
         break;
       case 'newHostReady':
         window._horHandoffTarget844 = null;
-        broadcast({ type: 'switchHost', roomCode: data.roomCode, hostName: data.hostName });
+        broadcast({
+          type: 'switchHost',
+          roomCode: data.roomCode,
+          hostName: data.hostName,
+        });
         setTimeout(() => {
           try {
             horFollowNewHost(data.roomCode);
@@ -4948,6 +5019,7 @@ function handleMessage(data, conn) {
         }
         break;
       case 'welcome':
+        if (data.yourId !== myPeerId) return;
         horDebugLog(
           'CLIENT: welcome received, yourId=' +
             data.yourId +
@@ -4957,6 +5029,10 @@ function handleMessage(data, conn) {
             data.hostVersion
         );
         if (data.hostVersion && data.hostVersion !== APP_VERSION) {
+          if (conn && conn.__horJoinRejected844)
+            conn.__horJoinRejected844(
+              'The two devices are running different game versions. Reopen both sites and try again.'
+            );
           const s = $('lobbyStatus');
           const weAreStale = horVersionNum(APP_VERSION) < horVersionNum(data.hostVersion);
           if (weAreStale) {
@@ -5039,9 +5115,14 @@ function handleMessage(data, conn) {
         try {
           horFlushOutbox();
         } catch (e) {}
+        if (conn && conn.__horJoinAccepted844) conn.__horJoinAccepted844();
         break;
 
       case 'versionMismatch': {
+        if (conn && conn.__horJoinRejected844)
+          conn.__horJoinRejected844(
+            'The two devices are running different game versions. Reopen both sites and try again.'
+          );
         const s = $('lobbyStatus');
         // Only refresh ourselves if we're actually the stale side. If the
         // host already told us it's the one that's outdated (hostIsStale),
@@ -5066,6 +5147,10 @@ function handleMessage(data, conn) {
       }
 
       case 'error':
+        if (conn && conn.__horJoinRejected844)
+          conn.__horJoinRejected844(
+            data.message || 'The host could not accept your join. Please try again.'
+          );
         alert(data.message);
         break;
       case 'gameStart':
@@ -5360,37 +5445,16 @@ function handleMessage(data, conn) {
         if (data.summary) {
           if (game && data.summary.careerEvent?.matchId)
             game.careerMatchId = data.summary.careerEvent.matchId;
-          try {
-            window.HORJeromeVoiceLines?.result(data.summary);
-          } catch (e) {}
+          window.HOREndHandEffectsV12?.prepare();
           if (data.summary.careerEvent) horRecordCareerHand(data.summary.careerEvent);
-          // Host already held the nest overlay; clients may still be watching it
+          // Clients may still be watching the bounded nest capture.
           const stillNest = document.getElementById('ghNestAnim');
           if (stillNest) {
             setTimeout(() => {
-              try {
-                stillNest.classList.add('out');
-              } catch (e) {}
-              setTimeout(() => {
-                try {
-                  stillNest.remove();
-                } catch (e) {}
-              }, 400);
-              showScoreModal(data.summary);
+              stillNest.remove();
+              presentCompletedHandV12(data.summary);
             }, 200);
-          } else {
-            showScoreModal(data.summary);
-          }
-          const goal = (game && game.targetScore) || targetScore || 500;
-          const finalScores = data.summary.scores || (game && game.scores) || [0, 0];
-          const matchResult = getMatchResult(finalScores, goal);
-          if (matchResult) {
-            const winner = matchResult;
-            try {
-              mergeLifetimeStats(winner);
-            } catch (e) {}
-            showWinCelebration(winner, [...finalScores]);
-          }
+          } else presentCompletedHandV12(data.summary);
         }
         break;
       case 'hostGone':
@@ -7759,7 +7823,9 @@ function hostStartGame() {
     if (ldw) layDownWinningCards = ldw.checked !== false;
   } catch (e) {}
   handHistory = [];
+  matchStats = freshMatchStats();
   resetPlayerStats();
+  pendingCele = null;
   recentTricks = [];
   matchTricks = [];
   lastCompletedTrick = null;
@@ -10921,7 +10987,99 @@ function allRemainingCardsAreDefiniteWinners(seat) {
   return hand.length > 0 && hand.every((c) => cardIsDefiniteWinner(c, seat));
 }
 
-/** Only lay down when every leftover card is a stone-cold winner. */
+/** Prove a winning sequence against every legal response, without changing play. */
+function proveRestByLeading(seat) {
+  const hands = game.hands.map((h) => [...h]);
+  if (!game.trump || hands.some((h) => h.length > 16)) return false;
+  const masks = hands.map((h) => (1 << h.length) - 1);
+  const responders = [0, 1, 2, 3].filter((i) => i !== seat);
+  const memo = new Map();
+  let budget = 12000;
+  const cards = (i, mask) => hands[i].filter((c, j) => mask & (1 << j));
+  function win(state) {
+    if (--budget < 0) return false; // An uncompleted proof never authorizes a claim.
+    if (!state[seat]) return state.every((m) => m === 0);
+    const key = state.join(',');
+    if (memo.has(key)) return memo.get(key);
+    const available = state.map((m, i) => cards(i, m));
+    for (let j = 0; j < hands[seat].length; j++) {
+      if (!(state[seat] & (1 << j))) continue;
+      const lead = hands[seat][j];
+      const led = isTrumpCard(lead, game.trump) ? game.trump : lead.color;
+      const replies = responders.map((i) =>
+        hands[i]
+          .map((card, n) => ({ card, n }))
+          .filter(
+            ({ card, n }) => state[i] & (1 << n) && canPlay(card, available[i], led, game.trump)
+          )
+      );
+      if (
+        replies.some(
+          (choices) =>
+            !choices.length ||
+            choices.some(({ card }) => compareCards(card, lead, led, game.trump) > 0)
+        )
+      )
+        continue;
+      const next = [...state];
+      next[seat] &= ~(1 << j);
+      function everyReply(k) {
+        if (--budget < 0) return false;
+        if (k === responders.length) return win(next);
+        const i = responders[k];
+        for (const { n } of replies[k]) {
+          next[i] = state[i] & ~(1 << n);
+          if (!everyReply(k + 1)) return false;
+        }
+        return true;
+      }
+      if (everyReply(0)) {
+        memo.set(key, true);
+        return true;
+      }
+      if (budget < 0) break;
+    }
+    memo.set(key, false);
+    return false;
+  }
+  return win(masks);
+}
+
+/** Fast certificate: draw every opposing trump, then cash only unbeatable cards. */
+function canDrawTrumpAndCashWinners(seat) {
+  const hands = game.hands;
+  const own = hands[seat];
+  if (!game.trump || hands.some((h) => h.length !== own.length)) return false;
+  const trumps = own
+    .filter((c) => isTrumpCard(c, game.trump))
+    .sort((a, b) => compareCards(b, a, game.trump, game.trump));
+  const others = hands.filter((h, i) => i !== seat);
+  const opposingTrumps = others.map((h) => h.filter((c) => isTrumpCard(c, game.trump)));
+  const draws = Math.max(...opposingTrumps.map((h) => h.length));
+  if (trumps.length < draws) return false;
+  for (let n = 0; n < draws; n++) {
+    if (
+      opposingTrumps.some(
+        (h) => h.length > n && h.some((c) => compareCards(c, trumps[n], game.trump, game.trump) > 0)
+      )
+    )
+      return false;
+  }
+  return own
+    .filter((c) => !isTrumpCard(c, game.trump))
+    .every((c) =>
+      others.every((h) =>
+        h.every(
+          (reply) =>
+            isTrumpCard(reply, game.trump) ||
+            reply.color !== c.color ||
+            compareCards(reply, c, c.color, game.trump) <= 0
+        )
+      )
+    );
+}
+
+/** A claim needs either independent winners or a fully proved lead sequence. */
 function playerCanForceRest(seat) {
   if (!game || !game.hands) return false;
   const my = game.hands[seat] || [];
@@ -10931,21 +11089,45 @@ function playerCanForceRest(seat) {
     if (i !== seat) opp += (game.hands[i] || []).length;
   }
   if (!opp) return true;
-  return allRemainingCardsAreDefiniteWinners(seat);
+  const onlyTrumps = my.every((c) => isTrumpCard(c, game.trump));
+  const otherTrumps = game.hands.some(
+    (h, i) => i !== seat && h.some((c) => isTrumpCard(c, game.trump))
+  );
+  // An opponent can follow once, become void, then trump the next winner.
+  // The old independent-card shortcut is safe only without that future ruff.
+  if ((onlyTrumps || !otherTrumps) && allRemainingCardsAreDefiniteWinners(seat)) return true;
+  if (canDrawTrumpAndCashWinners(seat)) return true;
+  const key = JSON.stringify([
+    seat,
+    game.trump,
+    specialsAnytime,
+    mustTrumpWhenVoid,
+    onesHigh,
+    rookLowest,
+    includeRook,
+    includeRed1,
+    includeRed2,
+    game.hands.map((h) => h.map((c) => [c.id, c.color, c.rank])),
+  ]);
+  if (playerCanForceRest.proofCache?.key === key) return playerCanForceRest.proofCache.result;
+  const result = proveRestByLeading(seat);
+  playerCanForceRest.proofCache = { key, result };
+  return result;
 }
 
 /**
  * Returns { seat, reason: 'trumps'|'rest' } when one player may claim the rest,
- * or null. Respects claimDeclined for the current hand.
+ * or null. Continue Playing dismisses the current opportunity until a card is played.
  */
 function getRestClaimInfo() {
   if (layDownWinningCards === false) return null;
   if (!game || game.phase !== 'play' || !game.hands) return null;
   if (game.claimDeclined) return null;
+  if (game.paused) return null;
   if (game.claimAnimation || game.claimAnimating) return null;
   if (game.resolvingTrick) return null;
   // Mid-trick: wait until the trick resolves
-  if (game.trick && game.trick.length > 0 && game.trick.length < 4) return null;
+  if (game.trick && game.trick.length > 0) return null;
   const left = remainingCardsInHands();
   if (left < 2) return null;
   // Last trick (one card each) — just play it out. No lay-down.
@@ -10953,18 +11135,9 @@ function getRestClaimInfo() {
   for (let i = 0; i < 4; i++) maxLeft = Math.max(maxLeft, (game.hands[i] || []).length);
   if (maxLeft <= 1) return null;
 
-  const force = [];
-  for (let i = 0; i < 4; i++) {
-    if (playerCanForceRest(i)) force.push(i);
-  }
-  if (force.length === 1) {
-    const seat = force[0];
+  const seat = game.currentPlayer;
+  if (Number.isInteger(seat) && seat >= 0 && seat < 4 && playerCanForceRest(seat)) {
     return { seat, reason: getAllTrumpsHolder() === seat ? 'trumps' : 'rest' };
-  }
-
-  const trumpHolder = getAllTrumpsHolder();
-  if (trumpHolder != null && playerCanForceRest(trumpHolder)) {
-    return { seat: trumpHolder, reason: 'trumps' };
   }
   return null;
 }
@@ -10976,7 +11149,15 @@ function getRestClaimHolder() {
 
 function showAllTrumpsClaimUI() {
   if (isSpectator || !game || game.phase !== 'play') return;
-  const info = getRestClaimInfo();
+  if (game.paused || game.resolvingTrick || game.claimAnimating || game.claimDeclined) return;
+  if (game.trick?.length) return;
+  // Guests have no opponents' hands. Only the host can prove eligibility;
+  // guests display its public authorization, and the host rechecks on submit.
+  const info = isHost
+    ? getRestClaimInfo()
+    : Number.isInteger(game.trumpClaimPlayer)
+      ? { seat: game.trumpClaimPlayer, reason: game.trumpClaimReason || 'rest' }
+      : null;
   if (!info || info.seat !== myIndex) return;
   // Only when it is the claimer's turn to play
   if (game.currentPlayer !== myIndex) return;
@@ -11020,6 +11201,7 @@ function showAllTrumpsClaimUI() {
 
 function hostDeclineClaim(player) {
   if (!isHost || !game || game.phase !== 'play') return;
+  if (player !== game.currentPlayer) return;
   const info = getRestClaimInfo();
   if (!info || info.seat !== player) return;
   game.claimDeclined = true;
@@ -11431,6 +11613,8 @@ function hostProcessPlay(data) {
   const card = hand[idx];
   if (!canPlay(card, hand, game.ledColor, game.trump)) return;
 
+  // Continue Playing dismisses this opportunity, not every later lead.
+  game.claimDeclined = false;
   hand.splice(idx, 1);
   if (!game.ledColor) {
     game.ledColor = card.color === 'rook' || isRed2(card) || isRed1(card) ? game.trump : card.color;
@@ -11677,7 +11861,9 @@ function nestCardMarkup(card) {
 
 /** Show nest capture overlay for ~3s, then fade. Returns hold time in ms (0 if skipped). */
 function showNestCaptureAnimation(winnerName, nestCards, pts) {
-  if (nestLastTrickAnim === false) return 0;
+  // The House effect replaces the legacy nest overlay and its blocking hold.
+  // Actual nest cards and points remain available on the scoreboard.
+  if (nestLastTrickAnim === false || window.HOREndHandEffectsV12) return 0;
   const cards = Array.isArray(nestCards) ? nestCards.filter(Boolean) : [];
   const HOLD_MS = solScaledDelay(3200, 0);
   const FADE_MS = solScaledDelay(500, 0);
@@ -11733,14 +11919,7 @@ function showNestCaptureAnimation(winnerName, nestCards, pts) {
         },
         solScaledDelay(650 + i * 65, 100)
       );
-      setTimeout(
-        () => {
-          try {
-            if (typeof playCardSound === 'function') playCardSound();
-          } catch (_) {}
-        },
-        solScaledDelay(i * 65, 0)
-      );
+      // Silent end-of-hand nest reveal: stacking six ordinary card cues made a burst.
     });
     setTimeout(() => {
       try {
@@ -12064,11 +12243,9 @@ function hostEndHand() {
           : null,
     summary: { pointsA, pointsB, bid: game.bid, made, trump: game.trump, scores: [...game.scores] },
   };
+  window.HOREndHandEffectsV12?.prepare();
   horRecordCareerHand(summary.careerEvent);
   const finishToScore = () => {
-    try {
-      window.HORJeromeVoiceLines?.result(summary);
-    } catch (e) {}
     broadcast({
       type: 'handResult',
       summary,
@@ -12078,16 +12255,7 @@ function hostEndHand() {
       playerStats: playerStats.map((s) => ({ ...s })),
     });
     broadcastState();
-    showScoreModal(summary);
-    const goal = game.targetScore || targetScore || 300;
-    const matchResult = getMatchResult(game.scores, goal);
-    if (matchResult) {
-      const winner = matchResult;
-      try {
-        mergeLifetimeStats(winner);
-      } catch (e) {}
-      showWinCelebration(winner, [...game.scores]);
-    }
+    presentCompletedHandV12(summary);
   };
 
   // Nest overlay holds 3s, then fade into the score page
@@ -12095,6 +12263,52 @@ function hostEndHand() {
     setTimeout(finishToScore, nestHoldMs);
   } else {
     finishToScore();
+  }
+}
+
+// Presentation owns no points, hands or career state. Reopening scores bypasses it.
+function presentCompletedHandV12(summary) {
+  const owner = game;
+  const current = () => game === owner && game?.phase === 'score';
+  const reveal = () => {
+    if (current()) showScoreModal(summary);
+  };
+  const complete = () => {
+    if (!current()) return;
+    try {
+      window.HORJeromeVoiceLines?.result(summary);
+    } catch (e) {}
+    const finalScores = summary.scores || game.scores;
+    const winner = getMatchResult(finalScores, game.targetScore || targetScore || 500);
+    if (winner) {
+      try {
+        mergeLifetimeStats(winner);
+      } catch (e) {}
+      showWinCelebration(winner, [...finalScores]);
+    }
+  };
+  const event = summary.careerEvent;
+  const key = [
+    event?.matchId || game?.careerMatchId,
+    event?.hand || handHistory.length,
+    ...(summary.scores || []),
+  ].join(':');
+  if (window.HOREndHandEffectsV12) {
+    try {
+      window.HOREndHandEffectsV12.play({
+        key,
+        onReveal: reveal,
+        onComplete: complete,
+        reduced: reduceMotion || matchMedia('(prefers-reduced-motion: reduce)').matches,
+      });
+    } catch (error) {
+      console.error('End-hand presentation:', error);
+      reveal();
+      complete();
+    }
+  } else {
+    reveal();
+    complete();
   }
 }
 
@@ -12869,8 +13083,7 @@ function pickHighlightTricks(winnerLabel) {
   const team = winningTeamIndex(winnerLabel);
   let pool = (matchTricks || []).slice();
   if (team === 0 || team === 1) {
-    const fromWinners = pool.filter((t) => t.team === team);
-    if (fromWinners.length) pool = fromWinners;
+    pool = pool.filter((t) => t.team === team);
   }
   pool.sort((a, b) => {
     const pd = (b.points || 0) - (a.points || 0);
@@ -12931,7 +13144,7 @@ function startMatchCelebration() {
   if (sub) {
     const scoreTxt = `Final A ${scores[0]} – B ${scores[1]}`;
     sub.textContent = highlights.length
-      ? `${scoreTxt} · ${highlights.length === 1 ? 'Biggest trick' : 'Two biggest tricks'} from the winning side`
+      ? `${scoreTxt} · ${highlights.length === 1 ? 'Biggest trick' : 'Two biggest tricks'} ${winner === 'Tie' ? 'of the match' : 'from the winning side'}`
       : scoreTxt;
   }
   page.classList.remove('hidden');
@@ -13205,6 +13418,7 @@ function broadcastState() {
           : matchTricks
         : [],
     trumpClaimPlayer: getRestClaimHolder(),
+    trumpClaimReason: getRestClaimInfo()?.reason || null,
     revealedHands: null,
     claimDeclined: !!game.claimDeclined,
     claimAnimation: game.claimAnimation || null,
@@ -13320,6 +13534,7 @@ function applyState(data) {
       : game.widowSpread || [],
     handPoints: data.handPoints || game.handPoints || [0, 0],
     trumpClaimPlayer: data.trumpClaimPlayer != null ? data.trumpClaimPlayer : null,
+    trumpClaimReason: data.trumpClaimReason || null,
     revealedHands: null,
     claimDeclined: !!data.claimDeclined,
     claimAnimation: data.claimAnimation || null,
@@ -15566,6 +15781,10 @@ function sortMyHand() {
 }
 
 function drawQr(code) {
+  if (isSoloPractice || roomCode === 'OFFLINE' || code === 'OFFLINE') {
+    setQrOpen(false);
+    return;
+  }
   const link = joinLink(code),
     line = $('joinLinkLine'),
     graphic = $('qrGraphic845');
@@ -15615,7 +15834,9 @@ function drawQr(code) {
 // A same-origin ZIP player owns the browser's top-level share identity.
 // Brand that document too; never read or modify an unrelated cross-origin parent.
 function horSyncShareBrand845() {
-  const icon = new URL('assets/images/house-of-rooks-192.png?v=845', location.href).href;
+  const icon =
+    document.querySelector('link[rel~="icon"]')?.href ||
+    new URL('assets/images/house-of-rooks-192.png?v=845', location.href).href;
   for (const doc of [
     document,
     (() => {
@@ -15640,6 +15861,7 @@ function horSyncShareBrand845() {
 horSyncShareBrand845();
 
 function copyRoomCode() {
+  if (isSoloPractice || roomCode === 'OFFLINE') return;
   const code = roomCode || ($('displayCode') && $('displayCode').textContent);
   if (!code) return;
   const hosted = canShareJoinQr();
@@ -15681,6 +15903,7 @@ function shareRoomText(code, url) {
 }
 
 function shareRoom() {
+  if (isSoloPractice || roomCode === 'OFFLINE') return;
   horSyncShareBrand845();
   const code = roomCode || '';
   const url = canShareJoinQr() ? joinLink(code) : '';
@@ -16497,6 +16720,7 @@ bindClick('btnResumePause', () => {
 bindClick('copyCodeBtn', copyRoomCode);
 bindClick('shareBtn', shareRoom);
 function setQrOpen(open) {
+  if (isSoloPractice || roomCode === 'OFFLINE') open = false;
   const box = $('qrBox');
   const btn = $('showQrBtn');
   if (!box) return;
@@ -16736,6 +16960,7 @@ function updateLandscapeTheater() {
   const endEl = $('ltEndGame');
   const endSummary = landscapeLastSummary;
   const isLandscape = window.matchMedia && window.matchMedia('(orientation: landscape)').matches;
+  $('landscapeTheater')?.setAttribute('aria-hidden', String(!isLandscape));
   if (endEl) {
     const goal = (game && game.targetScore) || targetScore || 500;
     const isScore = !!(game && game.phase === 'score');
@@ -18842,9 +19067,11 @@ try {
       const play = document.createElement('button');
       play.type = 'button';
       play.textContent = 'Play';
+      play.setAttribute('aria-label', 'Play ' + title);
       const stop = document.createElement('button');
       stop.type = 'button';
       stop.textContent = 'Stop';
+      stop.setAttribute('aria-label', 'Stop ' + title);
       play.onclick = async () => {
         if (sel.value === 'rotate') {
           stopPreviewAudio();

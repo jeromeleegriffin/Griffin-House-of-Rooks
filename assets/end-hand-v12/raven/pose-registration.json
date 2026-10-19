@@ -1,0 +1,37 @@
+{
+  "canvas": [
+    1856,
+    1344
+  ],
+  "units": "source pixels",
+  "status": "PROVISIONAL_POSTURE_CONTINUITY_UNFINISHED",
+  "cycle": [
+    "raven-up.png",
+    "raven-mid.png",
+    "raven-down.png",
+    "raven-mid.png"
+  ],
+  "poseIntervalMs": 105,
+  "poses": {
+    "raven-up.png": {
+      "anchor": [
+        1010,
+        780
+      ]
+    },
+    "raven-mid.png": {
+      "anchor": [
+        1090,
+        770
+      ]
+    },
+    "raven-down.png": {
+      "anchor": [
+        1070,
+        585
+      ]
+    }
+  },
+  "note": "Full untrimmed PNGs. Anchors reduce displacement but do not fix posture/anatomical drift. No claim of final temporal continuity.",
+  "paddingPixels": 160
+}

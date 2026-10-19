@@ -1,4 +1,7 @@
 /* Functional availability labels: selection can never name a different seated bot. */
+[data-offline-invitation] {
+  display: none !important;
+}
 #botPickerGrid .bot-pick.bot-unavailable835 {
   opacity: 0.62;
   cursor: not-allowed;
@@ -14,6 +17,24 @@
 #landingPartners783 [data-done]:disabled {
   opacity: 0.65;
   cursor: not-allowed;
+}
+/* Native modal top layer keeps these dialogs above game artwork and makes the
+   underlying table inert, without changing the approved bid/hand geometry. */
+dialog:is(#tutorialOverlay, #confirmSheet) {
+  box-sizing: border-box;
+  width: 100%;
+  height: 100%;
+  max-width: none;
+  max-height: none;
+  margin: 0;
+  border: 0;
+  color: inherit;
+}
+dialog:is(#tutorialOverlay, #confirmSheet):not([open]) {
+  display: none !important;
+}
+dialog:is(#tutorialOverlay, #confirmSheet)::backdrop {
+  background: transparent;
 }
 /* Center all existing tour content inside the available viewport. */
 #tutorialOverlay.tour-bounded835:not(.hidden) {

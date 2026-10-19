@@ -123,7 +123,7 @@
     paint();
     status(
       s.selected.size === s.ctx.count
-        ? 'Arrange your ten kept cards, then lock your hand.'
+        ? 'Arrange your ' + (s.hand.length - s.ctx.count) + ' kept cards, then lock your hand.'
         : zone === 'nest'
           ? 'Moved to the Nest. Choose ' + (s.ctx.count - s.selected.size) + ' more.'
           : 'Card returned. Slide left or right to place it.'

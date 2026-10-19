@@ -41,6 +41,7 @@
       base,
       isHost,
       roomCode,
+      matchMedia('(orientation: landscape)').matches,
       players.map((p) => [p.id, p.name, p.seat, p.avatar, p.careerPublic]),
     ]);
     if (key === renderKey) return;
@@ -75,16 +76,25 @@
           (p.id === myPeerId
             ? 'You' + (p.isHost ? ' · Host' : '')
             : p.isBot
-              ? isHost
-                ? 'Bot · tap to remove'
-                : 'Bot · tap to replace'
+              ? matchMedia('(orientation: landscape)').matches
+                ? 'Bot · view career'
+                : isHost
+                  ? 'Bot · tap to remove'
+                  : 'Bot · tap to replace'
               : p.isHost
                 ? 'Host'
                 : 'Friend') +
           '</small>';
         button.setAttribute(
           'aria-label',
-          p.name + (p.isBot ? (isHost ? ', remove bot' : ', replace bot') : ', seated')
+          p.name +
+            (p.isBot
+              ? matchMedia('(orientation: landscape)').matches
+                ? ', view career'
+                : isHost
+                  ? ', remove bot'
+                  : ', replace bot'
+              : ', seated')
         );
       }
       button.onclick = (e) => {
@@ -152,6 +162,13 @@
     document.getElementById('displayCode').textContent = roomCode;
     document.getElementById('shareBtn').textContent = 'Invite';
     document.getElementById('showQrBtn').textContent = 'QR';
+    // Practice has no joinable room, including after a completed solo match.
+    const offline = isSoloPractice || roomCode === 'OFFLINE';
+    for (const id of ['shareBtn', 'showQrBtn', 'copyCodeBtn']) {
+      const button = document.getElementById(id);
+      button.disabled = offline;
+      button.toggleAttribute('data-offline-invitation', offline);
+    }
     document.getElementById('fillSeatsBtn').textContent = 'Fill seats';
     const copy = document.getElementById('copyCodeBtn');
     copy.classList.remove('hidden');
@@ -185,5 +202,6 @@
     renderKey = '';
     refresh();
   }).observe(root, { attributes: true, attributeFilter: ['class'] });
+  addEventListener('resize', refresh);
   refresh();
 })();

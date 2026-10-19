@@ -1,0 +1,17 @@
+OWNER-SUPPLIED SOURCE RECORDINGS — extracted/filtered/faded for 063.
+All Freesound sources below listed CC0 1.0 at retrieval on October 8, 2026:
+Playing Cards.wav — MellowAudio — https://freesound.org/people/MellowAudio/sounds/591486/
+antique clock tick.wav — keweldog — https://freesound.org/people/keweldog/sounds/223130/
+Wine Glasses on contact (Clink) — EpicWizard — https://freesound.org/people/EpicWizard/sounds/325194/
+traditional stamp.wav — I.fekry — https://freesound.org/people/I.fekry/sounds/470710/
+Finger - slide - wood - tap.wav — ValentinPetiteau — https://freesound.org/people/ValentinPetiteau/sounds/567861/
+Push button — xkeril — https://freesound.org/people/xkeril/sounds/613919/
+short pigeon wing flap — zouzmusic — https://freesound.org/people/zouzmusic/sounds/414671/
+CC0: https://creativecommons.org/publicdomain/zero/1.0/
+Applause, small audience — nervousneal (Freesound), supplied through freesound_community on Pixabay.
+https://pixabay.com/sound-effects/people-applause-small-audience-97257/
+Pixabay Content License: https://pixabay.com/service/license-summary/
+Applause excerpt is included only as a game sound effect, not a standalone stock-audio product.
+See manifest.json for exact excerpt intervals and source filenames.
+Processing: mono 22050 Hz PCM16; 100 Hz highpass, 6500 Hz lowpass; bounded peak normalization (maximum gain 4); edge fades; applause 120ms onset/600ms release.
+Listening approval pending. Recorded bird-card calls remain the prior owner-approved asset, unchanged.

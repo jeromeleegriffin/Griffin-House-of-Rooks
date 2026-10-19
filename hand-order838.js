@@ -50,7 +50,16 @@
     if (!cards?.length) return [];
     const r = ensure(cards),
       by = new Map(cards.map((c) => [sid(c), c]));
-    return r.ids.filter((id) => by.has(id)).map((id) => by.get(id));
+    const list = r.ids.filter((id) => by.has(id)).map((id) => by.get(id));
+    if (game?.phase === 'play' && game.trump) {
+      const trumps = list.filter((c) => isTrumpCard(c, game.trump)).sort(compareCardsDisplay);
+      const plain = list.filter((c) => !isTrumpCard(c, game.trump));
+      // Keep manual ordering within the plain cards, but always gather the
+      // called trump with the birds once the trump choice is authoritative.
+      if (!r.locked) plain.sort(compareCardsDisplay);
+      return [...trumps, ...plain];
+    }
+    return list;
   }
   function apply(cards) {
     if (!cards?.sort || !cards.length) return cards;
