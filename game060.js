@@ -7,7 +7,7 @@
 // It's exchanged during the join handshake so a stale host or joiner (e.g.
 // one still running old cached JS) gets caught and auto-updated instead of
 // silently failing or behaving unpredictably against a mismatched peer.
-const APP_VERSION = '846-complete-repairs-20261019';
+const APP_VERSION = '846-premium-owner-repair-20261020-r7-cumulative';
 window.HOR_SCRIPT_BUILD = APP_VERSION;
 
 function horThisIndex() {
@@ -15155,13 +15155,6 @@ window.addEventListener('orientationchange', () => {
 window.addEventListener('resize', () => {
   setTimeout(syncLandscapeFullscreen, 120);
 });
-document.addEventListener(
-  'pointerdown',
-  () => {
-    if (wantLandscapeFullscreen()) enterLandscapeFullscreen();
-  },
-  { passive: true }
-);
 document.addEventListener('fullscreenchange', syncBrowserFitBtn);
 
 function hideActionPanel() {
@@ -15951,46 +15944,16 @@ function wantLandscapeFullscreen() {
     : !!fullscreenElement();
 }
 
+// Legacy viewport/game hooks only repaint controls. Native fullscreen entry/exit
+// belongs to the explicit button controller; never re-enter from resize or a tap.
 function enterLandscapeFullscreen() {
-  if (!wantLandscapeFullscreen()) return;
-  try {
-    if (!fullscreenElement()) {
-      const el = document.documentElement;
-      const req =
-        el.requestFullscreen ||
-        el.webkitRequestFullscreen ||
-        el.webkitRequestFullScreen ||
-        el.msRequestFullscreen;
-      if (req) {
-        const p = req.call(el);
-        if (p && typeof p.catch === 'function') p.catch(() => {});
-      }
-    }
-  } catch (e) {}
-  try {
-    if (screen.orientation && typeof screen.orientation.unlock === 'function') {
-      screen.orientation.unlock();
-    }
-  } catch (e) {}
+  syncBrowserFitBtn();
 }
-
 function exitLandscapeFullscreen() {
-  if (wantLandscapeFullscreen()) return;
-  try {
-    if (fullscreenElement()) {
-      const ex =
-        document.exitFullscreen || document.webkitExitFullscreen || document.msExitFullscreen;
-      if (ex) {
-        const p = ex.call(document);
-        if (p && typeof p.catch === 'function') p.catch(() => {});
-      }
-    }
-  } catch (e) {}
+  syncBrowserFitBtn();
 }
-
 function syncLandscapeFullscreen() {
-  if (wantLandscapeFullscreen()) enterLandscapeFullscreen();
-  else exitLandscapeFullscreen();
+  syncBrowserFitBtn();
 }
 
 function syncBrowserFitBtn() {
@@ -18204,6 +18167,8 @@ function playDealCardSound(delayMs = 0) {
   );
 }
 function positionRailControls035(controls) {
+  // Premium portrait UI may own these existing buttons. No-op when not installed.
+  if (window.HORRailControlsReview?.position?.(controls) === true) return;
   // Tablet room scaling creates a containing block for fixed descendants.
   // Keep the existing buttons/handlers in viewport space on larger viewports.
   if (!controls._railHome035) controls._railHome035 = controls.parentNode;

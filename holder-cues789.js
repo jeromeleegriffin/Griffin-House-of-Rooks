@@ -13,7 +13,6 @@
     shown = '',
     win = '',
     pendingWin = '',
-    pendingCards = '',
     timer = 0,
     frame = 0,
     token = 0,
@@ -114,7 +113,6 @@
     timer = 0;
     win = '';
     pendingWin = '';
-    pendingCards = '';
     shown = '';
     if (area) delete area.dataset.holderCue;
     stopHaptic();
@@ -139,14 +137,21 @@
   function launchWin(key) {
     if (!present() || pendingWin !== key || !['play', 'score'].includes(current.phase)) return;
     pendingWin = '';
-    pendingCards = '';
     win = key;
     shown = '';
     const ticket = ++token;
     area.dataset.holderReduced = String(reduced());
     area.dataset.holderCue = 'win';
     if (live) live.textContent = 'Trick won';
-    record('win', { key, reduced: reduced() });
+    record('win', {
+      key,
+      reduced: reduced(),
+      phase: current.phase,
+      resolving: !!current.resolvingTrick,
+      trickLength: current.trick?.length,
+      winner: current.lastTrickWinner,
+      local,
+    });
     vibrate(reduced() ? 18 : [18, 322, 18]);
     timer = setTimeout(
       () => {
@@ -161,20 +166,10 @@
       reduced() ? 900 : 800
     );
   }
-  function arrival(key, ticket, source) {
-    if (ticket !== token || pendingWin !== key || !present()) return;
-    record('arrival', { key, source });
-    schedule(() => {
-      if (ticket === token) launchWin(key);
-    });
-  }
-  function captureWaiter(winner, cards) {
-    const key = pendingWin,
-      ticket = token;
-    const signature = (cards || []).map((t) => t.card?.id).join(',');
-    if (!key || winner !== local || signature !== pendingCards) return () => {};
-    record('collection-start', { key });
-    return () => arrival(key, ticket, 'collection-end');
+  // Native capture code keeps this optional hook. The win cue now starts at
+  // trick resolution, so collection callbacks must never queue or replay it.
+  function captureWaiter() {
+    return () => {};
   }
   function refresh() {
     frame = 0;
@@ -227,27 +222,19 @@
       if (!seenWins.has(key)) {
         seenWins.add(key);
         pendingWin = key;
-        pendingCards = g.trick.map((t) => t.card?.id).join(',');
-        const ticket = token;
-        // Quiet the previous turn while the four cards are revealed and collected.
         shown = '';
-        delete area.dataset.holderCue;
         stopHaptic();
-        if (live) live.textContent = '';
-        record('win-wait', { key });
-        // The raven encounter replaces ordinary card collection. Keep its existing gate.
-        window.HORRavenFight741?.deferCelebration(() => arrival(key, ticket, 'raven-complete'));
+        record('win-ready', {
+          key,
+          winner: g.lastTrickWinner,
+          local,
+          phase: g.phase,
+          trickLength: g.trick.length,
+        });
+        // The fourth card has resolved and its winner is already authoritative.
+        // Start now, in this render frame; never wait for collection or next lead.
+        launchWin(key);
       }
-    }
-    // If there was no drawable flight, acknowledge only once the resolved trick
-    // has actually cleared; never leave the following human turn waiting forever.
-    if (
-      pendingWin &&
-      !g.resolvingTrick &&
-      !document.querySelector('.trick-capture-flight-layer') &&
-      !window.HORRavenFight741?.getState().active
-    ) {
-      arrival(pendingWin, token, 'collection-cleared');
     }
     if (win || pendingWin) return;
     if (turn) showTurn();

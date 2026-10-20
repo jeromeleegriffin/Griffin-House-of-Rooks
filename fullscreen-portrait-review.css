@@ -1,0 +1,14 @@
+/* Griffin House of Rooks: isolated portrait review, not a live-release fix. */
+@media (orientation: portrait) {
+  body.hor-rail-review .game-room > .hand-area {
+    translate: 0 var(--hor-rail-review-dy, 0px) !important;
+  }
+}
+@layer approvedPortraitBidAsset {
+  @media (orientation: portrait) {
+    body.hor-rail-review.in-game
+      #decisionConsole.approved-bid-portrait.decision-mode-bid:not(.hidden) {
+      translate: 0 calc(clamp(22px, 7.5vw, 32px) + var(--hor-rail-review-dy, 0px)) !important;
+    }
+  }
+}

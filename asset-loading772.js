@@ -108,6 +108,7 @@
     failed = [],
     busy = false,
     replay = false,
+    soloEntryPending = false,
     booted = false,
     initialRevealComplete = false,
     fadeTimer = 0,
@@ -290,10 +291,12 @@
     'click',
     async (e) => {
       const el = e.target.closest?.('#soloPracticeBtn');
-      if (!el || replay || [...required].every((p) => loaded.has(p))) return;
+      if (!el || replay) return;
+      if (!soloEntryPending && [...required].every((p) => loaded.has(p))) return;
       e.preventDefault();
       e.stopImmediatePropagation();
-      if (busy) return;
+      if (soloEntryPending) return;
+      soloEntryPending = true;
       try {
         await prepare();
         replay = true;
@@ -302,7 +305,10 @@
         } finally {
           replay = false;
         }
-      } catch (_) {}
+      } catch (_) {
+      } finally {
+        soloEntryPending = false;
+      }
     },
     true
   );

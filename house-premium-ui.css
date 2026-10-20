@@ -1,0 +1,319 @@
+/* HOUSE PREMIUM UI: every physical visible surface is an approved raster artwork asset.
+   CSS positions finished PNG assets and dynamically updating text/click targets only.
+   The protected table, card, nest, Bid Box and portrait dimensions are untouched. */
+#housePremiumHud1020[hidden],
+#housePremiumConsole1020[hidden],
+#housePremiumHud1020 .hidden {
+  display: none !important;
+}
+#horRailFullscreenReview[hidden] {
+  display: none !important;
+}
+@media (orientation: portrait) {
+  body.in-game #matchHeader706 {
+    visibility: hidden !important;
+    pointer-events: none !important;
+  }
+  body.in-game #housePremiumHud1020 {
+    display: block;
+    position: fixed;
+    z-index: 155;
+    pointer-events: none;
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 86px;
+    overflow: visible;
+    box-sizing: border-box;
+    padding: env(safe-area-inset-top, 0px) env(safe-area-inset-right, 0px)
+      env(safe-area-inset-bottom, 0px) env(safe-area-inset-left, 0px);
+  }
+  body.in-game #housePremiumHud1020 .house-premium-match {
+    position: absolute;
+    top: 0;
+    left: 0;
+    height: auto;
+    pointer-events: none;
+    display: block;
+    aspect-ratio: 619/93;
+  }
+  body.in-game #housePremiumHud1020 .house-premium-match img {
+    position: absolute;
+    /* Original PNG canvas is 622x100; visible alpha bounds are (2,4)-(621,97). */
+    left: calc(-2 / 619 * 100%);
+    top: calc(-4 / 93 * 100%);
+    width: calc(622 / 619 * 100%);
+    height: calc(100 / 93 * 100%);
+    display: block;
+  }
+  body.in-game #housePremiumHud1020 .house-premium-match .house-score-number {
+    position: absolute;
+    top: calc(19 / 93 * 100%);
+    width: calc(65.932 / 619 * 100%);
+    height: calc(58 / 93 * 100%);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: #f4e9d4;
+    font:
+      700 clamp(10px, 3.2vw, 17px) / 1 Georgia,
+      serif;
+    font-variant-numeric: tabular-nums;
+    white-space: nowrap;
+    background: none;
+    text-shadow: 0 1px 2px #000;
+  }
+  body.in-game #housePremiumHud1020 .house-score-a {
+    left: calc(231.872 / 619 * 100%);
+  }
+  body.in-game #housePremiumHud1020 .house-score-b {
+    left: calc(527.322 / 619 * 100%);
+  }
+  body.in-game .in-game-leave.house-utility-group {
+    position: fixed !important;
+    display: flex !important;
+    flex-flow: row nowrap !important;
+    align-items: center !important;
+    justify-content: center !important;
+    gap: var(--house-tool-gap, 4px) !important;
+    margin: 0 !important;
+    padding: 0 !important;
+    height: var(--house-tool-size, 31px) !important;
+    width: max-content !important;
+    min-height: 0 !important;
+    min-width: 0 !important;
+    max-width: none !important;
+    background: transparent !important;
+    border: 0 !important;
+    box-shadow: none !important;
+    transform: none !important;
+    translate: none !important;
+    overflow: visible !important;
+    z-index: 180 !important;
+    pointer-events: none !important;
+  }
+  body.in-game .in-game-leave.house-utility-group > button,
+  body.in-game .in-game-leave.house-utility-group > .leave-menu-btn,
+  body.in-game .in-game-leave.house-utility-group > .leave-exit-btn {
+    display: block !important;
+    position: relative !important;
+    flex: none !important;
+    width: var(--house-tool-size, 31px) !important;
+    height: var(--house-tool-size, 31px) !important;
+    min-width: var(--house-tool-size, 31px) !important;
+    min-height: var(--house-tool-size, 31px) !important;
+    max-width: var(--house-tool-size, 31px) !important;
+    max-height: var(--house-tool-size, 31px) !important;
+    margin: 0 !important;
+    padding: 0 !important;
+    border: 0 !important;
+    border-radius: 0 !important;
+    background-color: transparent !important;
+    background-position: center !important;
+    background-size: 100% 100% !important;
+    background-repeat: no-repeat !important;
+    box-shadow: none !important;
+    outline: none !important;
+    opacity: 1 !important;
+    color: transparent !important;
+    font-size: 0 !important;
+    transform: none !important;
+    translate: none !important;
+    filter: none !important;
+    -webkit-tap-highlight-color: transparent !important;
+    pointer-events: auto !important;
+    touch-action: manipulation !important;
+  }
+  body.in-game .in-game-leave.house-utility-group > button::before,
+  body.in-game .in-game-leave.house-utility-group > button::after {
+    content: none !important;
+    display: none !important;
+  }
+  body.in-game .in-game-leave.house-utility-group > button > * {
+    display: none !important;
+  }
+  body.in-game #horRailFullscreenReview {
+    background-image: url('assets/house-premium-console/utility-fullscreen.png') !important;
+  }
+  body.in-game #btnToggleTopOpts {
+    background-image: url('assets/house-premium-console/utility-menu.png') !important;
+  }
+  body.in-game #leaveReplaceBtn {
+    background-image: url('assets/house-premium-console/utility-back.png') !important;
+  }
+  body.in-game .house-pace-stage {
+    position: fixed;
+    z-index: 170;
+    display: flex;
+    align-items: stretch;
+    justify-content: center;
+    overflow: visible;
+    pointer-events: none;
+    background: url('assets/house-premium-console/speed-frame-photo.png') center/100% 100% no-repeat;
+  }
+  body.in-game .house-pace-stage.house-console-pace {
+    background: none;
+  }
+  body.in-game #scoreSpeed701.house-premium-speed {
+    display: flex !important;
+    position: absolute !important;
+    left: 3.1325% !important;
+    right: auto !important;
+    top: 14.6789% !important;
+    bottom: auto !important;
+    flex: 0 0 75% !important;
+    width: 69.3976% !important;
+    height: 66.055% !important;
+    min-width: 0 !important;
+    max-width: 69.3976% !important;
+    align-items: stretch !important;
+    gap: 0 !important;
+    margin: 0 !important;
+    padding: 0 !important;
+    border: 0 !important;
+    border-radius: 0 !important;
+    box-shadow: none !important;
+    background: transparent !important;
+    transform: none !important;
+    translate: none !important;
+    overflow: visible !important;
+    pointer-events: auto !important;
+  }
+  body.in-game #scoreSpeed701.house-premium-speed > button,
+  body.in-game #portraitLastTrickButton.house-premium-last {
+    appearance: none !important;
+    box-sizing: border-box !important;
+    display: flex !important;
+    position: relative !important;
+    z-index: 1 !important;
+    align-items: center !important;
+    justify-content: center !important;
+    width: 33.333% !important;
+    min-width: 0 !important;
+    max-width: none !important;
+    height: 100% !important;
+    min-height: 0 !important;
+    max-height: none !important;
+    margin: 0 !important;
+    padding: 0 !important;
+    border: 0 !important;
+    border-radius: 0 !important;
+    outline: 0 !important;
+    background: url('assets/house-premium-console/speed-unselected-photo.png') center/100% 100%
+      no-repeat !important;
+    box-shadow: none !important;
+    font:
+      700 clamp(9px, 2.4vw, 13px) / 1 Georgia,
+      serif !important;
+    letter-spacing: 0 !important;
+    text-shadow: 0 1px 1px #000 !important;
+    color: #f1dfb5 !important;
+    white-space: nowrap !important;
+    transform: none !important;
+    translate: none !important;
+    pointer-events: auto !important;
+    touch-action: manipulation !important;
+  }
+  body.in-game #portraitLastTrickButton.house-premium-last {
+    position: absolute !important;
+    left: 72.5301% !important;
+    right: auto !important;
+    top: 14.6789% !important;
+    bottom: auto !important;
+    flex: 0 0 25% !important;
+    width: 23.1325% !important;
+    height: 66.055% !important;
+    min-width: 0 !important;
+    max-width: none !important;
+  }
+  body.in-game .house-pace-stage .house-paced-button-face {
+    position: absolute;
+    z-index: -1;
+    pointer-events: none;
+    inset: 7% 3%;
+    background: url('assets/house-premium-console/speed-unselected-photo.png') center/100% 100%
+      no-repeat;
+  }
+  body.in-game #scoreSpeed701.house-premium-speed > button.active,
+  body.in-game #scoreSpeed701.house-premium-speed > button[aria-pressed='true'],
+  body.in-game #portraitLastTrickButton.house-premium-last[aria-expanded='true'] {
+    color: #20160a !important;
+    text-shadow: none !important;
+    background: url('assets/house-premium-console/speed-selected-photo.png') center/100% 100%
+      no-repeat !important;
+  }
+  body.in-game #housePremiumConsole1020 {
+    position: fixed;
+    z-index: 148;
+    display: block;
+    overflow: visible;
+    box-sizing: border-box;
+    padding: 0;
+    margin: 0;
+    pointer-events: none;
+  }
+  body.in-game #housePremiumConsole1020 > img.house-premium-wood {
+    display: block;
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    object-fit: fill;
+    pointer-events: none;
+  }
+  body.in-game #housePremiumConsole1020 .house-clock-zone,
+  body.in-game #housePremiumConsole1020 .house-goal-zone {
+    position: absolute;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    box-sizing: border-box;
+    overflow: hidden;
+    color: #edd9aa;
+    font:
+      600 clamp(9px, 2.85vw, 13px) / 1.1 Georgia,
+      serif;
+    font-variant-numeric: tabular-nums;
+    text-shadow: 0 1px 2px #000;
+  }
+  body.in-game #housePremiumConsole1020 .house-clock-zone {
+    left: calc(35 / 941 * 100%);
+    width: calc(192 / 941 * 100%);
+    top: 35%;
+    height: 42%;
+    background: none;
+    white-space: nowrap;
+  }
+  body.in-game #housePremiumConsole1020 .house-goal-zone {
+    left: 77%;
+    width: 19.2%;
+    top: 34.5%;
+    height: 43%;
+    background: none;
+    flex-direction: column;
+    gap: 1px;
+  }
+  body.in-game #housePremiumConsole1020 .house-goal-zone span {
+    display: block;
+    width: 100%;
+    text-align: center;
+  }
+  body.in-game #housePremiumConsole1020 .house-console-controls-holder {
+    position: absolute;
+    left: 28.3%;
+    width: 42.7%;
+    top: 27%;
+    height: 43%;
+    pointer-events: none;
+  }
+  body.in-game:has(#scoreModal:not(.hidden)) .house-pace-stage {
+    display: none !important;
+  }
+}
+
+@media (orientation: portrait) {
+  body.in-game #horProgressToastHost {
+    top: var(--house-premium-notice-top, 84px) !important;
+  }
+}

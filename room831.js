@@ -5,42 +5,100 @@
     wide = () => matchMedia('(orientation:landscape)').matches;
   const buttons = [];
   let messageTimer;
+  let changing = false;
+  const safeAndroid =
+    /Android/i.test(navigator.userAgent) || navigator.userAgentData?.platform === 'Android';
   function fullscreen() {
-    return !!(document.fullscreenElement || document.webkitFullscreenElement);
+    return !!nativeOwner();
+  }
+  function nativeOwner() {
+    let view = window;
+    try {
+      while (view) {
+        if (view.document.fullscreenElement || view.document.webkitFullscreenElement)
+          return view.document;
+        if (view === view.parent) break;
+        view = view.parent;
+      }
+    } catch (_) {}
+    return null;
+  }
+  function fitModeActive() {
+    return document.body.classList.contains('page-fit');
+  }
+  function fullscreenLabel() {
+    return fullscreen() ? 'Exit full screen' : 'Full screen';
+  }
+  async function exitNativeForFit() {
+    const owner = nativeOwner();
+    if (owner) {
+      const exit = owner.exitFullscreen || owner.webkitExitFullscreen;
+      if (exit) await exit.call(owner);
+    }
   }
   function paint() {
     for (const b of buttons) {
-      const label = fullscreen() ? 'Exit full screen' : 'Full screen';
+      const text = fullscreenLabel();
       b.innerHTML =
         '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M3 8V3h5m8 0h5v5m0 8v5h-5M8 21H3v-5"/></svg><span></span>';
-      b.querySelector('span').textContent = label;
-      b.setAttribute('aria-label', label);
+      b.querySelector('span').textContent = text;
+      b.setAttribute('aria-label', text);
       b.setAttribute('aria-pressed', String(fullscreen()));
     }
   }
   async function toggle() {
+    if (changing) return;
+    changing = true;
     const was = fullscreen();
-    window.HORManualFullscreen831 = !was;
     try {
       if (was) {
-        const exit = document.exitFullscreen || document.webkitExitFullscreen;
+        const owner = nativeOwner();
+        const exit = owner?.exitFullscreen || owner?.webkitExitFullscreen;
         if (!exit) throw Error();
-        await exit.call(document);
+        await exit.call(owner);
       } else {
         const el = document.documentElement,
           request = el.requestFullscreen || el.webkitRequestFullscreen;
         if (!request) throw Error();
         await request.call(el);
       }
+      window.HORManualFullscreen831 = fullscreen();
+      clearTimeout(messageTimer);
+      if (!was) {
+        try {
+          screen.orientation?.unlock?.();
+        } catch (_) {}
+      }
       paint();
     } catch (_) {
-      window.HORManualFullscreen831 = was;
+      window.HORManualFullscreen831 = fullscreen();
       for (const b of buttons) b.textContent = 'Full screen unavailable';
       clearTimeout(messageTimer);
       messageTimer = setTimeout(paint, 3500);
+    } finally {
+      changing = false;
     }
   }
-  window.HORFullscreen831 = { toggle };
+  async function fitScreen() {
+    if (changing) return;
+    changing = true;
+    try {
+      await exitNativeForFit();
+      document.body.classList.add('page-fit');
+      window.HORManualFullscreen831 = false;
+      window.syncBrowserFitBtn?.();
+      paint();
+    } finally {
+      changing = false;
+    }
+  }
+  window.HORFullscreen831 = {
+    toggle,
+    fitScreen,
+    fitModeActive: () => safeAndroid && fitModeActive(),
+    label: fullscreenLabel,
+  };
+  if (safeAndroid) document.body.classList.add('page-fit');
   for (const id of ['lobby', 'waiting']) {
     const host = $(id);
     if (!host) continue;

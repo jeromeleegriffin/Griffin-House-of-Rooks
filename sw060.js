@@ -2,10 +2,29 @@
  * Author: Jerome Griffin
  * Copyright (c) 2026 Jerome Griffin / Griffin House
  */
-const BUILD = '846-complete-repairs-20261019';
-const CACHE = 'house-of-rooks-846-complete-repairs-20261019';
+const BUILD = '846-premium-owner-repair-20261020-r7-cumulative';
+const CACHE = 'house-of-rooks-846-premium-owner-repair-20261020-r7-cumulative';
 // Current dependency paths only; cacheLookup handles version query strings.
 const SHELL = [
+  './cloudflare-entry.js',
+  './assets/house-premium-console/ASSET_PROVENANCE.json',
+  './assets/house-premium-console/clock-enamel-inset.png',
+  './assets/house-premium-console/goal-enamel-inset.png',
+  './assets/house-premium-console/score-number-inset.png',
+  './assets/house-premium-console/speed-frame-photo.png',
+  './assets/house-premium-console/speed-selected-photo.png',
+  './assets/house-premium-console/speed-unselected-photo.png',
+  './assets/house-premium-console/top-match-plaque.png',
+  './assets/house-premium-console/utility-back.png',
+  './assets/house-premium-console/utility-fullscreen.png',
+  './assets/house-premium-console/utility-menu.png',
+  './assets/house-premium-console/walnut-console-live-fields.png',
+  './assets/house-premium-console/holder-console-walnut-connector.png',
+  './fullscreen-portrait-review.css',
+  './fullscreen-portrait-review.js',
+  './house-premium-ui.css',
+  './house-premium-ui.js',
+
   './end-hand-effects-v12.js',
   './end-hand-effects-v12.css',
   './assets/end-hand-v12/audio/CORVID_CALL_PROVENANCE.txt',

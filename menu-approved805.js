@@ -853,6 +853,20 @@
           window.HORFullscreen831?.toggle();
         },
       ],
+      ...(/Android/i.test(navigator.userAgent) || navigator.userAgentData?.platform === 'Android'
+        ? [
+            [
+              'fitscreen',
+              'Fit screen',
+              'Leave native fullscreen and keep controls within the browser',
+              '⛶',
+              () => {
+                closeAll();
+                window.HORFullscreen831?.fitScreen?.().catch(() => {});
+              },
+            ],
+          ]
+        : []),
       ['join', 'Join by Code', "Enter a friend's table code", '⌨', joinByCode],
       ['score', 'Match Score', 'Running team scores and match statistics', '♜', matchScore],
       ['profile', 'My Profile', 'Your name, avatar and voice', '◇', profile],
@@ -931,7 +945,8 @@
       const f = buttons.get('fullscreen');
       if (f) {
         const on = !!fullscreenElement();
-        f.querySelector('b').textContent = on ? 'Exit full screen' : 'Full screen';
+        f.querySelector('b').textContent =
+          window.HORFullscreen831?.label?.() || (on ? 'Exit full screen' : 'Full screen');
       }
       remember('Menu');
       restoreControls();

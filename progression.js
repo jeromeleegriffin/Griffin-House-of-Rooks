@@ -594,7 +594,7 @@ HORCareerCore.install(window.HORProgression);
         (document.body.classList.contains('angle-c-runtime') &&
         matchMedia('(orientation:landscape)').matches
           ? 1
-          : state.maxVisible) &&
+          : (window.HORPremiumUI1020?.noticeLimit?.() ?? state.maxVisible)) &&
       state.queue.length
     ) {
       const ev = state.queue.shift();
