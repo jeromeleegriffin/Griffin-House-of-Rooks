@@ -1,0 +1,11 @@
+{
+  "workflow": 39561281136,
+  "job": 119092888708,
+  "commit": "5968e0eec8386f783d1f42e0610a1c13ce3146c8",
+  "conclusion": "failure",
+  "assertion": "after.botIntelligence.decisions.bid > 0",
+  "scope": "The test completed its real ten-minute interval and passed original-seat/token/hand assertions, then failed the unproven bot-progress assumption. Not a complete passing run.",
+  "fixtureIssue": "Random initial dealer can place the human first; the original setup did not require a pending bot turn.",
+  "correction": "Wait for dealing locks, drive required human actions, assert another seat is current before detaching, compare total decisions before/after and preserve original own cards (auction may add the nest). No game source changed.",
+  "replacementCommit": "65af52ca1661923578a98d850cd311084b9d46ac"
+}

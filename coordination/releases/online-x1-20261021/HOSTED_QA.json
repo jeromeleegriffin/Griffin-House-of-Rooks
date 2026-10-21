@@ -3,17 +3,16 @@
   "scope": "Real Cloudflare HTTP API on isolated Worker; one GitHub runner and distinct simulated human identities; no rendered browser or physical network certification",
   "worker": "griffin-house-of-rooks-x1-qa-20261021",
   "namespace": "1d0feb9cebf54a17ae0c50e306abc299",
-  "version": "ffdfc6e4-1af8-433d-b0e2-66d67785955b",
-  "deployment": "c8f009c5-ec3f-4604-9720-5d45940fc344",
-  "sourceSha256": "c430869e13412d1f5aca4ee001571d8a6764895b7eb6c515d2a3d642a2a8b1ed",
+  "version": "9f4afd3f-00ff-47a6-9f38-442a3b56ee56",
+  "deployment": "62f35057-d207-4d8a-b35c-3a53e85c80ca",
+  "sourceSha256": "313ed667456754003a054b6506c9c5579d98d16ecb179b9d8465fa954152e6c1",
   "exactDownloadedSourceMatch": true,
   "workflow": {
-    "id": 39561016427,
-    "job": 119092010530,
-    "commit": "5c882d2e984584db6a6ae0ed4cdbd72b234bafe9",
+    "id": 39562960314,
+    "job": 119098320852,
+    "commit": "bf0e112f3fd284b7211733065beea2437e6f1c2e",
     "conclusion": "success",
-    "url": "https://github.com/jeromeleegriffin/Test/actions/runs/39561016427",
-    "artifact": 12326794855
+    "url": "https://github.com/jeromeleegriffin/Test/actions/runs/39562960314"
   },
   "matches": [
     {
@@ -22,19 +21,19 @@
       "pace": 99,
       "phase": "complete",
       "scores": [
-        150,
-        50
+        60,
+        140
       ],
-      "actions": 11,
+      "actions": 12,
       "rejoins": 3,
       "duplicates": 2,
       "networkRetries": 0,
-      "elapsedMs": 20081,
+      "elapsedMs": 20088,
       "intelligence": {
         "version": "x1-online-v1",
         "active": "x1",
         "decisions": {
-          "bid": 3,
+          "bid": 5,
           "discard": 1,
           "trump": 1,
           "play": 30
@@ -52,14 +51,14 @@
       "pace": 3,
       "phase": "complete",
       "scores": [
-        160,
-        40
+        125,
+        75
       ],
       "actions": 24,
       "rejoins": 7,
       "duplicates": 2,
       "networkRetries": 0,
-      "elapsedMs": 31269,
+      "elapsedMs": 32480,
       "intelligence": {
         "version": "x1-online-v1",
         "active": "x1",
@@ -82,14 +81,14 @@
       "pace": 1,
       "phase": "complete",
       "scores": [
-        110,
-        90
+        50,
+        150
       ],
       "actions": 46,
       "rejoins": 11,
       "duplicates": 2,
-      "networkRetries": 2,
-      "elapsedMs": 61136,
+      "networkRetries": 1,
+      "elapsedMs": 59396,
       "intelligence": {
         "version": "x1-online-v1",
         "active": "x1",
@@ -109,7 +108,7 @@
   ],
   "totals": {
     "completeMatches": 3,
-    "humanActions": 81,
+    "humanActions": 82,
     "rejoins": 21,
     "duplicateRetries": 6,
     "x1CardPlays": 50

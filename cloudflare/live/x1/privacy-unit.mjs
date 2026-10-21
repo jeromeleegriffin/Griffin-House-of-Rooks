@@ -113,6 +113,11 @@ const bidder = x1PlayInput(s, 0, memory);
 assert.notEqual(bidder.nest, '0');
 assert.equal('partnerMask' in bidder, false);
 const variant = structuredClone(s);
+for (const minBid of [5, 65, 205]) {
+  const custom = structuredClone(state);
+  custom.settings.minBid = minBid;
+  assert.equal(chooseOnlineBotAction({gameState: custom, x1: freshOnlineX1(custom)}, custom.currentPlayer).reason, 'unsupported-rules');
+}
 variant.settings.rules.includeRed2 = false;
 assert.equal(
   chooseOnlineBotAction({ gameState: variant, x1: memory }, 1).reason,

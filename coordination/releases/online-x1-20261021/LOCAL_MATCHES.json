@@ -2,31 +2,31 @@
   "scope": "Local candidate RoomService with structured-clone storage adapter; not Cloudflare or rendered browser",
   "matches": 6,
   "actions": 161,
-  "rejoins": 28,
+  "rejoins": 24,
   "reports": [
     {
       "humans": 1,
       "bots": 3,
       "run": 0,
       "hands": 1,
-      "steps": 50,
+      "steps": 47,
       "scores": [
-        80,
-        120
+        95,
+        105
       ],
       "intelligence": {
         "version": "x1-online-v1",
         "active": "x1",
         "decisions": {
-          "bid": 6,
+          "bid": 3,
           "discard": 1,
           "trump": 1,
           "play": 30
         },
         "fallbacks": 0,
         "lastFallback": null,
-        "lastDecisionMs": 0.08,
-        "maxDecisionMs": 182.07,
+        "lastDecisionMs": 0.1,
+        "maxDecisionMs": 218.13,
         "partnerAssist": false
       }
     },
@@ -37,8 +37,8 @@
       "hands": 1,
       "steps": 50,
       "scores": [
-        150,
-        50
+        55,
+        145
       ],
       "intelligence": {
         "version": "x1-online-v1",
@@ -52,7 +52,7 @@
         "fallbacks": 0,
         "lastFallback": null,
         "lastDecisionMs": 0.05,
-        "maxDecisionMs": 99.39,
+        "maxDecisionMs": 97.21,
         "partnerAssist": false
       }
     },
@@ -61,24 +61,24 @@
       "bots": 2,
       "run": 0,
       "hands": 1,
-      "steps": 47,
+      "steps": 46,
       "scores": [
-        -115,
-        110
+        180,
+        20
       ],
       "intelligence": {
         "version": "x1-online-v1",
         "active": "x1",
         "decisions": {
-          "bid": 4,
+          "bid": 2,
           "discard": 1,
           "trump": 1,
           "play": 20
         },
         "fallbacks": 0,
         "lastFallback": null,
-        "lastDecisionMs": 0.05,
-        "maxDecisionMs": 94.12,
+        "lastDecisionMs": 0.04,
+        "maxDecisionMs": 108.85,
         "partnerAssist": false
       }
     },
@@ -87,24 +87,24 @@
       "bots": 2,
       "run": 1,
       "hands": 1,
-      "steps": 43,
+      "steps": 47,
       "scores": [
-        120,
-        80
+        165,
+        35
       ],
       "intelligence": {
         "version": "x1-online-v1",
         "active": "x1",
         "decisions": {
           "bid": 2,
-          "discard": 0,
-          "trump": 0,
+          "discard": 1,
+          "trump": 1,
           "play": 20
         },
         "fallbacks": 0,
         "lastFallback": null,
         "lastDecisionMs": 0.04,
-        "maxDecisionMs": 78.31,
+        "maxDecisionMs": 98.4,
         "partnerAssist": false
       }
     },
@@ -115,8 +115,8 @@
       "hands": 1,
       "steps": 47,
       "scores": [
-        10,
-        190
+        -100,
+        140
       ],
       "intelligence": {
         "version": "x1-online-v1",
@@ -141,8 +141,8 @@
       "hands": 1,
       "steps": 47,
       "scores": [
-        175,
-        25
+        25,
+        175
       ],
       "intelligence": {
         "version": "x1-online-v1",

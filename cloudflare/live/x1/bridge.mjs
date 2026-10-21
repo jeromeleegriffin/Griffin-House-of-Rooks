@@ -30,6 +30,9 @@ function x1Compatible(state) {
   const s = state.settings,
     r = s.rules;
   return (
+    Number(s.minBid) >= 70 &&
+    Number(s.minBid) <= 200 &&
+    Number(s.minBid) % 5 === 0 &&
     s.handSize === 10 &&
     s.nestSize === 6 &&
     s.nestGoesTo === 'lastTrick' &&

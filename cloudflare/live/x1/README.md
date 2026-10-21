@@ -4,7 +4,7 @@ The canonical Worker is ../worker-live.mjs. It reuses the approved native core.j
 
 ## Intelligence contract
 
-New standard 46-card hands use X1 bidding, nest discard, trump choice and sampled card play. Input is the acting bot's own hand and confirmed public information. A bidder may use its own buried nest. Other private hands, unknown nest, offline partner-mask and Anchor assistance are excluded. Seeds are deterministic from the own/public view. Unsupported rule variants and Moon contracts retain the existing safe server bot. An X1 sampling failure uses legal Sol7 for the remainder of that hand; an adapter failure retains the legacy legal bot. Existing persisted hands without X1 memory stay legacy until the next deal.
+New standard 46-card hands with minimum bids from 70 through 200 use X1 bidding, nest discard, trump choice and sampled card play. Input is the acting bot's own hand and confirmed public information. A bidder may use its own buried nest. Other private hands, unknown nest, offline partner-mask and Anchor assistance are excluded. Seeds are deterministic from the own/public view. Unsupported rule variants and Moon contracts retain the existing safe server bot. An X1 sampling failure uses legal Sol7 for the remainder of that hand; an adapter failure retains the legacy legal bot. Existing persisted hands without X1 memory stay legacy until the next deal.
 
 Public snapshots expose only aggregate engine/version/phase counts and fallback diagnostics. Private plans, void memory, seeds and hidden cards stay on the server. The in-request performance.now diagnostic remained zero in hosted QA; do not treat it as a CPU benchmark. Hosted tests prove completion within bounded HTTP timeouts, not device-scale capacity.
 
