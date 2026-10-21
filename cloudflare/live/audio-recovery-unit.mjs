@@ -38,6 +38,9 @@ class FakeAudioContext {
     };
     return { gain, connect() {}, disconnect() {} };
   }
+  createWaveShaper() {
+    return { curve: null, connect() {}, disconnect() {} };
+  }
   createBuffer(_, size) {
     return { duration: 1, getChannelData: () => new Float32Array(size) };
   }

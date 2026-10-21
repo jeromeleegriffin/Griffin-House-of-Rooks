@@ -22,7 +22,7 @@ const {default:worker}=await import('data:text/javascript;base64,'+Buffer.from(w
 const network=[];
 globalThis.fetch=async url=>{
  const parsed=new URL(url);const pathname=parsed.pathname;
- assert(pathname.startsWith('/jeromeleegriffin/Test/374bf70223a9df7113d83786cd55f2ee6c25f4ae/'));
+ assert(pathname.startsWith('/jeromeleegriffin/Test/90078a710948c7643caafb18986e34dc71ce7cee/'));
  const path=pathname.split('/').slice(4).join('/');network.push(path);
  return new Response(fs.readFileSync((process.env.GHR_ASSET_ROOT || '.')+'/'+path),{headers:{'content-type':'application/octet-stream'}});
 };

@@ -5,6 +5,15 @@
   const PCM = window.HORCabinSamples;
 
   const RATE = 12000;
+  // These preserved recordings are already attenuated to roughly -50 to -70 dBFS.
+  // Restore useful playback level before the saved mixer controls. One shared
+  // soft ceiling bounds the combined ambience at high slider settings.
+  const RECORDING_GAIN = 100;
+  const ceilingCurve = new Float32Array(2049);
+  for (let i = 0; i < ceilingCurve.length; i++) {
+    const x = (2 * i) / (ceilingCurve.length - 1) - 1;
+    ceilingCurve[i] = 0.45 * Math.tanh(x / 0.45);
+  }
   const DEFAULT_FIRE_VOLUME = 10; // A faint hint; independent of outdoor ambience.
   const saved = (key) => {
     try {
@@ -57,6 +66,7 @@
     pageActive = true;
   let ctx = null,
     bus = null,
+    outputChain = null,
     unlocked = false,
     running = false,
     epoch = 0,
@@ -196,8 +206,10 @@
     rainUntil = 0;
     busyUntil = 0;
     const token = epoch,
-      oldBus = bus;
+      oldBus = bus,
+      oldChain = outputChain;
     bus = null;
+    outputChain = null;
     if (ctx && oldBus) {
       const now = ctx.currentTime;
       oldBus.gain.cancelScheduledValues(now);
@@ -212,6 +224,7 @@
     voices.clear();
     setTimeout(() => {
       if (oldBus) oldBus.disconnect();
+      if (oldChain) for (const node of oldChain) node.disconnect();
       if (token === epoch && !running && ctx && ctx.state === 'running')
         ctx.suspend().catch(() => {});
     }, 160);
@@ -263,7 +276,15 @@
       }
       bus = ctx.createGain();
       bus.gain.setValueAtTime(volume / 30, ctx.currentTime);
-      bus.connect(window.HORAudioMixer.output(ctx, 'atmosphere'));
+      const recordingGain = ctx.createGain();
+      recordingGain.gain.value = RECORDING_GAIN;
+      const ceiling = ctx.createWaveShaper();
+      ceiling.curve = ceilingCurve;
+      ceiling.oversample = '2x';
+      outputChain = [recordingGain, ceiling];
+      bus.connect(recordingGain);
+      recordingGain.connect(ceiling);
+      ceiling.connect(window.HORAudioMixer.output(ctx, 'atmosphere'));
       voice('fire', 0, true, 3);
       voice('wind', 0, true, 5);
       schedule('bird', 120, 240, token);
@@ -342,6 +363,7 @@
       timers: timers.size,
       voices: [...voices].map((v) => ({ name: v.name, level: v.level.gain.value })),
       busGain: bus?.gain.value ?? 0,
+      recordingGain: outputChain?.[0].gain.value ?? 0,
     }),
   };
   function init() {
