@@ -1,0 +1,58 @@
+/* Owner-requested portrait-only geometry corrections. No artwork is redrawn. */
+@media (orientation: portrait) {
+  /* Resize all six nest cards together, including the revealed face and flip. */
+  body.in-game #nestArea.nest {
+    top: -13% !important;
+  }
+  body.in-game #nestArea .table-nest-pile {
+    width: 78px !important;
+    height: 108px !important;
+  }
+  body.in-game #nestArea .table-nest-under,
+  body.in-game #nestArea .table-nest-top,
+  body.in-game #nestArea .table-nest-flip,
+  body.in-game #nestArea .nest-face-up,
+  body.in-game #nestArea .nest-stay-face,
+  body.in-game #nestArea .table-nest-flip-inner {
+    width: 68px !important;
+    height: 98px !important;
+  }
+  /* Space the welcome words below the existing decorative medallion. */
+  body #lobby.landing-returning #landingGreeting783 {
+    padding-top: 12px;
+  }
+  /* The entire label, not just its text, must contain + Choose partner. */
+  body #waiting.friends803 .wait-seat.friends-empty[data-position='top'] {
+    width: max(158px, 26%) !important;
+    max-width: 42% !important;
+  }
+  body #waiting.friends803 .wait-seat[data-position='top'] .friends-seat-choice804 {
+    box-sizing: border-box;
+    min-width: 154px;
+    padding-inline: 12px;
+    font-size: 14px !important;
+    white-space: nowrap;
+    text-align: center;
+  }
+}
+/* R8 follow-up: keep partner label and pill together at Android portrait widths. */
+@media (orientation: portrait) {
+  body #waiting.friends803 .wait-seat.friends-empty[data-position='top'] {
+    width: 204px !important;
+    max-width: min(62%, 240px) !important;
+  }
+  body #waiting.friends803 .wait-seat.friends-empty[data-position='top'] .friends-seat-choice804 {
+    display: inline-flex !important;
+    align-items: center;
+    justify-content: center;
+    width: max-content !important;
+    min-width: 188px !important;
+    max-width: 100% !important;
+    min-height: 32px;
+    padding: 6px 15px !important;
+    font:
+      400 14px/1.2 Georgia,
+      serif !important;
+    white-space: nowrap !important;
+  }
+}

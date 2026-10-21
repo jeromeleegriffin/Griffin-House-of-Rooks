@@ -2,10 +2,11 @@
  * Author: Jerome Griffin
  * Copyright (c) 2026 Jerome Griffin / Griffin House
  */
-const BUILD = '846-premium-owner-repair-20261020-r7-cumulative';
-const CACHE = 'house-of-rooks-846-premium-owner-repair-20261020-r7-cumulative';
+const BUILD = '846-r8-friends-voices-portrait-20261021';
+const CACHE = 'house-of-rooks-846-r8-friends-voices-portrait-20261021';
 // Current dependency paths only; cacheLookup handles version query strings.
 const SHELL = [
+  './portrait-r8-repairs.css',
   './cloudflare-entry.js',
   './assets/house-premium-console/ASSET_PROVENANCE.json',
   './assets/house-premium-console/clock-enamel-inset.png',
