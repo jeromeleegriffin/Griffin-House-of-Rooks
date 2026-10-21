@@ -1,0 +1,14 @@
+{
+  "core.js": {
+    "bytes": 10690,
+    "sha256": "54295f5da5c3011050c739b4528dc798cb4ba06d09d76ac9305c78d9430edd20"
+  },
+  "sha256.js": {
+    "bytes": 1841,
+    "sha256": "2dc5b474cae25050759e51ea4b9fb2edf08fdfd71d86ffa5b03813221b17cfd9"
+  },
+  "bidding.js": {
+    "bytes": 10377,
+    "sha256": "c2b56d03a1505de5e2f508b05d6c2872ee0bee46ac77712b80ec11fe1adffb0b"
+  }
+}

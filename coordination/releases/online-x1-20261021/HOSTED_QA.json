@@ -1,0 +1,119 @@
+{
+  "date": "2026-10-21",
+  "scope": "Real Cloudflare HTTP API on isolated Worker; one GitHub runner and distinct simulated human identities; no rendered browser or physical network certification",
+  "worker": "griffin-house-of-rooks-x1-qa-20261021",
+  "namespace": "1d0feb9cebf54a17ae0c50e306abc299",
+  "version": "ffdfc6e4-1af8-433d-b0e2-66d67785955b",
+  "deployment": "c8f009c5-ec3f-4604-9720-5d45940fc344",
+  "sourceSha256": "c430869e13412d1f5aca4ee001571d8a6764895b7eb6c515d2a3d642a2a8b1ed",
+  "exactDownloadedSourceMatch": true,
+  "workflow": {
+    "id": 39561016427,
+    "job": 119092010530,
+    "commit": "5c882d2e984584db6a6ae0ed4cdbd72b234bafe9",
+    "conclusion": "success",
+    "url": "https://github.com/jeromeleegriffin/Test/actions/runs/39561016427",
+    "artifact": 12326794855
+  },
+  "matches": [
+    {
+      "humans": 1,
+      "bots": 3,
+      "pace": 99,
+      "phase": "complete",
+      "scores": [
+        150,
+        50
+      ],
+      "actions": 11,
+      "rejoins": 3,
+      "duplicates": 2,
+      "networkRetries": 0,
+      "elapsedMs": 20081,
+      "intelligence": {
+        "version": "x1-online-v1",
+        "active": "x1",
+        "decisions": {
+          "bid": 3,
+          "discard": 1,
+          "trump": 1,
+          "play": 30
+        },
+        "fallbacks": 0,
+        "lastFallback": null,
+        "lastDecisionMs": 0,
+        "maxDecisionMs": 0,
+        "partnerAssist": false
+      }
+    },
+    {
+      "humans": 2,
+      "bots": 2,
+      "pace": 3,
+      "phase": "complete",
+      "scores": [
+        160,
+        40
+      ],
+      "actions": 24,
+      "rejoins": 7,
+      "duplicates": 2,
+      "networkRetries": 0,
+      "elapsedMs": 31269,
+      "intelligence": {
+        "version": "x1-online-v1",
+        "active": "x1",
+        "decisions": {
+          "bid": 2,
+          "discard": 0,
+          "trump": 0,
+          "play": 20
+        },
+        "fallbacks": 0,
+        "lastFallback": null,
+        "lastDecisionMs": 0,
+        "maxDecisionMs": 0,
+        "partnerAssist": false
+      }
+    },
+    {
+      "humans": 4,
+      "bots": 0,
+      "pace": 1,
+      "phase": "complete",
+      "scores": [
+        110,
+        90
+      ],
+      "actions": 46,
+      "rejoins": 11,
+      "duplicates": 2,
+      "networkRetries": 2,
+      "elapsedMs": 61136,
+      "intelligence": {
+        "version": "x1-online-v1",
+        "active": "x1",
+        "decisions": {
+          "bid": 0,
+          "discard": 0,
+          "trump": 0,
+          "play": 0
+        },
+        "fallbacks": 0,
+        "lastFallback": null,
+        "lastDecisionMs": 0,
+        "maxDecisionMs": 0,
+        "partnerAssist": false
+      }
+    }
+  ],
+  "totals": {
+    "completeMatches": 3,
+    "humanActions": 81,
+    "rejoins": 21,
+    "duplicateRetries": 6,
+    "x1CardPlays": 50
+  },
+  "clockNote": "Hosted in-request performance.now diagnostics were zero; no CPU measurement claimed.",
+  "closedOwnTestRooms": true
+}

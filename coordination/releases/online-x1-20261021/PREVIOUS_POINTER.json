@@ -1,0 +1,306 @@
+{
+  "project": "Griffin House of Rooks",
+  "foundationVersion": "H",
+  "foundationArtifact": "artifacts/GRIFFIN_HOUSE_MASTER_BANK_2026-10-06_H_MASTER_BRAIN.zip",
+  "foundationSha256": "e5fe4e526d40d4ee8baea74aad06a774e8b74d4fa59b47b764647db43b7b5f4a",
+  "seatedImage": "versions/H/files/02_VISUAL_REFERENCES/SCENE_INTEGRATED_SEATED_PLAYER_MASTER_REFERENCE_2026-10-05.png",
+  "seatedImageSha256": "0537f1fd1735f087395288bd9c7aa9544727d02a0ad3c2d58d945926a360be31",
+  "constructionAuthority": "versions/H/files/01_MASTER_BANK/SCENE_INTEGRATED_SEATED_PLAYER_MASTER_CONSTRUCTION_AUTHORITY_2026-10-05.txt",
+  "constructionAuthoritySha256": "b405602e809b1ce470c92aa7189f78d3d7e03448a622061aeb18cdcf62dd2d89",
+  "brainVersion": "AG",
+  "status": "CURRENT",
+  "updated": "2026-10-21",
+  "browse": "versions/AG/index.html",
+  "document": "versions/AG/files/01_MASTER_BANK/MASTER_BRAIN_AG.md",
+  "manifest": "versions/AG/inventory.json",
+  "startupPrompt": "versions/AG/files/00_START_HERE/REPLACEMENT_CHAT_STARTUP_PROMPT.txt",
+  "history": "history.html",
+  "previousVersion": "AF",
+  "sha256": "ad1bd2f342cf428f98bf75e736808eaa92578fbaaa435f8ca33229344e4cea62",
+  "sha256Scope": "Master Brain AG primary document",
+  "checkpoint": "r10-ambience-20261021",
+  "checkpointStatus": "ALL_THREE_R10_DEPLOYED_OWNER_CONFIRMED_AUDIO",
+  "latestGameBuild": "846-r10-ambience-levels-20261021",
+  "runtimeStatusAuthority": "currentRuntimeRelease and Master Brain AG; frozen historical fields remain in the previous pointer snapshot",
+  "currentRuntimeRelease": {
+    "status": "ALL_THREE_R10_DEPLOYED_OWNER_CONFIRMED_AUDIO",
+    "date": "2026-10-21",
+    "runtime": "846-r10-ambience-levels-20261021",
+    "ownerConfirmedCardSoundsRestored": true,
+    "test": {
+      "url": "https://jeromeleegriffin.github.io/Test/",
+      "runtimeCommit": "a5804a9035b3a2f56b38231cec4ff44da686655f",
+      "assetCommit": "90078a710948c7643caafb18986e34dc71ce7cee",
+      "assetSourceCheck": {
+        "id": 39557639452,
+        "conclusion": "success"
+      },
+      "runs": [
+        {
+          "id": 39557812112,
+          "name": "Source checks",
+          "status": "completed",
+          "conclusion": "success"
+        },
+        {
+          "id": 39557811988,
+          "name": "pages build and deployment",
+          "status": "completed",
+          "conclusion": "success"
+        }
+      ],
+      "rollbackCommit": "517c308a9aa21e518908344020835a3a00ff8a68",
+      "pages": {
+        "id": 39557811988,
+        "status": "completed",
+        "conclusion": "success"
+      },
+      "sourceCheck": {
+        "id": 39557812112,
+        "conclusion": "success"
+      }
+    },
+    "production": {
+      "url": "https://jeromeleegriffin.github.io/Griffin-House-of-Rooks/",
+      "runtimeCommit": "c52c097473c2476957306c6492c695c4bb6946b7",
+      "branchSourceCheck": {
+        "id": 39557744220,
+        "conclusion": "success"
+      },
+      "runs": [
+        {
+          "id": 39557815019,
+          "name": "Source checks",
+          "status": "completed",
+          "conclusion": "success"
+        },
+        {
+          "id": 39557814680,
+          "name": "pages build and deployment",
+          "status": "completed",
+          "conclusion": "success"
+        },
+        {
+          "id": 39557744220,
+          "name": "Source checks",
+          "status": "completed",
+          "conclusion": "success"
+        }
+      ],
+      "rollbackCommit": "70cc652f0a425f2b3428aa3f7db17f1dc36ef0a8",
+      "pages": {
+        "id": 39557814680,
+        "status": "completed",
+        "conclusion": "success"
+      },
+      "sourceCheck": {
+        "id": 39557815019,
+        "conclusion": "success"
+      }
+    },
+    "cloudflare": {
+      "url": "https://griffin-house-of-rooks-online.jeromeleegriffin.workers.dev/",
+      "worker": "griffin-house-of-rooks-online",
+      "version": "d4d2ed21-45da-4652-bd09-95ce85b41c12",
+      "deployment": "0567f9b0-2512-43f9-aaa3-a64d0ef42e52",
+      "workerSha256": "a8cb41c717bf1178373e559cc6b36263d45e172474870849f8b0af4e88672eae",
+      "exactServedSourceMatch": true,
+      "assetCommit": "90078a710948c7643caafb18986e34dc71ce7cee",
+      "namespace": "bb1bf1c32b68451cbe5db6fee3066fa0",
+      "rollbackVersion": "60c2b7e7-3787-4b09-be10-d232f988b6d9",
+      "roomStorageReset": false,
+      "secretAndRateLimitsRetained": true,
+      "previewsEnabled": false
+    },
+    "rollbackBranchBothRepos": "rollback/pre-r10-ambience-20261021",
+    "repair": {
+      "behavioralFile": "cabin-ambience041.js",
+      "recordingGain": 100,
+      "nominalGainDb": 40,
+      "outputSoftCeiling": 0.45,
+      "existingRecordingsChanged": false,
+      "approvedVoicesOrPortraitsChanged": false,
+      "savedPrefsReset": false,
+      "mainAudioChanged": false,
+      "cardFixPreserved": true,
+      "serviceWorkerCleared": false,
+      "estimatedDefaultOutputRmsDb": {
+        "before": {
+          "wind": -84.3,
+          "fire": -95.2
+        },
+        "after": {
+          "wind": -44.3,
+          "fire": -55.2
+        }
+      },
+      "tests": [
+        "Original R9 fails real-PCM audibility-range assertion",
+        "R10 actual-created graph with real PCM passes corrected RMS estimates, curve/headroom, preferences, zero/mute, max sliders, no duplicate gain and stale stop cleanup",
+        "Context recovery suspended/interrupted/closed/rejected resume/background preserved",
+        "Confirmed online card audio, entry/security/Friends/create/invite, collection/reconnect and diagnostics privacy regressions pass",
+        "Native non-ambience file changes identity only; normalized Worker exactly retains card/server/diagnostic source",
+        "Immutable cabin download exact; both repositories share exact native blob SHAs"
+      ]
+    },
+    "limitations": {
+      "physicalAndroidAmbienceVerified": true,
+      "actualAudibleAmbienceVerified": true,
+      "cloudBrowser": "Native credential runtime unavailable; no repeated auth/reconnect loops",
+      "graphTest": "Actual module/PCM, mocked AudioContext and evaluated WaveShaper curve; not a browser listening test",
+      "newZipCreated": false,
+      "audioVerificationMethod": "Owner confirmation, not assistant browser listening"
+    },
+    "next": "Preserve the working audio. Address separately chosen remaining banked work and verification items; see coordination/BANKED_IDEAS_STATUS_20261021.md.",
+    "ownerPhoneAudioAcceptance": {
+      "date": "2026-10-21",
+      "otherSoundsQuote": "the other sounds are back",
+      "ambienceQuote": "I hear it.",
+      "method": "Owner report in this conversation",
+      "scope": "Current owner phone/session; not exhaustive rare-event, device, roaming or suspension certification"
+    }
+  },
+  "comprehensiveHandoff": "versions/AG/files/01_MASTER_BANK/MASTER_BRAIN_AG.md",
+  "threeSiteReleasePolicy": "../coordination/THREE_SITE_RELEASE_POLICY.md",
+  "currentReleaseReceipt": "../coordination/releases/r10-ambience-20261021/LIVE_RECEIPT.json",
+  "currentCumulativeGamePackage": {
+    "status": "No new ZIP; R10 native game deployed on all three sites. Preserve older ZIPs as historical artifacts.",
+    "nativeSourceCommit": "a5804a9035b3a2f56b38231cec4ff44da686655f"
+  },
+  "previousPointerSnapshot": "../coordination/releases/all-three-r7-cumulative-20261020/PREVIOUS_AF_POINTER.json",
+  "physicalAndroidVerified": false,
+  "independentCellularVerified": false,
+  "onlineX1Integrated": false,
+  "paidUpgradeAuthorized": false,
+  "previousCumulativeGamePackage": {
+    "filename": "Griffin_House_Complete_Cumulative_Final_20261020.zip",
+    "bytes": 166774839,
+    "sha256": "3264c8c1ec3ebca83e87d2aa8eebe97c7b7e4a04e52a8d8c27f3c6aff3316cbf",
+    "entries": 1670,
+    "crc": "PASS",
+    "allManifestHashes": "PASS",
+    "library_file_id": "libfile_31c70b5c390481919f5ab8eff6ecc05c",
+    "file_id": "file_000000000ce481f6abedc30775ec581a",
+    "runtime": "846-premium-owner-repair-20261020-r7-cumulative",
+    "nativeBaseCommit": "18cf361be26dd5d65b3c8aa384c2a5434f730a93",
+    "cloudCodeCommit": "93e881c0c3fd61762dd24ffe58b8d8b60d5d44d3",
+    "onlineURL": "https://griffin-house-of-rooks-online.jeromeleegriffin.workers.dev/",
+    "onlineVersion": "48f6f945-e54c-4200-bfbd-52bb3e9928b6",
+    "packagedOfflineHandPassed": true,
+    "packagedNextHandAndLeavePassed": true,
+    "friendsAndEightCharacterInviteDispatchPassed": true,
+    "artVoiceIntelligenceFilesUnchanged": 1386,
+    "publicPagesGameUpdated": true,
+    "document": "coordination/CUMULATIVE_FINAL_ZIP_20261020.json",
+    "sourceEvidenceCommit": "38f52428515277616c06277924b80673a1879505",
+    "nativeSourceCommit": "2ef90e8264c4f0e887b8df118a563f61e6d47098",
+    "publicationNote": "Cumulative ZIP behavior preserved; equivalent formatting in published source; no new ZIP created."
+  },
+  "pendingAudioRepair": {
+    "status": "OWNER_CONFIRMED_WORKING_ON_CURRENT_PHONE",
+    "document": "coordination/releases/r10-ambience-20261021/README.md",
+    "ownerConfirmedOtherSoundsRestored": true,
+    "ownerConfirmedAmbienceHeard": true,
+    "physicalPhoneAmbienceAcceptancePending": false,
+    "releaseCommit": "a5804a9035b3a2f56b38231cec4ff44da686655f",
+    "cloudflareVersion": "d4d2ed21-45da-4652-bd09-95ce85b41c12"
+  },
+  "previousRuntimeRelease": {
+    "status": "ALL_THREE_R8_DEPLOYED",
+    "date": "2026-10-21",
+    "runtime": "846-r8-friends-voices-portrait-20261021",
+    "test": {
+      "url": "https://jeromeleegriffin.github.io/Test/",
+      "runtimeCommit": "47a3c83b61fd9a927195cf429a9acfe0a0e4e443",
+      "pagesRun": 39549226534,
+      "sourceCheckRun": 39549227923,
+      "conclusion": "success",
+      "rollbackCommit": "61c843aa338a2899ba5582c3c7b42e18a2be84ee"
+    },
+    "production": {
+      "url": "https://jeromeleegriffin.github.io/Griffin-House-of-Rooks/",
+      "runtimeCommit": "0330bcdde34b4fe47587adeda9f6379ce53b1459",
+      "pagesRun": 39549556090,
+      "sourceCheckRun": 39549556789,
+      "conclusion": "success",
+      "rollbackCommit": "972a381196259a58016122c3e365e2208a874755"
+    },
+    "cloudflare": {
+      "url": "https://griffin-house-of-rooks-online.jeromeleegriffin.workers.dev/",
+      "worker": "griffin-house-of-rooks-online",
+      "version": "2b037d2a-7232-4a0b-9784-6ccb8fb118d1",
+      "deployment": "f0cdcf6a-75f4-4673-98dc-55d22aed2a9c",
+      "namespace": "bb1bf1c32b68451cbe5db6fee3066fa0",
+      "rollbackVersion": "48f6f945-e54c-4200-bfbd-52bb3e9928b6",
+      "assetCommit": "7c7eab3c9e1c6e6124da28e403a0d7405ac7c967",
+      "sourceCommit": "47a3c83b61fd9a927195cf429a9acfe0a0e4e443",
+      "workerSha256": "47b07501fd45c952215c324f45f9a73623bc434d2ca714817a3808ddaf920986",
+      "roomStorageReset": false,
+      "secretRetained": true,
+      "rateBindingsRetained": true,
+      "previewUrlsEnabled": false,
+      "paidUpgradePerformed": false
+    },
+    "browserTests": {
+      "nativeCreate": true,
+      "fillThreeBots": true,
+      "start": true,
+      "bid": true,
+      "nestDiscard": true,
+      "trumpConfirm": true,
+      "cardPlay": true,
+      "reloadSameSeatHand": true,
+      "joinIndependentHost": true,
+      "existingLiveR7RoomRetainedAfterR8": true,
+      "independentPhysicalDevices": false
+    },
+    "networkTests": {
+      "scope": "Browser-driven real hosted preview HTTP API; distinct simulated human identities",
+      "requests": 255,
+      "results": [
+        {
+          "humans": 4,
+          "bots": 0,
+          "room": "EJZZXE7Q",
+          "phase": "score",
+          "humanCardPlays": 40,
+          "reconnectSeatHand": true
+        },
+        {
+          "humans": 2,
+          "bots": 2,
+          "room": "WHYCT377",
+          "phase": "score",
+          "humanCardPlays": 20,
+          "reconnectSeatHand": true
+        }
+      ],
+      "nonHostStartRejected": true
+    },
+    "localTests": {
+      "unitSuites": 13,
+      "entryRoutingSuites": 3,
+      "fullMatches": 10,
+      "actions": 2259,
+      "rejoins": 391
+    },
+    "limitations": {
+      "finalPostReleaseZipLoaderReplay": "BLOCKED_BY_CLOUD_BROWSER_NATIVE_CREDENTIAL_RUNTIME; not passed",
+      "earlierPreservedZipNativeNavigation": "PASSED against prior Worker before R8 deployment",
+      "physicalAndroidVerified": false,
+      "independentCellularVerified": false,
+      "onlineX1Integrated": false,
+      "newZipCreated": false
+    },
+    "preview": {
+      "id": "4138dbf219054acca9ba5fcdb249f646",
+      "namespace": "17f11ebca0d64cac97196089e2f28c24",
+      "exactSourceRestoredDeployment": "eca91b1c-40e1-4a5c-87e6-c60497921daf",
+      "temporaryTestPageRemoved": true,
+      "publicRoutingDisabled": true
+    },
+    "rollbackBranchBothRepos": "rollback/pre-r8-20261021"
+  },
+  "bankedIdeasStatus": "../coordination/BANKED_IDEAS_STATUS_20261021.md",
+  "bankedIdeasComplete": false
+}

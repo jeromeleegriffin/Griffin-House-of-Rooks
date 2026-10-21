@@ -1,0 +1,35 @@
+name: X1 online QA
+on:
+  push:
+    branches:
+      - work/x1-online-20261021
+      - work/x1-live-acceptance-20261021
+    paths:
+      - cloudflare/live/x1/**
+      - cloudflare/live/worker-live.mjs
+      - .github/workflows/x1-online-qa.yml
+permissions:
+  contents: read
+jobs:
+  intelligence:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    env:
+      GHR_X1_TARGET: ${{ github.ref_name == 'work/x1-live-acceptance-20261021' && 'live' || 'qa' }}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+      - name: Privacy and persisted reconnect checks
+        run: |
+          node cloudflare/live/x1/privacy-unit.mjs
+          node cloudflare/live/x1/reliability-unit.mjs
+      - name: Real Cloudflare complete matches
+        run: node cloudflare/live/x1/hosted-qa.mjs
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: x1-online-${{ env.GHR_X1_TARGET }}-${{ github.run_id }}
+          path: x1-evidence/
+          if-no-files-found: warn

@@ -1,0 +1,164 @@
+{
+  "scope": "Local candidate RoomService with structured-clone storage adapter; not Cloudflare or rendered browser",
+  "matches": 6,
+  "actions": 161,
+  "rejoins": 28,
+  "reports": [
+    {
+      "humans": 1,
+      "bots": 3,
+      "run": 0,
+      "hands": 1,
+      "steps": 50,
+      "scores": [
+        80,
+        120
+      ],
+      "intelligence": {
+        "version": "x1-online-v1",
+        "active": "x1",
+        "decisions": {
+          "bid": 6,
+          "discard": 1,
+          "trump": 1,
+          "play": 30
+        },
+        "fallbacks": 0,
+        "lastFallback": null,
+        "lastDecisionMs": 0.08,
+        "maxDecisionMs": 182.07,
+        "partnerAssist": false
+      }
+    },
+    {
+      "humans": 1,
+      "bots": 3,
+      "run": 1,
+      "hands": 1,
+      "steps": 50,
+      "scores": [
+        150,
+        50
+      ],
+      "intelligence": {
+        "version": "x1-online-v1",
+        "active": "x1",
+        "decisions": {
+          "bid": 6,
+          "discard": 1,
+          "trump": 1,
+          "play": 30
+        },
+        "fallbacks": 0,
+        "lastFallback": null,
+        "lastDecisionMs": 0.05,
+        "maxDecisionMs": 99.39,
+        "partnerAssist": false
+      }
+    },
+    {
+      "humans": 2,
+      "bots": 2,
+      "run": 0,
+      "hands": 1,
+      "steps": 47,
+      "scores": [
+        -115,
+        110
+      ],
+      "intelligence": {
+        "version": "x1-online-v1",
+        "active": "x1",
+        "decisions": {
+          "bid": 4,
+          "discard": 1,
+          "trump": 1,
+          "play": 20
+        },
+        "fallbacks": 0,
+        "lastFallback": null,
+        "lastDecisionMs": 0.05,
+        "maxDecisionMs": 94.12,
+        "partnerAssist": false
+      }
+    },
+    {
+      "humans": 2,
+      "bots": 2,
+      "run": 1,
+      "hands": 1,
+      "steps": 43,
+      "scores": [
+        120,
+        80
+      ],
+      "intelligence": {
+        "version": "x1-online-v1",
+        "active": "x1",
+        "decisions": {
+          "bid": 2,
+          "discard": 0,
+          "trump": 0,
+          "play": 20
+        },
+        "fallbacks": 0,
+        "lastFallback": null,
+        "lastDecisionMs": 0.04,
+        "maxDecisionMs": 78.31,
+        "partnerAssist": false
+      }
+    },
+    {
+      "humans": 4,
+      "bots": 0,
+      "run": 0,
+      "hands": 1,
+      "steps": 47,
+      "scores": [
+        10,
+        190
+      ],
+      "intelligence": {
+        "version": "x1-online-v1",
+        "active": "x1",
+        "decisions": {
+          "bid": 0,
+          "discard": 0,
+          "trump": 0,
+          "play": 0
+        },
+        "fallbacks": 0,
+        "lastFallback": null,
+        "lastDecisionMs": 0,
+        "maxDecisionMs": 0,
+        "partnerAssist": false
+      }
+    },
+    {
+      "humans": 4,
+      "bots": 0,
+      "run": 1,
+      "hands": 1,
+      "steps": 47,
+      "scores": [
+        175,
+        25
+      ],
+      "intelligence": {
+        "version": "x1-online-v1",
+        "active": "x1",
+        "decisions": {
+          "bid": 0,
+          "discard": 0,
+          "trump": 0,
+          "play": 0
+        },
+        "fallbacks": 0,
+        "lastFallback": null,
+        "lastDecisionMs": 0,
+        "maxDecisionMs": 0,
+        "partnerAssist": false
+      }
+    }
+  ]
+}

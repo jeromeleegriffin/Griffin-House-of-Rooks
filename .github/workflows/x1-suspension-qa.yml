@@ -1,0 +1,25 @@
+name: X1 ten-minute disconnect QA
+on:
+  push:
+    branches: [work/x1-suspension-20261021]
+    paths:
+      - cloudflare/live/x1/suspension-qa.mjs
+      - .github/workflows/x1-suspension-qa.yml
+permissions:
+  contents: read
+jobs:
+  suspension:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+      - run: node cloudflare/live/x1/suspension-qa.mjs
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: x1-ten-minute-${{ github.run_id }}
+          path: x1-evidence/
+          if-no-files-found: warn
