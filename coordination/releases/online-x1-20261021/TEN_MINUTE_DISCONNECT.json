@@ -1,0 +1,30 @@
+{
+  "workflow": 39562716870,
+  "job": 119097524927,
+  "commit": "65af52ca1661923578a98d850cd311084b9d46ac",
+  "conclusion": "success",
+  "pass": true,
+  "scope": "Real Cloudflare HTTP API, one GitHub runner; not physical phone suspension or cellular roaming",
+  "detachedMs": 600309,
+  "sameSeatTokenAndOwnCards": true,
+  "persistedAlarmBotProgress": true,
+  "revisionBefore": 3,
+  "revisionAfter": 5,
+  "intelligence": {
+    "version": "x1-online-v1",
+    "active": "x1",
+    "decisions": {
+      "bid": 2,
+      "discard": 0,
+      "trump": 0,
+      "play": 0
+    },
+    "fallbacks": 0,
+    "lastFallback": null,
+    "lastDecisionMs": 0,
+    "maxDecisionMs": 0,
+    "partnerAssist": false
+  },
+  "crossedQaDeployment": "62f35057-d207-4d8a-b35c-3a53e85c80ca",
+  "progressScope": "Bot progress and safe catch-up observed on resume; the test does not independently timestamp alarm execution before the resume requests. Local actual-RoomDO simulated-time tests separately exercise alarm invocation and actor recreation."
+}

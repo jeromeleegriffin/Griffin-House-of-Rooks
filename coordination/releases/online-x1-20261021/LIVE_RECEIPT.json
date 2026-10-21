@@ -1,0 +1,165 @@
+{
+  "status": "ALL_THREE_R10_NATIVE_ONLINE_X1_VERIFIED",
+  "date": "2026-10-21",
+  "version": "x1-online-v1",
+  "nativeRuntime": "846-r10-ambience-levels-20261021",
+  "nativeAssetCommit": "90078a710948c7643caafb18986e34dc71ce7cee",
+  "worker": "griffin-house-of-rooks-online",
+  "workerVersion": "3c0339df-3396-4784-b50b-05a0b41166ab",
+  "workerSha256": "313ed667456754003a054b6506c9c5579d98d16ecb179b9d8465fa954152e6c1",
+  "testSourceCommit": "9b63d8d9791c7b8d7d9766aaae065c675e03d10b",
+  "productionSourceCommit": "a1b73405f1905bd92685c77a6fd0a1d640ddcb24",
+  "rollback": {
+    "workerVersion": "d4d2ed21-45da-4652-bd09-95ce85b41c12",
+    "testCommit": "633e194924e906202ed2ee1da1802359632ef99d",
+    "productionCommit": "c52c097473c2476957306c6492c695c4bb6946b7",
+    "branchBothRepos": "rollback/pre-online-x1-20261021",
+    "instructions": "Restore source with reviewed new commits, never reset main; preserve current Brain/data. Redeploy previous Worker version on the same namespace without resetting storage."
+  },
+  "contract": {
+    "standard46CardX1": [
+      "bidding",
+      "discard",
+      "trump",
+      "sampled card play"
+    ],
+    "ownAndPublicOnly": true,
+    "privatePartnerAssistance": false,
+    "unknownHandsRead": false,
+    "moonAndUnsupportedRules": "Existing legal server bot",
+    "samplingFailure": "Legal Sol7 for rest of hand",
+    "adapterFailure": "Existing legal server bot",
+    "existingHands": "Legacy until next deal",
+    "minimumBidRange": [
+      70,
+      200
+    ]
+  },
+  "preservation": {
+    "roomNamespace": "bb1bf1c32b68451cbe5db6fee3066fa0",
+    "roomStorageReset": false,
+    "signingSecretRetained": true,
+    "rateLimitsRetained": true,
+    "nativeFilesChanged": 0,
+    "approvedMaleVoicesPreserved": true,
+    "portraitRepairsPreserved": true,
+    "cardAudioAndAmbiencePreserved": true,
+    "savedPreferencesPreserved": true,
+    "serviceWorkerChanged": false,
+    "uiChanged": false,
+    "leadPillChanged": false,
+    "paidUpgrade": false,
+    "newZip": false
+  },
+  "qa": {
+    "id": 39562960314,
+    "job": 119098320852,
+    "commit": "bf0e112f3fd284b7211733065beea2437e6f1c2e",
+    "conclusion": "success",
+    "url": "https://github.com/jeromeleegriffin/Test/actions/runs/39562960314"
+  },
+  "local": {
+    "completeMatches": 6,
+    "humanActions": 161,
+    "rejoins": 24,
+    "x1CardPlays": 100,
+    "simulatedActorRestartAndTenMinuteDetach": true,
+    "lostResponseExactlyOnce": true,
+    "staleAndUnauthorizedRejected": true,
+    "privacyAndHiddenDealInvariance": true
+  },
+  "limitations": {
+    "renderedBrowser": "Blocked by native credential runtime; no new UI changes",
+    "physicalAndroidSuspension": false,
+    "independentWANAndCellularRoaming": false,
+    "installedCacheAndOfflineUpgrade": false,
+    "qrCameraAndShareSheet": false,
+    "offlineAssetCatchup": "No cache/asset changes; not recertified",
+    "cpuBenchmark": "Hosted in-request clock stayed zero; not a CPU measurement",
+    "preResumeAlarmExecutionIndependentlyTimed": false
+  },
+  "deployment": "8bb4c652-3133-4480-a1f3-b09bf69159b3",
+  "exactServedSourceMatch": true,
+  "tenMinuteDisconnect": {
+    "workflow": 39562716870,
+    "job": 119097524927,
+    "commit": "65af52ca1661923578a98d850cd311084b9d46ac",
+    "conclusion": "success",
+    "pass": true,
+    "scope": "Real Cloudflare HTTP API, one GitHub runner; not physical phone suspension or cellular roaming",
+    "detachedMs": 600309,
+    "sameSeatTokenAndOwnCards": true,
+    "persistedAlarmBotProgress": true,
+    "revisionBefore": 3,
+    "revisionAfter": 5,
+    "intelligence": {
+      "version": "x1-online-v1",
+      "active": "x1",
+      "decisions": {
+        "bid": 2,
+        "discard": 0,
+        "trump": 0,
+        "play": 0
+      },
+      "fallbacks": 0,
+      "lastFallback": null,
+      "lastDecisionMs": 0,
+      "maxDecisionMs": 0,
+      "partnerAssist": false
+    },
+    "crossedQaDeployment": "62f35057-d207-4d8a-b35c-3a53e85c80ca",
+    "progressScope": "Bot progress and safe catch-up observed on resume; the test does not independently timestamp alarm execution before the resume requests. Local actual-RoomDO simulated-time tests separately exercise alarm invocation and actor recreation."
+  },
+  "qaPublicRoutingDisabled": true,
+  "livePreviewsEnabled": false,
+  "workerGitBlob": "c021183d88858dbd6b34be81b1c8b83824de4f2c",
+  "liveAcceptance": {
+    "workflow": 39564067285,
+    "job": 119101991507,
+    "commit": "900247eac1179579494c89698c61843ee36868fd",
+    "conclusion": "success",
+    "report": {
+      "humans": 1,
+      "bots": 3,
+      "pace": 99,
+      "phase": "complete",
+      "scores": [
+        10,
+        190
+      ],
+      "actions": 12,
+      "rejoins": 3,
+      "duplicates": 2,
+      "networkRetries": 0,
+      "elapsedMs": 19072,
+      "intelligence": {
+        "version": "x1-online-v1",
+        "active": "x1",
+        "decisions": {
+          "bid": 3,
+          "discard": 1,
+          "trump": 1,
+          "play": 30
+        },
+        "fallbacks": 0,
+        "lastFallback": null,
+        "lastDecisionMs": 0,
+        "maxDecisionMs": 0,
+        "partnerAssist": false
+      }
+    },
+    "closedOwnTestRoom": true
+  },
+  "pagesDeployments": {
+    "test": {
+      "id": 39564061138,
+      "conclusion": "success",
+      "sourceCommit": "9b63d8d9791c7b8d7d9766aaae065c675e03d10b"
+    },
+    "production": {
+      "id": 39564062280,
+      "conclusion": "success",
+      "sourceCommit": "a1b73405f1905bd92685c77a6fd0a1d640ddcb24"
+    }
+  }
+}
