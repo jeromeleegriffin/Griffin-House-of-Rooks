@@ -80,6 +80,6 @@ const game = fs.readFileSync(new URL('../../game060.js', import.meta.url), 'utf8
 const build = game.match(/const APP_VERSION = '([^']+)'/)[1];
 assert.ok(adapter.includes(JSON.stringify(build)), 'adapter accepts the cumulative app build');
 const refs = [...new Set(workerSource.match(/raw\.githubusercontent\.com\/jeromeleegriffin\/Test\/[0-9a-f]+/g))];
-assert.deepEqual(refs, ['raw.githubusercontent.com/jeromeleegriffin/Test/cf5dd70e99da52c8de84100b3926601b54e10834']);
+assert.deepEqual(refs, ['raw.githubusercontent.com/jeromeleegriffin/Test/374bf70223a9df7113d83786cd55f2ee6c25f4ae']);
 
 console.log('PASS: native submit keeps default navigation, targets the top window, carries create/join intent, and matches the cumulative Worker baseline.');

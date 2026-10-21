@@ -1683,7 +1683,7 @@ var worker_default = {
         session=await issuePrivateSession(env.TEST_GATE_KEY);
       }
       try {
-        const upstream=await fetch("https://raw.githubusercontent.com/jeromeleegriffin/Test/cf5dd70e99da52c8de84100b3926601b54e10834/index.html",{redirect:"follow",cf:{cacheEverything:true,cacheTtlByStatus:{"200-299":86400,"300-599":-1}}});
+        const upstream=await fetch("https://raw.githubusercontent.com/jeromeleegriffin/Test/374bf70223a9df7113d83786cd55f2ee6c25f4ae/index.html",{redirect:"follow",cf:{cacheEverything:true,cacheTtlByStatus:{"200-299":86400,"300-599":-1}}});
         if (!upstream.ok) return new Response("The game is temporarily unavailable. Please reload shortly.",{status:502,headers:{"cache-control":"no-store"}});
         const response=secureIntegratedGameHtml(injectCloudGameAdapter(await upstream.text()));
         if (session) response.headers.set("Set-Cookie",`${PRIVATE_SESSION_COOKIE}=${session.token}; Path=/; Max-Age=${Math.floor(PRIVATE_SESSION_MS/1000)}; HttpOnly; Secure; SameSite=Strict`);
@@ -1703,7 +1703,7 @@ var worker_default = {
       }
       try {
         const assetPath = assetParts.map(encodeURIComponent).join("/");
-        const upstream = await fetch(`https://raw.githubusercontent.com/jeromeleegriffin/Test/cf5dd70e99da52c8de84100b3926601b54e10834/${assetPath}`, {
+        const upstream = await fetch(`https://raw.githubusercontent.com/jeromeleegriffin/Test/374bf70223a9df7113d83786cd55f2ee6c25f4ae/${assetPath}`, {
           method: request.method,
           headers: { "accept": request.headers.get("accept") || "*/*" },
           redirect: "follow",
@@ -1748,7 +1748,7 @@ var worker_default = {
         });
       }
       try {
-        const upstream = await fetch("https://raw.githubusercontent.com/jeromeleegriffin/Test/cf5dd70e99da52c8de84100b3926601b54e10834/index.html", { redirect: "follow", cf: {cacheEverything: true, cacheTtlByStatus: {"200-299":86400,"300-599":-1}} });
+        const upstream = await fetch("https://raw.githubusercontent.com/jeromeleegriffin/Test/374bf70223a9df7113d83786cd55f2ee6c25f4ae/index.html", { redirect: "follow", cf: {cacheEverything: true, cacheTtlByStatus: {"200-299":86400,"300-599":-1}} });
         if (!upstream.ok) return new Response("The private game copy is temporarily unavailable.", { status: 502 });
         const integrated = injectCloudGameAdapter(await upstream.text());
         return secureIntegratedGameHtml(integrated);
