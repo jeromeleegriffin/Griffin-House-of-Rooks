@@ -1,0 +1,42 @@
+{
+  "workflow": 39569158287,
+  "job": 119118711546,
+  "commit": "d4df8e2531d8888e8249d99ceae1f47de60090ec",
+  "conclusion": "success",
+  "report": {
+    "moon": true,
+    "includeRed2": false,
+    "humans": 1,
+    "bots": 3,
+    "pace": 99,
+    "phase": "complete",
+    "scores": [
+      -180,
+      75
+    ],
+    "actions": 13,
+    "rejoins": 5,
+    "duplicates": 2,
+    "networkRetries": 0,
+    "elapsedMs": 19319,
+    "intelligence": {
+      "version": "x1-online-v2",
+      "active": "x1-rules",
+      "decisions": {
+        "bid": 0,
+        "discard": 0,
+        "trump": 0,
+        "play": 30
+      },
+      "fallbacks": 0,
+      "lastFallback": null,
+      "lastDecisionMs": 0,
+      "maxDecisionMs": 0,
+      "partnerAssist": true,
+      "partnerDecisions": 10,
+      "ruleDecisions": 30,
+      "handEngineVersion": "x1-online-v2"
+    }
+  },
+  "closedOwnTestRoom": true
+}
