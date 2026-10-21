@@ -38,6 +38,7 @@
   let lastScoreSignature = "";
   let redealRevision = -1;
   let cloudDealOwner=null, cloudDealTimer=null;
+  let cloudAudio = null;
 
   const status = (message) => {
     const lobby = document.getElementById("lobby");
@@ -169,6 +170,30 @@
       start.classList.remove("hidden");
       start.disabled = snap.occupiedSeats?.length !== 4;
       start.textContent = "Start Game";
+    }
+  }
+
+  // A restored cloud hand skips the native deal, which normally primes impacts.
+  // Retry on trusted interaction too; a network failure must not silence the hand.
+  function warmCloudAudio() {
+    if (!credentials) return;
+    try { preloadCardLandingSounds058().catch(() => {}); } catch (_) {}
+  }
+  document.addEventListener("pointerdown", warmCloudAudio, { passive: true });
+
+  function presentCloudCardAudio(snap) {
+    const cards = (snap.trick || []).filter(entry => entry?.card?.id);
+    if (!cloudAudio || cloudAudio.owner !== credentials || cloudAudio.hand !== snap.handNumber) {
+      cloudAudio = { owner: credentials, hand: snap.handNumber, seen: new Set(cards.map(entry => entry.card.id)) };
+      warmCloudAudio();
+      return; // Reconnect/new-hand snapshots describe history, not fresh plays.
+    }
+    const fresh = cards.filter(entry => !cloudAudio.seen.has(entry.card.id));
+    for (const entry of cards) cloudAudio.seen.add(entry.card.id);
+    if (snap.phase === "play" && fresh.length) {
+      // A catch-up snapshot can contain several cards: sound the latest only.
+      // The native dispatcher retains mute, effects levels and bird-sound rules.
+      try { notifyCardPlayed(fresh[fresh.length - 1].card); } catch (_) {}
     }
   }
 
@@ -324,6 +349,8 @@
         });
       },solScaledDelay(1500,150));
     }
+
+    presentCloudCardAudio(snap);
 
     // Presentation observes confirmed public changes; reconnect snapshots are quiet.
     if (presented?.hand === snap.handNumber) {
