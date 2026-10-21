@@ -1,0 +1,8 @@
+{
+  "pass": true,
+  "v1InProgressHands": 8,
+  "standardNoAssistParity": 8,
+  "v1BaseSha256": "313ed667456754003a054b6506c9c5579d98d16ecb179b9d8465fa954152e6c1",
+  "exactNativeAndFrozenPrefixPreserved": true,
+  "scope": "Local exact v1/v2 action comparisons, not hosted physical devices"
+}

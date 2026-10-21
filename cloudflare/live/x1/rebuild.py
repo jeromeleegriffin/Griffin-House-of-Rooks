@@ -5,6 +5,8 @@ parser.add_argument("--base",required=True,type=Path)
 parser.add_argument("--engine-dir",required=True,type=Path)
 parser.add_argument("--output",required=True,type=Path)
 args=parser.parse_args()
+if args.output.exists() and "const ONLINE_X1_VERSION = 'x1-online-v2';" in args.output.read_text():
+ raise SystemExit('Refusing to overwrite v2 with the v1 reproduction. Use cloudflare/live/x1-full/build.py; see its README.')
 assert hashlib.sha256(args.base.read_bytes()).hexdigest()=="a8cb41c717bf1178373e559cc6b36263d45e172474870849f8b0af4e88672eae", "Wrong R10 base; refusing to overwrite later work"
 root=Path(__file__).parent
 sources=[args.engine_dir/p for p in ['core.js','sha256.js','bidding.js']]

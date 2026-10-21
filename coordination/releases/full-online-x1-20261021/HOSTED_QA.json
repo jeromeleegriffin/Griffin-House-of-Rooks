@@ -1,0 +1,237 @@
+{
+  "date": "2026-10-21",
+  "scope": "Isolated real Cloudflare HTTP API, one GitHub runner and simulated identities; no rendered browser/physical devices",
+  "worker": "griffin-house-of-rooks-x1-qa-20261021",
+  "namespace": "1d0feb9cebf54a17ae0c50e306abc299",
+  "version": "f17751fa-ea77-454f-bffe-b3aeb6030eb2",
+  "deployment": "f8a95f20-b6bb-441c-ac73-e87067433e27",
+  "sourceSha256": "404a1d0e90de319012876750cfa0c757a23c2524275b04e05dc112b625497436",
+  "exactServedSourceMatch": true,
+  "workflow": {
+    "id": 39567187965,
+    "job": 119112188386,
+    "commit": "232425eaf2bcbf0b815fc50ccb4043f8e8810b2b",
+    "conclusion": "success"
+  },
+  "reports": [
+    {
+      "moon": false,
+      "includeRed2": true,
+      "humans": 1,
+      "bots": 3,
+      "pace": 99,
+      "phase": "complete",
+      "scores": [
+        40,
+        160
+      ],
+      "actions": 12,
+      "rejoins": 3,
+      "duplicates": 2,
+      "networkRetries": 0,
+      "elapsedMs": 20519,
+      "intelligence": {
+        "version": "x1-online-v2",
+        "active": "x1",
+        "decisions": {
+          "bid": 7,
+          "discard": 1,
+          "trump": 1,
+          "play": 30
+        },
+        "fallbacks": 0,
+        "lastFallback": null,
+        "lastDecisionMs": 0,
+        "maxDecisionMs": 0,
+        "partnerAssist": true,
+        "partnerDecisions": 12,
+        "ruleDecisions": 0,
+        "handEngineVersion": "x1-online-v2"
+      }
+    },
+    {
+      "moon": false,
+      "includeRed2": true,
+      "humans": 2,
+      "bots": 2,
+      "pace": 3,
+      "phase": "complete",
+      "scores": [
+        180,
+        20
+      ],
+      "actions": 22,
+      "rejoins": 5,
+      "duplicates": 2,
+      "networkRetries": 0,
+      "elapsedMs": 32051,
+      "intelligence": {
+        "version": "x1-online-v2",
+        "active": "x1",
+        "decisions": {
+          "bid": 2,
+          "discard": 1,
+          "trump": 1,
+          "play": 20
+        },
+        "fallbacks": 0,
+        "lastFallback": null,
+        "lastDecisionMs": 0,
+        "maxDecisionMs": 0,
+        "partnerAssist": false,
+        "partnerDecisions": 0,
+        "ruleDecisions": 0,
+        "handEngineVersion": "x1-online-v2"
+      }
+    },
+    {
+      "moon": false,
+      "includeRed2": true,
+      "humans": 4,
+      "bots": 0,
+      "pace": 1,
+      "phase": "complete",
+      "scores": [
+        -100,
+        165
+      ],
+      "actions": 47,
+      "rejoins": 11,
+      "duplicates": 2,
+      "networkRetries": 1,
+      "elapsedMs": 59258,
+      "intelligence": {
+        "version": "x1-online-v2",
+        "active": "x1",
+        "decisions": {
+          "bid": 0,
+          "discard": 0,
+          "trump": 0,
+          "play": 0
+        },
+        "fallbacks": 0,
+        "lastFallback": null,
+        "lastDecisionMs": 0,
+        "maxDecisionMs": 0,
+        "partnerAssist": false,
+        "partnerDecisions": 0,
+        "ruleDecisions": 0,
+        "handEngineVersion": "x1-online-v2"
+      }
+    },
+    {
+      "moon": false,
+      "includeRed2": false,
+      "humans": 1,
+      "bots": 3,
+      "pace": 99,
+      "phase": "complete",
+      "scores": [
+        80,
+        100
+      ],
+      "actions": 11,
+      "rejoins": 3,
+      "duplicates": 2,
+      "networkRetries": 0,
+      "elapsedMs": 18569,
+      "intelligence": {
+        "version": "x1-online-v2",
+        "active": "x1-rules",
+        "decisions": {
+          "bid": 3,
+          "discard": 1,
+          "trump": 1,
+          "play": 30
+        },
+        "fallbacks": 0,
+        "lastFallback": null,
+        "lastDecisionMs": 0,
+        "maxDecisionMs": 0,
+        "partnerAssist": true,
+        "partnerDecisions": 11,
+        "ruleDecisions": 35,
+        "handEngineVersion": "x1-online-v2"
+      }
+    },
+    {
+      "moon": true,
+      "includeRed2": true,
+      "humans": 1,
+      "bots": 3,
+      "pace": 99,
+      "phase": "complete",
+      "scores": [
+        -200,
+        75
+      ],
+      "actions": 13,
+      "rejoins": 5,
+      "duplicates": 2,
+      "networkRetries": 0,
+      "elapsedMs": 20833,
+      "intelligence": {
+        "version": "x1-online-v2",
+        "active": "x1-rules",
+        "decisions": {
+          "bid": 1,
+          "discard": 0,
+          "trump": 0,
+          "play": 30
+        },
+        "fallbacks": 0,
+        "lastFallback": null,
+        "lastDecisionMs": 0,
+        "maxDecisionMs": 0,
+        "partnerAssist": false,
+        "partnerDecisions": 10,
+        "ruleDecisions": 30,
+        "handEngineVersion": "x1-online-v2"
+      }
+    },
+    {
+      "moon": true,
+      "includeRed2": false,
+      "humans": 1,
+      "bots": 3,
+      "pace": 99,
+      "phase": "complete",
+      "scores": [
+        -180,
+        75
+      ],
+      "actions": 13,
+      "rejoins": 5,
+      "duplicates": 2,
+      "networkRetries": 1,
+      "elapsedMs": 24246,
+      "intelligence": {
+        "version": "x1-online-v2",
+        "active": "x1-rules",
+        "decisions": {
+          "bid": 2,
+          "discard": 0,
+          "trump": 0,
+          "play": 30
+        },
+        "fallbacks": 0,
+        "lastFallback": null,
+        "lastDecisionMs": 0,
+        "maxDecisionMs": 0,
+        "partnerAssist": true,
+        "partnerDecisions": 11,
+        "ruleDecisions": 32,
+        "handEngineVersion": "x1-online-v2"
+      }
+    }
+  ],
+  "testRoomsClosed": true,
+  "qaRoutingDisabled": true,
+  "totals": {
+    "matches": 6,
+    "humanActions": 118,
+    "rejoins": 32,
+    "duplicateRetries": 12,
+    "x1CardPlays": 140
+  }
+}

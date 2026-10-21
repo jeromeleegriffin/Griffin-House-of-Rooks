@@ -3,7 +3,7 @@ import json
 root=Path(__file__).resolve().parents[2]
 canonical=root/'cloudflare/live/worker-live.mjs'
 if canonical.exists() and 'const ONLINE_X1 = ' in canonical.read_text():
- raise SystemExit('Refusing to replace the X1 release with the historical builder. Use cloudflare/live/x1/rebuild.py with the verified immutable R10 base and root x1 engine sources; see cloudflare/live/x1/README.md.')
+ raise SystemExit('Refusing to replace the X1 release with the historical builder. Use cloudflare/live/x1-full/build.py with the verified immutable online-v1 base; see cloudflare/live/x1-full/README.md.')
 s=(root/'cloudflare/isolated/worker-candidate.mjs').read_text()
 s=s.replace('GHR-Private-Test','GHR-Online-v1').replace('var PRIVATE_SESSION_MS = 60 * 60 * 1e3;', 'var PRIVATE_SESSION_MS = 12 * 60 * 60 * 1e3;')
 s=s.replace('Private cloud room test ready.', 'Online table ready.').replace('Private cloud room test ready. Create a room or join with a code.', 'Online table ready. Create a room or join with a code.')

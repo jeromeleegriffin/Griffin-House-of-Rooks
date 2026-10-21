@@ -1,0 +1,235 @@
+{
+  "ruleConfigurations": 256,
+  "legalComparisons": 1024,
+  "rankingComparisons": 1897984,
+  "scoreComparisons": 64,
+  "hands": [
+    {
+      "options": {},
+      "moon": false,
+      "actions": 40,
+      "maxMs": 194,
+      "scores": [
+        140,
+        60
+      ]
+    },
+    {
+      "options": {},
+      "moon": true,
+      "actions": 40,
+      "maxMs": 61,
+      "scores": [
+        -200,
+        100
+      ]
+    },
+    {
+      "options": {
+        "includeRed2": false
+      },
+      "moon": false,
+      "actions": 40,
+      "maxMs": 31,
+      "scores": [
+        125,
+        55
+      ]
+    },
+    {
+      "options": {
+        "includeRed2": false
+      },
+      "moon": true,
+      "actions": 40,
+      "maxMs": 33,
+      "scores": [
+        -180,
+        30
+      ]
+    },
+    {
+      "options": {
+        "includeOnes": false,
+        "includeRed2": false,
+        "includeRook": false
+      },
+      "moon": false,
+      "actions": 40,
+      "maxMs": 29,
+      "scores": [
+        -100,
+        60
+      ]
+    },
+    {
+      "options": {
+        "includeOnes": false,
+        "includeRed2": false,
+        "includeRook": false
+      },
+      "moon": true,
+      "actions": 40,
+      "maxMs": 30,
+      "scores": [
+        -100,
+        35
+      ]
+    },
+    {
+      "options": {
+        "onesHigh": false,
+        "rookLowest": true
+      },
+      "moon": false,
+      "actions": 40,
+      "maxMs": 31,
+      "scores": [
+        -100,
+        185
+      ]
+    },
+    {
+      "options": {
+        "onesHigh": false,
+        "rookLowest": true
+      },
+      "moon": true,
+      "actions": 40,
+      "maxMs": 37,
+      "scores": [
+        -200,
+        20
+      ]
+    },
+    {
+      "options": {
+        "includeRed1": true,
+        "red2Points": 10
+      },
+      "moon": false,
+      "actions": 40,
+      "maxMs": 31,
+      "scores": [
+        -100,
+        135
+      ]
+    },
+    {
+      "options": {
+        "includeRed1": true,
+        "red2Points": 10
+      },
+      "moon": true,
+      "actions": 40,
+      "maxMs": 34,
+      "scores": [
+        -220,
+        60
+      ]
+    },
+    {
+      "options": {
+        "specialsAnytime": true,
+        "mustTrumpWhenVoid": true
+      },
+      "moon": false,
+      "actions": 40,
+      "maxMs": 91,
+      "scores": [
+        160,
+        40
+      ]
+    },
+    {
+      "options": {
+        "specialsAnytime": true,
+        "mustTrumpWhenVoid": true
+      },
+      "moon": true,
+      "actions": 40,
+      "maxMs": 49,
+      "scores": [
+        -200,
+        165
+      ]
+    },
+    {
+      "options": {
+        "nestGoesTo": "bidder",
+        "bidOnlyScoring": true
+      },
+      "moon": false,
+      "actions": 40,
+      "maxMs": 40,
+      "scores": [
+        100,
+        85
+      ]
+    },
+    {
+      "options": {
+        "nestGoesTo": "bidder",
+        "bidOnlyScoring": true
+      },
+      "moon": true,
+      "actions": 40,
+      "maxMs": 39,
+      "scores": [
+        -200,
+        145
+      ]
+    },
+    {
+      "options": {
+        "openWidow": true
+      },
+      "moon": false,
+      "actions": 40,
+      "maxMs": 61,
+      "scores": [
+        -100,
+        125
+      ]
+    },
+    {
+      "options": {
+        "openWidow": true
+      },
+      "moon": true,
+      "actions": 40,
+      "maxMs": 37,
+      "scores": [
+        -200,
+        70
+      ]
+    },
+    {
+      "options": {
+        "handSize": 9,
+        "minBid": 70
+      },
+      "moon": false,
+      "actions": 36,
+      "maxMs": 27,
+      "scores": [
+        -100,
+        170
+      ]
+    },
+    {
+      "options": {
+        "handSize": 9,
+        "minBid": 70
+      },
+      "moon": true,
+      "actions": 36,
+      "maxMs": 29,
+      "scores": [
+        -200,
+        90
+      ]
+    }
+  ],
+  "privacy": 3
+}

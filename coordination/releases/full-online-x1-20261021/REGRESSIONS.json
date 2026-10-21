@@ -1,0 +1,11 @@
+{
+  "passed": [
+    "collection-unit.mjs",
+    "invalid-actions-unit.mjs",
+    "pace-unit.mjs",
+    "trump-unit.mjs",
+    "deal-unit.mjs",
+    "rare-rules-unit.mjs"
+  ],
+  "scope": "Actual candidate source, local simulated storage/time; native wrapper byte-identical to v1"
+}
