@@ -74,7 +74,7 @@ const X1_RULES = (() => {
   function utility(v, points) {
     const b=v.bidder%2,delta=points.slice(),made=points[b]>=v.bid;
     delta[b]=made?(v.settings.bidOnlyScoring?v.bid:points[b]):-v.bid;
-    if(made&&v.settings.sandbagging){const added=Math.floor(Math.max(0,points[b]-v.bid)/10)*10;delta[b]-=Math.floor(((v.sandbagOverpoints?.[b]||0)+added)/100)*100;}
+    if(made&&!v.settings.bidOnlyScoring&&v.settings.sandbagging){const added=Math.floor(Math.max(0,points[b]-v.bid)/10)*10;delta[b]-=Math.floor(((v.sandbagOverpoints?.[b]||0)+added)/100)*100;}
     const scores=v.scores.map((s,i)=>s+delta[i]);
     if(v.moon&&made)scores[b]=Math.max(scores[b],v.settings.targetScore);
     const result=matchResult(scores,v.settings.targetScore),team=v.seat%2;

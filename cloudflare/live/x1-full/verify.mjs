@@ -18,8 +18,8 @@ for(let mask=0;mask<256;mask++){
  reports.ruleConfigurations++;
 }
 // Compare scoring utility to final reducer outcomes, including negative-score Moon.
-for(const moon of [false,true])for(const bidOnly of [false,true])for(const nestTo of ['lastTrick','bidder'])for(const scores of [[0,0],[-120,450]])for(const cut of [0,4,20,40]){
- const s=ready({targetScore:500,bidOnlyScoring:bidOnly,nestGoesTo:nestTo},moon?200:100),deck=makeDeck(s.settings.rules);s.scores=scores.slice();s.shotTheMoon=moon;s.bid=moon?200:100;s.nestCards=deck.slice(40);s.tricksTaken=[deck.slice(0,cut),deck.slice(cut,40)];s.hands=[[],[],[],[]];
+for(const moon of [false,true])for(const bidOnly of [false,true])for(const nestTo of ['lastTrick','bidder'])for(const sandbag of [false,true])for(const scores of [[0,0],[-120,450]])for(const cut of [0,4,20,40]){
+ const s=ready({targetScore:500,bidOnlyScoring:bidOnly,nestGoesTo:nestTo,sandbagging:sandbag},moon?200:100),deck=makeDeck(s.settings.rules);s.scores=scores.slice();s.sandbagOverpoints=[90,90];s.shotTheMoon=moon;s.bid=moon?200:100;s.nestCards=deck.slice(40);s.tricksTaken=[deck.slice(0,cut),deck.slice(cut,40)];s.hands=[[],[],[],[]];
  const done=finishHand(s,1),points=[done.lastSummary.pointsA,done.lastSummary.pointsB],v=x1ExtendedView(s,0,freshOnlineX1(s));const actual=done.matchResult?done.matchResult==='Tie'?0:done.matchResult==='Team A'?10000:-10000:Math.max(-9999,Math.min(9999,done.scores[0]-done.scores[1]));assert.equal(X1_RULES.utility(v,points),actual);reports.scoreComparisons++;
 }
 const cases=[{}, {includeRed2:false}, {includeOnes:false,includeRed2:false,includeRook:false}, {onesHigh:false,rookLowest:true}, {includeRed1:true,red2Points:10}, {specialsAnytime:true,mustTrumpWhenVoid:true}, {nestGoesTo:'bidder',bidOnlyScoring:true}, {openWidow:true}, {handSize:9,minBid:70}];
@@ -42,7 +42,7 @@ for(const options of [{includeRed2:false},{includeRed1:true},{specialsAnytime:tr
  d=chooseOnlineBotAction(room,1);next=chooseTrump(s,1,d.action.color);assert(next.accepted);assert.equal(d.engine,'x1-rules',d.reason);
 }
 // A hand of ten controlling trumps must recognize a makeable Moon even below zero.
-for(const scores of [[0,0],[-250,100]]){
+for(const scores of [[0,0],[100,-250]]){
  const s=createMatch(players,{misdealOnNoCounters:false},{dealer:0}),room=roomFor(s),deck=makeDeck(s.settings.rules);
  const own=deck.filter(c=>c.id==='rook'||c.id==='red-2'||c.color==='green'&&(c.rank===1||c.rank>=8));assert.equal(own.length,10);
  s.hands[1]=own;s.scores=scores;

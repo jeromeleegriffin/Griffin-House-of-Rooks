@@ -3,14 +3,14 @@
   "scope": "Isolated real Cloudflare HTTP API, one GitHub runner and simulated identities; no rendered browser/physical devices",
   "worker": "griffin-house-of-rooks-x1-qa-20261021",
   "namespace": "1d0feb9cebf54a17ae0c50e306abc299",
-  "version": "f17751fa-ea77-454f-bffe-b3aeb6030eb2",
-  "deployment": "f8a95f20-b6bb-441c-ac73-e87067433e27",
-  "sourceSha256": "404a1d0e90de319012876750cfa0c757a23c2524275b04e05dc112b625497436",
+  "version": "cb34abb2-7e30-4767-a1cf-d4efe24d668c",
+  "deployment": "70372db9-278c-4abc-8e17-8f16d582c045",
+  "sourceSha256": "78b9cbe754895bbab04b153c9f5a71a380f948837d5dba82e3ab6915635b99f9",
   "exactServedSourceMatch": true,
   "workflow": {
-    "id": 39567187965,
-    "job": 119112188386,
-    "commit": "232425eaf2bcbf0b815fc50ccb4043f8e8810b2b",
+    "id": 39568499209,
+    "job": 119116545905,
+    "commit": "358281a2b33792e61b9c66b1c5fcfad3e4607b3e",
     "conclusion": "success"
   },
   "reports": [
@@ -22,19 +22,19 @@
       "pace": 99,
       "phase": "complete",
       "scores": [
-        40,
-        160
+        50,
+        150
       ],
       "actions": 12,
       "rejoins": 3,
       "duplicates": 2,
       "networkRetries": 0,
-      "elapsedMs": 20519,
+      "elapsedMs": 19995,
       "intelligence": {
         "version": "x1-online-v2",
         "active": "x1",
         "decisions": {
-          "bid": 7,
+          "bid": 3,
           "discard": 1,
           "trump": 1,
           "play": 30
@@ -43,8 +43,8 @@
         "lastFallback": null,
         "lastDecisionMs": 0,
         "maxDecisionMs": 0,
-        "partnerAssist": true,
-        "partnerDecisions": 12,
+        "partnerAssist": false,
+        "partnerDecisions": 11,
         "ruleDecisions": 0,
         "handEngineVersion": "x1-online-v2"
       }
@@ -57,14 +57,14 @@
       "pace": 3,
       "phase": "complete",
       "scores": [
-        180,
-        20
+        150,
+        50
       ],
-      "actions": 22,
+      "actions": 23,
       "rejoins": 5,
       "duplicates": 2,
       "networkRetries": 0,
-      "elapsedMs": 32051,
+      "elapsedMs": 33615,
       "intelligence": {
         "version": "x1-online-v2",
         "active": "x1",
@@ -92,14 +92,14 @@
       "pace": 1,
       "phase": "complete",
       "scores": [
-        -100,
-        165
+        65,
+        135
       ],
-      "actions": 47,
+      "actions": 46,
       "rejoins": 11,
       "duplicates": 2,
       "networkRetries": 1,
-      "elapsedMs": 59258,
+      "elapsedMs": 56158,
       "intelligence": {
         "version": "x1-online-v2",
         "active": "x1",
@@ -127,14 +127,14 @@
       "pace": 99,
       "phase": "complete",
       "scores": [
-        80,
-        100
+        55,
+        125
       ],
-      "actions": 11,
+      "actions": 12,
       "rejoins": 3,
       "duplicates": 2,
       "networkRetries": 0,
-      "elapsedMs": 18569,
+      "elapsedMs": 18414,
       "intelligence": {
         "version": "x1-online-v2",
         "active": "x1-rules",
@@ -148,7 +148,7 @@
         "lastFallback": null,
         "lastDecisionMs": 0,
         "maxDecisionMs": 0,
-        "partnerAssist": true,
+        "partnerAssist": false,
         "partnerDecisions": 11,
         "ruleDecisions": 35,
         "handEngineVersion": "x1-online-v2"
@@ -163,18 +163,18 @@
       "phase": "complete",
       "scores": [
         -200,
-        75
+        170
       ],
       "actions": 13,
       "rejoins": 5,
       "duplicates": 2,
       "networkRetries": 0,
-      "elapsedMs": 20833,
+      "elapsedMs": 17732,
       "intelligence": {
         "version": "x1-online-v2",
         "active": "x1-rules",
         "decisions": {
-          "bid": 1,
+          "bid": 3,
           "discard": 0,
           "trump": 0,
           "play": 30
@@ -183,8 +183,8 @@
         "lastFallback": null,
         "lastDecisionMs": 0,
         "maxDecisionMs": 0,
-        "partnerAssist": false,
-        "partnerDecisions": 10,
+        "partnerAssist": true,
+        "partnerDecisions": 11,
         "ruleDecisions": 30,
         "handEngineVersion": "x1-online-v2"
       }
@@ -198,13 +198,13 @@
       "phase": "complete",
       "scores": [
         -180,
-        75
+        40
       ],
       "actions": 13,
       "rejoins": 5,
       "duplicates": 2,
-      "networkRetries": 1,
-      "elapsedMs": 24246,
+      "networkRetries": 0,
+      "elapsedMs": 19579,
       "intelligence": {
         "version": "x1-online-v2",
         "active": "x1-rules",
@@ -218,7 +218,7 @@
         "lastFallback": null,
         "lastDecisionMs": 0,
         "maxDecisionMs": 0,
-        "partnerAssist": true,
+        "partnerAssist": false,
         "partnerDecisions": 11,
         "ruleDecisions": 32,
         "handEngineVersion": "x1-online-v2"
@@ -229,7 +229,7 @@
   "qaRoutingDisabled": true,
   "totals": {
     "matches": 6,
-    "humanActions": 118,
+    "humanActions": 119,
     "rejoins": 32,
     "duplicateRetries": 12,
     "x1CardPlays": 140
