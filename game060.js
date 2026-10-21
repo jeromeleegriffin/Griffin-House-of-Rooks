@@ -7,7 +7,7 @@
 // It's exchanged during the join handshake so a stale host or joiner (e.g.
 // one still running old cached JS) gets caught and auto-updated instead of
 // silently failing or behaving unpredictably against a mismatched peer.
-const APP_VERSION = '846-r8-friends-voices-portrait-20261021';
+const APP_VERSION = '846-r9-audio-recovery-20261021';
 window.HOR_SCRIPT_BUILD = APP_VERSION;
 
 function horThisIndex() {
@@ -1699,7 +1699,7 @@ let audioCtx = null;
 
 function ensureAudio() {
   if (soundMuted) return null;
-  if (!audioCtx) {
+  if (!audioCtx || audioCtx.state === 'closed') {
     try {
       audioCtx = new (window.AudioContext || window.webkitAudioContext)();
     } catch (e) {
@@ -1707,7 +1707,7 @@ function ensureAudio() {
       return null;
     }
   }
-  if (audioCtx.state === 'suspended') {
+  if (audioCtx.state !== 'running') {
     audioCtx.resume().catch(() => {});
   }
   return audioCtx;
@@ -1724,10 +1724,12 @@ function whenAudioReady(fn) {
       fn(ctx);
     } catch (e) {}
   };
-  if (ctx.state === 'suspended') {
+  if (ctx.state !== 'running') {
     ctx
       .resume()
-      .then(() => run())
+      .then(() => {
+        if (ctx.state === 'running' && !soundMuted) run();
+      })
       .catch(() => {});
     return;
   }

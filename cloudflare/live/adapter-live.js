@@ -9,7 +9,7 @@
   // Private 846 adapter, eight-character Cloudflare room codes.
   const codeField = document.getElementById("hor-room-code");
   if (codeField) codeField.maxLength = 8;
-  if (!["846-r8-friends-voices-portrait-20261021"].includes(window.HOR_SCRIPT_BUILD)) {
+  if (!["846-r9-audio-recovery-20261021"].includes(window.HOR_SCRIPT_BUILD)) {
     const notice = document.getElementById("lobbyStatus");
     if (notice) notice.textContent = "This game version has not been verified for private cloud play. Please wait for the test adapter update.";
     // Fail closed rather than silently falling back to browser-hosted rooms.

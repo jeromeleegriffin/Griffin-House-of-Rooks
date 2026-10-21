@@ -221,7 +221,26 @@
       if (running) stop();
       return;
     }
+    if (ctx?.state === 'closed') {
+      stop();
+      ctx = null;
+    }
     if (running) {
+      // Playback intent can survive Android/browser audio-focus loss while the
+      // actual context is suspended or interrupted. A later trusted tap must
+      // resume that context, not treat the intent flag as proof of playback.
+      if (ctx.state !== 'running') {
+        try {
+          await ctx.resume();
+        } catch (_) {
+          return;
+        }
+        if (!allowed()) {
+          if (running) stop();
+          return;
+        }
+        if (!running || ctx.state !== 'running') return;
+      }
       for (const v of voices)
         v.level.gain.setTargetAtTime(soundLevel(v.name), ctx.currentTime, 0.25);
       if (bus) bus.gain.setTargetAtTime(volume / 30, ctx.currentTime, 0.25);
@@ -234,6 +253,10 @@
       running = true;
       const token = ++epoch;
       await ctx.resume();
+      if (ctx.state !== 'running') {
+        if (token === epoch) stop();
+        return;
+      }
       if (token !== epoch || !allowed()) {
         if (token === epoch) stop();
         return;
@@ -306,6 +329,9 @@
     settings: () => ({ ...settings }),
     inspect: () => ({
       running,
+      contextState: ctx?.state ?? 'not-created',
+      unlocked,
+      allowed: allowed(),
       enabled,
       volume,
       fireVolume,

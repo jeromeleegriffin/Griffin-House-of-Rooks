@@ -128,5 +128,5 @@ s=s.replace('opening:room.opening?{handNumber:', 'opening:room.opening?{id:room.
 s=s.replace('async readyForBidding(roomId, token, handNumber)', 'async readyForBidding(roomId, token, handNumber, openingId)')
 s=s.replace('if(room.opening&&!room.opening.readySeats.includes(seat))', 'if(openingId&&room.opening&&openingId!==room.opening.id)throw Error("STALE_DEAL");if(room.opening&&!room.opening.readySeats.includes(seat))')
 s=s.replace('body.handNumber)', 'body.handNumber,body.openingId)')
-s=s.replace('18cf361be26dd5d65b3c8aa384c2a5434f730a93', '7c7eab3c9e1c6e6124da28e403a0d7405ac7c967')
+s=s.replace('18cf361be26dd5d65b3c8aa384c2a5434f730a93', 'cf5dd70e99da52c8de84100b3926601b54e10834')
 (root/'cloudflare/live/worker-live.mjs').write_text(s)
