@@ -3,6 +3,21 @@
 <!-- House of Rooks | Author: Jerome Griffin | Copyright (c) 2026 Jerome Griffin / Griffin House -->
 <html lang="en">
   <head>
+    <script id="hor-canonical-entry">
+      (() => {
+        if (
+          location.hostname !== 'jeromeleegriffin.github.io' ||
+          navigator.onLine === false ||
+          new URLSearchParams(location.search).has('offline')
+        ) return;
+        // Enter the shared lobby before loading this historical game's artwork.
+        // Local profiles, installed offline cache and service workers stay intact.
+        const entry = new URL('https://griffin-house-of-rooks-online.jeromeleegriffin.workers.dev/');
+        entry.search = location.search;
+        entry.hash = location.hash;
+        location.replace(entry.href);
+      })();
+    </script>
     <meta charset="utf-8" />
     <style id="houseLoadingStyle">
       #houseLoading *,
