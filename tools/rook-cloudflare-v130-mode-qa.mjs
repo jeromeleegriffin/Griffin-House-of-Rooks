@@ -19,7 +19,7 @@ for (const spec of [{humans:1,pace:99,anchor:true},{humans:2,pace:99},{humans:3,
     duplicates = 0,
     networkRetries = 0;
   const begun = Date.now();
-  const entry = await fetch(base + '/');
+  const entry = await fetch(base + '/cloud-game/index.html?game=rook');
   assert.equal(entry.status, 200, 'Native entry failed');
   cookie = entry.headers.get('set-cookie')?.split(';')[0];
   assert(cookie);
