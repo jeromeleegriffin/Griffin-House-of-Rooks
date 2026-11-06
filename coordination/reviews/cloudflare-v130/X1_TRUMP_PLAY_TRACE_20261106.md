@@ -3,7 +3,7 @@
 Date: 2026-11-06. The exact deployed Worker `griffin-house-of-rooks-online` version `4335d4fa-d2ef-4d1e-9bad-dda40e71ce1e` was retrieved from Cloudflare `content/v2`. In isolated in-memory simulations, a temporary test-only variation changed the `ONLINE_X1.core.choose` selection criterion from `adjusted = d - 0.5 - 0.5 * se` to `adjusted = d - 5 - se`. This was **play-choice confidence**, not a bid cap, bid ceiling, persona modification or production change. All bidding, cards, rules and discard policies stayed unchanged between paired variants.
 
 ## Paired tests
-- Ordinary seed series `0x9c371 + i*10133`, deals 0–19: 20/20 full pairs completed; same auction in all 20; original and conservative both 0 sets. Total bidder-team points original 3,? (first 8 sum not recorded here) and no conclusion about set avoidance. In the latter 12 deals original 1,880 captured versus candidate 1,920.
+- Ordinary seed series `0x9c371 + i*10133`, deals 0–19: 20/20 full pairs completed; same auction in all 20; original and conservative both 0 sets. Total bidding-team captured points: original 3,160, candidate 3,220, with no conclusion about set avoidance (both had zero sets). The latter 12 deals contributed original 1,880 versus candidate 1,920.
 - Hard series A, seed `0x371092 + i*17011`, deals 0–11: 12 full pairs completed, same auction in all 12. Original X1 2 sets, stricter confidence 2 sets. Original bidder-team points 1,795, candidate 1,845. One set was rescued and one new set was caused.
 - Hard series B, seed `0xb7190 + i*24137`, deals 20–31: 12 full pairs completed, same auction in all 12. Original X1 3 sets, stricter confidence 1 set. Original bidder-team points 1,755, candidate 1,720. Two contracts rescued, but average points worsened.
 
