@@ -9,6 +9,7 @@ const base =
 const pause = (ms) => new Promise((r) => setTimeout(r, ms));
 const reports = [];
 const observedBids=[];
+const handSummaries=[];
 let requests = 0;
 for (const spec of [{humans:1,pace:99,anchor:true},{humans:2,pace:99},{humans:3,pace:99}]) {
   let cookie,
@@ -114,6 +115,10 @@ for (const spec of [{humans:1,pace:99,anchor:true},{humans:2,pace:99},{humans:3,
       // Two-human and three-human matches may also include eligible human/bot partners.
       assert(v.revision >= lastRevision);
       lastRevision = v.revision;
+      if (v.phase === 'score' && v.lastSummary) {
+        const key=code+':'+v.handNumber;
+        if(!handSummaries.some(x=>x.key===key))handSummaries.push({key,humanCount:spec.humans,summary:v.lastSummary,botIntelligence:v.botIntelligence});
+      }
       if (v.phase === 'bidding' && v.highestBid >= 70 && v.bidder >= 0) {
         const key=code+':'+v.handNumber+':'+v.bidder+':'+v.highestBid;
         if(!observedBids.some(x=>x.key===key))observedBids.push({key,humanCount:spec.humans,seat:v.bidder,bid:v.highestBid,hand:v.handNumber});
@@ -222,6 +227,8 @@ for (const spec of [{humans:1,pace:99,anchor:true},{humans:2,pace:99},{humans:3,
     };
     reports.push(report);
     console.log(JSON.stringify(report));
+    fs.mkdirSync('x1-evidence',{recursive:true});
+    fs.writeFileSync('x1-evidence/v130-mode-test.json',JSON.stringify({target,scope:'Cloudflare v130 live synthetic rooms',requests,reports,observedBids,handSummaries},null,2));
   } finally {
     if (code && credentials[0])
       await api('/rooms/' + code + '/close', 'POST', {}, credentials[0].token);
@@ -236,6 +243,7 @@ const result = {
   matches: reports.length,
   reports,
   observedBids,
+  handSummaries,
 };
 fs.mkdirSync('x1-evidence', { recursive: true });
 fs.writeFileSync('x1-evidence/v130-mode-test.json', JSON.stringify(result, null, 2));
