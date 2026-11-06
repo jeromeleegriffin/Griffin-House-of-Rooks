@@ -310,7 +310,6 @@ function chooseOnlineBotAction(room,seat) {
     // A human-partnered bot must evaluate the known partner hand during the auction,
     // not only during card play. Keep other seats on the frozen standard path.
     if(partner!==null){const v=x1ExtendedView(s,seat,m,partner);const p=X1_RULES.bid(v);d.action={type:'bid',value:p.bid};d.samples=p.samples;d.engine='x1-rules-partner-bid';}
-    if(false&&partner!==null&&s.bidder===partner){const v=x1BidInput(s,seat,m),ask=v.high+5,cap=ONLINE_X1.core.ceiling(v.h,{seat,high:v.high,history:v.history,scores:v.scores});if(cap>=ask){const p=ONLINE_X1.bidding.decide(v);if(![0,ask].includes(p.bid))throw Error('X1_BAD_TAKEOVER');d.action={type:'bid',value:p.bid};}}
     if(s.settings.shootMoonEnabled){const v=x1ExtendedView(s,seat,m,partner),power=Math.max(...Array.from({length:4},(_,tr)=>X1_RULES.plan({...v,tr},0,false).score));if(power>=90||d.action.value===200){const p=X1_RULES.bid(v,[d.action.value===200?0:d.action.value,200]);d.action={type:'bid',value:p.bid};}}
    }
    if(s.phase==='play'&&partner!==null){const v=x1PlayInput(s,seat,m,partner),p=ONLINE_X1.core.choose(v);const card=s.hands[seat].find(c=>x1CardId(c)===p.card);if(!card)throw Error('X1_PARTNER_SAMPLE');d.action={type:'play',cardId:card.id};}
