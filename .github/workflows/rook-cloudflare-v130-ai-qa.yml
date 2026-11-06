@@ -7,7 +7,7 @@ on:
       - tools/rook-cloudflare-v130-mode-qa.mjs
       - .github/workflows/rook-cloudflare-v130-ai-qa.yml
 permissions:
-  contents: read
+  contents: write
 jobs:
   cloudflare-live-isolated-rooms:
     runs-on: ubuntu-latest
@@ -19,6 +19,15 @@ jobs:
           node-version: '22'
       - name: Exercise active Cloudflare Worker with isolated test rooms
         run: node tools/rook-cloudflare-v130-mode-qa.mjs
+      - name: Save test receipt to audit branch
+        if: always()
+        run: |
+          mkdir -p coordination/reviews/cloudflare-v130
+          if [ -f x1-evidence/v130-mode-test.json ]; then cp x1-evidence/v130-mode-test.json coordination/reviews/cloudflare-v130/mode-test.json; else printf '{"status":"no-evidence-file","note":"Runner stopped before writing complete results"}\n' > coordination/reviews/cloudflare-v130/mode-test.json; fi
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git config user.name "github-actions[bot]"
+          git add coordination/reviews/cloudflare-v130/mode-test.json
+          git diff --cached --quiet || (git commit -m "Record Cloudflare v130 mode QA results" && git push)
       - uses: actions/upload-artifact@v4
         if: always()
         with:
