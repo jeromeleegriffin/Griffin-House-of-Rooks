@@ -3,7 +3,7 @@ function x1EligiblePartner(room, seat) {
   const s=room.gameState,p=s.players,roster=room.seats;
   if(!['bidding','discard','trump','play'].includes(s.phase)||s.paused||!Array.isArray(p)||p.length!==4||!Array.isArray(roster)||roster.length!==4)return null;
   if(p.some((a,i)=>!a||a.seat!==i||a.team!==i%2||typeof a.isBot!=='boolean'||!a.playerId||!roster[i]||roster[i].playerId!==a.playerId||!!roster[i].isBot!==a.isBot))return null;
-  if(new Set(p.map(a=>a.playerId)).size!==4||p.filter(a=>!a.isBot).length!==1)return null;
+  if(new Set(p.map(a=>a.playerId)).size!==4)return null;
   const partner=(seat+2)%4;
   return p[seat]?.isBot&&!p[partner].isBot?partner:null;
 }
