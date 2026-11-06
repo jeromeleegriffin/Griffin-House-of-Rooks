@@ -1,0 +1,27 @@
+name: Cloudflare Rook v130 AI QA
+on:
+  push:
+    branches:
+      - audit/cloudflare-v130-ai-validation-20261106
+    paths:
+      - tools/rook-cloudflare-v130-mode-qa.mjs
+      - .github/workflows/rook-cloudflare-v130-ai-qa.yml
+permissions:
+  contents: read
+jobs:
+  cloudflare-live-isolated-rooms:
+    runs-on: ubuntu-latest
+    timeout-minutes: 25
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - name: Exercise active Cloudflare Worker with isolated test rooms
+        run: node tools/rook-cloudflare-v130-mode-qa.mjs
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: cloudflare-rook-v130-ai-modes
+          path: x1-evidence/
+          if-no-files-found: warn
