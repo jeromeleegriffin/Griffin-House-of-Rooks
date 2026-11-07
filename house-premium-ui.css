@@ -317,3 +317,17 @@
     top: var(--house-premium-notice-top, 84px) !important;
   }
 }
+
+/* Laptop/desktop Rook console: these raster-window fields intentionally contain
+   wider cropped artwork. overflow:hidden creates a scrollable container even
+   when the scrollbar is invisible, so trackpad/script scrolling can slide the
+   walnut artwork underneath the clock or live-points text. overflow:clip keeps
+   the exact visual crop and forbids internal scrolling. No table/AI changes. */
+@media (orientation: landscape) {
+  @supports (overflow: clip) {
+    body.in-game .house-landscape-clock,
+    body.in-game .house-landscape-goal {
+      overflow: clip !important;
+    }
+  }
+}
